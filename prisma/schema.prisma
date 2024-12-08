@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+
+  tastings Tasting[] // This defines the opposite side of the relation
+}
+
+model Tasting {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  wineType       String?
+  sight          Json?
+  nose           Json?
+  palate         Json?
+  conclusion     Json?
+  wineName       String?
+  timerEnabled   Boolean  @default(false)
+  timerDuration  Int?
+  isArchived     Boolean  @default(false)
+  notes          String?
+  created_at     DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id])
+  results        Result[]
+}
+
+
+model Result {
+  id             Int    @id @default(autoincrement())
+  tastingId      Int
+  characteristic String 
+  value          String 
+
+  tasting Tasting @relation(fields: [tastingId], references: [id])
+}
+
