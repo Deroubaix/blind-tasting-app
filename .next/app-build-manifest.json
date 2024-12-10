@@ -6,35 +6,50 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/api/tastings/save/route": [
+    "/api/user/me/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/tastings/save/route.js"
+      "static/chunks/app/api/user/me/route.js"
     ],
-    "/api/tastings/get/route": [
+    "/tastings/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/tastings/get/route.js"
+      "static/chunks/app/tastings/page.js"
     ],
-    "/api/tastings/archive/route": [
+    "/tastings/red/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/tastings/archive/route.js"
+      "static/chunks/app/tastings/red/page.js"
+    ],
+    "/tastings/white/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/white/page.js"
     ],
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/tasting/start/page": [
+    "/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/tasting/start/page.js"
+      "static/chunks/app/login/page.js"
     ],
-    "/tasting/red/page": [
+    "/api/auth/login/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/tasting/red/page.js"
+      "static/chunks/app/api/auth/login/route.js"
+    ],
+    "/api/tastings/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/tastings/route.js"
+    ],
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

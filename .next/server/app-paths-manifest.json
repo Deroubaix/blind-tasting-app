@@ -1,5 +1,11 @@
 {
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/tastings/route": "app/api/tastings/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/user/me/route": "app/api/user/me/route.js",
+  "/tastings/white/page": "app/tastings/white/page.js",
+  "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/tasting/start/page": "app/tasting/start/page.js",
-  "/tasting/red/page": "app/tasting/red/page.js"
+  "/tastings/page": "app/tastings/page.js",
+  "/tastings/red/page": "app/tastings/red/page.js"
 }
