@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Blind Tasting | White Wine Tasting",
 };
 
-export default async function RedWinePage() {
+export default async function WhiteWinePage() {
   return (
     <>
       <div className="">

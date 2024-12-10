@@ -20,7 +20,7 @@ export default function Homepage() {
           <Link href="/login">
             <button className="btn primary">Login / Signup</button>
           </Link>
-          <Link href="/tasting/start">
+          <Link href="/tastings">
             <button className="btn secondary">Start Blind Tasting</button>
           </Link>
         </div>

@@ -1,19 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OtherInputButton from "./OtherInputButton";
+import { useTastingContext } from "../../components/tasting/TastingContext";
+import ClientTastingService from "../../services/client/ClientTastingService";
+import { TastingData } from "../../types/TastingData";
 
 export default function RedWineTasting() {
   const [currentPhase, setCurrentPhase] = useState<
     "sight" | "nose" | "palate" | "initialConclusion" | "finalConclusion"
   >("sight");
 
+  const { tastingData, updateTastingData } = useTastingContext();
+  const tastingService = new ClientTastingService();
+
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string | null>
-  >({});
+  >(tastingData.sight || {});
+
+  useEffect(() => {
+    if (tastingData[currentPhase]) {
+      setSelectedOptions(tastingData[currentPhase] as Record<string, string>);
+    }
+  }, [currentPhase, tastingData]);
 
   const handleOptionSelect = (category: string, option: string) => {
     setSelectedOptions((prev) => ({ ...prev, [category]: option }));
+  };
+
+  const savePhaseData = () => {
+    updateTastingData({ [currentPhase]: selectedOptions });
   };
 
   const canProceedToNextPhase = (): boolean => {
@@ -23,10 +39,10 @@ export default function RedWineTasting() {
         "Brightness",
         "Concentration",
         "Color",
+        "Hue",
         "Viscosity",
         "Stained Tears",
         "Gas Evidence",
-        "Sendiment",
         "Sediment, Particles",
       ],
       nose: [
@@ -44,16 +60,37 @@ export default function RedWineTasting() {
         "Spices",
         "Animal",
         "Nuts",
-        "Vanification",
+        "Vinification",
         "Earth",
         "Rocks",
         "Wood Aromas",
         "Wood Aromas Origin",
         "Wood Aromas Condition",
       ],
-      palate: ["Sweetness", "Tannin", "Acid", "Alcohol", "Body", "Texture"],
-      initialConclusion: ["Old World or New World", "Climate", "Age Range"],
-      finalConclusion: ["Grape Variety/Blend", "Country of Origin"],
+      palate: [
+        "Sweetness",
+        "Tannin",
+        "Acid",
+        "Alcohol",
+        "Body",
+        "Texture",
+        "Finish",
+        "Complexity",
+      ],
+      initialConclusion: [
+        "Old World or New World",
+        "Climate",
+        "Age Range",
+        "Grape Variety/Blend",
+        "Possible Countries",
+      ],
+      finalConclusion: [
+        "Grape Variety/Blend",
+        "Country of Origin",
+        "Region/Appellation",
+        "Quality Level",
+        "Vintage",
+      ],
     };
 
     const categories = requiredCategories[currentPhase] || [];
@@ -66,6 +103,9 @@ export default function RedWineTasting() {
       return;
     }
 
+    // Save the current phase's data
+    savePhaseData();
+
     if (currentPhase === "sight") setCurrentPhase("nose");
     else if (currentPhase === "nose") setCurrentPhase("palate");
     else if (currentPhase === "palate") setCurrentPhase("initialConclusion");
@@ -74,6 +114,8 @@ export default function RedWineTasting() {
   };
 
   const handlePreviousPhase = () => {
+    savePhaseData();
+
     if (currentPhase === "finalConclusion")
       setCurrentPhase("initialConclusion");
     else if (currentPhase === "initialConclusion") setCurrentPhase("palate");
@@ -210,7 +252,7 @@ export default function RedWineTasting() {
           >
             Faulty
           </button>
-          <OtherInputButton label="Faulty Reason" />
+          <OtherInputButton label="Faulty Reason" onSave={handleOptionSelect} />
 
           <h3>Intensity</h3>
           <button onClick={() => handleOptionSelect("Intensity", "Delicate")}>
@@ -332,7 +374,7 @@ export default function RedWineTasting() {
           <button onClick={() => handleOptionSelect("Floral", "Black Tea")}>
             Black Tea
           </button>
-          <OtherInputButton label="Floral" />
+          <OtherInputButton label="Floral" onSave={handleOptionSelect} />
 
           <h3>Condition</h3>
           <button onClick={() => handleOptionSelect("Condition", "Fresh")}>
@@ -383,7 +425,7 @@ export default function RedWineTasting() {
           >
             Tomato Leaf
           </button>
-          <OtherInputButton label="Veg/Herbal" />
+          <OtherInputButton label="Veg/Herbal" onSave={handleOptionSelect} />
 
           <h3>Spices</h3>
           <button onClick={() => handleOptionSelect("Spices", "Black Pepper")}>
@@ -392,13 +434,13 @@ export default function RedWineTasting() {
           <button onClick={() => handleOptionSelect("Spices", "Anise")}>
             Anise
           </button>
-          <button onClick={() => handleOptionSelect("Spicesn", "Clove")}>
+          <button onClick={() => handleOptionSelect("Spices", "Clove")}>
             Clove
           </button>
           <button onClick={() => handleOptionSelect("Spices", "Juniper")}>
             Juniper
           </button>
-          <OtherInputButton label="Spices" />
+          <OtherInputButton label="Spices" onSave={handleOptionSelect} />
 
           <h3>Animal</h3>
           <button onClick={() => handleOptionSelect("Animal", "Barbecue")}>
@@ -422,7 +464,7 @@ export default function RedWineTasting() {
           <button onClick={() => handleOptionSelect("Animal", "Brett")}>
             Brett
           </button>
-          <OtherInputButton label="Animal" />
+          <OtherInputButton label="Animal" onSave={handleOptionSelect} />
 
           <h3>Nuts</h3>
           <button onClick={() => handleOptionSelect("Nuts", "Almond")}>
@@ -440,49 +482,49 @@ export default function RedWineTasting() {
           <button onClick={() => handleOptionSelect("Nuts", "Nutmeg")}>
             Nutmeg
           </button>
-          <OtherInputButton label="Nuts" />
+          <OtherInputButton label="Nuts" onSave={handleOptionSelect} />
 
-          <h3>Vanification</h3>
-          <button onClick={() => handleOptionSelect("Vanification", "Butter")}>
+          <h3>Vinification</h3>
+          <button onClick={() => handleOptionSelect("Vinification", "Butter")}>
             Butter
           </button>
-          <button onClick={() => handleOptionSelect("Vanification", "Cream")}>
+          <button onClick={() => handleOptionSelect("Vinification", "Cream")}>
             Cream
           </button>
-          <button onClick={() => handleOptionSelect("Vanification", "Rind")}>
+          <button onClick={() => handleOptionSelect("Vinification", "Rind")}>
             Rind
           </button>
-          <button onClick={() => handleOptionSelect("Vanification", "Yougurt")}>
+          <button onClick={() => handleOptionSelect("Vinification", "Yougurt")}>
             Yogurt
           </button>
-          <button onClick={() => handleOptionSelect("Vanification", "Brioche")}>
+          <button onClick={() => handleOptionSelect("Vinification", "Brioche")}>
             Brioche
           </button>
-          <button onClick={() => handleOptionSelect("Vanification", "Dough")}>
+          <button onClick={() => handleOptionSelect("Vinification", "Dough")}>
             Dough
           </button>
           <button
-            onClick={() => handleOptionSelect("Vanification", "Graham Cracker")}
+            onClick={() => handleOptionSelect("Vinification", "Graham Cracker")}
           >
             Graham Cracker
           </button>
           <button
-            onClick={() => handleOptionSelect("Vanification", "Bubblegum")}
+            onClick={() => handleOptionSelect("Vinification", "Bubblegum")}
           >
             Bubblegum
           </button>
           <button
-            onClick={() => handleOptionSelect("Vanification", "Botrytis")}
+            onClick={() => handleOptionSelect("Vinification", "Botrytis")}
           >
             Botrytis
           </button>
-          <OtherInputButton label="Nuts" />
+          <OtherInputButton label="Vinification" onSave={handleOptionSelect} />
 
           <h3>Earth</h3>
           <button onClick={() => handleOptionSelect("Earth", "Baked earth")}>
             Baked earth
           </button>
-          <button onClick={() => handleOptionSelect("Earthn", "Compost")}>
+          <button onClick={() => handleOptionSelect("Earth", "Compost")}>
             Compost
           </button>
           <button onClick={() => handleOptionSelect("Earth", "Forest Floor")}>
@@ -506,21 +548,45 @@ export default function RedWineTasting() {
           <button onClick={() => handleOptionSelect("Earth", "Straw")}>
             Straw
           </button>
-          <OtherInputButton label="Nuts" />
+          <OtherInputButton label="Earth" onSave={handleOptionSelect} />
 
           <h3>Rocks</h3>
-          <button>Chalk</button>
-          <button>Dust</button>
-          <button>Flint/Gunpowder</button>
-          <button>Granit</button>
-          <button>Graphite</button>
-          <button>Gravel</button>
-          <button>Limestone</button>
-          <button>Slate/Petrol</button>
-          <button>Volcanic</button>
-          <button>Tar</button>
-          <button>Sea Spray</button>
-          <OtherInputButton label="Rocks" />
+          <button onClick={() => handleOptionSelect("Rocks", "Chalk")}>
+            Chalk
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Dust")}>
+            Dust
+          </button>
+          <button
+            onClick={() => handleOptionSelect("Rocks", "Flint/Gunpowder")}
+          >
+            Flint/Gunpowder
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Granit")}>
+            Granit
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Graphite")}>
+            Graphite
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Gravel")}>
+            Gravel
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Limestone")}>
+            Limestone
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Slate/Petrol")}>
+            Slate/Petrol
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Volcanic")}>
+            Volcanic
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Tar")}>
+            Tar
+          </button>
+          <button onClick={() => handleOptionSelect("Rocks", "Sea Spray")}>
+            Sea Spray
+          </button>
+          <OtherInputButton label="Rocks" onSave={handleOptionSelect} />
 
           <h3>Wood Aromas</h3>
           <button onClick={() => handleOptionSelect("Wood Aromas", "Vanilla")}>
@@ -559,7 +625,7 @@ export default function RedWineTasting() {
           >
             Pencil Shavings
           </button>
-          <OtherInputButton label="Wood Aromas" />
+          <OtherInputButton label="Wood Aromas" onSave={handleOptionSelect} />
 
           <h5>Origin</h5>
           <button
@@ -610,58 +676,126 @@ export default function RedWineTasting() {
         <>
           <h2>Palate (30 sec)</h2>
           <h3>Sweetness</h3>
-          <button>Bone Dry</button>
-          <button>Dry</button>
-          <button>Off-Dry</button>
-          <button>Sweet</button>
+          <button onClick={() => handleOptionSelect("Sweetness", "Bone Dry")}>
+            Bone Dry
+          </button>
+          <button onClick={() => handleOptionSelect("Sweetness", "Dry")}>
+            Dry
+          </button>
+          <button onClick={() => handleOptionSelect("Sweetness", "Off-Dry")}>
+            Off-Dry
+          </button>
+          <button onClick={() => handleOptionSelect("Sweetness", "Sweet")}>
+            Sweet
+          </button>
 
           <h3>Tannin</h3>
-          <button>Low</button>
-          <button>Medium(-)</button>
-          <button>Medium</button>
-          <button>Medium(+)</button>
-          <button>High</button>
+          <button onClick={() => handleOptionSelect("Tannin", "Low")}>
+            Low
+          </button>
+          <button onClick={() => handleOptionSelect("Tannin", "Medium (-)")}>
+            Medium(-)
+          </button>
+          <button onClick={() => handleOptionSelect("Tannin", "Medium")}>
+            Medium
+          </button>
+          <button onClick={() => handleOptionSelect("Tannin", "Medium (+)")}>
+            Medium(+)
+          </button>
+          <button onClick={() => handleOptionSelect("Tannin", "High")}>
+            High
+          </button>
 
           <h3>Acid</h3>
-          <button>Low</button>
-          <button>Medium(-)</button>
-          <button>Medium</button>
-          <button>Medium(+)</button>
-          <button>High</button>
+          <button onClick={() => handleOptionSelect("Acid", "Low")}>Low</button>
+          <button onClick={() => handleOptionSelect("Acid", "Medium(-)")}>
+            Medium(-)
+          </button>
+          <button onClick={() => handleOptionSelect("Acid", "Medium")}>
+            Medium
+          </button>
+          <button onClick={() => handleOptionSelect("Acid", "Medium(+)")}>
+            Medium(+)
+          </button>
+          <button onClick={() => handleOptionSelect("Acid", "High")}>
+            High
+          </button>
 
           <h3>Alcohol</h3>
-          <button>Low</button>
-          <button>Medium(-)</button>
-          <button>Medium</button>
-          <button>Medium(+)</button>
-          <button>High</button>
+          <button onClick={() => handleOptionSelect("Alcohol", "Low")}>
+            Low
+          </button>
+          <button onClick={() => handleOptionSelect("Alcohol", "Medium(-)")}>
+            Medium(-)
+          </button>
+          <button onClick={() => handleOptionSelect("Alcohol", "Medium")}>
+            Medium
+          </button>
+          <button onClick={() => handleOptionSelect("Alcohol", "Medium(+)")}>
+            Medium(+)
+          </button>
+          <button onClick={() => handleOptionSelect("Alcohol", "High")}>
+            High
+          </button>
 
           <h3>Body</h3>
-          <button>Light</button>
-          <button>Medium</button>
-          <button>Full Bodied</button>
+          <button onClick={() => handleOptionSelect("Body", "Light")}>
+            Light
+          </button>
+          <button onClick={() => handleOptionSelect("Body", "Medium")}>
+            Medium
+          </button>
+          <button onClick={() => handleOptionSelect("Body", "Full Bodied")}>
+            Full Bodied
+          </button>
 
           <h3>Texture</h3>
-          <button>Lean</button>
-          <button>Round</button>
-          <button>Creamy</button>
+          <button onClick={() => handleOptionSelect("Texture", "Lean")}>
+            Lean
+          </button>
+          <button onClick={() => handleOptionSelect("Texture", "Round")}>
+            Round
+          </button>
+          <button onClick={() => handleOptionSelect("Texture", "Creamy")}>
+            Creamy
+          </button>
 
           <h3>Flavour</h3>
           <p>Confirm the nose</p>
 
           <h3>Finish</h3>
-          <button>Short</button>
-          <button>Medium(-)</button>
-          <button>Medium</button>
-          <button>Medium(+)</button>
-          <button>Long</button>
+          <button onClick={() => handleOptionSelect("Finish", "Short")}>
+            Short
+          </button>
+          <button onClick={() => handleOptionSelect("Finish", "Medium(-)")}>
+            Medium(-)
+          </button>
+          <button onClick={() => handleOptionSelect("Finish", "Medium")}>
+            Medium
+          </button>
+          <button onClick={() => handleOptionSelect("Finish", "Medium(+)")}>
+            Medium(+)
+          </button>
+          <button onClick={() => handleOptionSelect("Finish", "Long")}>
+            Long
+          </button>
 
           <h3>Complexity</h3>
-          <button>Low</button>
-          <button>Medium(-)</button>
-          <button>Medium</button>
-          <button>Medium(+)</button>
-          <button>High</button>
+          <button onClick={() => handleOptionSelect("Complexity", "Low")}>
+            Low
+          </button>
+          <button onClick={() => handleOptionSelect("Complexity", "Medium(-)")}>
+            Medium(-)
+          </button>
+          <button onClick={() => handleOptionSelect("Complexity", "Medium")}>
+            Medium
+          </button>
+          <button onClick={() => handleOptionSelect("Complexity", "Medium(+)")}>
+            Medium(+)
+          </button>
+          <button onClick={() => handleOptionSelect("Complexity", "High")}>
+            High
+          </button>
 
           <div className="navigation-buttons">
             <button onClick={handlePreviousPhase}>Back</button>
@@ -674,25 +808,57 @@ export default function RedWineTasting() {
         <>
           <h2>Initial Conclusion (30 sec)</h2>
           <h3>Old World or New World</h3>
-          <button>Old World</button>
-          <button>New World</button>
+          <button
+            onClick={() =>
+              handleOptionSelect("Old World or New World", "Old World")
+            }
+          >
+            Old World
+          </button>
+          <button
+            onClick={() =>
+              handleOptionSelect("Old World or New World", "New World")
+            }
+          >
+            New World
+          </button>
 
           <h3>Climate</h3>
-          <button>Cool</button>
-          <button>Moderate</button>
-          <button>Warm</button>
+          <button onClick={() => handleOptionSelect("Climate", "Cool")}>
+            Cool
+          </button>
+          <button onClick={() => handleOptionSelect("Climate", "Moderate")}>
+            Moderate
+          </button>
+          <button onClick={() => handleOptionSelect("Climate", "Warm")}>
+            Warm
+          </button>
 
           <h3>Grape Variety/Blend</h3>
-          <OtherInputButton label="Grape Variety/Blend" />
+          <OtherInputButton
+            label="Grape Variety/Blend"
+            onSave={handleOptionSelect}
+          />
 
           <h3>Possible Countries</h3>
-          <OtherInputButton label="Possible Countries" />
+          <OtherInputButton
+            label="Possible Countries"
+            onSave={handleOptionSelect}
+          />
 
           <h3>Age Range</h3>
-          <button>1-3</button>
-          <button>3-5</button>
-          <button>5-10</button>
-          <button>+10</button>
+          <button onClick={() => handleOptionSelect("Age Range", "1-3")}>
+            1-3
+          </button>
+          <button onClick={() => handleOptionSelect("Age Range", "3-5")}>
+            3-5
+          </button>
+          <button onClick={() => handleOptionSelect("Age Range", "5-10")}>
+            5-10
+          </button>
+          <button onClick={() => handleOptionSelect("Age Range", "+10")}>
+            +10
+          </button>
 
           <div className="navigation-buttons">
             <button onClick={handlePreviousPhase}>Back</button>
@@ -705,19 +871,28 @@ export default function RedWineTasting() {
         <>
           <h2>Final Conclusion (30 sec)</h2>
           <h3>Grape Variety/Blend</h3>
-          <OtherInputButton label="Grape Variety/Blend" />
+          <OtherInputButton
+            label="Grape Variety/Blend"
+            onSave={handleOptionSelect}
+          />
 
           <h3>Country of Origin</h3>
-          <OtherInputButton label="Country of Origin" />
+          <OtherInputButton
+            label="Country of Origin"
+            onSave={handleOptionSelect}
+          />
 
           <h3>Region/Appellation</h3>
-          <OtherInputButton label="Region/Appellation" />
+          <OtherInputButton
+            label="Region/Appellation"
+            onSave={handleOptionSelect}
+          />
 
           <h3>Quality Level</h3>
-          <OtherInputButton label="Quality Level" />
+          <OtherInputButton label="Quality Level" onSave={handleOptionSelect} />
 
           <h3>Vintage</h3>
-          <OtherInputButton label="Vintage" />
+          <OtherInputButton label="Vintage" onSave={handleOptionSelect} />
 
           <h3>Notes</h3>
           <textarea
@@ -728,7 +903,38 @@ export default function RedWineTasting() {
 
           <div className="navigation-buttons">
             <button onClick={handlePreviousPhase}>Back</button>
-            <button onClick={() => alert("Tasting Saved!")}>Save</button>
+            <button
+              onClick={async () => {
+                try {
+                  savePhaseData();
+                  const timerDurationMap: Record<string, number> = {
+                    "7.5 min": 7,
+                    "4 min": 4,
+                  };
+
+                  const fullTastingData: TastingData = {
+                    ...tastingData,
+                    conclusion: {
+                      initial: tastingData.conclusion?.initial || {}, // Access `conclusion.initial`
+                      final: selectedOptions, // Assuming `selectedOptions` is for `final`
+                    },
+                    wineType: tastingData.wineType as "White" | "Red", // Ensure type safety
+                    timerEnabled: !!tastingData.timerDuration,
+                    timerDuration: tastingData.timerDuration
+                      ? timerDurationMap[tastingData.timerDuration]
+                      : null,
+                  };
+
+                  await tastingService.saveTasting(fullTastingData);
+
+                  alert("Tasting Saved!");
+                } catch (error) {
+                  alert("Failed to save tasting. Please try again.");
+                }
+              }}
+            >
+              Save
+            </button>
           </div>
         </>
       )}

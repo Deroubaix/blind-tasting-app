@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 export const dynamic = "force-dynamic";
+import { AuthProvider } from "../components/auth/AuthProvider";
+import ToastProvider from "../toast/ToastProvider";
+import { TastingProvider } from "../components/tasting/TastingContext";
 
 export const metadata: Metadata = {
   title: "Blind Tasting App",
@@ -24,9 +27,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta name="description" content="A fun app for wine enthusiasts!" />
       </head>
       <body>
-        {/*       <Header /> */}
-        {children}
-        {/*    <Footer /> */}
+        <AuthProvider>
+          <ToastProvider>
+            <TastingProvider>{children}</TastingProvider>
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );

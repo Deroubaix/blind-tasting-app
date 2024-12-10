@@ -13,7 +13,7 @@ model User {
   password   String
   created_at DateTime? @default(now()) @db.Timestamp(6)
 
-  tastings Tasting[] // This defines the opposite side of the relation
+  tastings Tasting[]
 }
 
 model Tasting {
@@ -30,11 +30,9 @@ model Tasting {
   isArchived     Boolean  @default(false)
   notes          String?
   created_at     DateTime @default(now())
-
   user           User     @relation(fields: [userId], references: [id])
   results        Result[]
 }
-
 
 model Result {
   id             Int    @id @default(autoincrement())

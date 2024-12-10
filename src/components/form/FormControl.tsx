@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { ReactNode, createContext, useContext, useMemo } from 'react';
-import { v4 as uuid } from 'uuid';
+import React, { ReactNode, createContext, useContext } from "react";
+import { useId } from "react";
 
 export type FormControlContextType = {
   fieldId: string;
@@ -20,11 +20,11 @@ export type FormControlProps = {
 
 export default function FormControl(props: FormControlProps) {
   const { className, children, label, name } = props;
-  const fieldId = useMemo(() => uuid(), []);
+  const fieldId = useId();
 
   return (
     <FormControlContext.Provider value={{ fieldId, name, label }}>
-      <div className={`FormControl ${className ?? ''}`}>
+      <div className={`FormControl ${className ?? ""}`}>
         {label && <label htmlFor={fieldId}>{label}</label>}
         {children}
       </div>
