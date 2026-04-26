@@ -53,7 +53,6 @@ export default class NotificationUtils {
         autoCloseMs: duration ?? 8000,
       });
     } else {
-      // Fallback to Mantine (for backwards compatibility)
       notifications.show({
         title,
         message,

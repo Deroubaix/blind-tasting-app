@@ -1,0 +1,57 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tasting Phase Layout — generic page shell shared by all tasting phase pages
+// (Sight, Nose, Palate, Initial Conclusion, Final Conclusion)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.tasting-phase-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $color-black;
+  color: $color-white;
+  overflow: hidden;
+  font-family: $font-display-normal-family;
+}
+
+.tasting-phase-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tasting-phase-main {
+  flex: 1;
+  overflow: auto;
+  background-color: $color-black;
+  padding-bottom: 80px; // clear the sticky footer
+}
+
+.tasting-phase-content {
+  padding: $spacing-xxl $spacing-xxl 0;
+}
+
+// ── Shared page heading elements (used on every phase page) ───────────────────
+$phase-accent: #8B4557;
+
+.phase-label {
+  @include eyebrow-label(0.65rem);
+  color: $phase-accent;
+  margin-bottom: $spacing-xxxs;
+}
+
+.phase-heading {
+  font-family: $font-body-bold-family;
+  font-size: 1.75rem;
+  font-weight: $font-weight-bold;
+  color: $color-white;
+  margin: 0 0 $spacing-sm;
+  line-height: 1.2;
+}
+
+.phase-description {
+  font-size: $font-size-sm;
+  font-style: italic;
+  color: rgba(228, 228, 204, 0.4);
+  margin: 0 0 $spacing-lg;
+  line-height: 1.6;
+}

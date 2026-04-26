@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^3.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.1",
     "@types/react": "^19.0.1",
@@ -15,16 +16,18 @@
   },
   "dependencies": {
     "@mantine/core": "^7.15.0",
+    "@mantine/form": "^7.17.2",
     "@mantine/notifications": "^7.15.0",
     "@prisma/client": "^6.0.1",
     "@tabler/icons-react": "^3.24.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
     "cookie": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
     "next": "^15.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sass": "^1.82.0",
+    "sass": "^1.65.1",
     "uuid": "^11.0.3",
     "zod": "^3.24.0"
   }

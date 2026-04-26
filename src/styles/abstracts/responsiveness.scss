@@ -1,0 +1,15 @@
+$breakpoint-mobile-fold: 280px;
+$breakpoint-mobile: 34rem; // 540px
+$breakpoint-tablet: 74rem; // 1184px
+$breakpoint-desktop: 80rem; // 1280px
+$breakpoint-nest-hub: $breakpoint-desktop;
+$breakpoint-large-desktop: 90rem;
+
+$article-list-breakpoint: 45rem;
+$masked-section-breakpoint: 48rem; //768px
+
+@mixin responsive($size, $basis: max, $type: width) {
+  @media only screen and (#{$basis}-#{$type}: #{$size}) {
+    @content;
+  }
+}

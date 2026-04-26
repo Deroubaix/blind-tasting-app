@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { TastingData } from "../../types/TastingData"; // Import the shared type
+import { TastingData } from "../../types/TastingData";
 
 type TastingContextValue = {
   tastingData: Partial<TastingData>;

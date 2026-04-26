@@ -7,7 +7,6 @@ const SECRET_KEY = process.env.JWT_SECRET!;
 
 export async function GET() {
   try {
-    // Await the cookies object
     const cookieStore = await cookies();
     const token = cookieStore.get("auth-token")?.value;
 
@@ -20,12 +19,9 @@ export async function GET() {
         { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
-
-    // Verify the JWT token
     const decoded = jwt.verify(token, SECRET_KEY) as { userId: number };
     const userId = decoded.userId;
 
-    // Fetch the user from the database
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true, email: true },

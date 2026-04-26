@@ -1,0 +1,117 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Palate Assessment page
+// ─────────────────────────────────────────────────────────────────────────────
+$p-accent:         #8B4557;
+$p-accent-light:   #D4A0AB;
+$p-border:         rgba(228, 228, 204, 0.08);
+$p-border-mid:     rgba(228, 228, 204, 0.12);
+$p-text-secondary: rgba(228, 228, 204, 0.65);
+$p-text-tertiary:  rgba(228, 228, 204, 0.4);
+$p-text-muted:     rgba(228, 228, 204, 0.22);
+
+
+// ── 2-column category grid ────────────────────────────────────────────────────
+.palate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+// ── Category card ─────────────────────────────────────────────────────────────
+.palate-card {
+  background-color: $color-darkGrey;
+  border: 1px solid $p-border;
+  border-radius: 8px;
+  padding: $spacing-md;
+
+  &__label {
+    @include eyebrow-label(0.58rem);
+    color: $p-accent-light;
+    margin-bottom: $spacing-xs;
+  }
+}
+
+// ── Option pills ──────────────────────────────────────────────────────────────
+.palate-options {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+}
+
+.palate-option {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  // Component styles
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid $p-border-mid;
+  background-color: $color-surface-variant;
+  color: $p-text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  @include transition(all, 0.15s);
+
+  &:hover:not(.palate-option--selected) {
+    border-color: rgba(228, 228, 204, 0.22);
+    color: $color-white;
+  }
+
+  &--selected {
+    border-color: $p-accent;
+    background-color: rgba(139, 69, 87, 0.15);
+    color: $p-accent-light;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ── Confirm the Nose textarea card ────────────────────────────────────────────
+.palate-notes {
+  background-color: $color-darkGrey;
+  border: 1px solid $p-border;
+  border-radius: 8px;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__label {
+    @include eyebrow-label(0.58rem);
+    color: $p-accent-light;
+  }
+
+  &__sublabel {
+    font-size: $font-size-xs;
+    font-family: $font-display-normal-family;
+    color: $p-text-muted;
+    font-style: italic;
+    font-weight: $font-weight-regular;
+  }
+
+  &__textarea {
+    width: 100%;
+    background: transparent;
+    border: 1px solid $p-border-mid;
+    border-radius: 6px;
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+    font-family: $font-display-normal-family;
+    color: $color-white;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+
+    &::placeholder { color: $p-text-muted; }
+    &:focus { border-color: $p-accent; }
+  }
+}

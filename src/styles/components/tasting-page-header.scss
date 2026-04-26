@@ -1,0 +1,68 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tasting session header
+// Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
+// ─────────────────────────────────────────────────────────────────────────────
+
+$tph-border: rgba(228, 228, 204, 0.06);
+$tph-text-muted: rgba(228, 228, 204, 0.4);
+$tph-accent: #8B4557;
+
+.tasting-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $page-spacing;
+  height: 52px;
+  background-color: $color-black;
+  border-bottom: 1px solid $tph-border;
+  flex-shrink: 0;
+  font-family: $font-display-normal-family;
+
+  &__logo {
+    @include eyebrow-label(0.72rem);
+    color: $color-white;
+    letter-spacing: 0.15em;
+
+    &:after { display: none; }
+  }
+
+  &__wine-label {
+    @include eyebrow-label(0.65rem);
+    color: rgba(228, 228, 204, 0.55);
+    letter-spacing: 0.2em;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__timer {
+    @include eyebrow-label(0.72rem);
+    background-color: $color-darkGrey;
+    border: 1px solid rgba(228, 228, 204, 0.12);
+    border-radius: 20px;
+    padding: 4px 12px;
+    color: $color-white;
+    letter-spacing: 0.05em;
+  }
+
+  &__account-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: $tph-text-muted;
+    @include transition(color background-color, 0.2s);
+
+    &:after { display: none; }
+
+    &:hover {
+      color: $color-white;
+      background-color: rgba(228, 228, 204, 0.08);
+    }
+  }
+}

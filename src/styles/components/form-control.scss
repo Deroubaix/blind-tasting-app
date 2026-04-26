@@ -1,0 +1,36 @@
+.FormControl {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	gap: $spacing-xxxs;
+	flex-grow: 1;
+	flex-shrink: 1;
+
+	.error {
+		color: $color-error;
+		font-size: $font-size-sm;
+	}
+
+	&.invalid.submitted input {
+		border-color: $color-error;
+	}
+
+	&.boolean {
+		display: grid;
+		grid-template-areas: 'input label' 'error error';
+		grid-template-columns: auto 1fr;
+		align-items: center;
+
+		> * {
+			grid-area: input;
+		}
+
+		> label {
+			grid-area: label;
+		}
+
+		> .error {
+			grid-area: error;
+		}
+	}
+}

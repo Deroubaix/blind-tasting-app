@@ -1,0 +1,370 @@
+.home-page {
+  padding-top: var(--navbar-height_approx);
+
+  // ----------------------------------------
+  // Hero Section
+  // ----------------------------------------
+  .hero-section {
+    padding: $page-spacing * 4 $page-spacing * 3;
+    min-height: calc(100dvh - var(--navbar-height_approx));
+    display: flex;
+    align-items: center;
+
+    @include responsive($breakpoint-tablet) {
+      padding: $page-spacing * 3 $page-spacing * 2;
+    }
+    @include responsive($breakpoint-mobile) {
+      padding: $page-spacing * 2 $page-spacing;
+    }
+  }
+
+  .hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $page-spacing * 4;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+
+    @include responsive($breakpoint-tablet) {
+      grid-template-columns: 1fr;
+      gap: $page-spacing * 2;
+    }
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $page-spacing * 1.2;
+  }
+
+  .entrance-label {
+    @include eyebrow-label(0.7rem);
+
+    .dot {
+      color: $color-roseGoldDark;
+      margin-right: 0.25rem;
+    }
+  }
+
+  .hero-left h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-family: $font-display-bold-family;
+    font-weight: $font-weight-extrabold;
+    line-height: 1.15;
+    color: $color-white;
+    margin: 0;
+
+    // Deliberately uses Lora serif for the italic accent
+    .italic-accent {
+      font-family: $font-body-normal-family;
+      font-style: italic;
+      color: $color-roseGoldDark;
+    }
+  }
+
+  .hero-description {
+    color: $color-text-muted;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0;
+  }
+
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: $page-spacing * 1.5;
+    margin-top: $page-spacing * 0.5;
+  }
+
+  .btn-start-tasting {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: $color-burgundy;
+    color: $color-white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    font-family: $font-display-normal-family;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover { background-color: lighten($color-burgundy, 8%); }
+
+    &:after { display: none; }
+
+    .arrow { font-size: 1rem; }
+  }
+
+  .sign-in-link {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+    font-family: $font-display-normal-family;
+    transition: color 0.2s ease;
+
+    &:after { display: none; }
+
+    &:hover { color: $color-white; }
+  }
+
+  .hero-right {
+    display: flex;
+    justify-content: flex-end;
+
+    @include responsive($breakpoint-tablet) {
+      justify-content: center;
+    }
+  }
+
+  .hero-image-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .sommelier-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    filter: grayscale(30%) brightness(0.75);
+  }
+
+  .active-session-card {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    background-color: rgba(28, 27, 27, 0.92);
+    backdrop-filter: blur(6px);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid rgba(255, 179, 173, 0.15);
+  }
+
+  .session-label,
+  .score-label {
+    @include eyebrow-label(0.6rem);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .session-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $color-white;
+    font-family: $font-body-normal-family;
+  }
+
+  .score-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $color-white;
+    font-family: $font-display-normal-family;
+    text-align: right;
+  }
+
+  .session-right { text-align: right; }
+
+  // ----------------------------------------
+  // Features Section
+  // ----------------------------------------
+  .features-section {
+    padding: $page-spacing * 5 $page-spacing * 3;
+    max-width: 1100px;
+    margin: 0 auto;
+
+    @include responsive($breakpoint-tablet) {
+      padding: $page-spacing * 3 $page-spacing * 2;
+    }
+    @include responsive($breakpoint-mobile) {
+      padding: $page-spacing * 2 $page-spacing;
+    }
+  }
+
+  .features-header {
+    margin-bottom: $page-spacing * 3;
+
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-family: $font-body-normal-family;
+      font-weight: 700;
+      color: $color-white;
+      margin: 0 0 0.5rem;
+    }
+
+    p {
+      color: $color-text-muted;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $page-spacing;
+
+    @include responsive($breakpoint-tablet) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .feature-card {
+    background-color: $color-darkGrey;
+    padding: $page-spacing * 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: $page-spacing * 0.75;
+
+    &.featured {
+      background-color: $color-surface-variant;
+      border: 1px solid rgba(255, 179, 173, 0.15);
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $color-white;
+      font-family: $font-display-normal-family;
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: $color-text-muted;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  .feature-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-roseGoldDark;
+
+    img {
+      filter: brightness(0) saturate(100%) invert(72%) sepia(20%) saturate(500%) hue-rotate(320deg);
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .feature-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: $page-spacing * 0.5;
+  }
+
+  .tag {
+    @include eyebrow-label(0.6rem);
+    border: 1px solid rgba(228, 228, 204, 0.2);
+    padding: 0.2rem 0.5rem;
+  }
+
+  .feature-progress {
+    margin-top: auto;
+    padding-top: $page-spacing * 0.5;
+
+    .progress-label {
+      @include eyebrow-label(0.6rem);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background-color: rgba(228, 228, 204, 0.15);
+      width: 100%;
+
+      .progress-fill {
+        height: 100%;
+        width: 70%;
+        background-color: $color-roseGoldDark;
+      }
+    }
+  }
+
+  .feature-metrics {
+    display: flex;
+    gap: $page-spacing * 0.75;
+    margin-top: auto;
+    padding-top: $page-spacing * 0.5;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .metric-label {
+      @include eyebrow-label(0.6rem);
+    }
+
+    .metric-value {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $color-white;
+      font-family: $font-display-normal-family;
+    }
+  }
+
+  // ----------------------------------------
+  // CTA Section
+  // ----------------------------------------
+  .cta-section {
+    padding: $page-spacing * 4 $page-spacing * 3;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $page-spacing * 1.5;
+
+    p {
+      font-size: 0.9rem;
+      color: $color-text-muted;
+      margin: 0;
+
+      .cta-inline-link {
+        color: $color-white;
+        font-weight: 600;
+
+        &:after { border-color: $color-white; }
+      }
+    }
+  }
+
+  .btn-private-session {
+    display: inline-block;
+    background-color: transparent;
+    color: $color-white;
+    border: 1px solid rgba(228, 228, 204, 0.4);
+    padding: 0.75rem 2rem;
+    font-family: $font-display-normal-family;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:after { display: none; }
+
+    &:hover {
+      border-color: $color-white;
+      background-color: rgba(228, 228, 204, 0.05);
+    }
+  }
+}

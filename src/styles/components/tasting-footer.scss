@@ -1,0 +1,107 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tasting Footer — sticky bottom bar shared by all tasting phase pages
+// ─────────────────────────────────────────────────────────────────────────────
+$tf-border:        rgba(228, 228, 204, 0.08);
+$tf-accent:        #8B4557;
+$tf-text-tertiary: rgba(228, 228, 204, 0.4);
+$tf-text-muted:    rgba(228, 228, 204, 0.22);
+
+.tasting-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: $color-darkGrey;
+  border-top: 1px solid $tf-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $page-spacing;
+  z-index: $index-navbar - 100;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  &__autosave {
+    @include eyebrow-label(0.6rem);
+    color: $tf-text-muted;
+    letter-spacing: 0.08em;
+  }
+
+  &__reset {
+    // Reset global button defaults
+    text-transform: none;
+    letter-spacing: normal;
+    min-width: unset;
+
+    // Component styles
+    background: none;
+    border: none;
+    padding: 0;
+    color: $tf-text-tertiary;
+    font-size: $font-size-xs;
+    font-family: $font-display-normal-family;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover { color: $color-white; }
+  }
+
+  &__back {
+    color: $tf-text-tertiary;
+    font-size: $font-size-sm;
+    font-family: $font-display-normal-family;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    @include transition(color, 0.2s);
+
+    &:after { display: none; }
+    &:hover { color: $color-white; }
+  }
+
+  &__back-btn {
+    // Reset global button defaults
+    text-transform: none;
+    letter-spacing: normal;
+    min-width: unset;
+
+    // Component styles
+    background: none;
+    border: none;
+    padding: 0;
+    color: $tf-text-tertiary;
+    font-size: $font-size-sm;
+    font-family: $font-display-normal-family;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    @include transition(color, 0.2s);
+
+    &:hover { color: $color-white; }
+  }
+
+  &__next {
+    // Reset global button defaults
+    text-transform: none;
+    letter-spacing: normal;
+    min-width: unset;
+
+    // Component styles
+    background-color: $tf-accent;
+    color: $color-white;
+    border: none;
+    border-radius: 6px;
+    padding: $spacing-xs $spacing-xl;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    font-family: $font-display-normal-family;
+    cursor: pointer;
+    @include transition(background-color, 0.2s);
+
+    &:hover { background-color: lighten($tf-accent, 8%); }
+  }
+}

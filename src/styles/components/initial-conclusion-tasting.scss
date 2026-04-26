@@ -1,0 +1,303 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Initial Conclusion page
+// ─────────────────────────────────────────────────────────────────────────────
+$ic-accent:       #8B4557;
+$ic-accent-light: #D4A0AB;
+$ic-green:        #3A6B4A;
+$ic-border:       rgba(228, 228, 204, 0.08);
+$ic-border-mid:   rgba(228, 228, 204, 0.12);
+$ic-text-secondary: rgba(228, 228, 204, 0.65);
+$ic-text-tertiary:  rgba(228, 228, 204, 0.4);
+$ic-text-muted:     rgba(228, 228, 204, 0.22);
+
+
+// ── 2-column layout ───────────────────────────────────────────────────────────
+.ic-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+  align-items: start;
+}
+
+.ic-col {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// ── Section eyebrow label ─────────────────────────────────────────────────────
+.ic-section-label {
+  @include eyebrow-label(0.62rem);
+  color: $ic-text-tertiary;
+  letter-spacing: 0.12em;
+
+  &--mt {
+    margin-top: $spacing-sm;
+  }
+}
+
+// ── Generic card ──────────────────────────────────────────────────────────────
+.ic-card {
+  background-color: $color-darkGrey;
+  border: 1px solid $ic-border;
+  border-radius: 8px;
+  padding: $spacing-md;
+
+  &__label {
+    @include eyebrow-label(0.58rem);
+    color: $ic-accent-light;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+// ── World Origin — full-width toggle pair ─────────────────────────────────────
+.ic-world-origin {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.ic-world-btn {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid $ic-border-mid;
+  background-color: $color-surface-variant;
+  color: $ic-text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  font-family: $font-display-normal-family;
+  text-align: center;
+  cursor: pointer;
+  @include transition(all, 0.15s);
+
+  &:hover:not(.ic-world-btn--selected) {
+    border-color: rgba(228, 228, 204, 0.22);
+    color: $color-white;
+  }
+
+  &--selected {
+    border-color: $ic-accent;
+    background-color: rgba(139, 69, 87, 0.35);
+    color: $color-white;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ── Option pills ──────────────────────────────────────────────────────────────
+.ic-options {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+}
+
+.ic-option {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: 1px solid $ic-border-mid;
+  background-color: $color-surface-variant;
+  color: $ic-text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  @include transition(all, 0.15s);
+
+  &:hover:not(.ic-option--selected) {
+    border-color: rgba(228, 228, 204, 0.22);
+    color: $color-white;
+  }
+
+  &--selected {
+    border-color: $ic-accent;
+    background-color: rgba(139, 69, 87, 0.15);
+    color: $ic-accent-light;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ── Search input row ──────────────────────────────────────────────────────────
+.ic-search-row {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ic-search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  background-color: $color-surface-variant;
+  border: 1px solid $ic-border-mid;
+  border-radius: 6px;
+  padding: 7px 10px;
+  @include transition(border-color, 0.15s);
+
+  &:focus-within {
+    border-color: rgba(228, 228, 204, 0.25);
+  }
+}
+
+.ic-search-icon {
+  color: $ic-text-muted;
+  flex-shrink: 0;
+}
+
+.ic-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $color-white;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+
+  &::placeholder { color: $ic-text-muted; }
+}
+
+// ── Confirm button (dark red) ─────────────────────────────────────────────────
+.ic-confirm-btn {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: $ic-accent;
+  color: $color-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  white-space: nowrap;
+  @include transition(background-color, 0.15s);
+
+  &:hover { background-color: lighten($ic-accent, 8%); }
+}
+
+// ── Add button (green) ────────────────────────────────────────────────────────
+.ic-add-btn {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  padding: 7px 20px;
+  border-radius: 6px;
+  border: none;
+  background-color: $ic-green;
+  color: $color-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  white-space: nowrap;
+  @include transition(background-color, 0.15s);
+
+  &:hover { background-color: lighten($ic-green, 8%); }
+}
+
+// ── Varietal chips ────────────────────────────────────────────────────────────
+.ic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+}
+
+.ic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background-color: rgba(139, 69, 87, 0.2);
+  border: 1px solid rgba(139, 69, 87, 0.4);
+  color: $ic-accent-light;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+
+  &__remove {
+    // Reset global button defaults
+    text-transform: none;
+    letter-spacing: normal;
+    min-width: unset;
+
+    background: none;
+    border: none;
+    color: $ic-text-muted;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    @include transition(color, 0.15s);
+
+    &:hover { color: $color-white; }
+  }
+}
+
+// ── Country list ──────────────────────────────────────────────────────────────
+.ic-country-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.ic-country-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: 6px;
+  border: 1px solid $ic-border;
+  background-color: $color-surface-variant;
+
+  &__icon {
+    color: $ic-text-muted;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1;
+    font-size: $font-size-sm;
+    font-family: $font-display-normal-family;
+    color: $ic-text-secondary;
+  }
+
+  &__remove {
+    // Reset global button defaults
+    text-transform: none;
+    letter-spacing: normal;
+    min-width: unset;
+
+    background: none;
+    border: none;
+    color: $ic-text-muted;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    @include transition(color, 0.15s);
+
+    &:hover { color: $color-white; }
+  }
+}

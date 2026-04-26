@@ -1,0 +1,134 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tasting left sidebar
+// Used on every tasting phase page (Sight, Nose, Palate, etc.)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Re-use the sight page's local accent tokens — defined in sight-tasting.scss.
+// If this file is imported before sight-tasting.scss, declare fallback values.
+// In practice both files are compiled together via _components.scss.
+$sidebar-accent:       #8B4557 !default;
+$sidebar-accent-light: #D4A0AB !default;
+$sidebar-border:       rgba(228, 228, 204, 0.08) !default;
+$sidebar-text-tertiary: rgba(228, 228, 204, 0.4) !default;
+$sidebar-text-muted:    rgba(228, 228, 204, 0.22) !default;
+
+.tasting-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background-color: $color-darkGrey;
+  border-right: 1px solid $sidebar-border;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  height: 100%;
+
+  // ── Branding / user block ─────────────────────────────────────────────────
+  &__brand {
+    padding: $spacing-xxl $spacing-xl $spacing-lg;
+    border-bottom: 1px solid $sidebar-border;
+  }
+
+  &__title {
+    @include eyebrow-label(0.72rem);
+    color: $color-white;
+    letter-spacing: 0.2em;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__username {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-white;
+    font-family: $font-display-normal-family;
+    margin-bottom: 2px;
+  }
+
+  &__role {
+    @include eyebrow-label(0.56rem);
+    color: $sidebar-text-tertiary;
+    letter-spacing: 0.15em;
+  }
+
+  &__app-name {
+    font-size: $font-size-sm;
+    color: $sidebar-text-muted;
+    font-family: $font-display-normal-family;
+  }
+
+  // ── Phase progress ────────────────────────────────────────────────────────
+  &__progress-section {
+    padding: $spacing-lg $spacing-xl $spacing-md;
+    border-bottom: 1px solid $sidebar-border;
+  }
+
+  &__progress-label {
+    @include eyebrow-label(0.58rem);
+    color: $sidebar-text-tertiary;
+    letter-spacing: 0.12em;
+    margin-bottom: $spacing-xs;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  &__progress-pct {
+    color: $sidebar-accent-light;
+    font-size: 0.65rem;
+  }
+
+  &__progress-track {
+    height: 3px;
+    border-radius: 2px;
+    background-color: $sidebar-border;
+    overflow: hidden;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background-color: $sidebar-accent;
+    @include transition(width, 0.3s, ease);
+    // width set inline (dynamic %)
+  }
+
+  // ── Nav ───────────────────────────────────────────────────────────────────
+  &__nav {
+    padding: $spacing-sm 0;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// ── Nav item ──────────────────────────────────────────────────────────────────
+.tasting-nav-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-xl;
+  border-left: 2px solid transparent;
+  color: $sidebar-text-tertiary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  font-family: $font-display-normal-family;
+  text-decoration: none;
+  @include transition(all, 0.15s);
+
+  &:after { display: none; }
+
+  &:hover {
+    color: $color-white;
+    background-color: rgba(228, 228, 204, 0.04);
+  }
+
+  &--active {
+    border-left-color: $sidebar-accent;
+    background-color: rgba(139, 69, 87, 0.12);
+    color: $sidebar-accent-light;
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+      color: $sidebar-accent-light;
+      background-color: rgba(139, 69, 87, 0.16);
+    }
+  }
+}
