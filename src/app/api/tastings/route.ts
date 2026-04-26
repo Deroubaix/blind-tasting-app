@@ -14,13 +14,14 @@ async function getUserIdFromToken() {
   }
 
   const decoded = jwt.verify(token, SECRET_KEY) as { userId: number };
+
   return decoded.userId;
 }
 
 export async function GET() {
   try {
     const userId = await getUserIdFromToken();
-
+    console.log("Decoded User ID:", userId);
     const tastings = await prisma.tasting.findMany({
       where: { userId },
     });
@@ -43,7 +44,6 @@ export async function POST(request: Request) {
     const userId = await getUserIdFromToken();
     const body = await request.json();
 
-    // Validate required fields
     if (!body.wineType) {
       return new Response(JSON.stringify({ error: "Wine type is required" }), {
         status: 400,

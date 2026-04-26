@@ -1,0 +1,6 @@
+// Manrope is loaded via next/font/google in layout.tsx
+// and injected as --font-manrope CSS variable on <html>.
+// Poppins local files are no longer used.
+
+$font-primary: var(--font-manrope), sans-serif;
+$font-primary-bold: var(--font-manrope), sans-serif;

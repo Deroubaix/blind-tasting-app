@@ -1,0 +1,208 @@
+.auth-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-black;
+}
+
+// ----------------------------------------
+// Minimal auth header
+// ----------------------------------------
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $page-spacing * 0.75 $page-spacing * 1.5;
+  flex-shrink: 0;
+}
+
+.auth-header-logo {
+  @include eyebrow-label(0.75rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: $color-white;
+
+  &:after { display: none; }
+}
+
+.auth-header-link {
+  @include eyebrow-label(0.75rem);
+  font-weight: 600;
+  color: $color-white;
+  transition: color 0.2s ease;
+
+  &:after { display: none; }
+
+  &:hover { color: $color-text-muted; }
+}
+
+// ----------------------------------------
+// Main form area
+// ----------------------------------------
+.auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $page-spacing * 2;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-heading {
+  font-family: $font-display-bold-family;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: $font-weight-extrabold;
+  color: $color-white;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.03em;
+}
+
+.auth-subheading {
+  font-size: 0.85rem;
+  color: $color-text-muted;
+  line-height: 1.6;
+  margin: 0 0 $page-spacing * 1.75;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: $page-spacing;
+  margin-bottom: $page-spacing * 1.5;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.auth-label {
+  @include eyebrow-label;
+}
+
+.auth-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.auth-forgot {
+  @include eyebrow-label(0.6rem);
+  transition: color 0.2s ease;
+
+  &:after { display: none; }
+
+  &:hover { color: $color-white; }
+}
+
+.auth-input-wrapper {
+  position: relative;
+
+  .auth-input {
+    width: 100%;
+    padding-right: 2.5rem;
+  }
+}
+
+.auth-input {
+  width: 100%;
+  background-color: $color-darkGrey;
+  border: 1px solid rgba(228, 228, 204, 0.08);
+  color: $color-white;
+  padding: 0.8rem 1rem;
+  font-family: $font-display-normal-family;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &::placeholder { color: rgba(228, 228, 204, 0.2); }
+
+  &:focus { border-color: rgba(228, 228, 204, 0.25); }
+}
+
+.auth-eye-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s ease;
+
+  &:hover { color: $color-white; }
+}
+
+.auth-submit {
+  width: 100%;
+  background-color: $color-burgundy;
+  color: $color-white;
+  border: none;
+  padding: 1rem;
+  font-family: $font-display-normal-family;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: $page-spacing * 0.25;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) { background-color: lighten($color-burgundy, 8%); }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.auth-error {
+  font-size: 0.8rem;
+  color: $color-error;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(229, 115, 115, 0.1);
+  border-left: 2px solid $color-error;
+}
+
+.auth-switch {
+  font-size: 0.82rem;
+  color: $color-text-muted;
+  text-align: center;
+  margin: 0;
+}
+
+.auth-switch-link {
+  color: $color-white;
+  font-weight: 600;
+
+  &:after { border-color: $color-white; }
+}
+
+// ----------------------------------------
+// Bottom bar
+// ----------------------------------------
+.auth-footer-bar {
+  @include eyebrow-label(0.6rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $page-spacing * 0.75 $page-spacing * 1.5;
+  color: rgba(228, 228, 204, 0.2);
+  flex-shrink: 0;
+
+  @include responsive($breakpoint-mobile) {
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: center;
+  }
+}

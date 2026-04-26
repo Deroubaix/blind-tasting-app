@@ -1,0 +1,290 @@
+body.menu-open {
+  overflow: hidden;
+}
+
+$menu-padding-top: $page-spacing * 0.6;
+$menu-padding-sides: $page-spacing * 1.5;
+$item-gap: $page-spacing * 1.5;
+
+.navbar {
+  position: fixed;
+  z-index: $index-navbar;
+  width: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $menu-padding-top $menu-padding-sides;
+  height: var(--navbar-height_approx);
+  background-color: rgba(20, 19, 19, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(228, 228, 204, 0.06);
+  font-family: $font-display-normal-family;
+
+  .header-logo {
+    @include eyebrow-label(0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: $color-white;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:after { display: none; }
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: $page-spacing * 2;
+  }
+
+  .desktop-nav-links {
+    display: flex;
+    align-items: center;
+    gap: $item-gap;
+
+    @include responsive($breakpoint-tablet) {
+      display: none;
+    }
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+    font-family: $font-display-normal-family;
+    transition: color 0.2s ease;
+
+    &:after { display: none; }
+
+    &:hover,
+    &.active { color: $color-white; }
+  }
+
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: $page-spacing * 0.75;
+
+    @include responsive($breakpoint-tablet) {
+      display: none;
+    }
+  }
+
+  .nav-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-muted;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+
+    &:after { display: none; }
+
+    &:hover {
+      color: $color-white;
+      background-color: rgba(228, 228, 204, 0.08);
+    }
+  }
+
+  .nav-auth {
+    display: flex;
+    align-items: center;
+    gap: $page-spacing;
+
+    @include responsive($breakpoint-tablet) {
+      display: none;
+    }
+  }
+
+  .nav-signup-btn {
+    font-size: 0.8rem;
+    font-family: $font-display-normal-family;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: $color-white;
+    border: 1px solid rgba(228, 228, 204, 0.35);
+    padding: 0.4rem 1rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:after { display: none; }
+
+    &:hover {
+      border-color: $color-white;
+      background-color: rgba(228, 228, 204, 0.06);
+    }
+  }
+
+  .hamburger-menu {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-muted;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+
+    &.hidden { display: none; }
+
+    @include responsive($breakpoint-tablet) {
+      display: flex;
+    }
+  }
+
+  .close-menu {
+    cursor: pointer;
+    color: $color-text-muted;
+    align-self: flex-end;
+    padding: $menu-padding-top $menu-padding-sides;
+
+    &:hover { color: $color-white; }
+  }
+
+  .menu-links {
+    display: none;
+
+    &.show { display: flex; }
+
+    @include responsive($breakpoint-tablet) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100dvh;
+      width: 100%;
+      background: $color-black;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $page-spacing;
+      font-size: 1.1rem;
+      z-index: $index-navbar;
+      padding-top: $page-spacing * 2;
+
+      > a {
+        padding: 0.25rem $menu-padding-sides;
+        color: $color-text-muted;
+        text-decoration: none;
+        font-weight: 500;
+        font-family: $font-display-normal-family;
+
+        &:after { display: none; }
+
+        &:hover { color: $color-white; }
+      }
+    }
+  }
+}
+
+// ----------------------------------------
+// Footer
+// ----------------------------------------
+.site-footer {
+  background-color: $color-darkGrey;
+  border-top: 1px solid rgba(228, 228, 204, 0.06);
+  padding: $page-spacing * 3 $page-spacing * 3 $page-spacing * 1.5;
+  font-family: $font-display-normal-family;
+
+  @include responsive($breakpoint-tablet) {
+    padding: $page-spacing * 2 $page-spacing * 2 $page-spacing;
+  }
+
+  .footer-main {
+    display: flex;
+    justify-content: space-between;
+    gap: $page-spacing * 3;
+    margin-bottom: $page-spacing * 3;
+
+    @include responsive($breakpoint-tablet) {
+      flex-direction: column;
+      gap: $page-spacing * 2;
+    }
+  }
+
+  .footer-brand {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: $page-spacing * 0.75;
+  }
+
+  .footer-logo {
+    @include eyebrow-label(0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: $color-white;
+
+    &:after { display: none; }
+  }
+
+  .footer-tagline {
+    font-size: 0.8rem;
+    color: $color-text-muted;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: $page-spacing * 4;
+
+    @include responsive($breakpoint-mobile) {
+      gap: $page-spacing * 2;
+    }
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: $page-spacing * 0.6;
+
+    h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $color-white;
+      margin: 0 0 0.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    a {
+      font-size: 0.8rem;
+      color: $color-text-muted;
+      transition: color 0.2s ease;
+
+      &:after { display: none; }
+
+      &:hover { color: $color-white; }
+    }
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $page-spacing;
+    border-top: 1px solid rgba(228, 228, 204, 0.06);
+    font-size: 0.75rem;
+    color: $color-text-muted;
+
+    @include responsive($breakpoint-mobile) {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+  }
+
+  .footer-legal {
+    display: flex;
+    gap: $page-spacing;
+
+    a {
+      font-size: 0.75rem;
+      color: $color-text-muted;
+      transition: color 0.2s ease;
+
+      &:after { display: none; }
+
+      &:hover { color: $color-white; }
+    }
+  }
+}

@@ -1,0 +1,171 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Review & Save page
+// ─────────────────────────────────────────────────────────────────────────────
+$sv-accent:       #8B4557;
+$sv-accent-light: #D4A0AB;
+$sv-border:       rgba(228, 228, 204, 0.08);
+$sv-border-mid:   rgba(228, 228, 204, 0.12);
+$sv-text-secondary: rgba(228, 228, 204, 0.65);
+$sv-text-tertiary:  rgba(228, 228, 204, 0.4);
+$sv-text-muted:     rgba(228, 228, 204, 0.22);
+
+// ── Two-column layout ─────────────────────────────────────────────────────────
+.save-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.save-card {
+  background-color: $color-darkGrey;
+  border: 1px solid $sv-border;
+  border-radius: 8px;
+  padding: $spacing-md;
+
+  &__label {
+    @include eyebrow-label(0.58rem);
+    color: $sv-accent-light;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+// ── Notes textarea ────────────────────────────────────────────────────────────
+.save-notes {
+  width: 100%;
+  background: transparent;
+  border: 1px solid $sv-border-mid;
+  border-radius: 6px;
+  padding: $spacing-sm;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+  color: $color-white;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  line-height: 1.6;
+
+  &::placeholder { color: $sv-text-muted; }
+  &:focus { border-color: rgba(228, 228, 204, 0.25); }
+}
+
+// ── Photo upload ──────────────────────────────────────────────────────────────
+.save-photo-btn {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 6px;
+  border: 1px dashed $sv-border-mid;
+  background: none;
+  color: $sv-text-secondary;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  @include transition(all, 0.15s);
+
+  &:hover {
+    border-color: rgba(228, 228, 204, 0.25);
+    color: $color-white;
+  }
+}
+
+.save-photo-preview {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  align-items: flex-start;
+
+  &__img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+}
+
+.save-photo-remove {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 1px solid $sv-border-mid;
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: $sv-text-secondary;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  @include transition(all, 0.15s);
+
+  &:hover { color: $color-white; }
+}
+
+// ── Auth notice ───────────────────────────────────────────────────────────────
+.save-auth-notice {
+  background-color: $color-darkGrey;
+  border: 1px solid $sv-border;
+  border-radius: 8px;
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  &__text {
+    font-size: $font-size-sm;
+    font-family: $font-display-normal-family;
+    color: $sv-text-secondary;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-xs;
+    flex-shrink: 0;
+  }
+}
+
+.save-auth-btn {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  text-decoration: none;
+  @include transition(background-color, 0.15s);
+
+  &--primary {
+    background-color: $sv-accent;
+    border: none;
+    color: $color-white;
+    &:hover { background-color: lighten($sv-accent, 8%); }
+  }
+
+  &--secondary {
+    background: none;
+    border: 1px solid $sv-border-mid;
+    color: $sv-text-secondary;
+    &:hover { color: $color-white; }
+  }
+}

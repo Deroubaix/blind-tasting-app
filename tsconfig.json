@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/app/tastings/sight", "src/app/tastings/save"  ],
   "exclude": [
     "node_modules"
   ]

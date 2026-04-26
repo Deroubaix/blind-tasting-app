@@ -1,0 +1,75 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Final Conclusion page
+// Reuses .ic-search-row / .ic-search-input-wrap / .ic-confirm-btn / .ic-chips
+// from initial-conclusion-tasting.scss for input consistency.
+// ─────────────────────────────────────────────────────────────────────────────
+$fc-accent:         #8B4557;
+$fc-accent-light:   #D4A0AB;
+$fc-border-mid:     rgba(228, 228, 204, 0.12);
+$fc-text-tertiary:  rgba(228, 228, 204, 0.4);
+$fc-text-muted:     rgba(228, 228, 204, 0.22);
+
+
+// ── 2-column grid ─────────────────────────────────────────────────────────────
+.fc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg $spacing-xl;
+  align-items: start;
+}
+
+// ── Field ─────────────────────────────────────────────────────────────────────
+.fc-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  &--half {
+    grid-column: 1;
+  }
+
+  &__label {
+    @include eyebrow-label(0.62rem);
+    color: $fc-text-tertiary;
+    letter-spacing: 0.12em;
+  }
+}
+
+// ── Quality Level select ──────────────────────────────────────────────────────
+.fc-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fc-select {
+  width: 100%;
+  appearance: none;
+  background-color: $color-surface-variant;
+  border: 1px solid $fc-border-mid;
+  border-radius: 6px;
+  padding: 7px $spacing-xxl 7px $spacing-sm;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+  color: $color-white;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  @include transition(border-color, 0.15s);
+
+  &:focus {
+    border-color: rgba(228, 228, 204, 0.25);
+  }
+
+  option {
+    background-color: $color-darkGrey;
+    color: $color-white;
+  }
+}
+
+.fc-select__icon {
+  position: absolute;
+  right: $spacing-sm;
+  color: $fc-text-muted;
+  pointer-events: none;
+}

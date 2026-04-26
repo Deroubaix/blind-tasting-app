@@ -8,7 +8,10 @@ export type AbortableRequest<T = Response> = {
 };
 
 export default class FetchUtils {
-  public static execute(url: string, options?: RequestInit): AbortableRequest {
+  public static execute(
+    url: string,
+    options?: RequestInit
+  ): AbortableRequest<Response> {
     const controller = new AbortController();
 
     const responsePromise = fetch(url, {
@@ -19,12 +22,16 @@ export default class FetchUtils {
     return {
       abort: () => controller.abort(),
       response: new Promise((resolve, reject) => {
-        return responsePromise
-          .then((response) => {
+        responsePromise
+          .then(async (response) => {
             if (response.ok) {
               resolve(response);
             } else {
-              return ErrorUtils.throwJsonApiError(response).catch(reject);
+              try {
+                await ErrorUtils.throwJsonApiError(response);
+              } catch (error) {
+                reject(error);
+              }
             }
           })
           .catch(reject);
@@ -32,7 +39,10 @@ export default class FetchUtils {
     };
   }
 
-  public static get(url: string, options?: RequestInit): AbortableRequest {
+  public static get(
+    url: string,
+    options?: RequestInit
+  ): AbortableRequest<Response> {
     return this.execute(url, {
       ...options,
       method: "GET",
@@ -44,7 +54,7 @@ export default class FetchUtils {
     url: string,
     body: TBody,
     options?: RequestInit
-  ): AbortableRequest {
+  ): AbortableRequest<Response> {
     return this.execute(url, {
       ...options,
       method: "POST",
@@ -53,49 +63,7 @@ export default class FetchUtils {
         ...options?.headers,
         "Content-Type": "application/json",
       },
-      body: body instanceof FormData ? body : JSON.stringify(body),
-    });
-  }
-
-  public static put<TBody>(
-    url: string,
-    body: TBody,
-    options?: RequestInit
-  ): AbortableRequest {
-    return this.execute(url, {
-      ...options,
-      method: "PUT",
-      credentials: "same-origin",
-      headers: {
-        ...options?.headers,
-        "Content-Type": "application/json",
-      },
-      body: body instanceof FormData ? body : JSON.stringify(body),
-    });
-  }
-
-  public static patch<TBody>(
-    url: string,
-    body: TBody,
-    options?: RequestInit
-  ): AbortableRequest {
-    return this.execute(url, {
-      ...options,
-      method: "PATCH",
-      credentials: "same-origin",
-      headers: {
-        ...options?.headers,
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(body),
-    });
-  }
-
-  public static delete(url: string, options?: RequestInit): AbortableRequest {
-    return this.execute(url, {
-      ...options,
-      method: "DELETE",
-      credentials: "same-origin",
     });
   }
 
@@ -113,7 +81,9 @@ export default class FetchUtils {
 
     return {
       abort: abortableRequest.abort,
-      response: abortableRequest.response.then((response) => response.json()),
+      response: abortableRequest.response.then(
+        (response) => response.json() as Promise<TResponse>
+      ),
     };
   }
 
@@ -126,83 +96,43 @@ export default class FetchUtils {
 
     return {
       abort: abortableRequest.abort,
-      response: abortableRequest.response.then((response) => response.json()),
+      response: abortableRequest.response.then(
+        (response) => response.json() as Promise<TResponse>
+      ),
     };
   }
 
-  public static putJson<TResponse, TBody>(
-    url: string,
-    body: TBody,
-    options?: RequestInit
-  ): AbortableRequest<TResponse> {
-    const abortableRequest = this.put(url, body, options);
-
-    return {
-      abort: abortableRequest.abort,
-      response: abortableRequest.response.then((response) => response.json()),
-    };
-  }
-
-  public static patchJson<TResponse, TBody>(
-    url: string,
-    body: TBody,
-    options?: RequestInit
-  ): AbortableRequest<TResponse> {
-    const abortableRequest = this.patch(url, body, options);
-
-    return {
-      abort: abortableRequest.abort,
-      response: abortableRequest.response.then((response) => response.json()),
-    };
-  }
-
-  public static deleteJson<TResponse>(
-    url: string,
-    options?: RequestInit
-  ): AbortableRequest<TResponse> {
-    const abortableRequest = this.delete(url, options);
-    return {
-      abort: abortableRequest.abort,
-      response: abortableRequest.response.then((response) => response.json()),
-    };
-  }
-
-  public static abortableRequest<
-    TResponse = unknown,
-    TAccessedData = TResponse
-  >(
+  public static abortableRequest<TResponse>(
     request: AbortableRequest<TResponse>,
-    registerAbort?: RegisterAbortFunction,
-    dataAccessor?: (data: TResponse) => TAccessedData
-  ): AbortableRequest<TAccessedData> {
+    registerAbort?: RegisterAbortFunction
+  ): AbortableRequest<TResponse> {
     let rejectPromise: AbortFunction;
 
-    const abort: AbortFunction = (type = AbortType.EXPLICIT) => {
-      // This will implicitly cancel the query if it's still running
+    const abort = () => {
       request.abort();
-      rejectPromise(type);
+      rejectPromise?.(AbortType.EXPLICIT);
     };
+
     const unregisterAbort = registerAbort?.(abort);
 
-    const dataPromise = new Promise<TAccessedData>((resolve, reject) => {
+    const responsePromise = new Promise<TResponse>((resolve, reject) => {
       request.response
         .then((response) => {
           unregisterAbort?.();
-          resolve(
-            dataAccessor
-              ? dataAccessor(response)
-              : (response as unknown as TAccessedData)
-          );
+          resolve(response);
         })
-        .catch(reject);
+        .catch((error) => {
+          unregisterAbort?.();
+          reject(error);
+        });
 
       rejectPromise = (type: AbortType) =>
         reject(new FetchUtilsError("Aborted", type, 0));
     });
 
     return {
-      response: dataPromise,
+      response: responsePromise,
       abort,
-    } as AbortableRequest<TAccessedData>;
+    };
   }
 }

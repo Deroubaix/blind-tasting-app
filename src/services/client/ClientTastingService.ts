@@ -14,8 +14,13 @@ export default class ClientTastingService {
     return FetchUtils.abortableRequest(request);
   }
 
-  public getTastings() {
-    const request = FetchUtils.getJson<TastingData[]>("/api/tastings");
-    return FetchUtils.abortableRequest(request);
+  public async getTastings(): Promise<TastingData[]> {
+    const request = FetchUtils.getJson<{ tastings: TastingData[] }>(
+      "/api/tastings"
+    );
+    const response = await request.response;
+    console.log("Response from GET /api/tastings:", response);
+
+    return response.tastings;
   }
 }

@@ -1,0 +1,165 @@
+// Repeated pattern for small uppercase tracking labels (eyebrow text, field labels, tags)
+// Designer spec: weight 700, tracking 0.2em, uppercase, muted color
+@mixin eyebrow-label($size: $font-size-sm, $color: $color-text-muted) {
+  font-size: $size;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: $color;
+  font-family: $font-display-normal-family;
+  line-height: 1;
+}
+
+@mixin active-state {
+  &:hover,
+  &:focus,
+  &:active {
+    @content;
+  }
+}
+
+@mixin transition($element, $duration: 0.5s, $style: ease-in-out) {
+  -webkit-transition: $element $duration $style;
+  -moz-transition: $element $duration $style;
+  -o-transition: $element $duration $style;
+  transition: $element $duration $style;
+}
+
+@mixin transform($content) {
+  -webkit-transform: $content;
+  -ms-transform: $content;
+  transform: $content;
+}
+
+@function get-transparent-color($color, $opacity) {
+  @return color-mix(in srgb, $color $opacity, transparent);
+}
+
+@mixin scrollbar(
+  $size,
+  $foreground-color,
+  $background-color: mix($foreground-color, white, 50%)
+) {
+  // For Google Chrome
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $foreground-color;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $background-color;
+  }
+
+  // For Internet Explorer
+  & {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
+
+@mixin rendered-markdown() {
+  .table-wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    overflow: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: $color-primary;
+      color: $color-white;
+    }
+
+    tr:nth-of-type(2n) {
+      background: get-transparent-color($color-primary, 5%);
+    }
+
+    th,
+    td {
+      padding: 1em 0.5em;
+      @include responsive($breakpoint-mobile) {
+        max-width: 50dvw;
+        min-width: 50dvw;
+      }
+    }
+  }
+
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  img,
+  iframe {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  audio {
+    width: "100%";
+  }
+
+  blockquote {
+    background: $color-brand-2;
+    margin: $spacing-sm 0;
+    padding: $spacing-sm;
+
+    > * {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+@mixin wave-mask-section {
+  max-width: 100dvw;
+  padding: 0;
+  display: grid;
+  overflow-y: hidden;
+  align-items: stretch;
+}
+
+@mixin wave-mask-container {
+  mask-repeat: no-repeat;
+  mask-position: left;
+  mask-size: 100% 100%;
+  overflow: hidden;
+  height: 150px !important;
+  background-size: cover;
+}
+
+@mixin set-wave-image-masks {
+  $orientations: top_heavy, bottom_heavy, straight;
+  $sides: left, right;
+  $sizes: small, large;
+
+  @each $side in $sides {
+    @each $orientation in $orientations {
+      @each $size in $sizes {
+        .mask-image-#{$side}-#{$orientation}-#{$size} {
+          mask-image: url(/images/masks/wave-#{$side}-#{$orientation}-#{$size}.png);
+        }
+      }
+    }
+  }
+}
+
+@mixin overlay($color: rgba(115, 30, 61), $opacity: 0.5) {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $color;
+    opacity: $opacity;
+    z-index: 1;
+  }
+}

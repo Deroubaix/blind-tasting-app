@@ -1,24 +1,29 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import { randomBytes, scrypt } from "crypto";
+import { promisify } from "util";
 import { z } from "zod";
 import { JsonApiError } from "../../../../utils/ErrorUtils";
 
 const prisma = new PrismaClient();
+const scryptAsync = promisify(scrypt);
 
-// Schema validation for signup
 const signupSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, "Password must be at least 8 characters long"),
+  displayName: z.string().min(1, "Name is required"),
 });
+
+export async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString("hex");
+  const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${salt}:${derivedKey.toString("hex")}`;
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const { email, password, displayName } = signupSchema.parse(body);
 
-    // Validate input
-    const { email, password } = signupSchema.parse(body);
-
-    // Check if the user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new JsonApiError(
@@ -28,19 +33,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
-    // Create a new user
     const user = await prisma.user.create({
-      data: { email, password: hashedPassword },
+      data: { email, password: hashedPassword, displayName },
     });
 
-    // Return a successful response
     return new Response(
       JSON.stringify({
         message: "User created successfully",
-        user: { id: user.id, email: user.email },
+        user: { id: user.id, email: user.email, name: user.displayName },
       }),
       {
         status: 201,
@@ -48,7 +50,10 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    // Handle errors consistently using JsonApiError
+    const message = error instanceof Error ? error.message : String(error);
+    const code = (error as any)?.code;
+    process.stderr.write(`Error during signup: ${message}${code ? ` [${code}]` : ""}\n`);
+
     const handledError = JsonApiError.isJsonApiError(error)
       ? error
       : JsonApiError.create(error);

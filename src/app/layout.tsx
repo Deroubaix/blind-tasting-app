@@ -1,12 +1,27 @@
 import "../styles/main.scss";
 import React, { ReactNode } from "react";
 import type { Metadata } from "next";
-import Header from "../components/layout/Header";
+import { Manrope, Lora } from "next/font/google";
 import Footer from "../components/layout/Footer";
-export const dynamic = "force-dynamic";
 import { AuthProvider } from "../components/auth/AuthProvider";
 import ToastProvider from "../toast/ToastProvider";
 import { TastingProvider } from "../components/tasting/TastingContext";
+
+export const dynamic = "force-dynamic";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-lora",
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Blind Tasting App",
@@ -18,7 +33,7 @@ export type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${manrope.variable} ${lora.variable}`}>
       <head>
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.ico" />
@@ -29,7 +44,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body>
         <AuthProvider>
           <ToastProvider>
-            <TastingProvider>{children}</TastingProvider>
+            <TastingProvider>
+              {children}
+            </TastingProvider>
           </ToastProvider>
         </AuthProvider>
       </body>

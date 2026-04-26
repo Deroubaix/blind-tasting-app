@@ -1,0 +1,342 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Sight Assessment page
+// Local palette (accent colours specific to the tasting assessment UI)
+// ─────────────────────────────────────────────────────────────────────────────
+$s-accent:          #8B4557;
+$s-accent-light:    #D4A0AB;
+$s-border:          rgba(228, 228, 204, 0.08);
+$s-border-mid:      rgba(228, 228, 204, 0.12);
+$s-text-secondary:  rgba(228, 228, 204, 0.65);
+$s-text-tertiary:   rgba(228, 228, 204, 0.4);
+$s-text-muted:      rgba(228, 228, 204, 0.22);
+
+
+
+// ── Three-column assessment grid ──────────────────────────────────────────────
+.sight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: $spacing-md;
+}
+
+// ── Col-3 stack (Master Tip + Exam Progress) ─────────────────────────────────
+// Wraps both cards so they sit flush to each other regardless of adjacent row heights
+.sight-col3-stack {
+  grid-row: 3 / 5;
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  align-self: start;
+}
+
+// ── Generic card ──────────────────────────────────────────────────────────────
+.sight-card {
+  background-color: $color-darkGrey;
+  border: 1px solid $s-border;
+  border-radius: 8px;
+  padding: $spacing-md;
+
+  // Physical evidence: spans rows 1–2, stacks toggles vertically
+  &--evidence {
+    grid-row: span 2;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Color Spectrum / Hue Rim: spans columns 1–2
+  &--span-cols { grid-column: 1 / 3; }
+
+  // Master Tip
+  &--tip {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.sight-card__label {
+  @include eyebrow-label(0.58rem);
+  color: $s-accent-light;
+  margin-bottom: $spacing-md;
+}
+
+.sight-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  // When inside a header wrapper, the label loses its own bottom margin
+  .sight-card__label { margin-bottom: 0; }
+}
+
+.sight-card__sublabel {
+  @include eyebrow-label(0.56rem);
+  color: $s-text-muted;
+  letter-spacing: 0.1em;
+}
+
+// ── Option pills ──────────────────────────────────────────────────────────────
+.sight-options {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+}
+
+.sight-option {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  // Component styles
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid $s-border-mid;
+  background-color: $color-surface-variant;
+  color: $s-text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  font-family: $font-display-normal-family;
+  cursor: pointer;
+  @include transition(all, 0.15s);
+
+  &:hover:not(.sight-option--selected) {
+    border-color: rgba(228, 228, 204, 0.22);
+    color: $color-white;
+    background-color: $color-surface-variant;
+  }
+
+  &--selected {
+    border-color: $s-accent;
+    background-color: rgba(139, 69, 87, 0.15);
+    color: $s-accent-light;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ── Yes / No toggles ─────────────────────────────────────────────────────────
+.sight-toggle-group {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.sight-toggle-btn {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+
+  // Component styles
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid $s-border-mid;
+  background-color: $color-surface-variant;
+  color: $s-text-tertiary;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+  font-weight: $font-weight-regular;
+  cursor: pointer;
+  text-align: center;
+  @include transition(all, 0.15s);
+
+  &--selected {
+    background-color: $s-accent;
+    border-color: $s-accent;
+    color: $color-white;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// ── Physical evidence field stack ─────────────────────────────────────────────
+.sight-evidence-fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  flex: 1;
+}
+
+.sight-evidence-field {
+  &__label {
+    display: block;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $s-text-secondary;
+    font-family: $font-display-normal-family;
+    margin-bottom: $spacing-xs;
+  }
+}
+
+// ── Color swatches ────────────────────────────────────────────────────────────
+.sight-swatches {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.sight-swatch-item {
+  position: relative;
+  flex: 1;
+  cursor: pointer;
+}
+
+.sight-swatch-rect {
+  width: 100%;
+  height: 50px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  // background is set inline (dynamic hex value)
+  @include transition(border-color box-shadow, 0.15s);
+
+  &--selected {
+    border-color: $s-accent-light;
+    box-shadow: 0 0 0 1px $s-accent-light;
+  }
+}
+
+.sight-swatch-label {
+  margin-top: $spacing-xs;
+  font-size: $font-size-xs;
+  text-align: center;
+  color: $s-text-secondary;
+  font-family: $font-display-normal-family;
+  font-weight: $font-weight-regular;
+
+  &--selected {
+    color: $s-accent-light;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+// Tooltip — visible via JS-controlled class; no touch events trigger it
+.sight-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  @include transform(translateX(-50%));
+  background-color: #0A0908;
+  border: 1px solid $s-border-mid;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: $font-size-xs;
+  color: $s-text-secondary;
+  width: 160px;
+  text-align: center;
+  z-index: 20;
+  pointer-events: none;
+  line-height: 1.4;
+  white-space: normal;
+  font-family: $font-display-normal-family;
+}
+
+// ── Master Tip ────────────────────────────────────────────────────────────────
+.sight-tip-toggle {
+  // Reset global button defaults
+  text-transform: none;
+  letter-spacing: normal;
+  min-width: unset;
+  font-size: inherit;
+
+  // Component styles
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-white;
+  font-family: $font-display-normal-family;
+
+  &__label {
+    @include eyebrow-label(0.58rem);
+    color: $s-accent-light;
+    margin-bottom: 0;
+  }
+}
+
+.sight-tip-body {
+  margin: $spacing-sm 0 0;
+  font-size: $font-size-xs;
+  font-style: italic;
+  color: $s-text-secondary;
+  line-height: 1.6;
+  font-family: $font-display-normal-family;
+}
+
+.sight-tip-placeholder {
+  margin: $spacing-xs 0 0;
+  font-size: $font-size-xs;
+  color: $s-text-muted;
+  line-height: 1.5;
+  font-family: $font-display-normal-family;
+}
+
+// ── Exam Progress ─────────────────────────────────────────────────────────────
+.sight-progress {
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__stat-label {
+    font-size: $font-size-xs;
+    color: $s-text-secondary;
+    font-family: $font-display-normal-family;
+  }
+
+  &__pct {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: $s-accent-light;
+    font-family: $font-display-normal-family;
+  }
+
+  &__bar-track {
+    height: 4px;
+    border-radius: 2px;
+    background-color: $s-border-mid;
+    overflow: hidden;
+    margin-bottom: $spacing-md;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background-color: $s-accent;
+    @include transition(width, 0.3s, ease);
+    // width is set inline (dynamic %)
+  }
+
+  &__steps {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__step {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-xs;
+    font-family: $font-display-normal-family;
+  }
+
+  &__step-dot {
+    font-size: 14px;
+    line-height: 1;
+    color: $s-border-mid;
+
+    &--done { color: $s-accent; }
+  }
+
+  &__step-name {
+    color: $s-text-muted;
+
+    &--done { color: $s-text-secondary; }
+  }
+}
+

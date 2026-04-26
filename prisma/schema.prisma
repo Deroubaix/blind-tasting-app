@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  password   String
-  created_at DateTime? @default(now()) @db.Timestamp(6)
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String
+  displayName   String   
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
 
-  tastings Tasting[]
+  tastings      Tasting[]
 }
+
 
 model Tasting {
   id             Int      @id @default(autoincrement())

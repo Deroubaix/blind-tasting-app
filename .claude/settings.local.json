@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const t = require\\('@tabler/icons-react'\\); ['IconEye','IconWind','IconGlass','IconBrain','IconSquareCheck','IconUserCircle','IconChevronDown','IconChevronUp'].forEach\\(n => console.log\\(n, !!t[n]\\)\\)\")",
+      "Bash(npx sass:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

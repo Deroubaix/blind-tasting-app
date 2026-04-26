@@ -69,7 +69,16 @@ export default class ErrorUtils {
 
   public static async throwJsonApiError(response: Response) {
     if (!response.bodyUsed) {
-      const responseData = await response.json();
+      let responseData: unknown;
+      try {
+        responseData = await response.json();
+      } catch {
+        throw new FetchUtilsError(
+          `Request failed with status code ${response.status}`,
+          AbortType.UNKNOWN,
+          response.status
+        );
+      }
       if (JsonApiError.isJsonApiError(responseData)) {
         throw JsonApiError.create(responseData);
       } else {

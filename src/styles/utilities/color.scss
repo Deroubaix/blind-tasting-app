@@ -1,0 +1,42 @@
+@use 'sass:color';
+
+.color-primary {
+	--color: #{$color-primary};
+	color: var(--color);
+}
+.color-secondary {
+	--color: #{$color-secondary};
+	color: var(--color);
+}
+.color-accent-1 {
+	--color: #{$color-accent-1};
+	color: var(--color);
+}
+.color-accent-2 {
+	--color: #{$color-accent-2};
+	color: var(--color);
+}
+.color-brand-1 {
+	--color: #{$color-brand-1};
+	color: var(--color);
+}
+.color-brand-2 {
+	--color: #{$color-brand-2};
+	color: var(--color);
+}
+.color-warning {
+	--color: #{$color-warning};
+	color: var(--color);
+}
+.color-error {
+	--color: #{$color-error};
+	color: var(--color);
+}
+.color-success {
+	--color: #{$color-success};
+	color: var(--color);
+}
+.color-success-darker {
+	--color: #{darken($color-success, 30%)};
+	color: var(--color);
+}
