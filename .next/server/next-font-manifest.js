@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/marishaderoubaix/blind-tasting-app/src/app/layout\":[\"static/media/110cbef534704ef8-s.p.woff2\",\"static/media/5c0c2bcbaa4149ca-s.p.woff2\",\"static/media/4c9affa5bc8f420e-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

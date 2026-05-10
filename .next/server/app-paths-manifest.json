@@ -1,7 +1,0 @@
-{
-  "/tastings/final-conclusion/page": "app/tastings/final-conclusion/page.js",
-  "/tastings/palate/page": "app/tastings/palate/page.js",
-  "/tastings/nose/page": "app/tastings/nose/page.js",
-  "/tastings/sight/page": "app/tastings/sight/page.js",
-  "/tastings/start/page": "app/tastings/start/page.js"
-}
