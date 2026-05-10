@@ -2,43 +2,63 @@
 
 import React from "react";
 import Link from "next/link";
-import { IconUserCircle } from "@tabler/icons-react";
 import useAuthenticatedUser from "../../hooks/UseAuthenticatedUser";
+import TimerConditional from "./TimerConditional";
 import { useTastingContext } from "../tasting/TastingContext";
 
 type TastingPageHeaderProps = {
   wineType?: "red" | "white";
+  timerPage?: "sight" | "nose" | "palate" | "initialConclusion" | "finalConclusion";
+  timerDestination?: string;
 };
 
-export default function TastingPageHeader({ wineType }: TastingPageHeaderProps) {
+function getInitials(email: string): string {
+  const local = email.split("@")[0];
+  const parts = local.split(/[._-]/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return local.slice(0, 2).toUpperCase();
+}
+
+export default function TastingPageHeader({ wineType, timerPage, timerDestination }: TastingPageHeaderProps) {
   const { user, isInitialLoading } = useAuthenticatedUser();
   const { tastingData } = useTastingContext();
   const isLoggedIn = !isInitialLoading && !!user;
-  const timerEnabled = !!tastingData.timerEnabled;
+  const showTimer = !!timerPage && !!timerDestination && !!tastingData.timerEnabled;
 
   const wineLabel = wineType === "red"
-    ? "RED WINE ASSESSMENT"
+    ? "Red Wine Assessment"
     : wineType === "white"
-    ? "WHITE WINE ASSESSMENT"
+    ? "White Wine Assessment"
     : null;
+
+  const initials = user?.email ? getInitials(user.email) : "";
 
   return (
     <header className="tasting-page-header">
-      <Link href="/" className="tasting-page-header__logo no-underline">
+      <Link href="/" className="tasting-page-header__logo">
         The Sommelier&apos;s Ledger
       </Link>
 
-      {wineLabel && (
-        <span className="tasting-page-header__wine-label">{wineLabel}</span>
-      )}
+      <div className="tasting-page-header__center">
+        {showTimer && (
+          <>
+            <span className="tasting-page-header__timer-label">Time Remaining</span>
+            <div className="tasting-page-header__timer-display">
+              <TimerConditional page={timerPage!} destination={timerDestination!} />
+            </div>
+          </>
+        )}
+      </div>
 
-      <div className="tasting-page-header__actions">
-        {timerEnabled && (
-          <span className="tasting-page-header__timer">⏱ 25:00</span>
+      <div className="tasting-page-header__right">
+        {wineLabel && (
+          <span className="tasting-page-header__wine-label">{wineLabel}</span>
         )}
         {isLoggedIn && (
-          <Link href="/account" aria-label="Account" className="tasting-page-header__account-link">
-            <IconUserCircle size={20} />
+          <Link href="/account" aria-label="Account" className="tasting-page-header__avatar">
+            {initials}
           </Link>
         )}
       </div>

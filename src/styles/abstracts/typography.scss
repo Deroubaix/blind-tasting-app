@@ -45,11 +45,11 @@ $font-body-bold-spacing:  0.03em;
 $font-body-bold-weight:   $font-weight-bold;
 
 // -----------------------------------------
-// Heading styles (Manrope, designer spec)
+// Heading styles (Lora serif)
 // -----------------------------------------
 h1,
 h2 {
-  font-family: $font-display-bold-family;
+  font-family: $font-body-bold-family;
   margin: 1.5em 0;
 
   &:first-child {
@@ -66,7 +66,7 @@ h2 {
 
 h1 {
   font-size: $font-size-xxxxl;          // ≈ 48.8px
-  font-weight: $font-weight-extrabold;
+  font-weight: $font-weight-bold;
   letter-spacing: -0.03em;
 }
 
@@ -78,7 +78,7 @@ h2 {
 
 h3 {
   font-size: $font-size-lg;             // 20px
-  font-family: $font-display-normal-family;
+  font-family: $font-body-bold-family;
   font-weight: $font-weight-semibold;
   letter-spacing: 0;
 }

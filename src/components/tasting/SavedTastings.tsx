@@ -8,15 +8,15 @@ import { useTastingContext } from "../tasting/TastingContext";
 import ClientTastingService from "../../services/client/ClientTastingService";
 import { useAuthProvider } from "../auth/AuthProvider";
 import { useToastProvider } from "../../toast/ToastProvider";
-import LeftSidebar from "../tasting/LeftSideBar";
-import TastingPageHeader from "../layout/TastingPageHeader";
-import TastingFooter from "../layout/TastingFooter";
+import useLoadTracker from "../../hooks/useLoadTracker";
+import TastingPhaseLayout from "../layout/TastingPhaseLayout";
+import PhaseHeading from "../layout/PhaseHeading";
 
 export default function SavedTasting({ wineType }: { wineType: "red" | "white" }) {
   const { tastingData, updateTastingData, resetTastingData } = useTastingContext();
   const [notes, setNotes] = useState(tastingData.notes || "");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const { isLoading, addLoader, removeLoader } = useLoadTracker();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const tastingService = new ClientTastingService();
@@ -42,18 +42,13 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
       return;
     }
 
-    setIsSaving(true);
+    const loader = addLoader();
     updateTastingData({ notes });
 
     try {
       await tastingService.saveTasting({ ...tastingData, notes } as any);
-      showToast({
-        title: "Tasting saved!",
-        children: "Your tasting has been saved to your archives.",
-        color: "success",
-      });
       resetTastingData();
-      router.push("/tastings/thankyou");
+      router.push("/archives");
     } catch (error: any) {
       const isAuthError = error?.statusCode === 401 || error?.message?.includes("Access Denied");
       if (isAuthError) {
@@ -63,31 +58,34 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
         showToast({ title: "Save failed", children: "Something went wrong. Please try again.", color: "error" });
       }
     } finally {
-      setIsSaving(false);
+      removeLoader(loader);
     }
   };
 
   return (
-    <div className="tasting-phase-page">
-      <TastingPageHeader wineType={wineType} />
-      <div className="tasting-phase-body">
-        <LeftSidebar wineType={wineType} />
-        <main className="tasting-phase-main">
-          <div className="tasting-phase-content">
-
-            <div className="phase-label">Wrap Up</div>
-            <h1 className="phase-heading">Review &amp; Save</h1>
-            <p className="phase-description">
-              Add any final notes and capture the wine label before saving your tasting record.
-            </p>
+    <TastingPhaseLayout
+      wineType={wineType}
+      footer={{
+        onBack: () => router.push(`/tastings/final-conclusion?wineType=${wineType}`),
+        backLabel: "← Back to Final Conclusion",
+        nextLabel: "Save Tasting",
+        onNext: handleSave,
+        nextLoading: isLoading,
+      }}
+    >
+      <PhaseHeading
+        phase="Wrap Up"
+        title="Review & Save"
+        description="Add any final notes and capture the wine label before saving your tasting record."
+      />
 
             <div className="save-layout">
 
               {/* Notes */}
-              <div className="save-card">
-                <div className="save-card__label">Notes</div>
+              <div className="tasting-card">
+                <div className="tasting-card__label">Notes</div>
                 <textarea
-                  className="save-notes"
+                  className="tasting-textarea"
                   rows={6}
                   placeholder="Add your final observations, impressions, or anything worth remembering..."
                   value={notes}
@@ -96,8 +94,8 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
               </div>
 
               {/* Photo */}
-              <div className="save-card">
-                <div className="save-card__label">Wine Label Photo</div>
+              <div className="tasting-card">
+                <div className="tasting-card__label">Wine Label Photo</div>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -148,15 +146,6 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
               </div>
             )}
 
-          </div>
-        </main>
-      </div>
-      <TastingFooter
-        onBack={() => router.push(`/tastings/final-conclusion?wineType=${wineType}`)}
-        backLabel="← Back to Final Conclusion"
-        nextLabel={isSaving ? "Saving..." : "Save Tasting"}
-        onNext={handleSave}
-      />
-    </div>
+    </TastingPhaseLayout>
   );
 }

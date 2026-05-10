@@ -3,9 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTastingContext } from "../tasting/TastingContext";
-import LeftSidebar from "../tasting/LeftSideBar";
-import TastingPageHeader from "../layout/TastingPageHeader";
-import TastingFooter from "../layout/TastingFooter";
+import TastingPhaseLayout from "../layout/TastingPhaseLayout";
+import PhaseHeading from "../layout/PhaseHeading";
+
+const REQUIRED_CATEGORIES = new Set(["Sweetness", "Acid", "Tannin", "Alcohol", "Body", "Finish"]);
 
 const palateTastingOptions = {
   red: {
@@ -69,33 +70,41 @@ export default function PalateTastingClient({
   );
 
   return (
-    <div className="tasting-phase-page">
-      <TastingPageHeader wineType={wineType} />
-      <div className="tasting-phase-body">
-        <LeftSidebar wineType={wineType} progress={palatePct} />
-        <main className="tasting-phase-main">
-          <div className="tasting-phase-content">
-
-            {/* Page heading */}
-            <div className="phase-label">Phase 03</div>
-            <h1 className="phase-heading">The Palate</h1>
-            <p className="phase-description">
-              Analyze the structural components and flavor profile on the palate
-              to confirm your nasal assessments.
-            </p>
+    <TastingPhaseLayout
+      wineType={wineType}
+      progress={palatePct}
+      timerPage="palate"
+      timerDestination={`/tastings/initial-conclusion?wineType=${wineType}`}
+      footer={{
+        onBack: handlePreviousPhase,
+        backLabel: "← Back to Nose",
+        nextLabel: "Next: Initial Conclusion →",
+        onNext: handleNextPhase,
+      }}
+    >
+      <PhaseHeading
+        phase="Phase 03"
+        title="The Palate"
+        description="Analyze the structural components and flavor profile on the palate to confirm your nasal assessments."
+      />
 
             {/* 2-column category grid */}
             <div className="palate-grid">
               {Object.entries(currentOptions).map(([category, options]) => (
-                <div key={category} className="palate-card">
-                  <div className="palate-card__label">{category}</div>
-                  <div className="palate-options">
+                <div key={category} className="tasting-card">
+                  <div className="tasting-card__label">
+                    {category}
+                    {REQUIRED_CATEGORIES.has(category) && (
+                      <span className="palate-card__required" aria-label="required">*</span>
+                    )}
+                  </div>
+                  <div className="tasting-options">
                     {options.map((option) => {
                       const selected = selectedOptions[category] === option;
                       return (
                         <button
                           key={option}
-                          className={`palate-option${selected ? " palate-option--selected" : ""}`}
+                          className={`tasting-option${selected ? " tasting-option--selected" : ""}`}
                           onClick={() => handleOptionSelect(category, option)}
                         >
                           {option}
@@ -108,13 +117,13 @@ export default function PalateTastingClient({
             </div>
 
             {/* Confirm the Nose */}
-            <div className="palate-notes">
+            <div className="palate-notes tasting-card">
               <div className="palate-notes__header">
-                <span className="palate-notes__label">Confirm the Nose</span>
+                <span className="tasting-card__label">Confirm the Nose</span>
                 <span className="palate-notes__sublabel">Supplemental Notes</span>
               </div>
               <textarea
-                className="palate-notes__textarea"
+                className="tasting-textarea"
                 rows={4}
                 placeholder="Describe any secondary or tertiary notes that emerged on the palate..."
                 value={confirmNose}
@@ -122,15 +131,6 @@ export default function PalateTastingClient({
               />
             </div>
 
-          </div>
-        </main>
-      </div>
-      <TastingFooter
-        onBack={handlePreviousPhase}
-        backLabel="← Back to Nose"
-        nextLabel="Next: Initial Conclusion →"
-        onNext={handleNextPhase}
-      />
-    </div>
+    </TastingPhaseLayout>
   );
 }

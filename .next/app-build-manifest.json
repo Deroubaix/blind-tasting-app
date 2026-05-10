@@ -6,15 +6,90 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/tastings/final-conclusion/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/tastings/final-conclusion/page.js"
+      "static/chunks/app/page.js"
     ],
     "/api/user/me/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/user/me/route.js"
+    ],
+    "/tastings/start/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/start/page.js"
+    ],
+    "/tastings/sight/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/sight/page.js"
+    ],
+    "/tastings/nose/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/nose/page.js"
+    ],
+    "/tastings/palate/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/palate/page.js"
+    ],
+    "/tastings/initial-conclusion/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/initial-conclusion/page.js"
+    ],
+    "/tastings/final-conclusion/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/final-conclusion/page.js"
+    ],
+    "/tastings/save/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tastings/save/page.js"
+    ],
+    "/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/login/page.js"
+    ],
+    "/api/auth/login/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/auth/login/route.js"
+    ],
+    "/signup/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/signup/page.js"
+    ],
+    "/api/auth/signup/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/auth/signup/route.js"
+    ],
+    "/archives/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/archives/page.js"
+    ],
+    "/api/tastings/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/tastings/route.js"
+    ],
+    "/archives/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/archives/[id]/page.js"
+    ],
+    "/api/tastings/[id]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/tastings/[id]/route.js"
     ]
   }
 }

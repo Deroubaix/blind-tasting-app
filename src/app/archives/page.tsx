@@ -1,25 +1,28 @@
 import { Metadata } from "next";
-import Header from "../../components/layout/Header";
+import TastingPageHeader from "../../components/layout/TastingPageHeader";
+import LeftSidebar from "../../components/tasting/LeftSideBar";
 import ArchivesList from "../../components/archives/ArchivesList";
-import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "My Tastings | Blind Tasting App",
+  title: "Tasting Archives | Blind Tasting App",
 };
 
 export default function ArchivesPage() {
   return (
-    <>
-      <Header />
-      <main className="archives-page light-bg">
-        <div className="archives-header">
-          <h1>My Tasting Archives</h1>
-          <Link href="/tastings/start" className="button rounded solid">
-            + New Tasting
-          </Link>
-        </div>
-        <ArchivesList />
-      </main>
-    </>
+    <div className="tasting-phase-page">
+      <TastingPageHeader />
+      <div className="tasting-phase-body">
+        <LeftSidebar />
+        <main className="tasting-phase-main">
+          <div className="archives-hero">
+            <h1 className="archives-hero__title">Tasting Archives</h1>
+            <p className="archives-hero__description">
+              Your personal collection of deductive tastings. Review historical notes and master your sensory analysis.
+            </p>
+          </div>
+          <ArchivesList />
+        </main>
+      </div>
+    </div>
   );
 }

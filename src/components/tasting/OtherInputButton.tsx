@@ -26,6 +26,7 @@ export default function OtherInputButton({
       <div className="other-input">
         <input
           type="text"
+          className="tasting-input"
           value={customInput}
           onChange={(e) => setCustomInput(e.target.value)}
           placeholder={`Enter ${label}`}

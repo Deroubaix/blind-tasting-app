@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IconSearch, IconMapPin, IconTrash } from "@tabler/icons-react";
 import { useTastingContext } from "../tasting/TastingContext";
-import LeftSidebar from "../tasting/LeftSideBar";
-import TastingPageHeader from "../layout/TastingPageHeader";
-import TastingFooter from "../layout/TastingFooter";
+import TastingPhaseLayout from "../layout/TastingPhaseLayout";
+import PhaseHeading from "../layout/PhaseHeading";
+import TastingAutocomplete from "./TastingAutocomplete";
+import { GRAPE_VARIETALS, WINE_COUNTRIES } from "./autocompleteData";
 
 export default function InitialConclusionTastingClient({
   wineType,
@@ -42,28 +43,36 @@ export default function InitialConclusionTastingClient({
     router.push(`/tastings/palate?wineType=${wineType}`);
   };
 
-  const addVarietal = () => {
-    const v = varietalInput.trim();
+  const addVarietal = (input?: string) => {
+    const v = (input ?? varietalInput).trim();
     if (v && !grapeVarieties.includes(v)) setGrapeVarieties((prev) => [...prev, v]);
     setVarietalInput("");
   };
 
-  const addCountry = () => {
-    const c = countryInput.trim();
+  const addCountry = (input?: string) => {
+    const c = (input ?? countryInput).trim();
     if (c && !possibleCountries.includes(c)) setPossibleCountries((prev) => [...prev, c]);
     setCountryInput("");
   };
 
   return (
-    <div className="tasting-phase-page">
-      <TastingPageHeader wineType={wineType} />
-      <div className="tasting-phase-body">
-        <LeftSidebar wineType={wineType} progress={conclusionPct} />
-        <main className="tasting-phase-main">
-          <div className="tasting-phase-content">
-
-            <div className="phase-label">Phase 04</div>
-            <h1 className="phase-heading">Initial Conclusion</h1>
+    <TastingPhaseLayout
+      wineType={wineType}
+      progress={conclusionPct}
+      timerPage="initialConclusion"
+      timerDestination={`/tastings/final-conclusion?wineType=${wineType}`}
+      footer={{
+        onBack: handlePreviousPhase,
+        backLabel: "← Back to Palate",
+        nextLabel: "Next: Final Conclusion →",
+        onNext: handleNextPhase,
+      }}
+    >
+      <PhaseHeading
+        phase="Phase 04"
+        title="Initial Conclusion"
+        description="Synthesize your observations from sight, nose, and palate to form your initial identification — origin, climate, grape variety, and age."
+      />
 
             <div className="ic-layout">
 
@@ -71,13 +80,13 @@ export default function InitialConclusionTastingClient({
               <div className="ic-col">
                 <div className="ic-section-label">Origin &amp; Environment</div>
 
-                <div className="ic-card">
-                  <div className="ic-card__label">World Origin</div>
-                  <div className="ic-world-origin">
+                <div className="tasting-card">
+                  <div className="tasting-card__label">World Origin</div>
+                  <div className="tasting-options tasting-options--equal">
                     {["Old World", "New World"].map((opt) => (
                       <button
                         key={opt}
-                        className={`ic-world-btn${worldOrigin === opt ? " ic-world-btn--selected" : ""}`}
+                        className={`tasting-option${worldOrigin === opt ? " tasting-option--selected" : ""}`}
                         onClick={() => setWorldOrigin(opt)}
                       >
                         {opt}
@@ -86,13 +95,13 @@ export default function InitialConclusionTastingClient({
                   </div>
                 </div>
 
-                <div className="ic-card">
-                  <div className="ic-card__label">Climate</div>
-                  <div className="ic-options">
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Climate</div>
+                  <div className="tasting-options">
                     {["Cool", "Moderate", "Warm"].map((opt) => (
                       <button
                         key={opt}
-                        className={`ic-option${climate === opt ? " ic-option--selected" : ""}`}
+                        className={`tasting-option${climate === opt ? " tasting-option--selected" : ""}`}
                         onClick={() => setClimate(opt)}
                       >
                         {opt}
@@ -103,13 +112,13 @@ export default function InitialConclusionTastingClient({
 
                 <div className="ic-section-label ic-section-label--mt">Maturity</div>
 
-                <div className="ic-card">
-                  <div className="ic-card__label">Estimated Age Range (Years)</div>
-                  <div className="ic-options">
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Estimated Age Range (Years)</div>
+                  <div className="tasting-options">
                     {["1-3", "3-5", "5-10", "+10"].map((opt) => (
                       <button
                         key={opt}
-                        className={`ic-option${ageRange === opt ? " ic-option--selected" : ""}`}
+                        className={`tasting-option${ageRange === opt ? " tasting-option--selected" : ""}`}
                         onClick={() => setAgeRange(opt)}
                       >
                         {opt}
@@ -123,28 +132,26 @@ export default function InitialConclusionTastingClient({
               <div className="ic-col">
                 <div className="ic-section-label">Varietal Identification</div>
 
-                <div className="ic-card">
-                  <div className="ic-card__label">Grape Variety/Blend</div>
-                  <div className="ic-search-row">
-                    <div className="ic-search-input-wrap">
-                      <IconSearch size={14} className="ic-search-icon" />
-                      <input
-                        className="ic-search-input"
-                        placeholder="Search varietals..."
-                        value={varietalInput}
-                        onChange={(e) => setVarietalInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && addVarietal()}
-                      />
-                    </div>
-                    <button className="ic-confirm-btn" onClick={addVarietal}>Confirm</button>
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Grape Variety/Blend</div>
+                  <div className="tasting-search-row">
+                    <TastingAutocomplete
+                      suggestions={GRAPE_VARIETALS}
+                      value={varietalInput}
+                      onChange={setVarietalInput}
+                      onConfirm={addVarietal}
+                      placeholder="Search varietals..."
+                      icon={<IconSearch size={14} className="tasting-search-icon" />}
+                    />
+                    <button className="tasting-confirm-btn" onClick={() => addVarietal()}>Add</button>
                   </div>
                   {grapeVarieties.length > 0 && (
-                    <div className="ic-chips">
+                    <div className="tasting-chips">
                       {grapeVarieties.map((v) => (
-                        <span key={v} className="ic-chip">
+                        <span key={v} className="tasting-chip">
                           {v}
                           <button
-                            className="ic-chip__remove"
+                            className="tasting-chip__remove"
                             onClick={() => setGrapeVarieties((prev) => prev.filter((x) => x !== v))}
                           >
                             ×
@@ -157,20 +164,18 @@ export default function InitialConclusionTastingClient({
 
                 <div className="ic-section-label ic-section-label--mt">Geographic Deduction</div>
 
-                <div className="ic-card">
-                  <div className="ic-card__label">Possible Countries</div>
-                  <div className="ic-search-row">
-                    <div className="ic-search-input-wrap">
-                      <IconSearch size={14} className="ic-search-icon" />
-                      <input
-                        className="ic-search-input"
-                        placeholder="Search countries..."
-                        value={countryInput}
-                        onChange={(e) => setCountryInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && addCountry()}
-                      />
-                    </div>
-                    <button className="ic-add-btn" onClick={addCountry}>Add</button>
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Possible Countries</div>
+                  <div className="tasting-search-row">
+                    <TastingAutocomplete
+                      suggestions={WINE_COUNTRIES}
+                      value={countryInput}
+                      onChange={setCountryInput}
+                      onConfirm={addCountry}
+                      placeholder="Search countries..."
+                      icon={<IconSearch size={14} className="tasting-search-icon" />}
+                    />
+                    <button className="tasting-confirm-btn" onClick={() => addCountry()}>Add</button>
                   </div>
                   {possibleCountries.length > 0 && (
                     <ul className="ic-country-list">
@@ -192,15 +197,6 @@ export default function InitialConclusionTastingClient({
               </div>
 
             </div>
-          </div>
-        </main>
-      </div>
-      <TastingFooter
-        onBack={handlePreviousPhase}
-        backLabel="← Back to Palate"
-        nextLabel="Next: Final Conclusion →"
-        onNext={handleNextPhase}
-      />
-    </div>
+    </TastingPhaseLayout>
   );
 }
