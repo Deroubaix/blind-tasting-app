@@ -17,8 +17,7 @@ export default function TimerConditional({
   // If timer is not enabled, render nothing.
   if (!tastingData.timerEnabled) return null;
 
-  // Compare against 7 because that's what we stored for "7.5 min".
-  const selectedOption = tastingData.timerDuration === 7 ? "7.5 min" : "4 min";
+  const selectedOption = tastingData.timerDuration === 7.5 ? "7.5 min" : "4 min";
 
   // Timer durations for each page for both timer options.
   const timerMapping: Record<string, Record<"4 min" | "7.5 min", number>> = {

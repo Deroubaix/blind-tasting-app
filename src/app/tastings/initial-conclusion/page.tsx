@@ -5,11 +5,12 @@ export const metadata: Metadata = {
   title: "Initial Conclusion | Wine Tasting",
 };
 
-export default function InitialConclusionPage({
+export default async function InitialConclusionPage({
   searchParams,
 }: {
-  searchParams: { wineType?: string };
+  searchParams: Promise<{ wineType?: string }>;
 }) {
-  const wineType = (searchParams.wineType as "red" | "white") || "red";
+  const { wineType: wineTypeParam } = await searchParams;
+  const wineType = (wineTypeParam as "red" | "white") || "red";
   return <InitialConclusionTastingClient wineType={wineType} />;
 }

@@ -5,11 +5,12 @@ export const metadata: Metadata = {
   title: "Review & Save | Wine Tasting",
 };
 
-export default function SavedTastingPage({
+export default async function SavedTastingPage({
   searchParams,
 }: {
-  searchParams: { wineType?: string };
+  searchParams: Promise<{ wineType?: string }>;
 }) {
-  const wineType = (searchParams.wineType as "red" | "white") || "red";
+  const { wineType: wineTypeParam } = await searchParams;
+  const wineType = (wineTypeParam as "red" | "white") || "red";
   return <SavedTasting wineType={wineType} />;
 }

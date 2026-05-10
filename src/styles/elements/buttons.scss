@@ -17,13 +17,6 @@
 
 	padding: 0.8em 1.5em;
 
-	@include active-state {
-		background-color: var(--hover-color);
-		border-color: var(--hover-color);
-		color: var(--text-hover-color);
-		outline-color: var(--hover-color);
-	}
-
 	@if $type == inline {
 		padding: unset;
 		border: none;
@@ -47,7 +40,6 @@
 		@error "Unknown type '#{$type}'. Expecting 'subtle', 'inline' or 'solid'. Default is solid";
 	}
 }
-
 
 
 @mixin set-button-size($size) {
@@ -76,50 +68,6 @@
 button,
 .button,
 .btn {
-	&.primary {
-		@include set-button-color($color-primary);
-	}
-
-	&.secondary {
-		@include set-button-color($color-secondary);
-	}
-
-	&.white {
-		@include set-button-color($color-white);
-	}
-
-	&.success {
-		@include set-button-color($color-success);
-	}
-
-	&.accent-1 {
-		@include set-button-color($color-accent-1);
-	}
-
-	&.accent-2 {
-		@include set-button-color($color-accent-2);
-	}
-
-	&.brand-1 {
-		@include set-button-color($color-brand-1);
-	}
-
-	&.brand-2 {
-		@include set-button-color($color-brand-2);
-	}
-
-	&.warning {
-		@include set-button-color($color-warning);
-	}
-
-	&.error {
-		@include set-button-color($color-error);
-	}
-
-	&.success {
-		@include set-button-color($color-success);
-	}
-
 	@include set-button-color($color-primary);
 
 	display: inline-block;
@@ -136,30 +84,11 @@ button,
 		cursor: pointer;
 	}
 
-	&.full-size {
-		@include set-button-size(relative);
-	}
-	&.small-button {
-		@include set-button-size(small);
-	}
-	&.large-button {
-		@include set-button-size(large);
-	}
-	&.extra-large-button {
-		@include set-button-size(extra-large);
-	}
-
 	// Quiet = outline
 	// Subtle = inline
 	&.quiet,
 	&.outline {
 		@include set-button-type(outline);
-	}
-
-	&.quiet-large {
-		@include set-button-type(outline);
-		@include set-button-size(extra-large);
-		border: 1px solid var(--color);
 	}
 
 	&.subtle,
@@ -180,11 +109,11 @@ button,
 	&.rounded {
 		@include set-rounded-corners(2em);
 		@include set-button-type(solid);
-	
+
 		&.quiet {
 			@include set-button-type(outline);
 		}
-	
+
 		&.solid {
 			@include set-button-type(solid);
 		}
@@ -192,18 +121,115 @@ button,
 		background-color: var(--color);
 		color: var(--text-color);
 		border: 2px solid var(--color);
-	  
-		&:hover {
+
+		&:hover,
+		&:focus,
+		&:active {
 		  background-color: var(--hover-color);
 		  color: var(--text-hover-color);
 		  border-color: var(--hover-color);
 		}
 	  }
-	  
+
 }
 
 a.button {
 	&:after {
 		content: unset;
+	}
+}
+
+// ── Tasting option pill ───────────────────────────────────────────────────────
+// Shared by Sight, Nose, Palate, and Initial Conclusion assessment pages.
+// Use .tasting-option--selected to mark the active state.
+// Use .tasting-option--wide for slightly more horizontal padding (IC climate/age rows).
+// Use .tasting-option--ghost for the dashed "+ Other" trigger button.
+.tasting-option {
+	// Reset global button defaults
+	text-transform: none;
+	letter-spacing: normal;
+	min-width: unset;
+
+	// Component styles
+	padding: 6px 14px;
+	border-radius: 6px;
+	border: 1px solid $tasting-border-mid;
+	background-color: $color-surface-variant;
+	color: $tasting-text-secondary;
+	font-size: $font-size-sm;
+	font-weight: $font-weight-regular;
+	font-family: $font-display-normal-family;
+	cursor: pointer;
+	transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out, transform 0.15s ease;
+
+	&:active {
+		transform: scale(0.94);
+		transition-duration: 0s;
+	}
+
+	// Override global button red on hover/focus/active
+	@include active-state {
+		background-color: $color-surface-variant;
+		border-color: rgba(228, 228, 204, 0.22);
+		color: $color-white;
+		outline: none;
+	}
+
+	&--selected {
+		border-color: $tasting-accent;
+		background-color: rgba(139, 69, 87, 0.15);
+		color: $tasting-accent-light;
+
+		@include active-state {
+			background-color: rgba(139, 69, 87, 0.15);
+			border-color: $tasting-accent;
+			color: $tasting-accent-light;
+		}
+	}
+
+	&--wide {
+		padding: 6px 16px;
+	}
+
+	&--ghost {
+		border-style: dashed;
+		background: none;
+		color: $tasting-text-tertiary;
+
+		@include active-state {
+			border-color: rgba(228, 228, 204, 0.25);
+			color: $color-white;
+			background: none;
+		}
+	}
+}
+
+// ── Tasting toggle button ─────────────────────────────────────────────────────
+// Solid-fill toggle for binary/exclusive choices (e.g. Clarity, Red/White).
+// Use .tasting-toggle-btn--selected to mark the active state.
+.tasting-toggle-btn {
+	flex: 1;
+	padding: 6px 10px;
+	border-radius: 4px;
+	border: 1px solid $tasting-border-mid;
+	background-color: $color-surface-variant;
+	color: $tasting-text-tertiary;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-regular;
+	cursor: pointer;
+	text-align: center;
+	@include transition(all, 0.15s);
+
+	&:hover:not(.tasting-toggle-btn--selected) {
+		border-color: rgba(228, 228, 204, 0.22);
+		color: $color-white;
+	}
+
+	&--selected {
+		background-color: $tasting-accent;
+		border-color: $tasting-accent;
+		color: $color-white;
+		font-weight: $font-weight-semibold;
 	}
 }

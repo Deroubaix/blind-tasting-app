@@ -28,10 +28,8 @@ export default function Timer({ initialTime, onTimeUp }: TimerProps) {
   }`;
 
   return (
-    <div className="timer-container">
-      <div className="timer-display">
-        <span>{formattedTime}</span>
-      </div>
-    </div>
+    <span className={timeLeft === 0 ? "timer-display timer-display--expired" : "timer-display"}>
+      {formattedTime}
+    </span>
   );
 }

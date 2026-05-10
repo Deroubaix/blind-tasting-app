@@ -1,54 +1,63 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Loading from "../misc/Loading";
 
 type TastingFooterProps = {
   onReset?: () => void;
-  backHref?: string;
   onBack?: () => void;
   backLabel?: string;
   nextLabel: string;
   onNext: () => void;
+  nextLoading?: boolean;
 };
 
 export default function TastingFooter({
   onReset,
-  backHref,
   onBack,
   backLabel = "← Back",
   nextLabel,
   onNext,
+  nextLoading,
 }: TastingFooterProps) {
-  const [autoSaveTime] = useState(() =>
-    new Date().toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  );
+  const [confirming, setConfirming] = useState(false);
+
+  useEffect(() => {
+    if (!confirming) return;
+    const timer = setTimeout(() => setConfirming(false), 3000);
+    return () => clearTimeout(timer);
+  }, [confirming]);
+
+  const handleResetClick = () => setConfirming(true);
+  const handleConfirm = () => { setConfirming(false); onReset!(); };
+  const handleCancel = () => setConfirming(false);
 
   return (
     <footer className="tasting-footer">
       <div className="tasting-footer__left">
-        <span className="tasting-footer__autosave">Autosaved at {autoSaveTime}</span>
         {onReset && (
-          <button className="tasting-footer__reset" onClick={onReset}>
-            Reset Phase
-          </button>
+          confirming ? (
+            <div className="tasting-footer__reset-confirm">
+              <span className="tasting-footer__reset-question">Are you sure?</span>
+              <button className="tasting-footer__reset-yes" onClick={handleConfirm}>Yes</button>
+              <button className="tasting-footer__reset-no" onClick={handleCancel}>No</button>
+            </div>
+          ) : (
+            <button className="tasting-footer__reset" onClick={handleResetClick}>
+              Reset Phase
+            </button>
+          )
         )}
       </div>
 
-      {backHref ? (
-        <Link href={backHref} className="tasting-footer__back">
-          {backLabel}
-        </Link>
-      ) : onBack ? (
+      {onBack && (
         <button className="tasting-footer__back-btn" onClick={onBack}>
           {backLabel}
         </button>
-      ) : null}
+      )}
 
-      <button className="tasting-footer__next" onClick={onNext}>
+      <button className="tasting-footer__next" onClick={onNext} disabled={nextLoading}>
+        {nextLoading && <Loading size={14} inline />}
         {nextLabel}
       </button>
     </footer>

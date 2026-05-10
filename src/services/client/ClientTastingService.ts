@@ -19,8 +19,14 @@ export default class ClientTastingService {
       "/api/tastings"
     );
     const response = await request.response;
-    console.log("Response from GET /api/tastings:", response);
-
     return response.tastings;
+  }
+
+  public async getTasting(id: string | number): Promise<TastingData & { id: number; created_at: string }> {
+    const request = FetchUtils.getJson<{ tasting: TastingData & { id: number; created_at: string } }>(
+      `/api/tastings/${id}`
+    );
+    const response = await request.response;
+    return response.tasting;
   }
 }

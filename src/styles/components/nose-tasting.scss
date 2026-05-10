@@ -1,13 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Nose Assessment page
 // ─────────────────────────────────────────────────────────────────────────────
-$n-accent:         #8B4557;
-$n-accent-light:   #D4A0AB;
-$n-border:         rgba(228, 228, 204, 0.08);
-$n-border-mid:     rgba(228, 228, 204, 0.12);
-$n-text-secondary: rgba(228, 228, 204, 0.65);
-$n-text-tertiary:  rgba(228, 228, 204, 0.4);
-$n-text-muted:     rgba(228, 228, 204, 0.22);
 
 
 // ── Assessment grids ──────────────────────────────────────────────────────────
@@ -23,35 +16,7 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
   }
 }
 
-// ── Category card (with background) ──────────────────────────────────────────
-// Used for: top assessment, complex & secondary, wood exposure
-.nose-card {
-  background-color: $color-darkGrey;
-  border: 1px solid $n-border;
-  border-radius: 8px;
-  padding: $spacing-md;
-
-  // Split: single card with two equal columns (Fruit Character + Condition)
-  &--split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $page-spacing * 2;
-    margin-top: $page-spacing
-  }
-
-  &__label {
-    @include eyebrow-label(0.58rem);
-    color: $n-accent-light;
-    margin-bottom: $spacing-xs;
-
-    // Fruit variant: flex row to accommodate the color dot
-    &--fruit {
-      display: flex;
-      align-items: center;
-      gap: $spacing-xs;
-    }
-  }
-}
+// ── Category card (base styles from .tasting-card) ───────────────────────────
 
 // ── Fruit category (no background) ───────────────────────────────────────────
 // Used for: Primary Fruit Profile — sits directly on page background
@@ -60,7 +25,7 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
 
   &__label {
     @include eyebrow-label(0.58rem);
-    color: $n-accent-light;
+    color: $tasting-accent-light;
     margin-bottom: $spacing-xs;
     display: flex;
     align-items: center;
@@ -88,53 +53,15 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
   &--tropical { background-color: #B87820; }
 }
 
-// ── Option pills ──────────────────────────────────────────────────────────────
-.nose-options {
-  display: flex;
-  gap: $spacing-xs;
-  flex-wrap: wrap;
+// ── Equal-width pill variant (Fruit Character, Condition) ─────────────────────
+.tasting-options--equal {
+  flex-wrap: nowrap;
 
-  // Equal-width variant: buttons stretch to fill the row (Fruit Character, Condition)
-  &--equal {
-    flex-wrap: nowrap;
-
-    .nose-option {
-      flex: 1;
-      justify-content: center;
-      text-align: center;
-      padding: 9px 10px;
-    }
-  }
-}
-
-.nose-option {
-  // Reset global button defaults
-  text-transform: none;
-  letter-spacing: normal;
-  min-width: unset;
-
-  // Component styles
-  padding: 6px 14px;
-  border-radius: 6px;
-  border: 1px solid $n-border-mid;
-  background-color: $color-surface-variant;
-  color: $n-text-secondary;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-regular;
-  font-family: $font-display-normal-family;
-  cursor: pointer;
-  @include transition(all, 0.15s);
-
-  &:hover:not(.nose-option--selected) {
-    border-color: rgba(228, 228, 204, 0.22);
-    color: $color-white;
-  }
-
-  &--selected {
-    border-color: $n-accent;
-    background-color: rgba(139, 69, 87, 0.15);
-    color: $n-accent-light;
-    font-weight: $font-weight-semibold;
+  .tasting-option {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    padding: 9px 10px;
   }
 }
 
@@ -143,63 +70,6 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-
-  input {
-    background: transparent;
-    border: 1px solid $n-border-mid;
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: $font-size-sm;
-    font-family: $font-display-normal-family;
-    color: $color-white;
-    outline: none;
-
-    &::placeholder { color: $n-text-muted; }
-    &:focus { border-color: $n-accent; }
-  }
-}
-
-.nose-other-btn {
-  // Reset global button defaults
-  text-transform: none;
-  letter-spacing: normal;
-  min-width: unset;
-
-  // Component styles
-  padding: 5px 12px;
-  border-radius: 6px;
-  border: 1px dashed $n-border-mid;
-  background: none;
-  color: $n-text-tertiary;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
-  cursor: pointer;
-  @include transition(all, 0.15s);
-
-  &:hover {
-    border-color: rgba(228, 228, 204, 0.25);
-    color: $color-white;
-  }
-}
-
-.nose-other-action {
-  // Reset global button defaults
-  text-transform: none;
-  letter-spacing: normal;
-  min-width: unset;
-
-  // Component styles
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: 1px solid $n-border-mid;
-  background: $color-surface-variant;
-  color: $n-text-secondary;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
-  cursor: pointer;
-  @include transition(all, 0.15s);
-
-  &:hover { color: $color-white; }
 }
 
 // ── Non-collapsible section divider (Primary Fruit Profile) ───────────────────
@@ -207,11 +77,11 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
   margin-top: $spacing-xl;
   margin-bottom: $spacing-md;
   padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $n-border;
+  border-bottom: 1px solid $tasting-border;
 
   &__title {
     @include eyebrow-label(0.65rem);
-    color: $n-accent-light;
+    color: $tasting-accent-light;
   }
 }
 
@@ -232,12 +102,6 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
 
 // ── Collapsible section header ────────────────────────────────────────────────
 .nose-section-header {
-  // Reset global button defaults
-  text-transform: none;
-  letter-spacing: normal;
-  min-width: unset;
-
-  // Component styles
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -245,7 +109,7 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
   padding: $spacing-sm 0;
   background: none;
   border: none;
-  border-bottom: 1px solid $n-border;
+  border-bottom: 1px solid $tasting-border;
   cursor: pointer;
   margin-top: $spacing-xl;
   margin-bottom: $spacing-md;
@@ -257,20 +121,20 @@ $n-text-muted:     rgba(228, 228, 204, 0.22);
 
   &__title {
     @include eyebrow-label(0.65rem);
-    color: $n-accent-light;
+    color: $tasting-accent-light;
   }
 
   &__right {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
-    color: $n-text-secondary;
+    color: $tasting-text-secondary;
   }
 
   &__count {
     font-size: $font-size-xs;
     font-family: $font-display-normal-family;
-    color: $n-text-muted;
+    color: $tasting-text-muted;
     font-style: italic;
     font-weight: $font-weight-regular;
   }

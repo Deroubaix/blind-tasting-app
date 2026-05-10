@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import { useTastingContext } from "../tasting/TastingContext";
 import { useEffect, useState } from "react";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import LeftSidebar from "../tasting/LeftSideBar";
-import TastingPageHeader from "../layout/TastingPageHeader";
-import TastingFooter from "../layout/TastingFooter";
+import TastingPhaseLayout from "../layout/TastingPhaseLayout";
+import PhaseHeading from "../layout/PhaseHeading";
 
 // ── Single-select categories ───────────────────────────────────────────────────
 const SINGLE_SELECT = new Set([
@@ -137,8 +136,8 @@ export default function NoseTastingClient({
   );
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [showCustomInput, setShowCustomInput] = useState<Record<string, boolean>>({});
-  const [complexOpen, setComplexOpen] = useState(true);
-  const [woodOpen, setWoodOpen] = useState(true);
+  const [complexOpen, setComplexOpen] = useState(false);
+  const [woodOpen, setWoodOpen] = useState(false);
 
   useEffect(() => {
     if (tastingData.nose) {
@@ -211,14 +210,14 @@ export default function NoseTastingClient({
 
   // Shared pill renderer — used by both card and fruit variants
   const renderPills = (category: string, options: string[], selections: string[], customValues: string[], equalWidth = false) => (
-    <div className={`nose-options${equalWidth ? " nose-options--equal" : ""}`}>
+    <div className={`tasting-options${equalWidth ? " tasting-options--equal" : ""}`}>
       {options.map((option) => {
         const selected = selections.includes(option);
         return (
           <button
             key={option}
             onClick={() => handleOptionToggle(category, option)}
-            className={`nose-option${selected ? " nose-option--selected" : ""}`}
+            className={`tasting-option${selected ? " tasting-option--selected" : ""}`}
           >
             {option}
           </button>
@@ -228,7 +227,7 @@ export default function NoseTastingClient({
         <button
           key={val}
           onClick={() => handleRemoveCustom(category, val)}
-          className="nose-option nose-option--selected"
+          className="tasting-option tasting-option--selected"
           title="Click to remove"
         >
           {val} ×
@@ -239,6 +238,7 @@ export default function NoseTastingClient({
           <span className="nose-other-input">
             <input
               type="text"
+              className="tasting-input"
               value={customInputs[category] || ""}
               onChange={(e) =>
                 setCustomInputs((prev) => ({ ...prev, [category]: e.target.value }))
@@ -251,11 +251,11 @@ export default function NoseTastingClient({
               }}
               autoFocus
             />
-            <button className="nose-other-action" onClick={() => handleAddCustom(category)}>
+            <button className="tasting-option" onClick={() => handleAddCustom(category)}>
               Add
             </button>
             <button
-              className="nose-other-action"
+              className="tasting-option"
               onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: false }))}
             >
               ✕
@@ -263,7 +263,7 @@ export default function NoseTastingClient({
           </span>
         ) : (
           <button
-            className="nose-other-btn"
+            className="tasting-option tasting-option--ghost"
             onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: true }))}
           >
             + Other
@@ -282,7 +282,7 @@ export default function NoseTastingClient({
 
     return (
       <>
-        <div className="nose-card__label">{category}</div>
+        <div className="tasting-card__label">{category}</div>
         {renderPills(category, options, selections, customValues, equalWidth)}
       </>
     );
@@ -327,25 +327,28 @@ export default function NoseTastingClient({
 
   // ── Markup ───────────────────────────────────────────────────────────────────
   return (
-    <div className="tasting-phase-page">
-      <TastingPageHeader wineType={wineType} />
-      <div className="tasting-phase-body">
-        <LeftSidebar wineType={wineType} progress={nosePct} />
-        <main className="tasting-phase-main">
-          <div className="tasting-phase-content">
-
-            {/* Page heading */}
-            <div className="phase-label">Phase 02</div>
-            <h1 className="phase-heading">The Nose</h1>
-            <p className="phase-description">
-              Assess the aromatic profile — start with condition and intensity,
-              then identify fruit, secondary, and tertiary aromas.
-            </p>
+    <TastingPhaseLayout
+      wineType={wineType}
+      progress={nosePct}
+      timerPage="nose"
+      timerDestination={`/tastings/palate?wineType=${wineType}`}
+      footer={{
+        onBack: handlePreviousPhase,
+        backLabel: "← Back to Sight",
+        nextLabel: "Next: Palate →",
+        onNext: handleNextPhase,
+      }}
+    >
+      <PhaseHeading
+        phase="Phase 02"
+        title="The Nose"
+        description="Assess the aromatic profile — start with condition and intensity, then identify fruit, secondary, and tertiary aromas."
+      />
 
             {/* ── Top assessment (3 cols) ── */}
             <div className="nose-grid">
               {topAssessmentKeys[wineType].map((cat) => (
-                <div key={cat} className="nose-card">
+                <div key={cat} className="tasting-card">
                   {renderCategory(cat)}
                 </div>
               ))}
@@ -368,7 +371,7 @@ export default function NoseTastingClient({
             {/* Fruit Character + Condition — separate cards, equal-width buttons */}
             <div className="nose-grid nose-grid--two-col">
               {primaryFruitAssessmentKeys[wineType].map((cat) => (
-                <div key={cat} className="nose-card">
+                <div key={cat} className="tasting-card">
                   {renderCategory(cat, true)}
                 </div>
               ))}
@@ -412,7 +415,7 @@ export default function NoseTastingClient({
                   {/* Origin + Condition — right, stacked, individual cards */}
                   <div className="nose-wood-layout__assessment">
                     {woodAssessmentKeys[wineType].map((cat) => (
-                      <div key={cat} className="nose-card">
+                      <div key={cat} className="tasting-card">
                         {renderCategory(cat, true)}
                       </div>
                     ))}
@@ -421,15 +424,6 @@ export default function NoseTastingClient({
               </div>
             </div>
 
-          </div>
-        </main>
-      </div>
-      <TastingFooter
-        onBack={handlePreviousPhase}
-        backLabel="← Back to Sight"
-        nextLabel="Next: Palate →"
-        onNext={handleNextPhase}
-      />
-    </div>
+    </TastingPhaseLayout>
   );
 }

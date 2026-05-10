@@ -131,4 +131,20 @@ $sidebar-text-muted:    rgba(228, 228, 204, 0.22) !default;
       background-color: rgba(139, 69, 87, 0.16);
     }
   }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1px solid $sidebar-text-muted;
+    background: transparent;
+    margin-left: auto;
+    flex-shrink: 0;
+    @include transition(background-color border-color, 0.2s);
+
+    &--done {
+      background-color: $sidebar-accent;
+      border-color: $sidebar-accent;
+    }
+  }
 }

@@ -11,6 +11,7 @@ import {
   IconSquareCheck,
 } from "@tabler/icons-react";
 import useAuthenticatedUser from "../../hooks/UseAuthenticatedUser";
+import { useTastingContext } from "./TastingContext";
 
 const navItems = [
   { href: "/tastings/sight",              Icon: IconEye,         label: "Sight" },
@@ -33,9 +34,33 @@ type LeftSidebarProps = {
   progress?: number;
 };
 
+function phaseComplete(href: string, tastingData: ReturnType<typeof useTastingContext>["tastingData"]): boolean {
+  switch (href) {
+    case "/tastings/sight":
+      return Object.keys(tastingData.sight ?? {}).length > 0;
+    case "/tastings/nose":
+      return Object.values(tastingData.nose ?? {}).some((arr) => arr.length > 0);
+    case "/tastings/palate":
+      return Object.keys(tastingData.palate ?? {}).length > 0;
+    case "/tastings/initial-conclusion": {
+      const ic = tastingData.conclusion?.initial;
+      return !!(ic && (ic.worldOrigin || ic.climate || ic.ageRange ||
+        (ic.grapeVarieties?.length ?? 0) > 0 ||
+        (ic.possibleCountries?.length ?? 0) > 0));
+    }
+    case "/tastings/final-conclusion": {
+      const fc = tastingData.conclusion?.final;
+      return !!(fc && Object.values(fc).some(Boolean));
+    }
+    default:
+      return false;
+  }
+}
+
 export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
   const pathname = usePathname();
   const { user, isInitialLoading } = useAuthenticatedUser();
+  const { tastingData } = useTastingContext();
   const isLoggedIn = !isInitialLoading && !!user;
   const currentPhaseName = phaseNames[pathname] ?? "";
 
@@ -74,6 +99,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
       <nav className="tasting-sidebar__nav">
         {navItems.map(({ href, Icon, label }) => {
           const active   = pathname === href;
+          const done     = phaseComplete(href, tastingData);
           const linkHref = wineType ? `${href}?wineType=${wineType}` : href;
           return (
             <Link
@@ -83,6 +109,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
             >
               <Icon size={16} />
               <span>{label}</span>
+              <span className={`tasting-nav-item__dot${done ? " tasting-nav-item__dot--done" : ""}`} />
             </Link>
           );
         })}

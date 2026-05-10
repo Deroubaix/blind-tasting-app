@@ -3,10 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useTastingContext } from "../tasting/TastingContext";
 import { useEffect, useState } from "react";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import LeftSidebar from "../tasting/LeftSideBar";
-import TastingPageHeader from "../layout/TastingPageHeader";
-import TastingFooter from "../layout/TastingFooter";
+import TastingPhaseLayout from "../layout/TastingPhaseLayout";
+import PhaseHeading from "../layout/PhaseHeading";
 
 // ─── Wine colour data (logic, not styling) ────────────────────────────────────
 const wineColors = {
@@ -45,7 +43,6 @@ const wineColors = {
         desc: "Orange-brown rim. Indicates significant age and evolution.",
       },
     ],
-    tip: "Look for the rim of the wine against white paper. In red wines, a blue rim indicates youth, while brick-orange hints suggest maturity. Concentration can indicate the grape variety and winemaking style.",
   },
   white: {
     spectrum: [
@@ -55,44 +52,36 @@ const wineColors = {
         desc: "Very pale yellow, almost watery. Young Pinot Grigio, Muscadet, Albariño.",
       },
       {
+        name: "Yellow",
+        hex: "#E0C840",
+        desc: "Medium yellow. Classic white wines in their prime drinking window. Chardonnay, Pinot Gris.",
+      },
+      {
         name: "Gold",
         hex: "#DAA520",
         desc: "Rich golden yellow. Oaked Chardonnay, aged Riesling, Viognier.",
       },
-      {
-        name: "Amber",
-        hex: "#B87820",
-        desc: "Deep honey-brown gold. Aged whites, Sauternes, oxidative styles, Sherry.",
-      },
     ],
     hue: [
       {
-        name: "Greenish",
-        hex: "#C8D8A0",
-        desc: "Slight green tint. Very young, high acidity. Sauvignon Blanc, Grüner Veltliner.",
+        name: "Silver",
+        hex: "#D0D0C4",
+        desc: "Neutral silvery tint. Young, cool-climate whites. Muscadet, Pinot Grigio.",
       },
       {
-        name: "Yellow",
-        hex: "#E0C860",
-        desc: "Standard yellow hue. Most white wines in their prime drinking window.",
+        name: "Green",
+        hex: "#A8C878",
+        desc: "Green tint at rim. Very young, high acidity. Sauvignon Blanc, Grüner Veltliner.",
       },
       {
-        name: "Bronze",
-        hex: "#C49A48",
-        desc: "Golden-brown tint. Aged whites, some skin-contact wines.",
+        name: "Orange",
+        hex: "#D4903A",
+        desc: "Orange/amber tint. Aged whites, oxidative styles, some skin-contact wines.",
       },
     ],
-    tip: "Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary hues.",
   },
 };
 
-const progressSteps = [
-  { label: "Sight", done: true },
-  { label: "Nose", done: false },
-  { label: "Palate", done: false },
-  { label: "Initial Conclusion", done: false },
-  { label: "Final Conclusion", done: false },
-];
 
 export default function SightTastingClient({
   wineType,
@@ -105,8 +94,6 @@ export default function SightTastingClient({
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string | null>
   >(tastingData.sight || {});
-  const [tipOpen, setTipOpen] = useState(false);
-  const [hoveredSwatch, setHoveredSwatch] = useState<string | null>(null);
 
   useEffect(() => {
     if (tastingData.sight) setSelectedOptions(tastingData.sight);
@@ -126,10 +113,7 @@ export default function SightTastingClient({
   const colors = wineColors[wineType];
 
   // Completion %
-  const mainFields =
-    wineType === "red"
-      ? ["Clarity", "Brightness", "Concentration", "Viscosity", "Color", "Hue"]
-      : ["Clarity", "Brightness", "Viscosity", "Tears", "Color", "Hue"];
+  const mainFields = ["Clarity", "Brightness", "Concentration", "Viscosity", "Color", "Hue"];
   const pct = Math.round(
     (mainFields.filter((f) => selectedOptions[f] != null).length /
       mainFields.length) *
@@ -139,13 +123,13 @@ export default function SightTastingClient({
   // ─── Sub-renderers ───────────────────────────────────────────────────────────
 
   const renderOptions = (category: string, options: string[]) => (
-    <div className="sight-options">
+    <div className="tasting-options">
       {options.map((opt) => {
         const selected = selectedOptions[category] === opt;
         return (
           <button
             key={opt}
-            className={`sight-option${selected ? " sight-option--selected" : ""}`}
+            className={`tasting-option${selected ? " tasting-option--selected" : ""}`}
             onClick={() => handleOptionSelect(category, opt)}
           >
             {opt}
@@ -162,7 +146,7 @@ export default function SightTastingClient({
         return (
           <button
             key={opt}
-            className={`sight-toggle-btn${selected ? " sight-toggle-btn--selected" : ""}`}
+            className={`tasting-toggle-btn${selected ? " tasting-toggle-btn--selected" : ""}`}
             onClick={() => handleOptionSelect(category, opt)}
           >
             {opt}
@@ -181,24 +165,19 @@ export default function SightTastingClient({
           <div
             key={item.name}
             className="sight-swatch-item"
-            onMouseEnter={() => setHoveredSwatch(key)}
-            onMouseLeave={() => setHoveredSwatch(null)}
+            onClick={() => handleOptionSelect(category, item.name)}
           >
-            {/* Tooltip: shown via JS hover state — no touch equivalent */}
-            {hoveredSwatch === key && (
-              <div className="sight-tooltip">{item.desc}</div>
-            )}
             {/* background is dynamic (wine hex value) — only this one inline style */}
             <div
               className={`sight-swatch-rect${selected ? " sight-swatch-rect--selected" : ""}`}
               style={{ backgroundColor: item.hex }}
-              onClick={() => handleOptionSelect(category, item.name)}
             />
             <div
               className={`sight-swatch-label${selected ? " sight-swatch-label--selected" : ""}`}
             >
               {item.name}
             </div>
+            <div className="sight-swatch-desc">{item.desc}</div>
           </div>
         );
       })}
@@ -207,26 +186,28 @@ export default function SightTastingClient({
 
   // ─── Markup ───────────────────────────────────────────────────────────────────
   return (
-    <div className="tasting-phase-page">
-      {/* ── Top bar ── */}
-      <TastingPageHeader wineType={wineType} />
-
-      {/* ── Body ── */}
-      <div className="tasting-phase-body">
-        {/* ── Left nav sidebar ── */}
-        <LeftSidebar wineType={wineType} progress={pct} />
-
-        {/* ── Main content ── */}
-        <main className="tasting-phase-main">
-          <div className="tasting-phase-content">
-            {/* Page heading */}
-            <div className="phase-label">Phase 01</div>
-            <h1 className="phase-heading">The Sight</h1>
-            <p className="phase-description">
-              {wineType === "red"
-                ? "Examine the wine against a neutral white background under consistent lighting conditions."
-                : "Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary hues."}
-            </p>
+    <TastingPhaseLayout
+      wineType={wineType}
+      progress={pct}
+      timerPage="sight"
+      timerDestination={`/tastings/nose?wineType=${wineType}`}
+      footer={{
+        onReset: handleReset,
+        onBack: () => router.push(`/tastings/start?wineType=${wineType}`),
+        backLabel: "← Back to Setup",
+        nextLabel: "Next: The Nose →",
+        onNext: handleNextPhase,
+      }}
+    >
+      <PhaseHeading
+        phase="Phase 01"
+        title="The Sight"
+        description={
+          wineType === "red"
+            ? "Examine the wine against a neutral white background under consistent lighting conditions."
+            : "Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary hues."
+        }
+      />
 
             {/*
               Three-column assessment grid
@@ -242,30 +223,20 @@ export default function SightTastingClient({
             */}
             <div className="sight-grid">
               {/* Row 1, Col 1 — Clarity */}
-              <div className="sight-card">
-                <div className="sight-card__label">Clarity</div>
-                {renderOptions(
-                  "Clarity",
-                  wineType === "red"
-                    ? ["Clear", "Slightly Cloudy"]
-                    : ["Clear", "Hazy"],
-                )}
+              <div className="tasting-card">
+                <div className="tasting-card__label">Clarity</div>
+                {renderOptions("Clarity", ["Clear", "Slight Cloudy"])}
               </div>
 
               {/* Row 1, Col 2 — Brightness */}
-              <div className="sight-card">
-                <div className="sight-card__label">Brightness</div>
-                {renderOptions(
-                  "Brightness",
-                  wineType === "red"
-                    ? ["Hazy", "Day Bright", "Star Bright"]
-                    : ["Dull", "Bright"],
-                )}
+              <div className="tasting-card">
+                <div className="tasting-card__label">Brightness</div>
+                {renderOptions("Brightness", ["Hazy", "Day Bright", "Star Bright"])}
               </div>
 
               {/* Col 3, Rows 1–2 — Physical Evidence */}
-              <div className="sight-card sight-card--evidence">
-                <div className="sight-card__label">Physical Evidence</div>
+              <div className="tasting-card sight-card--evidence">
+                <div className="tasting-card__label">Physical Evidence</div>
                 <div className="sight-evidence-fields">
                   {wineType === "red" && (
                     <div className="sight-evidence-field">
@@ -294,100 +265,44 @@ export default function SightTastingClient({
 
               {/* Row 2, Col 1 — Concentration (red) or Viscosity (white) */}
               {wineType === "red" ? (
-                <div className="sight-card">
-                  <div className="sight-card__label">Concentration</div>
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Concentration</div>
                   {renderOptions("Concentration", ["Pale", "Moderate", "Deep"])}
                 </div>
               ) : (
-                <div className="sight-card">
-                  <div className="sight-card__label">Viscosity</div>
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Viscosity</div>
                   {renderOptions("Viscosity", ["Low", "Medium", "High"])}
                 </div>
               )}
 
               {/* Row 2, Col 2 — Viscosity (red) or Tears (white) */}
               {wineType === "red" ? (
-                <div className="sight-card">
-                  <div className="sight-card__label">Viscosity</div>
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Viscosity</div>
                   {renderOptions("Viscosity", ["Low", "Medium", "High"])}
                 </div>
               ) : (
-                <div className="sight-card">
-                  <div className="sight-card__label">Tears</div>
+                <div className="tasting-card">
+                  <div className="tasting-card__label">Tears</div>
                   {renderOptions("Tears", ["Slow", "Fast"])}
                 </div>
               )}
 
               {/* Row 3, Cols 1–2 — Color Spectrum */}
-              <div className="sight-card sight-card--span-cols">
+              <div className="tasting-card sight-card--span-cols">
                 <div className="sight-card__header">
-                  <div className="sight-card__label">Color Spectrum</div>
+                  <div className="tasting-card__label">Color Spectrum</div>
                   <span className="sight-card__sublabel">Core Color</span>
                 </div>
                 {renderSwatches("Color", colors.spectrum)}
               </div>
 
-              {/* Rows 3–4, Col 3 — Master Tip + Exam Progress stacked */}
-              <div className="sight-col3-stack">
-                {/* Master Tip */}
-                <div className="sight-card sight-card--tip">
-                  <button
-                    className="sight-tip-toggle"
-                    onClick={() => setTipOpen((o) => !o)}
-                  >
-                    <span className="sight-tip-toggle__label">Master Tip</span>
-                    {tipOpen ? (
-                      <IconChevronUp size={14} />
-                    ) : (
-                      <IconChevronDown size={14} />
-                    )}
-                  </button>
-                  {tipOpen ? (
-                    <p className="sight-tip-body">&ldquo;{colors.tip}&rdquo;</p>
-                  ) : (
-                    <p className="sight-tip-placeholder">
-                      Sommelier guidance for this phase.
-                    </p>
-                  )}
-                </div>
-
-                {/* Exam Progress */}
-                <div className="sight-card">
-                  <div className="sight-card__label">Exam Progress</div>
-                  <div className="sight-progress__meta">
-                    <span className="sight-progress__stat-label">Sight</span>
-                    <span className="sight-progress__pct">{pct}%</span>
-                  </div>
-                  <div className="sight-progress__bar-track">
-                    {/* width is dynamic — the only necessary inline style */}
-                    <div
-                      className="sight-progress__bar-fill"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <div className="sight-progress__steps">
-                    {progressSteps.map(({ label, done }) => (
-                      <div key={label} className="sight-progress__step">
-                        <span
-                          className={`sight-progress__step-dot${done ? " sight-progress__step-dot--done" : ""}`}
-                        >
-                          {done ? "●" : "○"}
-                        </span>
-                        <span
-                          className={`sight-progress__step-name${done ? " sight-progress__step-name--done" : ""}`}
-                        >
-                          {label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
 
               {/* Row 4, Cols 1–2 — Hue Rim / Secondary Hue */}
-              <div className="sight-card sight-card--span-cols">
+              <div className="tasting-card sight-card--span-cols">
                 <div className="sight-card__header">
-                  <div className="sight-card__label">
+                  <div className="tasting-card__label">
                     {wineType === "red" ? "Hue Rim" : "Secondary Hue"}
                   </div>
                   <span className="sight-card__sublabel">Rim Quality</span>
@@ -396,20 +311,6 @@ export default function SightTastingClient({
               </div>
             </div>
             {/* end .sight-grid */}
-          </div>
-          {/* end .tasting-phase-content */}
-        </main>
-      </div>
-      {/* end .tasting-phase-body */}
-
-      {/* ── Sticky bottom bar ── */}
-      <TastingFooter
-        onReset={handleReset}
-        backHref={`/tastings/start?wineType=${wineType}`}
-        backLabel="← Back to Setup"
-        nextLabel="Next: The Nose →"
-        onNext={handleNextPhase}
-      />
-    </div>
+    </TastingPhaseLayout>
   );
 }

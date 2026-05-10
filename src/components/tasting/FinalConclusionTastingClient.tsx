@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   IconSearch,
   IconMapPin,
@@ -10,9 +10,10 @@ import {
   IconChevronDown,
 } from "@tabler/icons-react";
 import { useTastingContext } from "../tasting/TastingContext";
-import LeftSidebar from "../tasting/LeftSideBar";
-import TastingPageHeader from "../layout/TastingPageHeader";
-import TastingFooter from "../layout/TastingFooter";
+import TastingPhaseLayout from "../layout/TastingPhaseLayout";
+import PhaseHeading from "../layout/PhaseHeading";
+import TastingAutocomplete from "./TastingAutocomplete";
+import { GRAPE_VARIETALS, WINE_COUNTRIES } from "./autocompleteData";
 
 const qualityTiers = [
   "Regional",
@@ -22,6 +23,16 @@ const qualityTiers = [
   "Single Vineyard",
   "Estate",
 ];
+
+function AnalysisRow({ label, value }: { label: string; value: string }) {
+  if (!value) return null;
+  return (
+    <div className="fc-analysis__row">
+      <div className="fc-analysis__row-label">{label}</div>
+      <div className="fc-analysis__row-value">{value}</div>
+    </div>
+  );
+}
 
 export default function FinalConclusionTastingClient({
   wineType,
@@ -39,7 +50,40 @@ export default function FinalConclusionTastingClient({
   const [regionAppellation, setRegionAppellation] = useState(saved["regionAppellation"] ?? "");
   const [regionInput, setRegionInput] = useState("");
   const [qualityLevel, setQualityLevel] = useState(saved["qualityLevel"] ?? "");
+  const [qualityOpen, setQualityOpen] = useState(false);
+  const qualityRef = useRef<HTMLDivElement>(null);
   const [vintage, setVintage] = useState(saved["vintage"] ?? "");
+
+  useEffect(() => {
+    if (!qualityOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (qualityRef.current && !qualityRef.current.contains(e.target as Node))
+        setQualityOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [qualityOpen]);
+
+  // Analysis summaries derived from prior phases
+  const sightSummary = tastingData.sight
+    ? Object.values(tastingData.sight).filter(Boolean).join(" · ")
+    : "";
+  const noseSummary = tastingData.nose
+    ? Object.values(tastingData.nose).flat().filter(Boolean).join(" · ")
+    : "";
+  const palateSummary = tastingData.palate
+    ? Object.values(tastingData.palate).filter(Boolean).join(" · ")
+    : "";
+  const initial = tastingData.conclusion?.initial;
+  const initialCallSummary = initial
+    ? [initial.worldOrigin, initial.climate, initial.ageRange, ...(initial.grapeVarieties ?? [])]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
+  const possibleOriginSummary = (initial?.possibleCountries ?? []).join(" · ");
+  const finalIdentity = [vintage, grapeVariety, qualityLevel, countryOfOrigin]
+    .filter(Boolean)
+    .join(" · ");
 
   const conclusionPct = Math.round(
     [grapeVariety, countryOfOrigin, regionAppellation, qualityLevel, vintage]
@@ -64,7 +108,6 @@ export default function FinalConclusionTastingClient({
     router.push(`/tastings/initial-conclusion?wineType=${wineType}`);
   };
 
-  // Single-value confirm helper
   const confirm = (input: string, setter: (v: string) => void, inputSetter: (v: string) => void) => {
     const v = input.trim();
     if (v) setter(v);
@@ -72,151 +115,189 @@ export default function FinalConclusionTastingClient({
   };
 
   return (
-    <div className="tasting-phase-page">
-      <TastingPageHeader wineType={wineType} />
-      <div className="tasting-phase-body">
-        <LeftSidebar wineType={wineType} progress={conclusionPct} />
-        <main className="tasting-phase-main">
-          <div className="tasting-phase-content">
+    <TastingPhaseLayout
+      wineType={wineType}
+      progress={conclusionPct}
+      timerPage="finalConclusion"
+      timerDestination={`/tastings/save?wineType=${wineType}`}
+      footer={{
+        onBack: handleBack,
+        backLabel: "← Back to Initial Conclusion",
+        nextLabel: "Review & Save →",
+        onNext: handleNext,
+      }}
+    >
+      <div className="fc-layout">
 
-            <div className="phase-label">Phase 05</div>
-            <h1 className="phase-heading">Final Conclusion</h1>
-            <p className="phase-description">
-              Synthesize your observations from sight, nose, and palate into a definitive
-              identification of the wine.
-            </p>
+        {/* ── Left: heading + analysis panel ── */}
+        <div className="fc-left">
+          <PhaseHeading
+            phase="Phase 05"
+            title="Final Conclusion"
+            description="Commit to your definitive identification. Synthesize everything — sight, nose, palate — into a single declaration."
+          />
 
-            <div className="fc-grid">
-
-              {/* Grape Variety/Blend */}
-              <div className="fc-field">
-                <label className="fc-field__label">Grape Variety/Blend</label>
-                <div className="ic-search-row">
-                  <div className="ic-search-input-wrap">
-                    <IconSearch size={14} className="ic-search-icon" />
-                    <input
-                      className="ic-search-input"
-                      placeholder="e.g., Chardonnay"
-                      value={grapeInput}
-                      onChange={(e) => setGrapeInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && confirm(grapeInput, setGrapeVariety, setGrapeInput)}
-                    />
-                  </div>
-                  <button className="ic-confirm-btn" onClick={() => confirm(grapeInput, setGrapeVariety, setGrapeInput)}>
-                    Confirm
-                  </button>
-                </div>
-                {grapeVariety && (
-                  <div className="ic-chips">
-                    <span className="ic-chip">
-                      {grapeVariety}
-                      <button className="ic-chip__remove" onClick={() => setGrapeVariety("")}>×</button>
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Country of Origin */}
-              <div className="fc-field">
-                <label className="fc-field__label">Country of Origin</label>
-                <div className="ic-search-row">
-                  <div className="ic-search-input-wrap">
-                    <IconMapPin size={14} className="ic-search-icon" />
-                    <input
-                      className="ic-search-input"
-                      placeholder="e.g., France"
-                      value={countryInput}
-                      onChange={(e) => setCountryInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && confirm(countryInput, setCountryOfOrigin, setCountryInput)}
-                    />
-                  </div>
-                  <button className="ic-confirm-btn" onClick={() => confirm(countryInput, setCountryOfOrigin, setCountryInput)}>
-                    Confirm
-                  </button>
-                </div>
-                {countryOfOrigin && (
-                  <div className="ic-chips">
-                    <span className="ic-chip">
-                      {countryOfOrigin}
-                      <button className="ic-chip__remove" onClick={() => setCountryOfOrigin("")}>×</button>
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Region/Appellation */}
-              <div className="fc-field">
-                <label className="fc-field__label">Region/Appellation</label>
-                <div className="ic-search-row">
-                  <div className="ic-search-input-wrap">
-                    <IconMap size={14} className="ic-search-icon" />
-                    <input
-                      className="ic-search-input"
-                      placeholder="e.g., Burgundy (Côte de Beaune)"
-                      value={regionInput}
-                      onChange={(e) => setRegionInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && confirm(regionInput, setRegionAppellation, setRegionInput)}
-                    />
-                  </div>
-                  <button className="ic-confirm-btn" onClick={() => confirm(regionInput, setRegionAppellation, setRegionInput)}>
-                    Confirm
-                  </button>
-                </div>
-                {regionAppellation && (
-                  <div className="ic-chips">
-                    <span className="ic-chip">
-                      {regionAppellation}
-                      <button className="ic-chip__remove" onClick={() => setRegionAppellation("")}>×</button>
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Quality Level */}
-              <div className="fc-field">
-                <label className="fc-field__label">Quality Level</label>
-                <div className="fc-select-wrap">
-                  <select
-                    className="fc-select"
-                    value={qualityLevel}
-                    onChange={(e) => setQualityLevel(e.target.value)}
-                  >
-                    <option value="" disabled>Select quality tier...</option>
-                    {qualityTiers.map((tier) => (
-                      <option key={tier} value={tier}>{tier}</option>
-                    ))}
-                  </select>
-                  <IconChevronDown size={16} className="fc-select__icon" />
-                </div>
-              </div>
-
-              {/* Vintage — half-width */}
-              <div className="fc-field fc-field--half">
-                <label className="fc-field__label">Vintage</label>
-                <div className="ic-search-row">
-                  <div className="ic-search-input-wrap">
-                    <IconCalendar size={14} className="ic-search-icon" />
-                    <input
-                      className="ic-search-input"
-                      placeholder="YYYY"
-                      maxLength={4}
-                      value={vintage}
-                      onChange={(e) => setVintage(e.target.value.replace(/\D/g, ""))}
-                    />
-                  </div>
-                </div>
-              </div>
-
+          <div className="fc-analysis">
+            <div className="fc-analysis__header">
+              <span className="fc-analysis__title">Your Analysis</span>
+              <span className="fc-analysis__subtitle">Confirmed so far</span>
             </div>
+
+            <AnalysisRow label="Color & Sight" value={sightSummary} />
+            <AnalysisRow label="Primary Aromas" value={noseSummary} />
+            <AnalysisRow label="Palate Structure" value={palateSummary} />
+            <AnalysisRow label="Initial Call" value={initialCallSummary} />
+            <AnalysisRow label="Possible Origin" value={possibleOriginSummary} />
+
+            {finalIdentity && (
+              <>
+                <div className="fc-analysis__divider" />
+                <div className="fc-analysis__row">
+                  <div className="fc-analysis__row-label">Final Identity</div>
+                  <div className="fc-analysis__row-value fc-analysis__row-value--identity">
+                    {finalIdentity}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-        </main>
+        </div>
+
+        {/* ── Right: form ── */}
+        <div className="fc-right">
+          <div className="fc-grid">
+
+            {/* Grape Variety/Blend */}
+            <div className="fc-field">
+              <label className="tasting-card__label">Grape Variety / Blend</label>
+              <div className="tasting-search-row">
+                <TastingAutocomplete
+                  suggestions={GRAPE_VARIETALS}
+                  value={grapeInput}
+                  onChange={setGrapeInput}
+                  onConfirm={(v) => confirm(v, setGrapeVariety, setGrapeInput)}
+                  placeholder="e.g., Pinot Noir"
+                  icon={<IconSearch size={14} className="tasting-search-icon" />}
+                />
+                <button className="tasting-confirm-btn" onClick={() => confirm(grapeInput, setGrapeVariety, setGrapeInput)}>
+                  Add
+                </button>
+              </div>
+              {grapeVariety && (
+                <div className="tasting-chips">
+                  <span className="tasting-chip">
+                    {grapeVariety}
+                    <button className="tasting-chip__remove" onClick={() => setGrapeVariety("")}>×</button>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Country of Origin */}
+            <div className="fc-field">
+              <label className="tasting-card__label">Country of Origin</label>
+              <div className="tasting-search-row">
+                <TastingAutocomplete
+                  suggestions={WINE_COUNTRIES}
+                  value={countryInput}
+                  onChange={setCountryInput}
+                  onConfirm={(v) => confirm(v, setCountryOfOrigin, setCountryInput)}
+                  placeholder="e.g., France"
+                  icon={<IconMapPin size={14} className="tasting-search-icon" />}
+                />
+                <button className="tasting-confirm-btn" onClick={() => confirm(countryInput, setCountryOfOrigin, setCountryInput)}>
+                  Add
+                </button>
+              </div>
+              {countryOfOrigin && (
+                <div className="tasting-chips">
+                  <span className="tasting-chip">
+                    {countryOfOrigin}
+                    <button className="tasting-chip__remove" onClick={() => setCountryOfOrigin("")}>×</button>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Region/Appellation */}
+            <div className="fc-field">
+              <label className="tasting-card__label">Region / Appellation</label>
+              <div className="tasting-search-row">
+                <div className="tasting-search-input-wrap">
+                  <IconMap size={14} className="tasting-search-icon" />
+                  <input
+                    className="tasting-search-input"
+                    placeholder="e.g., Burgundy — Côte de Nuits"
+                    value={regionInput}
+                    onChange={(e) => setRegionInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && confirm(regionInput, setRegionAppellation, setRegionInput)}
+                  />
+                </div>
+                <button className="tasting-confirm-btn" onClick={() => confirm(regionInput, setRegionAppellation, setRegionInput)}>
+                  Add
+                </button>
+              </div>
+              {regionAppellation && (
+                <div className="tasting-chips">
+                  <span className="tasting-chip">
+                    {regionAppellation}
+                    <button className="tasting-chip__remove" onClick={() => setRegionAppellation("")}>×</button>
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Quality Level */}
+            <div className="fc-field">
+              <label className="tasting-card__label">Quality Level</label>
+              <div className="tasting-select" ref={qualityRef}>
+                <button
+                  type="button"
+                  className={`tasting-select__trigger${!qualityLevel ? " tasting-select__trigger--placeholder" : ""}`}
+                  onClick={() => setQualityOpen(!qualityOpen)}
+                >
+                  {qualityLevel || "Select quality tier..."}
+                  <IconChevronDown size={14} className={`tasting-select__chevron${qualityOpen ? " tasting-select__chevron--open" : ""}`} />
+                </button>
+                {qualityOpen && (
+                  <ul className="tasting-select__dropdown">
+                    {qualityTiers.map((tier) => (
+                      <li key={tier}>
+                        <button
+                          type="button"
+                          className={`tasting-select__option${qualityLevel === tier ? " tasting-select__option--selected" : ""}`}
+                          onClick={() => { setQualityLevel(tier); setQualityOpen(false); }}
+                        >
+                          {tier}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            {/* Vintage */}
+            <div className="fc-field fc-field--half">
+              <label className="tasting-card__label">Vintage</label>
+              <div className="tasting-search-row">
+                <div className="tasting-search-input-wrap">
+                  <IconCalendar size={14} className="tasting-search-icon" />
+                  <input
+                    className="tasting-search-input"
+                    placeholder="Enter the harvest year"
+                    maxLength={4}
+                    value={vintage}
+                    onChange={(e) => setVintage(e.target.value.replace(/\D/g, ""))}
+                  />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-      <TastingFooter
-        onBack={handleBack}
-        backLabel="← Back to Initial Conclusion"
-        nextLabel="Save Tasting →"
-        onNext={handleNext}
-      />
-    </div>
+    </TastingPhaseLayout>
   );
 }

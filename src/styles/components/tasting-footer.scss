@@ -1,10 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Tasting Footer — sticky bottom bar shared by all tasting phase pages
 // ─────────────────────────────────────────────────────────────────────────────
-$tf-border:        rgba(228, 228, 204, 0.08);
-$tf-accent:        #8B4557;
-$tf-text-tertiary: rgba(228, 228, 204, 0.4);
-$tf-text-muted:    rgba(228, 228, 204, 0.22);
 
 .tasting-footer {
   position: fixed;
@@ -13,12 +9,19 @@ $tf-text-muted:    rgba(228, 228, 204, 0.22);
   right: 0;
   height: 60px;
   background-color: $color-darkGrey;
-  border-top: 1px solid $tf-border;
+  border-top: 1px solid $tasting-border;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 $page-spacing;
   z-index: $index-navbar - 100;
+
+  // Reset global button defaults for all footer buttons
+  button {
+    text-transform: none;
+    letter-spacing: normal;
+    min-width: unset;
+  }
 
   &__left {
     display: flex;
@@ -26,23 +29,51 @@ $tf-text-muted:    rgba(228, 228, 204, 0.22);
     gap: $spacing-md;
   }
 
-  &__autosave {
-    @include eyebrow-label(0.6rem);
-    color: $tf-text-muted;
-    letter-spacing: 0.08em;
+  &__reset-confirm {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  &__reset-question {
+    color: $tasting-text-tertiary;
+    font-size: $font-size-xs;
+    font-family: $font-display-normal-family;
+  }
+
+  &__reset-yes {
+    background: none;
+    border: 1px solid rgba(228, 228, 204, 0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: #e05555;
+    font-size: $font-size-xs;
+    font-family: $font-display-normal-family;
+    cursor: pointer;
+    @include transition(color border-color, 0.15s);
+
+    &:hover { color: #ff6b6b; border-color: rgba(228, 228, 204, 0.5); }
+  }
+
+  &__reset-no {
+    background: none;
+    border: 1px solid rgba(228, 228, 204, 0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: $tasting-text-tertiary;
+    font-size: $font-size-xs;
+    font-family: $font-display-normal-family;
+    cursor: pointer;
+    @include transition(color border-color, 0.15s);
+
+    &:hover { color: $color-white; border-color: rgba(228, 228, 204, 0.5); }
   }
 
   &__reset {
-    // Reset global button defaults
-    text-transform: none;
-    letter-spacing: normal;
-    min-width: unset;
-
-    // Component styles
     background: none;
     border: none;
     padding: 0;
-    color: $tf-text-tertiary;
+    color: $tasting-text-tertiary;
     font-size: $font-size-xs;
     font-family: $font-display-normal-family;
     cursor: pointer;
@@ -52,29 +83,11 @@ $tf-text-muted:    rgba(228, 228, 204, 0.22);
     &:hover { color: $color-white; }
   }
 
-  &__back {
-    color: $tf-text-tertiary;
-    font-size: $font-size-sm;
-    font-family: $font-display-normal-family;
-    text-decoration: none;
-    letter-spacing: 0.05em;
-    @include transition(color, 0.2s);
-
-    &:after { display: none; }
-    &:hover { color: $color-white; }
-  }
-
   &__back-btn {
-    // Reset global button defaults
-    text-transform: none;
-    letter-spacing: normal;
-    min-width: unset;
-
-    // Component styles
     background: none;
     border: none;
     padding: 0;
-    color: $tf-text-tertiary;
+    color: $tasting-text-tertiary;
     font-size: $font-size-sm;
     font-family: $font-display-normal-family;
     cursor: pointer;
@@ -85,13 +98,10 @@ $tf-text-muted:    rgba(228, 228, 204, 0.22);
   }
 
   &__next {
-    // Reset global button defaults
-    text-transform: none;
-    letter-spacing: normal;
-    min-width: unset;
-
-    // Component styles
-    background-color: $tf-accent;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    background-color: $tasting-accent;
     color: $color-white;
     border: none;
     border-radius: 6px;
@@ -100,8 +110,9 @@ $tf-text-muted:    rgba(228, 228, 204, 0.22);
     font-weight: $font-weight-semibold;
     font-family: $font-display-normal-family;
     cursor: pointer;
-    @include transition(background-color, 0.2s);
+    @include transition(background-color opacity, 0.2s);
 
-    &:hover { background-color: lighten($tf-accent, 8%); }
+    &:hover:not(:disabled) { background-color: lighten($tasting-accent, 8%); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
   }
 }

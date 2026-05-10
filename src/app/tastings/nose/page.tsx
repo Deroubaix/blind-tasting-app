@@ -5,11 +5,12 @@ export const metadata: Metadata = {
   title: "Nose | Wine Tasting",
 };
 
-export default function NosePage({
+export default async function NosePage({
   searchParams,
 }: {
-  searchParams: { wineType?: string };
+  searchParams: Promise<{ wineType?: string }>;
 }) {
-  const wineType = (searchParams.wineType as "red" | "white") || "red";
+  const { wineType: wineTypeParam } = await searchParams;
+  const wineType = (wineTypeParam as "red" | "white") || "red";
   return <NoseTastingClient wineType={wineType} />;
 }

@@ -1,0 +1,13 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tasting session design tokens
+// Single source of truth for the accent palette shared by all tasting phase
+// pages: Sight, Nose, Palate, Initial/Final Conclusion, footer, and header.
+// ─────────────────────────────────────────────────────────────────────────────
+
+$tasting-accent:          #8B4557;
+$tasting-accent-light:    #D4A0AB;
+$tasting-border:          rgba(228, 228, 204, 0.08);
+$tasting-border-mid:      rgba(228, 228, 204, 0.12);
+$tasting-text-secondary:  rgba(228, 228, 204, 0.65);
+$tasting-text-tertiary:   rgba(228, 228, 204, 0.4);
+$tasting-text-muted:      rgba(228, 228, 204, 0.22);
