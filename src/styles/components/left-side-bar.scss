@@ -55,6 +55,48 @@ $sidebar-text-muted:    rgba(228, 228, 204, 0.22) !default;
     font-family: $font-display-normal-family;
   }
 
+  // ── Exam-level progress (5 segments) ─────────────────────────────────────
+  &__exam-progress {
+    padding: $spacing-md $spacing-xl;
+    border-bottom: 1px solid $sidebar-border;
+  }
+
+  &__exam-label {
+    @include eyebrow-label(0.58rem);
+    color: $sidebar-text-tertiary;
+    letter-spacing: 0.12em;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__exam-count {
+    color: $sidebar-accent-light;
+    font-size: 0.65rem;
+  }
+
+  &__exam-segments {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__exam-segment {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background-color: $sidebar-text-muted;
+    @include transition(background-color, 0.25s);
+
+    &--active {
+      background-color: rgba(139, 69, 87, 0.45);
+    }
+
+    &--done {
+      background-color: $sidebar-accent;
+    }
+  }
+
   // ── Phase progress ────────────────────────────────────────────────────────
   &__progress-section {
     padding: $spacing-lg $spacing-xl $spacing-md;

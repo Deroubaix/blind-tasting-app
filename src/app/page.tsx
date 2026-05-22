@@ -68,7 +68,7 @@ export default function Homepage() {
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">
-                <Image src="/images/SVG/eye.svg" alt="Eye icon" width={24} height={24} />
+                <Image src="/images/SVG/eye.svg" alt="" width={24} height={24} />
               </div>
               <h3>Analytical Sight</h3>
               <p>
@@ -82,7 +82,7 @@ export default function Homepage() {
             </div>
             <div className="feature-card featured">
               <div className="feature-icon">
-                <Image src="/images/SVG/air.svg" alt="Air icon" width={24} height={24} />
+                <Image src="/images/SVG/air.svg" alt="" width={24} height={24} />
               </div>
               <h3>Aromatic Profiling</h3>
               <p>
@@ -98,7 +98,7 @@ export default function Homepage() {
             </div>
             <div className="feature-card">
               <div className="feature-icon">
-                <Image src="/images/SVG/glass.svg" alt="Glass icon" width={24} height={24} />
+                <Image src="/images/SVG/glass.svg" alt="" width={24} height={24} />
               </div>
               <h3>Palate Logic</h3>
               <p>

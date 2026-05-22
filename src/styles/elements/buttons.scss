@@ -172,7 +172,6 @@ a.button {
 		background-color: $color-surface-variant;
 		border-color: rgba(228, 228, 204, 0.22);
 		color: $color-white;
-		outline: none;
 	}
 
 	&--selected {
@@ -201,6 +200,10 @@ a.button {
 			color: $color-white;
 			background: none;
 		}
+	}
+
+	&--custom {
+		border-style: dashed;
 	}
 }
 

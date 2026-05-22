@@ -1,3 +1,4 @@
+@use 'sass:color';
 .auth-page {
   min-height: 100dvh;
   display: flex;
@@ -117,7 +118,6 @@
   padding: 0.8rem 1rem;
   font-family: $font-display-normal-family;
   font-size: 0.85rem;
-  outline: none;
   transition: border-color 0.2s ease;
 
   &::placeholder { color: rgba(228, 228, 204, 0.2); }
@@ -157,7 +157,7 @@
   margin-top: $page-spacing * 0.25;
   transition: background-color 0.2s ease;
 
-  &:hover:not(:disabled) { background-color: lighten($color-burgundy, 8%); }
+  &:hover:not(:disabled) { background-color: color.scale($color-burgundy, $lightness: 8%); }
 
   &:disabled {
     opacity: 0.6;

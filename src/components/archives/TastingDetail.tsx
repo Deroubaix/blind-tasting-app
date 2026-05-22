@@ -5,6 +5,8 @@ import Link from "next/link";
 import { TastingData } from "../../types/TastingData";
 import ClientTastingService from "../../services/client/ClientTastingService";
 
+const service = new ClientTastingService();
+
 type SavedTasting = TastingData & { id: number; created_at: string };
 
 function formatKey(key: string): string {
@@ -52,7 +54,7 @@ export default function TastingDetail({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    new ClientTastingService()
+    service
       .getTasting(id)
       .then(setTasting)
       .catch(() => setError("Tasting not found."))

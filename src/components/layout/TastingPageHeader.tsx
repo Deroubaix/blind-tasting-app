@@ -36,7 +36,7 @@ export default function TastingPageHeader({ wineType, timerPage, timerDestinatio
   const initials = user?.email ? getInitials(user.email) : "";
 
   return (
-    <header className="tasting-page-header">
+    <header className={`tasting-page-header${showTimer ? "" : " tasting-page-header--no-timer"}`}>
       <Link href="/" className="tasting-page-header__logo">
         The Sommelier&apos;s Ledger
       </Link>

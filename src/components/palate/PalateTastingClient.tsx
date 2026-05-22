@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTastingContext } from "../tasting/TastingContext";
 import TastingPhaseLayout from "../layout/TastingPhaseLayout";
 import PhaseHeading from "../layout/PhaseHeading";
@@ -39,28 +39,22 @@ export default function PalateTastingClient({
   const router = useRouter();
   const { tastingData, updateTastingData } = useTastingContext();
 
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string | null>>(
-    tastingData.palate || {},
-  );
+  const selectedOptions: Record<string, string | null> = tastingData.palate || {};
   const [confirmNose, setConfirmNose] = useState(tastingData.confirmNose || "");
-
-  useEffect(() => {
-    if (tastingData.palate) setSelectedOptions(tastingData.palate);
-  }, [tastingData]);
 
   const currentOptions = palateTastingOptions[wineType];
 
   const handleOptionSelect = (category: string, option: string) => {
-    setSelectedOptions((prev) => ({ ...prev, [category]: option }));
+    updateTastingData({ palate: { ...selectedOptions, [category]: option } });
   };
 
   const handleNextPhase = () => {
-    updateTastingData({ palate: selectedOptions, confirmNose });
+    updateTastingData({ confirmNose });
     router.push(`/tastings/initial-conclusion?wineType=${wineType}`);
   };
 
   const handlePreviousPhase = () => {
-    updateTastingData({ palate: selectedOptions, confirmNose });
+    updateTastingData({ confirmNose });
     router.push(`/tastings/nose?wineType=${wineType}`);
   };
 
@@ -68,6 +62,7 @@ export default function PalateTastingClient({
   const palatePct = Math.round(
     (allKeys.filter((k) => selectedOptions[k] != null).length / allKeys.length) * 100,
   );
+  const requiredFilled = [...REQUIRED_CATEGORIES].every((k) => selectedOptions[k] != null);
 
   return (
     <TastingPhaseLayout
@@ -80,6 +75,7 @@ export default function PalateTastingClient({
         backLabel: "← Back to Nose",
         nextLabel: "Next: Initial Conclusion →",
         onNext: handleNextPhase,
+        nextDisabled: !requiredFilled,
       }}
     >
       <PhaseHeading

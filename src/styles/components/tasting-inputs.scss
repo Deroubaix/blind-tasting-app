@@ -1,3 +1,4 @@
+@use 'sass:color';
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared tasting patterns
 // Used by: Sight, Nose, Palate, Initial Conclusion, Final Conclusion
@@ -28,7 +29,6 @@
   font-family: $font-display-normal-family;
   color: $color-white;
   resize: vertical;
-  outline: none;
   box-sizing: border-box;
   line-height: 1.6;
 
@@ -45,7 +45,6 @@
   font-size: $font-size-sm;
   font-family: $font-display-normal-family;
   color: $color-white;
-  outline: none;
 
   &::placeholder { color: $tasting-text-muted; }
   &:focus { border-color: $tasting-accent; }
@@ -96,7 +95,6 @@
   flex: 1;
   background: transparent;
   border: none;
-  outline: none;
   color: $color-white;
   font-size: $font-size-sm;
   font-family: $font-display-normal-family;
@@ -119,7 +117,7 @@
   white-space: nowrap;
   @include transition(background-color, 0.15s);
 
-  &:hover { background-color: lighten($tasting-accent, 8%); }
+  &:hover { background-color: color.scale($tasting-accent, $lightness: 8%); }
 }
 
 // ── Tag chips ────────────────────────────────────────────────────────────────
@@ -160,64 +158,33 @@
   position: relative;
   width: 100%;
 
-  &__trigger {
+  &__native {
+    appearance: none;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     background-color: $color-surface-variant;
     border: 1px solid $tasting-border-mid;
     border-radius: 6px;
-    padding: 0 $spacing-sm;
+    padding: 0 36px 0 $spacing-sm;
+    height: 40px;
     font-size: $font-size-sm;
     font-family: $font-display-normal-family;
     color: $color-white;
     cursor: pointer;
-    text-align: left;
     @include transition(border-color, 0.15s);
-    height: 40px;
 
-    &--placeholder { color: $tasting-text-muted; }
-    &:focus { border-color: rgba(228, 228, 204, 0.25); outline: none; }
+    option { background-color: $color-darkGrey; }
+
+    &:invalid,
+    &:has(option[value=""]:checked) { color: $tasting-text-muted; }
   }
 
   &__chevron {
-    flex-shrink: 0;
-    color: $color-white;
-    @include transition(transform, 0.2s);
-    &--open { transform: rotate(180deg); }
-  }
-
-  &__dropdown {
     position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background-color: $color-darkGrey;
-    border: 1px solid $tasting-border-mid;
-    border-radius: 6px;
-    padding: 4px 0;
-    list-style: none;
-    margin: 0;
-    z-index: 50;
-    overflow: hidden;
-  }
-
-  &__option {
-    display: block;
-    width: 100%;
-    padding: 8px $spacing-sm;
-    background: none;
-    border: none;
-    font-size: $font-size-sm;
-    font-family: $font-display-normal-family;
-    color: $tasting-text-secondary;
-    cursor: pointer;
-    text-align: left;
-    @include transition(background-color color, 0.1s);
-
-    &:hover { background-color: rgba(139, 69, 87, 0.15); color: $color-white; }
-    &--selected { color: $tasting-accent-light; background-color: rgba(139, 69, 87, 0.1); }
+    right: $spacing-sm;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: $color-white;
   }
 }
 

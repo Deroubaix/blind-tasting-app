@@ -5,6 +5,34 @@
 	box-sizing: border-box;
 }
 
+:focus-visible {
+  outline: 2px solid $tasting-accent-light;
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  padding: 8px 16px;
+  background-color: $tasting-accent;
+  color: $color-white;
+  font-size: $font-size-sm;
+  font-family: $font-display-normal-family;
+  text-decoration: none;
+  border-radius: 0 0 6px 0;
+  translate: 0 -100%;
+  transition: translate 0.15s ease;
+
+  &:after { display: none; }
+
+  &:focus-visible {
+    translate: 0 0;
+    outline: none;
+  }
+}
+
 body,
 html {
   background-color: $color-black;

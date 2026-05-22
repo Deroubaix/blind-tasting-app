@@ -26,6 +26,13 @@ $tph-border: rgba(228, 228, 204, 0.06);
     &:after { display: none; }
   }
 
+  &--no-timer {
+    display: flex;
+    justify-content: space-between;
+
+    .tasting-page-header__center { display: none; }
+  }
+
   // ── Center — timer block ────────────────────────────────────────────────────
   &__center {
     display: flex;
@@ -49,9 +56,13 @@ $tph-border: rgba(228, 228, 204, 0.06);
     letter-spacing: 0.06em;
     line-height: 1;
     color: $color-white;
+    @include transition(color, 0.3s);
 
-    // When time hits zero
-    .timer-display--expired {
+    &.timer-display--warning {
+      color: $color-warning;
+    }
+
+    &.timer-display--expired {
       color: $tasting-accent-light;
     }
   }

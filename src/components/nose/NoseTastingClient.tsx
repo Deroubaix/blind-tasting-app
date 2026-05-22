@@ -131,62 +131,48 @@ export default function NoseTastingClient({
   const router = useRouter();
   const { tastingData, updateTastingData } = useTastingContext();
 
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>(
-    (tastingData.nose as Record<string, string[]>) || {},
-  );
+  const selectedOptions: Record<string, string[]> = (tastingData.nose as Record<string, string[]>) || {};
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [showCustomInput, setShowCustomInput] = useState<Record<string, boolean>>({});
-  const [complexOpen, setComplexOpen] = useState(false);
-  const [woodOpen, setWoodOpen] = useState(false);
+  const [complexOpen, setComplexOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const v = localStorage.getItem("nose-complex-open");
+    return v === null ? true : v === "true";
+  });
+  const [woodOpen, setWoodOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const v = localStorage.getItem("nose-wood-open");
+    return v === null ? true : v === "true";
+  });
 
-  useEffect(() => {
-    if (tastingData.nose) {
-      setSelectedOptions(tastingData.nose as Record<string, string[]>);
-    }
-  }, [tastingData]);
+
+  useEffect(() => { localStorage.setItem("nose-complex-open", String(complexOpen)); }, [complexOpen]);
+  useEffect(() => { localStorage.setItem("nose-wood-open", String(woodOpen)); }, [woodOpen]);
 
   const handleOptionToggle = (category: string, option: string) => {
-    setSelectedOptions((prev) => {
-      const current = prev[category] || [];
-      if (SINGLE_SELECT.has(category)) {
-        return { ...prev, [category]: current[0] === option ? [] : [option] };
-      }
-      const exists = current.includes(option);
-      return {
-        ...prev,
-        [category]: exists ? current.filter((o) => o !== option) : [...current, option],
-      };
-    });
+    const current = selectedOptions[category] || [];
+    const newSelection = SINGLE_SELECT.has(category)
+      ? current[0] === option ? [] : [option]
+      : current.includes(option) ? current.filter((o) => o !== option) : [...current, option];
+    updateTastingData({ nose: { ...selectedOptions, [category]: newSelection } });
   };
 
   const handleAddCustom = (category: string) => {
     const value = customInputs[category]?.trim();
     if (!value) return;
-    setSelectedOptions((prev) => {
-      const current = prev[category] || [];
-      if (current.includes(value)) return prev;
-      return { ...prev, [category]: [...current, value] };
-    });
+    const current = selectedOptions[category] || [];
+    if (current.includes(value)) return;
+    updateTastingData({ nose: { ...selectedOptions, [category]: [...current, value] } });
     setCustomInputs((prev) => ({ ...prev, [category]: "" }));
     setShowCustomInput((prev) => ({ ...prev, [category]: false }));
   };
 
   const handleRemoveCustom = (category: string, value: string) => {
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [category]: (prev[category] || []).filter((o) => o !== value),
-    }));
+    updateTastingData({ nose: { ...selectedOptions, [category]: (selectedOptions[category] || []).filter((o) => o !== value) } });
   };
 
-  const handleNextPhase = () => {
-    updateTastingData({ nose: selectedOptions });
-    router.push(`/tastings/palate?wineType=${wineType}`);
-  };
-
-  const handlePreviousPhase = () => {
-    updateTastingData({ nose: selectedOptions });
-    router.push(`/tastings/sight?wineType=${wineType}`);
-  };
+  const handleNextPhase = () => router.push(`/tastings/palate?wineType=${wineType}`);
+  const handlePreviousPhase = () => router.push(`/tastings/sight?wineType=${wineType}`);
 
   const countSelected = (keys: string[]) =>
     keys.reduce((total, cat) => total + (selectedOptions[cat]?.length || 0), 0);
@@ -227,7 +213,7 @@ export default function NoseTastingClient({
         <button
           key={val}
           onClick={() => handleRemoveCustom(category, val)}
-          className="tasting-option tasting-option--selected"
+          className="tasting-option tasting-option--selected tasting-option--custom"
           title="Click to remove"
         >
           {val} ×

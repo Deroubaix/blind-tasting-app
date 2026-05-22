@@ -7,6 +7,8 @@ import { useAuthProvider } from "../auth/AuthProvider";
 import ClientTastingService from "../../services/client/ClientTastingService";
 import { TastingData } from "../../types/TastingData";
 
+const service = new ClientTastingService();
+
 type SavedTasting = TastingData & {
   id: number;
   created_at?: string;
@@ -18,8 +20,6 @@ export default function ArchivesList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const service = new ClientTastingService();
-
   useEffect(() => {
     if (isInitialLoading) return;
     if (!user) {
@@ -78,7 +78,7 @@ export default function ArchivesList() {
           : null;
 
         return (
-          <div key={tasting.id} className="archive-card">
+          <Link key={tasting.id} href={`/archives/${tasting.id}`} className="archive-card no-underline" aria-label={`View details for ${title}`}>
             <div className="archive-card__top">
               <span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
                 {tasting.wineType} Wine
@@ -98,11 +98,10 @@ export default function ArchivesList() {
 
             <div className="archive-card__footer">
               {date && <span className="archive-card__date">{date}</span>}
-              <Link href={`/archives/${tasting.id}`} className="archive-card__details no-underline">
-                Details
-              </Link>
+              {/* visual signal only — card is the interactive element; future delete button needs e.stopPropagation() */}
+              <span className="archive-card__details">Details →</span>
             </div>
-          </div>
+          </Link>
         );
       })}
 
