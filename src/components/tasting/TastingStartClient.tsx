@@ -53,9 +53,11 @@ export default function TastingStartClient() {
 
         <form onSubmit={handleStart}>
           {/* Wine Type Cards */}
-          <div className="wine-type-grid">
+          <div className="wine-type-grid" role="radiogroup" aria-label="Wine type">
             <button
               type="button"
+              role="radio"
+              aria-checked={wineType === "Red"}
               className={`wine-type-card wine-type-card--red ${wineType === "Red" ? "selected" : ""}`}
               onClick={() => setWineType("Red")}
             >
@@ -68,6 +70,8 @@ export default function TastingStartClient() {
 
             <button
               type="button"
+              role="radio"
+              aria-checked={wineType === "White"}
               className={`wine-type-card wine-type-card--white ${wineType === "White" ? "selected" : ""}`}
               onClick={() => setWineType("White")}
             >
@@ -112,9 +116,11 @@ export default function TastingStartClient() {
             </div>
 
             {timerEnabled && (
-              <div className="timer-duration-pills">
+              <div className="timer-duration-pills" role="radiogroup" aria-label="Timer duration">
                 <button
                   type="button"
+                  role="radio"
+                  aria-checked={timerDuration === 4}
                   className={`duration-pill ${timerDuration === 4 ? "selected" : ""}`}
                   onClick={() => setTimerDuration(4)}
                 >
@@ -122,6 +128,8 @@ export default function TastingStartClient() {
                 </button>
                 <button
                   type="button"
+                  role="radio"
+                  aria-checked={timerDuration === 7.5}
                   className={`duration-pill ${timerDuration === 7.5 ? "selected" : ""}`}
                   onClick={() => setTimerDuration(7.5)}
                 >

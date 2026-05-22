@@ -64,6 +64,8 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
   const isLoggedIn = !isInitialLoading && !!user;
   const currentPhaseName = phaseNames[pathname] ?? "";
 
+  const completedCount = navItems.filter(({ href }) => phaseComplete(href, tastingData)).length;
+
   return (
     <aside className="tasting-sidebar">
       <div className="tasting-sidebar__brand">
@@ -78,6 +80,23 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
         ) : (
           <div className="tasting-sidebar__app-name">Wine Tasting App</div>
         )}
+      </div>
+
+      <div className="tasting-sidebar__exam-progress">
+        <div className="tasting-sidebar__exam-label">
+          Exam Progress
+          <span className="tasting-sidebar__exam-count">{completedCount} / {navItems.length}</span>
+        </div>
+        <div className="tasting-sidebar__exam-segments">
+          {navItems.map(({ href }) => {
+            const done   = phaseComplete(href, tastingData);
+            const active = pathname === href;
+            const cls = done ? " tasting-sidebar__exam-segment--done"
+                       : active ? " tasting-sidebar__exam-segment--active"
+                       : "";
+            return <div key={href} className={`tasting-sidebar__exam-segment${cls}`} />;
+          })}
+        </div>
       </div>
 
       {progress !== undefined && currentPhaseName && (

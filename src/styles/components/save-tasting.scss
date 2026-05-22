@@ -1,3 +1,4 @@
+@use 'sass:color';
 // ─────────────────────────────────────────────────────────────────────────────
 // Review & Save page
 // ─────────────────────────────────────────────────────────────────────────────
@@ -104,7 +105,7 @@
     background-color: $tasting-accent;
     border: none;
     color: $color-white;
-    &:hover { background-color: lighten($tasting-accent, 8%); }
+    &:hover { background-color: color.scale($tasting-accent, $lightness: 8%); }
   }
 
   &--secondary {

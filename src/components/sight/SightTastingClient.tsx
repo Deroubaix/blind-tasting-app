@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useTastingContext } from "../tasting/TastingContext";
-import { useEffect, useState } from "react";
 import TastingPhaseLayout from "../layout/TastingPhaseLayout";
 import PhaseHeading from "../layout/PhaseHeading";
 
@@ -91,24 +90,15 @@ export default function SightTastingClient({
   const router = useRouter();
   const { tastingData, updateTastingData } = useTastingContext();
 
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string | null>
-  >(tastingData.sight || {});
-
-  useEffect(() => {
-    if (tastingData.sight) setSelectedOptions(tastingData.sight);
-  }, [tastingData]);
+  const selectedOptions: Record<string, string | null> = tastingData.sight || {};
 
   const handleOptionSelect = (category: string, option: string) => {
-    setSelectedOptions((prev) => ({ ...prev, [category]: option }));
+    updateTastingData({ sight: { ...selectedOptions, [category]: option } as Record<string, string> });
   };
 
-  const handleNextPhase = () => {
-    updateTastingData({ sight: selectedOptions as Record<string, string> });
-    router.push(`/tastings/nose?wineType=${wineType}`);
-  };
+  const handleNextPhase = () => router.push(`/tastings/nose?wineType=${wineType}`);
 
-  const handleReset = () => setSelectedOptions({});
+  const handleReset = () => updateTastingData({ sight: {} });
 
   const colors = wineColors[wineType];
 

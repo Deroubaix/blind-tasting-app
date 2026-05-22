@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import TastingPageHeader from "./TastingPageHeader";
 import TastingFooter from "./TastingFooter";
 import LeftSidebar from "../tasting/LeftSideBar";
@@ -12,6 +12,7 @@ type FooterProps = {
   nextLabel: string;
   onNext: () => void;
   nextLoading?: boolean;
+  nextDisabled?: boolean;
 };
 
 type TastingPhaseLayoutProps = {
@@ -31,8 +32,30 @@ export default function TastingPhaseLayout({
   footer,
   children,
 }: TastingPhaseLayoutProps) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      const isEditable = tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement).isContentEditable;
+
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && !footer.nextLoading) {
+        e.preventDefault();
+        footer.onNext();
+        return;
+      }
+
+      if (e.key === "Escape" && !isEditable && footer.onBack) {
+        e.preventDefault();
+        footer.onBack();
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [footer]);
+
   return (
     <div className="tasting-phase-page">
+      <a className="skip-link" href="#main">Skip to assessment</a>
       <TastingPageHeader
         wineType={wineType}
         timerPage={timerPage}
@@ -40,7 +63,7 @@ export default function TastingPhaseLayout({
       />
       <div className="tasting-phase-body">
         <LeftSidebar wineType={wineType} progress={progress} />
-        <main className="tasting-phase-main">
+        <main id="main" className="tasting-phase-main">
           <div className="tasting-phase-content">
             {children}
           </div>

@@ -1,11 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   IconSearch,
   IconMapPin,
-  IconMap,
   IconCalendar,
   IconChevronDown,
 } from "@tabler/icons-react";
@@ -13,7 +12,7 @@ import { useTastingContext } from "../tasting/TastingContext";
 import TastingPhaseLayout from "../layout/TastingPhaseLayout";
 import PhaseHeading from "../layout/PhaseHeading";
 import TastingAutocomplete from "./TastingAutocomplete";
-import { GRAPE_VARIETALS, WINE_COUNTRIES } from "./autocompleteData";
+import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from "./autocompleteData";
 
 const qualityTiers = [
   "Regional",
@@ -50,19 +49,7 @@ export default function FinalConclusionTastingClient({
   const [regionAppellation, setRegionAppellation] = useState(saved["regionAppellation"] ?? "");
   const [regionInput, setRegionInput] = useState("");
   const [qualityLevel, setQualityLevel] = useState(saved["qualityLevel"] ?? "");
-  const [qualityOpen, setQualityOpen] = useState(false);
-  const qualityRef = useRef<HTMLDivElement>(null);
   const [vintage, setVintage] = useState(saved["vintage"] ?? "");
-
-  useEffect(() => {
-    if (!qualityOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (qualityRef.current && !qualityRef.current.contains(e.target as Node))
-        setQualityOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [qualityOpen]);
 
   // Analysis summaries derived from prior phases
   const sightSummary = tastingData.sight
@@ -179,7 +166,7 @@ export default function FinalConclusionTastingClient({
                   placeholder="e.g., Pinot Noir"
                   icon={<IconSearch size={14} className="tasting-search-icon" />}
                 />
-                <button className="tasting-confirm-btn" onClick={() => confirm(grapeInput, setGrapeVariety, setGrapeInput)}>
+                <button className="tasting-confirm-btn" aria-label="Add grape variety" onClick={() => confirm(grapeInput, setGrapeVariety, setGrapeInput)}>
                   Add
                 </button>
               </div>
@@ -205,7 +192,7 @@ export default function FinalConclusionTastingClient({
                   placeholder="e.g., France"
                   icon={<IconMapPin size={14} className="tasting-search-icon" />}
                 />
-                <button className="tasting-confirm-btn" onClick={() => confirm(countryInput, setCountryOfOrigin, setCountryInput)}>
+                <button className="tasting-confirm-btn" aria-label="Add country of origin" onClick={() => confirm(countryInput, setCountryOfOrigin, setCountryInput)}>
                   Add
                 </button>
               </div>
@@ -223,17 +210,15 @@ export default function FinalConclusionTastingClient({
             <div className="fc-field">
               <label className="tasting-card__label">Region / Appellation</label>
               <div className="tasting-search-row">
-                <div className="tasting-search-input-wrap">
-                  <IconMap size={14} className="tasting-search-icon" />
-                  <input
-                    className="tasting-search-input"
-                    placeholder="e.g., Burgundy — Côte de Nuits"
-                    value={regionInput}
-                    onChange={(e) => setRegionInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && confirm(regionInput, setRegionAppellation, setRegionInput)}
-                  />
-                </div>
-                <button className="tasting-confirm-btn" onClick={() => confirm(regionInput, setRegionAppellation, setRegionInput)}>
+                <TastingAutocomplete
+                  suggestions={WINE_REGIONS}
+                  value={regionInput}
+                  onChange={setRegionInput}
+                  onConfirm={(v) => confirm(v, setRegionAppellation, setRegionInput)}
+                  placeholder="e.g., Burgundy — Côte de Nuits"
+                  icon={<IconMapPin size={14} className="tasting-search-icon" />}
+                />
+                <button className="tasting-confirm-btn" aria-label="Add region or appellation" onClick={() => confirm(regionInput, setRegionAppellation, setRegionInput)}>
                   Add
                 </button>
               </div>
@@ -250,30 +235,18 @@ export default function FinalConclusionTastingClient({
             {/* Quality Level */}
             <div className="fc-field">
               <label className="tasting-card__label">Quality Level</label>
-              <div className="tasting-select" ref={qualityRef}>
-                <button
-                  type="button"
-                  className={`tasting-select__trigger${!qualityLevel ? " tasting-select__trigger--placeholder" : ""}`}
-                  onClick={() => setQualityOpen(!qualityOpen)}
+              <div className="tasting-select">
+                <select
+                  className="tasting-select__native"
+                  value={qualityLevel}
+                  onChange={(e) => setQualityLevel(e.target.value)}
                 >
-                  {qualityLevel || "Select quality tier..."}
-                  <IconChevronDown size={14} className={`tasting-select__chevron${qualityOpen ? " tasting-select__chevron--open" : ""}`} />
-                </button>
-                {qualityOpen && (
-                  <ul className="tasting-select__dropdown">
-                    {qualityTiers.map((tier) => (
-                      <li key={tier}>
-                        <button
-                          type="button"
-                          className={`tasting-select__option${qualityLevel === tier ? " tasting-select__option--selected" : ""}`}
-                          onClick={() => { setQualityLevel(tier); setQualityOpen(false); }}
-                        >
-                          {tier}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  <option value="">Select quality tier…</option>
+                  {qualityTiers.map((tier) => (
+                    <option key={tier} value={tier}>{tier}</option>
+                  ))}
+                </select>
+                <IconChevronDown size={14} className="tasting-select__chevron" aria-hidden />
               </div>
             </div>
 
@@ -289,6 +262,13 @@ export default function FinalConclusionTastingClient({
                     maxLength={4}
                     value={vintage}
                     onChange={(e) => setVintage(e.target.value.replace(/\D/g, ""))}
+                    onBlur={() => {
+                      if (!vintage) return;
+                      const year = parseInt(vintage, 10);
+                      const max = new Date().getFullYear();
+                      if (year < 1900) setVintage("1900");
+                      else if (year > max) setVintage(String(max));
+                    }}
                   />
                 </div>
               </div>

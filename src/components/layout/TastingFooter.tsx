@@ -10,6 +10,7 @@ type TastingFooterProps = {
   nextLabel: string;
   onNext: () => void;
   nextLoading?: boolean;
+  nextDisabled?: boolean;
 };
 
 export default function TastingFooter({
@@ -19,6 +20,7 @@ export default function TastingFooter({
   nextLabel,
   onNext,
   nextLoading,
+  nextDisabled,
 }: TastingFooterProps) {
   const [confirming, setConfirming] = useState(false);
 
@@ -44,6 +46,7 @@ export default function TastingFooter({
             </div>
           ) : (
             <button className="tasting-footer__reset" onClick={handleResetClick}>
+              <span className="tasting-footer__reset-icon">↺</span>
               Reset Phase
             </button>
           )
@@ -56,7 +59,7 @@ export default function TastingFooter({
         </button>
       )}
 
-      <button className="tasting-footer__next" onClick={onNext} disabled={nextLoading}>
+      <button className="tasting-footer__next" onClick={onNext} disabled={nextLoading || nextDisabled}>
         {nextLoading && <Loading size={14} inline />}
         {nextLabel}
       </button>

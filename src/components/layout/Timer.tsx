@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface TimerProps {
   initialTime: number;
@@ -9,17 +9,19 @@ interface TimerProps {
 
 export default function Timer({ initialTime, onTimeUp }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(initialTime);
+  const onTimeUpRef = useRef(onTimeUp);
+  useEffect(() => { onTimeUpRef.current = onTimeUp; }, [onTimeUp]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      if (onTimeUp) onTimeUp();
+      onTimeUpRef.current?.();
       return;
     }
     const intervalId = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [timeLeft, onTimeUp]);
+  }, [timeLeft]); // onTimeUp intentionally excluded — reads via ref
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -27,8 +29,14 @@ export default function Timer({ initialTime, onTimeUp }: TimerProps) {
     seconds < 10 ? "0" + seconds : seconds
   }`;
 
+  const stateClass = timeLeft === 0
+    ? "timer-display--expired"
+    : timeLeft <= 60
+    ? "timer-display--warning"
+    : "";
+
   return (
-    <span className={timeLeft === 0 ? "timer-display timer-display--expired" : "timer-display"}>
+    <span className={`timer-display${stateClass ? ` ${stateClass}` : ""}`}>
       {formattedTime}
     </span>
   );
