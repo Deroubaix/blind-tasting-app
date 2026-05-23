@@ -2,6 +2,7 @@
 
 import TimerWrapper from "../layout/TimerWrapper";
 import { useTastingContext } from "../../components/tasting/TastingContext";
+import { PHASE_TIMER_SECONDS } from "../../data/timerData";
 
 interface TimerConditionalProps {
   page: "sight" | "nose" | "palate" | "initialConclusion" | "finalConclusion";
@@ -19,31 +20,7 @@ export default function TimerConditional({
 
   const selectedOption = tastingData.timerDuration === 7.5 ? "7.5 min" : "4 min";
 
-  // Timer durations for each page for both timer options.
-  const timerMapping: Record<string, Record<"4 min" | "7.5 min", number>> = {
-    sight: {
-      "4 min": 30,
-      "7.5 min": 56, // 30 * 1.875 ≈ 56 seconds
-    },
-    nose: {
-      "4 min": 120,
-      "7.5 min": 225, // 120 * 1.875 = 225 seconds
-    },
-    palate: {
-      "4 min": 30,
-      "7.5 min": 56,
-    },
-    initialConclusion: {
-      "4 min": 30,
-      "7.5 min": 56,
-    },
-    finalConclusion: {
-      "4 min": 30,
-      "7.5 min": 56,
-    },
-  };
-
-  const defaultDuration = timerMapping[page][selectedOption];
+  const defaultDuration = PHASE_TIMER_SECONDS[page][selectedOption];
 
   return (
     <TimerWrapper defaultDuration={defaultDuration} destination={destination} />

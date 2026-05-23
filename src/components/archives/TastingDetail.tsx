@@ -87,8 +87,8 @@ export default function TastingDetail({ id }: { id: string }) {
   const qualityLevel = final.qualityLevel ?? null;
   const vintage = final.vintage ?? null;
 
-  const title = grapeVariety || tasting.wineName || "Untitled Tasting";
-  const subtitleParts = [regionAppellation, countryOfOrigin].filter(Boolean);
+  const title = tasting.wineName || grapeVariety || "Untitled Tasting";
+  const subtitleParts = [grapeVariety, regionAppellation, countryOfOrigin].filter(Boolean);
   const subtitle = subtitleParts.length > 0
     ? `${subtitleParts.join(", ")}${vintage ? ` — ${vintage}` : ""}`
     : vintage ?? null;

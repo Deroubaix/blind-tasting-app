@@ -5,7 +5,7 @@ import TastingPageHeader from "../../../components/layout/TastingPageHeader";
 export default function TastingStartPage() {
   return (
     <div className="tasting-start-page">
-      <TastingPageHeader />
+      <TastingPageHeader cancelHref="/" />
       <TastingStartClient />
     </div>
   );

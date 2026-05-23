@@ -110,21 +110,6 @@
   }
 
   &__next {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    background-color: $tasting-accent;
-    color: $color-white;
-    border: none;
-    border-radius: 6px;
-    padding: $spacing-xs $spacing-xl;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    font-family: $font-display-normal-family;
-    cursor: pointer;
-    @include transition(background-color opacity, 0.2s);
-
-    &:hover:not(:disabled) { background-color: color.scale($tasting-accent, $lightness: 8%); }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    // All styles come from .btn-primary — no overrides needed.
   }
 }

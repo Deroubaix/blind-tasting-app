@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IconX, IconUser } from "@tabler/icons-react";
+import { IconX, IconUser, IconArrowRight } from "@tabler/icons-react";
 import useAuthenticatedUser from "../../hooks/UseAuthenticatedUser";
 import { useAuthProvider } from "../auth/AuthProvider";
 
@@ -53,7 +53,7 @@ export default function Header() {
   return (
     <header className="navbar">
       <Link href="/" className="header-logo no-underline">
-        The Sommelier&apos;s Ledger
+        The Sommelier<em className="logo-serif">&apos;s</em> Ledger
       </Link>
 
       <nav className="nav">
@@ -110,10 +110,10 @@ export default function Header() {
           ) : (
             <div className="nav-auth">
               <Link href="/login" className="nav-link">
-                login
+                Log in
               </Link>
-              <Link href="/signup" className="nav-signup-btn">
-                sign up
+              <Link href="/tastings/start" className="nav-signup-btn btn-primary no-underline">
+                Start a Tasting <IconArrowRight size={16} />
               </Link>
             </div>
           ))}
@@ -153,8 +153,7 @@ export default function Header() {
             </button>
           ) : (
             <>
-              <Link href="/login" onClick={closeMenu}>Login</Link>
-              <Link href="/signup" onClick={closeMenu}>Sign Up</Link>
+              <Link href="/login" onClick={closeMenu}>Log in</Link>
             </>
           )}
         </div>

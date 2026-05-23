@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IconCamera, IconX } from "@tabler/icons-react";
 import { useTastingContext } from "../tasting/TastingContext";
 import ClientTastingService from "../../services/client/ClientTastingService";
@@ -18,7 +17,10 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const { isLoading, addLoader, removeLoader } = useLoadTracker();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const autoSaveTriggered = useRef(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const autoSave = searchParams.get("autoSave") === "1";
   const tastingService = new ClientTastingService();
   const { user, isInitialLoading } = useAuthProvider();
   const { showToast } = useToastProvider();
@@ -31,14 +33,16 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
     reader.readAsDataURL(file);
   };
 
+  const saveRedirect = `/login?r=${encodeURIComponent(`/tastings/save?wineType=${wineType}&autoSave=1`)}`;
+
   const handleSave = async () => {
     if (!user) {
       showToast({
-        title: "Login required",
+        title: "Log in required",
         children: "Please log in or sign up to save your tasting.",
         color: "error",
       });
-      router.push(`/login?r=/tastings/save?wineType=${wineType}`);
+      router.push(saveRedirect);
       return;
     }
 
@@ -52,8 +56,8 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
     } catch (error: any) {
       const isAuthError = error?.statusCode === 401 || error?.message?.includes("Access Denied");
       if (isAuthError) {
-        showToast({ title: "Login required", children: "Please log in to save your tasting.", color: "error" });
-        router.push(`/login?r=/tastings/save?wineType=${wineType}`);
+        showToast({ title: "Log in required", children: "Please log in to save your tasting.", color: "error" });
+        router.push(saveRedirect);
       } else {
         showToast({ title: "Save failed", children: "Something went wrong. Please try again.", color: "error" });
       }
@@ -61,6 +65,13 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
       removeLoader(loader);
     }
   };
+
+  useEffect(() => {
+    if (!autoSave || isInitialLoading || !user || autoSaveTriggered.current) return;
+    autoSaveTriggered.current = true;
+    handleSave();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSave, isInitialLoading, user]);
 
   return (
     <TastingPhaseLayout
@@ -130,21 +141,6 @@ export default function SavedTasting({ wineType }: { wineType: "red" | "white" }
               </div>
 
             </div>
-
-            {/* Auth notice */}
-            {!isInitialLoading && !user && (
-              <div className="save-auth-notice">
-                <p className="save-auth-notice__text">You need an account to save tastings.</p>
-                <div className="save-auth-notice__actions">
-                  <Link href={`/signup?r=/tastings/save?wineType=${wineType}`} className="save-auth-btn save-auth-btn--primary">
-                    Sign Up
-                  </Link>
-                  <Link href={`/login?r=/tastings/save?wineType=${wineType}`} className="save-auth-btn save-auth-btn--secondary">
-                    Log In
-                  </Link>
-                </div>
-              </div>
-            )}
 
     </TastingPhaseLayout>
   );

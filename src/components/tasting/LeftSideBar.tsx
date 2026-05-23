@@ -84,7 +84,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 
       <div className="tasting-sidebar__exam-progress">
         <div className="tasting-sidebar__exam-label">
-          Exam Progress
+          Progress
           <span className="tasting-sidebar__exam-count">{completedCount} / {navItems.length}</span>
         </div>
         <div className="tasting-sidebar__exam-segments">

@@ -33,15 +33,5 @@ model Tasting {
   notes          String?
   created_at     DateTime @default(now())
   user           User     @relation(fields: [userId], references: [id])
-  results        Result[]
-}
-
-model Result {
-  id             Int    @id @default(autoincrement())
-  tastingId      Int
-  characteristic String 
-  value          String 
-
-  tasting Tasting @relation(fields: [tastingId], references: [id])
 }
 

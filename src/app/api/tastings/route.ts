@@ -21,7 +21,6 @@ async function getUserIdFromToken() {
 export async function GET() {
   try {
     const userId = await getUserIdFromToken();
-    console.log("Decoded User ID:", userId);
     const tastings = await prisma.tasting.findMany({
       where: { userId },
     });
