@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { IconArrowRight, IconEye, IconEyeOff } from "@tabler/icons-react";
 import ClientAuthService from "../../services/client/ClientAuthService";
 import NotificationUtils from "../../utils/NotificationsUtils";
 import AuthHeader from "../layout/AuthHeader";
+import Footer from "../layout/Footer";
+import { useAuthProvider } from "../auth/AuthProvider";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
@@ -18,6 +20,7 @@ export default function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("r") || "/archives";
+  const { signIn } = useAuthProvider();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +30,7 @@ export default function SignupForm() {
       setIsSubmitting(true);
       const authService = new ClientAuthService();
       await authService.signup(name, email, password);
+      await signIn(email, password);
 
       NotificationUtils.showSuccess("Account created successfully!", "Welcome to the Ledger");
       router.push(redirectTo);
@@ -44,24 +48,34 @@ export default function SignupForm() {
 
   return (
     <div className="auth-page">
-      <AuthHeader contextLink={{ href: "/login", label: "Login" }} />
+      <AuthHeader
+        contextLink={{ href: "/login", label: "Log in", contextLabel: "Already a member?" }}
+      />
 
       <main className="auth-main">
         <div className="auth-container">
-          <h1 className="auth-heading">Begin Your Ledger</h1>
-          <p className="auth-subheading">
-            Join the inner circle of the Court. Document every vintage, master the blind tasting.
-          </p>
+
+          <header className="auth-card-head">
+            <span className="page-eyebrow">Create account</span>
+            <h1 className="auth-heading">
+              Begin your <em>ledger</em>.
+            </h1>
+            <p className="auth-subheading">
+              <strong>Three fields, thirty seconds.</strong> Save your sessions to review later.
+            </p>
+          </header>
 
           <form className="auth-form" onSubmit={handleSignup}>
             {error && <p className="auth-error">{error}</p>}
 
             <div className="auth-field">
-              <label className="auth-label">Display Name</label>
+              <label htmlFor="signup-name" className="auth-label">Display Name</label>
               <input
+                id="signup-name"
                 className="auth-input"
                 type="text"
-                placeholder="E.g. Master Vinter"
+                autoComplete="name"
+                placeholder="e.g. Master Vinter"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -69,10 +83,12 @@ export default function SignupForm() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label">Email Address</label>
+              <label htmlFor="signup-email" className="auth-label">Email Address</label>
               <input
+                id="signup-email"
                 className="auth-input"
                 type="email"
+                autoComplete="email"
                 placeholder="cellar@master.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -81,11 +97,17 @@ export default function SignupForm() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label">Secure Password</label>
+              <div className="auth-label-row">
+                <label htmlFor="signup-password" className="auth-label">Password</label>
+                <span className="auth-input-hint">8+ characters</span>
+              </div>
               <div className="auth-input-wrapper">
                 <input
+                  id="signup-password"
                   className="auth-input"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  minLength={8}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -102,24 +124,33 @@ export default function SignupForm() {
               </div>
             </div>
 
-            <button className="auth-submit" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating account..." : "Create Account"}
+            <button
+              className="auth-submit btn-primary btn-primary--auth"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Creating account…" : "Sign up"}
+              <IconArrowRight size={15} />
             </button>
+
+            <p className="auth-fineprint">
+              By signing up you agree to our{" "}
+              <Link href="/terms">Terms</Link> and{" "}
+              <Link href="/privacy">Privacy Policy</Link>.
+            </p>
           </form>
 
           <p className="auth-switch">
             Already have an account?{" "}
             <Link href="/login" className="auth-switch-link">
-              Log In
+              Log in
             </Link>
           </p>
+
         </div>
       </main>
 
-      <footer className="auth-footer-bar">
-        <span>The Sommelier&apos;s Ledger • Practice Tool</span>
-        <span>V. 0.8.2 | Beta Access</span>
-      </footer>
+      <Footer />
     </div>
   );
 }

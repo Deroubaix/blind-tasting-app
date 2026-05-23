@@ -1,137 +1,212 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { IconArrowRight } from "@tabler/icons-react";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
+import { wineColors } from "../components/sight/sightData";
+
+const PHASES = [
+  {
+    num: "01",
+    prefix: "The",
+    name: "Sight",
+    desc: "Clarity, brightness, colour, concentration, viscosity. Selectable options.",
+    input: "Selectable",
+    time: "0:30",
+  },
+  {
+    num: "02",
+    prefix: "The",
+    name: "Nose",
+    desc: "Fruit, floral, herbs, earth, wood. Selectable options plus free-text custom notes. Varies by wine type.",
+    input: "Mixed",
+    time: "2:00",
+  },
+  {
+    num: "03",
+    prefix: "The",
+    name: "Palate",
+    desc: "Sweetness, tannin, acid, alcohol, body, finish. Selectable scales.",
+    input: "Selectable",
+    time: "0:30",
+  },
+  {
+    num: "04",
+    prefix: "Initial",
+    name: "call",
+    desc: "Old/New World, climate, age range, possible grape varieties and countries.",
+    input: "Mixed",
+    time: "0:30",
+  },
+  {
+    num: "05",
+    prefix: "Final",
+    name: "conclusion",
+    desc: "Grape, country, region, quality tier, vintage. Free text.",
+    input: "Free text",
+    time: "0:30",
+  },
+];
+
+const SWATCHES = wineColors.red.spectrum.map((s, i) => ({ ...s, selected: i === 2 }));
 
 export default function Homepage() {
   return (
     <>
       <Header />
       <main className="home-page">
-        {/* Hero Section */}
-        <section className="hero-section">
-          <div className="hero-content">
-            <div className="hero-left">
-              <span className="entrance-label">
-                <span className="dot">●</span> ENTRANCE EXAM PRACTICE TOOL
-              </span>
-              <h1>
-                Master the Art of
-                <br />
-                the <em className="italic-accent">Blind Tasting.</em>
-              </h1>
-              <p className="hero-description">
-                A digital companion for your deductive practice. Refine your
-                palate with a structured ledger designed for serious sommelier
-                candidates.
-              </p>
-              <div className="hero-cta">
-                <Link href="/tastings/start" className="btn-start-tasting">
-                  Start a Tasting <span className="arrow">→</span>
-                </Link>
-                <Link href="/login" className="sign-in-link">
-                  SIGN IN
-                </Link>
-              </div>
+
+        {/* ── Hero ── */}
+        <section className="hp-hero">
+          <div className="hp-hero__left">
+            <span className="hp-eyebrow">Built on the CMS deductive tasting method</span>
+
+            <h1 className="hp-hero__h1">
+              The deductive<br />
+              tasting sheet,<br />
+              <em className="hp-hero__italic">digitised</em>
+            </h1>
+
+            <p className="hp-hero__lede">
+              A practice ledger for sommelier students. Walk the five phases of
+              the deductive method, with optional timers, and save your sessions
+              to review later.
+            </p>
+
+            <div className="hp-hero__ctas">
+              <Link href="/tastings/start" className="btn-primary no-underline">
+                Start a Tasting <IconArrowRight size={16} />
+              </Link>
+              <Link href="/login" className="hp-link-quiet no-underline">
+                Log in <span className="hp-link-quiet__arrow"><IconArrowRight size={12} /></span>
+              </Link>
             </div>
-            <div className="hero-right">
-              <div className="hero-image-wrapper">
-                <Image
-                  src="/images/illustrations/wine-tasting.jpg"
-                  alt="Sommelier examining wine"
-                  className="sommelier-image"
-                  width={400}
-                  height={320}
-                />
-                <div className="active-session-card">
-                  <div className="session-left">
-                    <span className="session-label">ACTIVE SESSION</span>
-                    <span className="session-name">2018 Bordeaux Blend</span>
-                  </div>
-                  <div className="session-right">
-                    <span className="score-label">CONFIDENCE SCORE</span>
-                    <span className="score-value">92%</span>
+          </div>
+
+          <div className="hp-hero__right">
+
+            {/* Main preview card — tasting in progress */}
+            <article className="hp-preview hp-preview--main">
+              <header className="hp-preview__head">
+                <div className="hp-preview__phase">
+                  <span className="hp-phase-pip">01</span>
+                  <div>
+                    <span className="hp-phase-title">Sight</span>
+                    <span className="hp-phase-sub">analytical pass</span>
                   </div>
                 </div>
+                <div className="hp-preview__timer">
+                  <span className="hp-timer__label">Time</span>
+                  <span className="hp-timer__value">00:24</span>
+                </div>
+              </header>
+
+              <div className="hp-preview__field">
+                <div className="hp-field-q">
+                  <span>Core hue</span>
+                  <span className="hp-field-q__hint">Single select</span>
+                </div>
+                <div className="hp-swatch-grid">
+                  {SWATCHES.map(({ hex, name, selected }) => (
+                    <div
+                      key={name}
+                      className={`hp-swatch${selected ? " hp-swatch--selected" : ""}`}
+                      style={{ background: hex }}
+                    >
+                      {selected && <span className="hp-swatch__check">✓</span>}
+                      <span className="hp-swatch__name">{name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+
+              <div className="hp-preview__field">
+                <div className="hp-field-q">
+                  <span>Concentration</span>
+                  <span className="hp-field-q__hint">Single select</span>
+                </div>
+                <div className="hp-pill-row">
+                  {["Pale", "Medium−", "Medium", "Medium+", "Deep"].map((label) => (
+                    <span key={label} className={`hp-pill${label === "Medium" ? " hp-pill--on" : ""}`}>
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hp-preview__field">
+                <div className="hp-field-q">
+                  <span>Rim variation</span>
+                  <span className="hp-field-q__hint">Single select</span>
+                </div>
+                <div className="hp-pill-row">
+                  {["Distinct", "Slight", "None"].map((label) => (
+                    <span key={label} className={`hp-pill${label === "Distinct" ? " hp-pill--on" : ""}`}>
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <footer className="hp-preview__foot">
+                <div className="hp-progress">
+                  <div className="hp-progress__bar" />
+                  <span className="hp-progress__pct">3 / 6</span>
+                </div>
+                <span className="hp-next-cue">Next · Nose</span>
+              </footer>
+            </article>
+
+            {/* Secondary card — a saved past tasting */}
+            <article className="hp-preview hp-preview--ledger">
+              <header className="hp-ledger__head">
+                <span className="hp-ledger__badge">White · Saved</span>
+                <span className="hp-ledger__when">2 days ago</span>
+              </header>
+              <p className="hp-ledger__title">Sauvignon Blanc, Marlborough</p>
+              <p className="hp-ledger__sub">2022 · Cool climate · New World</p>
+              <div className="hp-ledger__result">
+                <span className="hp-ledger__result-label">Session length</span>
+                <span className="hp-ledger__result-value">04:00</span>
+              </div>
+            </article>
+
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="features-section">
-          <div className="features-header">
-            <h2>Precision over guesswork.</h2>
-            <p>The structured framework for analytical wine evaluation.</p>
-          </div>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Image src="/images/SVG/eye.svg" alt="" width={24} height={24} />
-              </div>
-              <h3>Analytical Sight</h3>
-              <p>
-                Record clarity, color, and concentration using standard
-                terminology and rapid selection tools.
-              </p>
-              <div className="feature-tags">
-                <span className="tag">PALE STRAW</span>
-                <span className="tag">STAR BRIGHT</span>
-              </div>
+        {/* ── The Method ── */}
+        <section className="hp-method">
+          <header className="hp-method__head">
+            <div className="hp-method__head-left">
+              <span className="hp-eyebrow">The Method</span>
+              <h2 className="hp-method__h2">
+                Five phases.<br />
+                One <em className="hp-method__italic">tasting</em>.
+              </h2>
             </div>
-            <div className="feature-card featured">
-              <div className="feature-icon">
-                <Image src="/images/SVG/air.svg" alt="" width={24} height={24} />
-              </div>
-              <h3>Aromatic Profiling</h3>
-              <p>
-                Categorize fruit condition, earth markers, and oak influence
-                into precise cluster groups.
-              </p>
-              <div className="feature-progress">
-                <span className="progress-label">FLORAL INTENSITY</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" />
+            <p className="hp-method__desc">
+              Each session walks the five phases of the deductive tasting method
+              in order. Optional timer for each. Reach the end, add notes, and save.
+            </p>
+          </header>
+
+          <div className="hp-phase-grid">
+            {PHASES.map(({ num, prefix, name, desc, input, time }) => (
+              <article key={num} className="hp-phase-cell">
+                <span className="hp-phase-cell__num">{num}</span>
+                <h3 className="hp-phase-cell__name">
+                  {prefix} <em>{name}</em>
+                </h3>
+                <p className="hp-phase-cell__desc">{desc}</p>
+                <div className="hp-phase-cell__foot">
+                  <span>{input}</span>
+                  <span className="hp-phase-cell__time">{time}</span>
                 </div>
-              </div>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">
-                <Image src="/images/SVG/glass.svg" alt="" width={24} height={24} />
-              </div>
-              <h3>Palate Logic</h3>
-              <p>
-                Quantify acidity, tannin, and alcohol to generate logical
-                conclusions based on your markers.
-              </p>
-              <div className="feature-metrics">
-                <div className="metric">
-                  <span className="metric-label">ACID</span>
-                  <span className="metric-value">High</span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">ALCOHOL</span>
-                  <span className="metric-value">14.5%</span>
-                </div>
-              </div>
-            </div>
+              </article>
+            ))}
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="cta-section">
-          <p>
-            Practice is permanent.{" "}
-            <Link href="/signup" className="cta-inline-link">
-              Create an account
-            </Link>{" "}
-            to save your session history and track your progress.
-          </p>
-          <Link href="/tastings/start" className="btn-private-session">
-            Start Private Session
-          </Link>
-        </section>
       </main>
       <Footer />
     </>

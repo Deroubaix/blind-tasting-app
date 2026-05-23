@@ -73,12 +73,26 @@ $tph-border: rgba(228, 228, 204, 0.06);
     align-items: center;
     gap: $spacing-md;
     justify-self: end;
+    position: relative;
   }
 
   &__wine-label {
     @include eyebrow-label(0.65rem);
     color: rgba(228, 228, 204, 0.55);
     letter-spacing: 0.2em;
+  }
+
+  &__cancel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: $tasting-text-muted;
+    font-family: $font-display-normal-family;
+    transition: color 0.2s ease;
+
+    &:after { display: none; }
+    &:hover { color: $color-white; }
   }
 
   &__avatar {

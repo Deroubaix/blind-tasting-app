@@ -1,371 +1,656 @@
 @use 'sass:color';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Landing page — home-page.scss
+// Uses project design tokens from blindTasting.scss / _tasting-tokens.scss.
+// All CSS custom properties from the HTML reference are mapped to SCSS vars.
+// ─────────────────────────────────────────────────────────────────────────────
+
+$hp-gutter: clamp(20px, 4vw, 56px);
+$hp-max:    1320px;
+$hp-radius: 6px;
+$hp-radius-lg: 10px;
+
 .home-page {
   padding-top: var(--navbar-height_approx);
 
-  // ----------------------------------------
-  // Hero Section
-  // ----------------------------------------
-  .hero-section {
-    padding: $page-spacing * 4 $page-spacing * 3;
-    min-height: calc(100dvh - var(--navbar-height_approx));
-    display: flex;
-    align-items: center;
+  // ─────────────────────────────────────────
+  // Shared atoms
+  // ─────────────────────────────────────────
 
-    @include responsive($breakpoint-tablet) {
-      padding: $page-spacing * 3 $page-spacing * 2;
-    }
-    @include responsive($breakpoint-mobile) {
-      padding: $page-spacing * 2 $page-spacing;
-    }
-  }
-
-  .hero-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $page-spacing * 4;
-    align-items: center;
-    max-width: 1100px;
-    margin: 0 auto;
-    width: 100%;
-
-    @include responsive($breakpoint-tablet) {
-      grid-template-columns: 1fr;
-      gap: $page-spacing * 2;
-    }
-  }
-
-  .hero-left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $page-spacing * 1.2;
-  }
-
-  .entrance-label {
-    @include eyebrow-label(0.7rem);
-
-    .dot {
-      color: $color-roseGoldDark;
-      margin-right: 0.25rem;
-    }
-  }
-
-  .hero-left h1 {
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
-    font-family: $font-display-bold-family;
-    font-weight: $font-weight-extrabold;
-    line-height: 1.15;
-    color: $color-white;
-    margin: 0;
-
-    // Deliberately uses Lora serif for the italic accent
-    .italic-accent {
-      font-family: $font-body-normal-family;
-      font-style: italic;
-      color: $color-roseGoldDark;
-    }
-  }
-
-  .hero-description {
-    color: $color-text-muted;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    max-width: 420px;
-    margin: 0;
-  }
-
-  .hero-cta {
-    display: flex;
-    align-items: center;
-    gap: $page-spacing * 1.5;
-    margin-top: $page-spacing * 0.5;
-  }
-
-  .btn-start-tasting {
+  .hp-eyebrow {
+    @include eyebrow-label(0.68rem, $tasting-text-muted);
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    background-color: $color-burgundy;
-    color: $color-white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    font-family: $font-display-normal-family;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    gap: 0.55rem;
+    line-height: 1;
 
-    &:hover { background-color: color.scale($color-burgundy, $lightness: 8%); }
-
-    &:after { display: none; }
-
-    .arrow { font-size: 1rem; }
+    &::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: $color-roseGoldDark;
+      box-shadow: 0 0 12px rgba(255, 179, 173, 0.55);
+      flex-shrink: 0;
+    }
   }
 
-  .sign-in-link {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
+  .hp-link-quiet {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: $color-text-muted;
+    font-weight: $font-weight-semibold;
     font-family: $font-display-normal-family;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     transition: color 0.2s ease;
 
-    &:after { display: none; }
-
     &:hover { color: $color-white; }
-  }
 
-  .hero-right {
-    display: flex;
-    justify-content: flex-end;
-
-    @include responsive($breakpoint-tablet) {
-      justify-content: center;
+    &__arrow {
+      color: $tasting-text-muted;
+      transition: color 0.2s ease;
     }
+
+    &:hover .hp-link-quiet__arrow { color: $color-roseGoldDark; }
   }
 
-  .hero-image-wrapper {
+  // ─────────────────────────────────────────
+  // Hero
+  // ─────────────────────────────────────────
+
+  .hp-hero {
     position: relative;
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .sommelier-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-    filter: grayscale(30%) brightness(0.75);
-  }
-
-  .active-session-card {
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    background-color: rgba(28, 27, 27, 0.92);
-    backdrop-filter: blur(6px);
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-top: 1px solid rgba(255, 179, 173, 0.15);
-  }
-
-  .session-label,
-  .score-label {
-    @include eyebrow-label(0.6rem);
-    display: block;
-    margin-bottom: 0.2rem;
-  }
-
-  .session-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: $color-white;
-    font-family: $font-body-normal-family;
-  }
-
-  .score-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: $color-white;
-    font-family: $font-display-normal-family;
-    text-align: right;
-  }
-
-  .session-right { text-align: right; }
-
-  // ----------------------------------------
-  // Features Section
-  // ----------------------------------------
-  .features-section {
-    padding: $page-spacing * 5 $page-spacing * 3;
-    max-width: 1100px;
+    padding: 5rem $hp-gutter 6rem;
+    max-width: $hp-max;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 6rem;
+    align-items: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(900px 600px at 5% 30%, rgba(74, 14, 14, 0.45), transparent 65%),
+        radial-gradient(700px 500px at 95% 85%, rgba(255, 179, 173, 0.08), transparent 70%);
+      z-index: 0;
+    }
+
+    > * { position: relative; z-index: 1; }
 
     @include responsive($breakpoint-tablet) {
-      padding: $page-spacing * 3 $page-spacing * 2;
-    }
-    @include responsive($breakpoint-mobile) {
-      padding: $page-spacing * 2 $page-spacing;
-    }
-  }
-
-  .features-header {
-    margin-bottom: $page-spacing * 3;
-
-    h2 {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-family: $font-body-normal-family;
-      font-weight: 700;
-      color: $color-white;
-      margin: 0 0 0.5rem;
-    }
-
-    p {
-      color: $color-text-muted;
-      font-size: 0.9rem;
-      margin: 0;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      padding-top: 3rem;
+      padding-bottom: 4rem;
+      min-height: auto;
     }
   }
 
-  .features-grid {
+  .hp-hero__left {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 620px;
+  }
+
+  .hp-hero__h1 {
+    font-family: $font-display-bold-family;
+    font-size: clamp(2.8rem, 5.8vw, 5.2rem);
+    font-weight: $font-weight-extrabold;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    color: $color-white;
+    margin: 0;
+  }
+
+  .hp-hero__italic {
+    font-family: $font-body-normal-family;
+    font-style: italic;
+    font-weight: $font-weight-regular;
+    color: $color-roseGoldDark;
+    font-size: 1.02em;
+    display: inline-block;
+    transform: translateY(0.04em);
+
+    &::after {
+      content: ".";
+      color: $color-roseGoldDark;
+    }
+  }
+
+  .hp-hero__lede {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: $color-text-muted;
+    max-width: 48ch;
+    margin: 0;
+  }
+
+  .hp-hero__ctas {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  // ─────────────────────────────────────────
+  // Hero right: stacked preview cards
+  // ─────────────────────────────────────────
+
+  .hp-hero__right {
+    position: relative;
+    height: 480px;
+
+    @include responsive($breakpoint-tablet) {
+      height: 460px;
+      max-width: 520px;
+      margin: 0 auto;
+      width: 100%;
+    }
+  }
+
+  .hp-preview {
+    position: absolute;
+    background: linear-gradient(180deg, $color-darkGrey 0%, rgba(28, 27, 27, 0.96) 100%);
+    border: 1px solid $tasting-border;
+    border-radius: $hp-radius-lg;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 179, 173, 0.04);
+
+    &--main {
+      inset: 0 -10% 0 0;
+      padding: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      z-index: 2;
+    }
+
+    &--ledger {
+      width: 62%;
+      top: auto;
+      bottom: -2.5rem;
+      right: -2rem;
+      padding: 1.1rem 1.25rem;
+      z-index: 3;
+      background: linear-gradient(180deg, $color-surface-variant 0%, $color-darkGrey 100%);
+
+      @include responsive($breakpoint-mobile) {
+        display: none;
+      }
+    }
+
+    &__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid $tasting-border;
+    }
+
+    &__phase {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    &__timer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    &__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid $tasting-border;
+      margin-top: auto;
+    }
+  }
+
+  .hp-phase-pip {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid $color-roseGoldDark;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    color: $color-roseGoldDark;
+    font-weight: $font-weight-bold;
+    font-variant-numeric: tabular-nums;
+    font-family: $font-display-normal-family;
+    flex-shrink: 0;
+  }
+
+  .hp-phase-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: $color-white;
+    font-weight: $font-weight-bold;
+    font-family: $font-display-normal-family;
+    display: block;
+  }
+
+  .hp-phase-sub {
+    font-family: $font-body-normal-family;
+    font-style: italic;
+    color: $color-text-muted;
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+  }
+
+  .hp-timer__label {
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: $tasting-text-muted;
+    font-weight: $font-weight-bold;
+    font-family: $font-display-normal-family;
+  }
+
+  .hp-timer__value {
+    font-size: 1.35rem;
+    font-weight: $font-weight-medium;
+    letter-spacing: 0.04em;
+    color: $color-white;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    font-family: $font-display-normal-family;
+  }
+
+  .hp-field-q {
+    font-size: 0.7rem;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(228, 228, 204, 0.78);
+    margin-bottom: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__hint {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      color: $tasting-text-muted;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  .hp-swatch-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: $page-spacing;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .hp-swatch {
+    aspect-ratio: 3 / 1;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.3rem 0.4rem;
+    border: 1.5px solid transparent;
+    position: relative;
+    transition: transform 0.25s ease;
+
+    &:hover { transform: translateY(-2px); }
+
+    &--selected {
+      border-color: $color-roseGoldDark;
+      box-shadow: 0 0 0 3px rgba(255, 179, 173, 0.18);
+    }
+
+    &__check {
+      position: absolute;
+      top: 0.35rem;
+      right: 0.35rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: $color-roseGoldDark;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-darkGrey;
+      font-size: 0.6rem;
+      font-weight: $font-weight-extrabold;
+    }
+
+    &__name {
+      font-size: 0.55rem;
+      font-weight: $font-weight-bold;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(228, 228, 204, 0.92);
+      text-align: center;
+      font-family: $font-display-normal-family;
+    }
+  }
+
+  .hp-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .hp-pill {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: $hp-radius;
+    border: 1px solid $tasting-border-mid;
+    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    letter-spacing: 0.02em;
+    font-family: $font-display-normal-family;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+    &--on {
+      border-color: $color-roseGoldDark;
+      color: $color-roseGoldDark;
+      background: rgba(255, 179, 173, 0.08);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  .hp-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    &__bar {
+      width: 120px;
+      height: 3px;
+      background: $tasting-border;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0 50% 0 0;
+        background: $color-roseGoldDark;
+        border-radius: 2px;
+      }
+    }
+
+    &__pct {
+      font-size: 0.7rem;
+      color: $color-roseGoldDark;
+      font-weight: $font-weight-semibold;
+      font-variant-numeric: tabular-nums;
+      font-family: $font-display-normal-family;
+    }
+  }
+
+  .hp-next-cue {
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: $color-white;
+    font-weight: $font-weight-bold;
+    font-family: $font-display-normal-family;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    &::after {
+      content: "→";
+      color: $color-roseGoldDark;
+    }
+  }
+
+  // Ledger card internals
+
+  .hp-ledger__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+  }
+
+  .hp-ledger__badge {
+    font-size: 0.55rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: rgba(142, 188, 142, 0.16);
+    color: $color-white-wine-accent;
+    border: 1px solid rgba(142, 188, 142, 0.3);
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: $font-display-normal-family;
+  }
+
+  .hp-ledger__when {
+    font-size: 0.6rem;
+    color: $tasting-text-muted;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: $font-weight-semibold;
+    font-family: $font-display-normal-family;
+  }
+
+  .hp-ledger__title {
+    font-family: $font-body-normal-family;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: $color-white;
+    margin: 0 0 0.15rem;
+    line-height: 1.2;
+    font-weight: $font-weight-regular;
+  }
+
+  .hp-ledger__sub {
+    font-size: 0.72rem;
+    color: $color-text-muted;
+    margin: 0 0 0.85rem;
+  }
+
+  .hp-ledger__result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.7rem;
+    border-top: 1px solid $tasting-border;
+
+    &-label {
+      font-size: 0.58rem;
+      color: $tasting-text-muted;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: $font-weight-bold;
+      font-family: $font-display-normal-family;
+    }
+
+    &-value {
+      font-size: 0.95rem;
+      color: $color-white-wine-accent;
+      font-weight: $font-weight-semibold;
+      font-variant-numeric: tabular-nums;
+      font-family: $font-display-normal-family;
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // Method section
+  // ─────────────────────────────────────────
+
+  .hp-method {
+    padding: 6rem $hp-gutter;
+    max-width: $hp-max;
+    margin: 0 auto;
+    border-top: 1px solid $tasting-border;
+  }
+
+  .hp-method__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3rem;
+    margin-bottom: 3.5rem;
+    flex-wrap: wrap;
+
+    &-left {
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+  }
+
+  .hp-method__h2 {
+    font-family: $font-display-bold-family;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: $font-weight-bold;
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+    color: $color-white;
+    margin: 0;
+  }
+
+  .hp-method__italic {
+    font-family: $font-body-normal-family;
+    font-style: italic;
+    font-weight: $font-weight-regular;
+    color: $color-roseGoldDark;
+    font-size: 1.05em;
+  }
+
+  .hp-method__desc {
+    font-size: 0.92rem;
+    color: $color-text-muted;
+    line-height: 1.75;
+    max-width: 38ch;
+    margin: 0;
+  }
+
+  // ─────────────────────────────────────────
+  // Phase grid
+  // ─────────────────────────────────────────
+
+  .hp-phase-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid $tasting-border-mid;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 20%;
+      height: 5px;
+      background: $color-roseGoldDark;
+    }
 
     @include responsive($breakpoint-tablet) {
+      grid-template-columns: repeat(2, 1fr);
+
+      &::before { display: none; }
+    }
+
+    @include responsive($breakpoint-mobile) {
       grid-template-columns: 1fr;
     }
   }
 
-  .feature-card {
-    background-color: $color-darkGrey;
-    padding: $page-spacing * 1.5;
+  .hp-phase-cell {
+    padding: 2rem 1.5rem 1.75rem;
+    border-right: 1px solid $tasting-border;
     display: flex;
     flex-direction: column;
-    gap: $page-spacing * 0.75;
+    gap: 1.1rem;
+    min-height: 240px;
+    transition: background 0.25s ease;
 
-    &.featured {
-      background-color: $color-surface-variant;
-      border: 1px solid rgba(255, 179, 173, 0.15);
+    &:last-child { border-right: none; }
+
+    &:hover { background: rgba(255, 179, 173, 0.025); }
+
+    @include responsive($breakpoint-tablet) {
+      border-bottom: 1px solid $tasting-border;
+      min-height: auto;
+
+      &:nth-child(even) { border-right: none; }
+      &:nth-last-child(-n+2) { border-bottom: none; }
     }
 
-    h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: $color-white;
-      font-family: $font-display-normal-family;
-      margin: 0;
+    @include responsive($breakpoint-mobile) {
+      border-right: none;
+      min-height: auto;
+
+      &:last-child { border-bottom: none; }
+      &:nth-last-child(-n+2) { border-bottom: 1px solid $tasting-border; }
     }
 
-    p {
-      font-size: 0.8rem;
-      color: $color-text-muted;
-      line-height: 1.6;
-      margin: 0;
-    }
-  }
-
-  .feature-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $color-roseGoldDark;
-
-    img {
-      filter: brightness(0) saturate(100%) invert(72%) sepia(20%) saturate(500%) hue-rotate(320deg);
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  .feature-tags {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: auto;
-    padding-top: $page-spacing * 0.5;
-  }
-
-  .tag {
-    @include eyebrow-label(0.6rem);
-    border: 1px solid rgba(228, 228, 204, 0.2);
-    padding: 0.2rem 0.5rem;
-  }
-
-  .feature-progress {
-    margin-top: auto;
-    padding-top: $page-spacing * 0.5;
-
-    .progress-label {
-      @include eyebrow-label(0.6rem);
-      display: block;
-      margin-bottom: 0.4rem;
-    }
-
-    .progress-bar {
-      height: 3px;
-      background-color: rgba(228, 228, 204, 0.15);
-      width: 100%;
-
-      .progress-fill {
-        height: 100%;
-        width: 70%;
-        background-color: $color-roseGoldDark;
-      }
-    }
-  }
-
-  .feature-metrics {
-    display: flex;
-    gap: $page-spacing * 0.75;
-    margin-top: auto;
-    padding-top: $page-spacing * 0.5;
-  }
-
-  .metric {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-
-    .metric-label {
-      @include eyebrow-label(0.6rem);
-    }
-
-    .metric-value {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: $color-white;
+    &__num {
+      font-size: 0.75rem;
+      font-weight: $font-weight-semibold;
+      letter-spacing: 0.06em;
+      color: $color-roseGoldDark;
+      font-variant-numeric: tabular-nums;
       font-family: $font-display-normal-family;
     }
-  }
 
-  // ----------------------------------------
-  // CTA Section
-  // ----------------------------------------
-  .cta-section {
-    padding: $page-spacing * 4 $page-spacing * 3;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $page-spacing * 1.5;
-
-    p {
-      font-size: 0.9rem;
-      color: $color-text-muted;
+    &__name {
+      font-size: 1.25rem;
+      font-weight: $font-weight-bold;
+      letter-spacing: -0.01em;
+      color: $color-white;
+      line-height: 1.2;
       margin: 0;
+      font-family: $font-display-bold-family;
 
-      .cta-inline-link {
-        color: $color-white;
-        font-weight: 600;
-
-        &:after { border-color: $color-white; }
+      em {
+        font-family: $font-body-normal-family;
+        font-style: italic;
+        font-weight: $font-weight-regular;
+        color: $color-roseGoldDark;
+        font-size: 1.1em;
       }
     }
-  }
 
-  .btn-private-session {
-    display: inline-block;
-    background-color: transparent;
-    color: $color-white;
-    border: 1px solid rgba(228, 228, 204, 0.4);
-    padding: 0.75rem 2rem;
-    font-family: $font-display-normal-family;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-
-    &:after { display: none; }
-
-    &:hover {
-      border-color: $color-white;
-      background-color: rgba(228, 228, 204, 0.05);
+    &__desc {
+      font-size: 0.82rem;
+      color: $color-text-muted;
+      line-height: 1.65;
+      flex: 1;
+      margin: 0;
     }
+
+    &__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: $tasting-text-muted;
+      font-weight: $font-weight-bold;
+      font-family: $font-display-normal-family;
+      padding-top: 0.85rem;
+      border-top: 1px solid $tasting-border;
+    }
+
+    &__time { color: $color-roseGoldDark; }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { IconArrowRight } from "@tabler/icons-react";
 import Loading from "../misc/Loading";
 
 type TastingFooterProps = {
@@ -59,9 +60,10 @@ export default function TastingFooter({
         </button>
       )}
 
-      <button className="tasting-footer__next" onClick={onNext} disabled={nextLoading || nextDisabled}>
+      <button className="tasting-footer__next btn-primary" onClick={onNext} disabled={nextLoading || nextDisabled}>
         {nextLoading && <Loading size={14} inline />}
         {nextLabel}
+        <IconArrowRight size={16} />
       </button>
     </footer>
   );

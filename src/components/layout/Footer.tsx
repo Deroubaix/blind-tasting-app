@@ -25,7 +25,7 @@ export default function Footer() {
             <h4>Tools</h4>
             <Link href="/archives">My Ledger</Link>
             <Link href="/account">Settings</Link>
-            <Link href="/login">Sign In</Link>
+            <Link href="/login">Log in</Link>
           </div>
         </div>
       </div>

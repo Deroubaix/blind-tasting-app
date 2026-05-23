@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 body.menu-open {
   overflow: hidden;
 }
@@ -6,6 +8,100 @@ $menu-padding-top: $page-spacing * 0.6;
 $menu-padding-sides: $page-spacing * 1.5;
 $item-gap: $page-spacing * 1.5;
 
+// ── Account dropdown — shared between navbar and tasting header ───────────────
+.nav-user {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-icon-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-muted;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  transition: color 0.2s ease, background-color 0.2s ease;
+
+  &:after { display: none; }
+
+  &:hover {
+    color: $color-white;
+    background-color: rgba(228, 228, 204, 0.08);
+  }
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 210px;
+  background: #1a1816;
+  border: 1px solid rgba(228, 228, 204, 0.08);
+  border-radius: 4px;
+  z-index: $index-navbar + 1;
+  overflow: hidden;
+
+  &__profile {
+    padding: 1rem 1rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  &__name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $color-white;
+    font-family: $font-display-normal-family;
+  }
+
+  &__email {
+    font-size: 0.75rem;
+    color: $color-text-muted;
+    font-family: $font-display-normal-family;
+  }
+
+  &__divider {
+    height: 1px;
+    background: rgba(228, 228, 204, 0.08);
+  }
+
+  &__item {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+    font-family: $font-display-normal-family;
+    color: $color-text-muted;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    letter-spacing: 0;
+    text-transform: none;
+
+    &:after { display: none; }
+
+    &:hover {
+      color: $color-white;
+      background: rgba(228, 228, 204, 0.06);
+    }
+
+    &--logout { color: rgba(229, 115, 115, 0.8); }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 .navbar {
   position: fixed;
   z-index: $index-navbar;
@@ -80,95 +176,10 @@ $item-gap: $page-spacing * 1.5;
   }
 
   .nav-user {
-    position: relative;
-    display: flex;
-    align-items: center;
     padding-right: $menu-padding-sides;
 
     @include responsive($breakpoint-tablet) {
       display: none;
-    }
-  }
-
-  .nav-icon-btn {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    color: $color-text-muted;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border-radius: 50%;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-transform: none;
-    letter-spacing: 0;
-    transition: color 0.2s ease, background-color 0.2s ease;
-
-    &:after { display: none; }
-
-    &:hover {
-      color: $color-white;
-      background-color: rgba(228, 228, 204, 0.08);
-    }
-  }
-
-  .nav-dropdown {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    min-width: 210px;
-    background: #1a1816;
-    border: 1px solid rgba(228, 228, 204, 0.08);
-    border-radius: 4px;
-    z-index: $index-navbar + 1;
-    overflow: hidden;
-
-    &__profile {
-      padding: 1rem 1rem 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-
-    &__name {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: $color-white;
-      font-family: $font-display-normal-family;
-    }
-
-    &__email {
-      font-size: 0.75rem;
-      color: $color-text-muted;
-      font-family: $font-display-normal-family;
-    }
-
-    &__divider {
-      height: 1px;
-      background: rgba(228, 228, 204, 0.08);
-    }
-
-    &__item {
-      display: block;
-      width: 100%;
-      padding: 0.7rem 1rem;
-      font-size: 0.8rem;
-      font-family: $font-display-normal-family;
-      color: $color-text-muted;
-      text-align: left;
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.2s ease, background-color 0.2s ease;
-
-      &:after { display: none; }
-
-      &:hover {
-        color: $color-white;
-        background: rgba(228, 228, 204, 0.06);
-      }
     }
   }
 
@@ -177,6 +188,7 @@ $item-gap: $page-spacing * 1.5;
     align-items: center;
     align-self: stretch;
     gap: 0;
+    padding-right: $menu-padding-sides;
 
     @include responsive($breakpoint-tablet) {
       display: none;
@@ -184,28 +196,11 @@ $item-gap: $page-spacing * 1.5;
   }
 
   .nav-signup-btn {
-    display: flex;
-    align-items: center;
-    align-self: stretch;
-    font-size: 13px;
-    font-family: $font-display-normal-family;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.85px;
-    color: $color-white;
-    border: none;
-    border-left: 1.5px solid $color-white;
-    border-right: 1.5px solid $color-white;
-    background-color: rgba(228, 228, 204, 0.05);
-    padding: 0 1.25rem;
-    transition: color 0.2s ease, background-color 0.2s ease;
-
-    &:after { display: none; }
-
-    &:hover {
-      color: $color-text-dark;
-      background-color: $color-white;
-    }
+    // Colours, hover, and focus ring come from .btn-primary.
+    // Only nav-specific layout lives here.
+    font-size: 0.8rem;
+    text-transform: none;
+    letter-spacing: 0.06em;
   }
 
   .hamburger-menu {

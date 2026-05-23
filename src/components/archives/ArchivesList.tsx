@@ -45,7 +45,7 @@ export default function ArchivesList() {
     return (
       <div className="archives-empty">
         <p>You have no saved tastings yet.</p>
-        <Link href="/tastings/start" className="button rounded solid no-underline">
+        <Link href="/tastings/start" className="btn-primary no-underline">
           Start Your First Tasting
         </Link>
       </div>
@@ -62,9 +62,9 @@ export default function ArchivesList() {
         const regionAppellation = final.regionAppellation ?? null;
         const vintage = final.vintage ?? null;
 
-        const title = grapeVariety || tasting.wineName || "Untitled Tasting";
+        const title = tasting.wineName || grapeVariety || "Untitled Tasting";
 
-        const subtitleParts = [regionAppellation, countryOfOrigin].filter(Boolean);
+        const subtitleParts = [grapeVariety, regionAppellation, countryOfOrigin].filter(Boolean);
         const subtitle = subtitleParts.length > 0
           ? `${subtitleParts.join(", ")}${vintage ? ` — ${vintage}` : ""}`
           : vintage ?? null;

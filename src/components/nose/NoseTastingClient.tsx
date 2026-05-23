@@ -306,7 +306,7 @@ export default function NoseTastingClient({
         {!isOpen && selectedCount > 0 && (
           <span className="nose-section-header__count">{selectedCount} selected</span>
         )}
-        {isOpen ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
+        {isOpen ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
       </span>
     </button>
   );
