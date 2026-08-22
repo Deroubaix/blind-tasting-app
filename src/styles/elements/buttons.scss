@@ -1,3 +1,4 @@
+@use '../abstracts' as *;
 @use 'sass:color';
 
 @mixin set-button-color($color) {
@@ -41,7 +42,6 @@
 	}
 }
 
-
 @mixin set-button-size($size) {
 	@if $size == relative {
 		font-size: 1em;
@@ -75,7 +75,7 @@ button,
 	font-weight: 500;
 	font-size: 0.9em;
 	text-align: center;
-	letter-spacing: 0.03em;;
+	letter-spacing: 0.03em;
 	text-transform: uppercase;
 
 	@include set-button-type(solid);
@@ -125,12 +125,11 @@ button,
 		&:hover,
 		&:focus,
 		&:active {
-		  background-color: var(--hover-color);
-		  color: var(--text-hover-color);
-		  border-color: var(--hover-color);
+			background-color: var(--hover-color);
+			color: var(--text-hover-color);
+			border-color: var(--hover-color);
 		}
-	  }
-
+	}
 }
 
 a.button {
@@ -143,49 +142,53 @@ a.button {
 // Shared by the hero CTA, tasting footer Next, and any future primary action.
 // Structural styles (padding, radius) are canonical here — override per context only if needed.
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  background-color: $color-burgundy;
-  color: $color-white;
-  border: none;
-  border-radius: 6px;
-  // Default size — hero CTA and tasting footer Next
-  padding: 1.2rem 1.6rem;
-  font-size: 0.84rem;
-  font-weight: $font-weight-medium;
-  font-family: $font-display-normal-family;
-  letter-spacing: 0.06em;
-  text-transform: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.25s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6rem;
+	background-color: $color-burgundy;
+	color: $color-white;
+	border: none;
+	border-radius: 6px;
+	// Default size — hero CTA and tasting footer Next
+	padding: 1.2rem 1.6rem;
+	font-size: 0.84rem;
+	font-weight: $font-weight-medium;
+	font-family: $font-display-normal-family;
+	letter-spacing: 0.06em;
+	text-transform: none;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		box-shadow 0.25s ease;
 
-  &::after { display: none; }
+	&::after {
+		display: none;
+	}
 
-  &:hover:not(:disabled) {
-    background-color: color.scale($color-burgundy, $lightness: 8%);
-  }
+	&:hover:not(:disabled) {
+		background-color: color.scale($color-burgundy, $lightness: 8%);
+	}
 
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 179, 173, 0.15);
-  }
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px rgba(139, 69, 87, 0.35);
+	}
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 
-  // Auth variant — form submit on Log in / Sign up pages
-  // Slightly taller and full-width; uppercase tracking because it's the sole action on the page.
-  &--auth {
-    width: 100%;
-    padding: 1.05rem 1.25rem;
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
+	// Auth variant — form submit on Log in / Sign up pages
+	// Slightly taller and full-width; uppercase tracking because it's the sole action on the page.
+	&--auth {
+		width: 100%;
+		padding: 1.05rem 1.25rem;
+		font-size: 0.78rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
 }
 
 // ── Tasting option pill ───────────────────────────────────────────────────────
@@ -209,7 +212,11 @@ a.button {
 	font-weight: $font-weight-regular;
 	font-family: $font-display-normal-family;
 	cursor: pointer;
-	transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out, transform 0.15s ease;
+	transition:
+		background-color 0.15s ease-in-out,
+		border-color 0.15s ease-in-out,
+		color 0.15s ease-in-out,
+		transform 0.15s ease;
 
 	&:active {
 		transform: scale(0.94);

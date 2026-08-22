@@ -1,35 +1,36 @@
+@use '../abstracts' as *;
 // ── Logo serif mark — the italic 's in "The Sommelier's Ledger" ───────────────
 .logo-serif {
-  font-family: $font-body-normal-family;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-  font-size: 1.05em;
-  color: $color-roseGoldDark;
+	font-family: $font-body-normal-family;
+	font-style: italic;
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+	font-size: 1.05em;
+	color: $color-accent-light;
 }
 
 // ── Shared eyebrow label with rosegold dot ─────────────────────────────────────
 // Used on auth pages, start page, and any full-page section heading.
 .page-eyebrow {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: $color-text-muted;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-family: $font-display-normal-family;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: $color-text-muted;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-family: $font-display-normal-family;
 
-  &::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: $color-roseGoldDark;
-    box-shadow: 0 0 12px rgba(255, 179, 173, 0.55);
-    flex-shrink: 0;
-  }
+	&::before {
+		content: '';
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: $color-display-accent;
+		box-shadow: 0 0 12px rgba($color-display-accent, 0.55);
+		flex-shrink: 0;
+	}
 }

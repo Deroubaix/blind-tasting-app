@@ -1,24 +1,21 @@
-"use client";
-import React, { ReactNode } from "react";
-import { useFormControlContext } from "./FormControl";
+'use client';
+import React, { type ReactNode } from 'react';
+import { useFormControlContext } from './FormControl';
 
 export type LabelProps = {
-  className?: string;
-  children?: ReactNode;
-  htmlFor?: string; // Allow passing htmlFor manually
+	className?: string;
+	children?: ReactNode;
+	htmlFor?: string; // Allow passing htmlFor manually
 };
 
 export default function Label(props: LabelProps) {
-  const { className, children, htmlFor } = props;
+	const { className, children, htmlFor } = props;
 
-  const formControl = useFormControlContext();
+	const formControl = useFormControlContext();
 
-  return (
-    <label
-      className={`Label ${className ?? ""}`}
-      htmlFor={htmlFor ?? formControl?.fieldId}
-    >
-      {children}
-    </label>
-  );
+	return (
+		<label className={`Label ${className ?? ''}`} htmlFor={htmlFor ?? formControl?.fieldId}>
+			{children}
+		</label>
+	);
 }

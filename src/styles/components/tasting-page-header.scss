@@ -1,3 +1,4 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Tasting session header
 // Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
@@ -6,116 +7,134 @@
 $tph-border: rgba(228, 228, 204, 0.06);
 
 .tasting-page-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  padding: 0 $page-spacing;
-  height: 52px;
-  background-color: $color-black;
-  border-bottom: 1px solid $tph-border;
-  flex-shrink: 0;
-  font-family: $font-display-normal-family;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	align-items: center;
+	padding: 0 $page-spacing;
+	height: 52px;
+	background-color: $color-black;
+	border-bottom: 1px solid $tph-border;
+	flex-shrink: 0;
+	font-family: $font-display-normal-family;
 
-  &__logo {
-    @include eyebrow-label(0.72rem);
-    color: $color-white;
-    letter-spacing: 0.15em;
-    justify-self: start;
-    text-decoration: none;
+	&__logo {
+		@include eyebrow-label(0.72rem);
+		color: $color-white;
+		letter-spacing: 0.15em;
+		justify-self: start;
+		text-decoration: none;
 
-    &:after { display: none; }
-  }
+		&:after {
+			display: none;
+		}
+	}
 
-  &--no-timer {
-    display: flex;
-    justify-content: space-between;
+	&--no-timer {
+		display: flex;
+		justify-content: space-between;
 
-    .tasting-page-header__center { display: none; }
-  }
+		.tasting-page-header__center {
+			display: none;
+		}
+	}
 
-  // ── Center — timer block ────────────────────────────────────────────────────
-  &__center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    justify-self: center;
-  }
+	// ── Center — timer block ────────────────────────────────────────────────────
+	&__center {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		justify-self: center;
+	}
 
-  &__timer-label {
-    @include eyebrow-label(0.5rem);
-    color: $tasting-text-muted;
-    letter-spacing: 0.18em;
-  }
+	&__timer-label {
+		@include eyebrow-label(0.5rem);
+		color: $tasting-text-muted;
+		letter-spacing: 0.18em;
+	}
 
-  &__timer-display {
-    font-family: ui-monospace, "SF Mono", "Cascadia Mono", monospace;
-    font-size: 1.4rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: 1;
-    color: $color-white;
-    @include transition(color, 0.3s);
+	&__timer-display {
+		font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
+		font-size: 1.4rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		line-height: 1;
+		color: $color-white;
 
-    &.timer-display--warning {
-      color: $color-warning;
-    }
+		// `<Timer>` renders its own <span class="timer-display …"> inside this element, so the state
+		// classes have to be matched as descendants. Written as `&.timer-display--warning` they
+		// required the modifier on this wrapper div, where it is never applied — which meant the
+		// amber and expired colours had simply never rendered.
+		.timer-display {
+			color: inherit;
+			@include transition(color, 0.3s);
 
-    &.timer-display--expired {
-      color: $tasting-accent-light;
-    }
-  }
+			&.timer-display--warning {
+				color: $color-warning;
+			}
 
-  // ── Right — wine label + avatar ─────────────────────────────────────────────
-  &__right {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    justify-self: end;
-    position: relative;
-  }
+			&.timer-display--expired {
+				color: $tasting-accent-light;
+			}
+		}
+	}
 
-  &__wine-label {
-    @include eyebrow-label(0.65rem);
-    color: rgba(228, 228, 204, 0.55);
-    letter-spacing: 0.2em;
-  }
+	// ── Right — wine label + avatar ─────────────────────────────────────────────
+	&__right {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+		justify-self: end;
+		position: relative;
+	}
 
-  &__cancel {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: $tasting-text-muted;
-    font-family: $font-display-normal-family;
-    transition: color 0.2s ease;
+	&__wine-label {
+		@include eyebrow-label(0.65rem);
+		color: rgba(228, 228, 204, 0.55);
+		letter-spacing: 0.2em;
+	}
 
-    &:after { display: none; }
-    &:hover { color: $color-white; }
-  }
+	&__cancel {
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: $tasting-text-muted;
+		font-family: $font-display-normal-family;
+		transition: color 0.2s ease;
 
-  &__avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid rgba(228, 228, 204, 0.25);
-    color: $tasting-text-muted;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    @include transition(color background-color border-color, 0.2s);
+		&:after {
+			display: none;
+		}
+		&:hover {
+			color: $color-white;
+		}
+	}
 
-    &:after { display: none; }
+	&__avatar {
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: rgba(228, 228, 204, 0.1) !important;
+		border: 1px solid rgba(228, 228, 204, 0.15) !important;
+		color: $color-accent-light;
+		font-family: $font-display-normal-family;
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		cursor: pointer;
+		text-transform: none;
+		@include transition(opacity, 0.2s);
 
-    &:hover {
-      color: $color-white;
-      border-color: rgba(228, 228, 204, 0.5);
-      background-color: rgba(228, 228, 204, 0.08);
-    }
-  }
+		&:after {
+			display: none;
+		}
+		&:hover {
+			opacity: 0.75;
+		}
+	}
 }

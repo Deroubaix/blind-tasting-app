@@ -1,3 +1,4 @@
+@use '../abstracts' as *;
 @use 'sass:color';
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared tasting patterns
@@ -6,221 +7,274 @@
 
 // ── Card container ────────────────────────────────────────────────────────────
 .tasting-card {
-  background-color: $color-darkGrey;
-  border: 1px solid $tasting-border;
-  border-radius: 8px;
-  padding: $spacing-md;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border;
+	border-radius: 8px;
+	padding: $spacing-md;
 }
 
 .tasting-card__label {
-  @include eyebrow-label(0.58rem);
-  color: $tasting-accent-light;
-  margin-bottom: $spacing-sm;
+	@include eyebrow-label(0.58rem);
+	color: $tasting-accent-light;
+	margin-bottom: $spacing-sm;
 }
 
 // ── Notes textarea ────────────────────────────────────────────────────────────
 .tasting-textarea {
-  width: 100%;
-  background: transparent;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 6px;
-  padding: $spacing-sm;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
-  color: $color-white;
-  resize: vertical;
-  box-sizing: border-box;
-  line-height: 1.6;
+	width: 100%;
+	background: transparent;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 6px;
+	padding: $spacing-sm;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
+	color: $color-white;
+	resize: vertical;
+	box-sizing: border-box;
+	line-height: 1.6;
 
-  &::placeholder { color: $tasting-text-muted; }
-  &:focus { border-color: $tasting-accent; }
+	&::placeholder {
+		color: $tasting-text-muted;
+	}
+	&:focus {
+		border-color: $tasting-accent;
+	}
 }
 
 // ── Standalone text input ─────────────────────────────────────────────────────
 .tasting-input {
-  background: transparent;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
-  color: $color-white;
+	background: transparent;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 6px;
+	padding: 5px 10px;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
+	color: $color-white;
 
-  &::placeholder { color: $tasting-text-muted; }
-  &:focus { border-color: $tasting-accent; }
+	&::placeholder {
+		color: $tasting-text-muted;
+	}
+	&:focus {
+		border-color: $tasting-accent;
+	}
 }
 
 // ── Option pill container ─────────────────────────────────────────────────────
 .tasting-options {
-  display: flex;
-  gap: $spacing-xs;
-  flex-wrap: wrap;
+	display: flex;
+	gap: $spacing-xs;
+	flex-wrap: wrap;
 }
 
 // ── Search input row ──────────────────────────────────────────────────────────
 .tasting-search-row {
-  display: flex;
-  gap: $spacing-xs;
-  align-items: center;
-  margin-bottom: $spacing-sm;
+	display: flex;
+	gap: $spacing-xs;
+	align-items: center;
+	margin-bottom: $spacing-sm;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .tasting-search-input-wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  background-color: $color-surface-variant;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 6px;
-  padding: 0 10px;
-  height: 40px;
-  @include transition(border-color, 0.15s);
+	flex: 1;
+	display: flex;
+	align-items: center;
+	gap: $spacing-xs;
+	background-color: $color-surface-variant;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 6px;
+	padding: 0 10px;
+	height: 40px;
+	@include transition(border-color, 0.15s);
 
-  &:focus-within {
-    border-color: rgba(228, 228, 204, 0.25);
-  }
+	&:focus-within {
+		border-color: rgba(228, 228, 204, 0.25);
+	}
 }
 
 .tasting-search-icon {
-  color: $tasting-text-muted;
-  flex-shrink: 0;
+	color: $tasting-text-muted;
+	flex-shrink: 0;
 }
 
 .tasting-search-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: $color-white;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
+	flex: 1;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: $color-white;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
 
-  &::placeholder { color: $tasting-text-muted; }
+	&::placeholder {
+		color: $tasting-text-muted;
+	}
+	&:focus-visible {
+		outline: none;
+	}
 }
 
 // ── Confirm button (burgundy) ─────────────────────────────────────────────────
 .tasting-confirm-btn {
-  align-self: stretch;
-  padding: 0 14px;
-  border-radius: 6px;
-  border: none;
-  background-color: $tasting-accent;
-  color: $color-white;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  font-family: $font-display-normal-family;
-  cursor: pointer;
-  white-space: nowrap;
-  @include transition(background-color, 0.15s);
+	align-self: stretch;
+	padding: 0 14px;
+	border-radius: 6px;
+	border: none;
+	background-color: $tasting-accent;
+	color: $color-white;
+	font-size: $font-size-sm;
+	font-weight: $font-weight-semibold;
+	font-family: $font-display-normal-family;
+	cursor: pointer;
+	white-space: nowrap;
+	@include transition(background-color, 0.15s);
 
-  &:hover { background-color: color.scale($tasting-accent, $lightness: 8%); }
+	&:hover {
+		background-color: color.scale($tasting-accent, $lightness: 8%);
+	}
 }
 
 // ── Tag chips ────────────────────────────────────────────────────────────────
 .tasting-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-xs;
+	display: flex;
+	flex-wrap: wrap;
+	gap: $spacing-xs;
 }
 
 .tasting-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  background-color: rgba(139, 69, 87, 0.2);
-  border: 1px solid rgba(139, 69, 87, 0.4);
-  color: $tasting-accent-light;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 4px;
+	background-color: rgba(139, 69, 87, 0.2);
+	border: 1px solid rgba(139, 69, 87, 0.4);
+	color: $tasting-accent-light;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
 
-  &__remove {
-    background: none;
-    border: none;
-    color: $tasting-text-muted;
-    cursor: pointer;
-    font-size: 1rem;
-    line-height: 1;
-    padding: 0;
-    @include transition(color, 0.15s);
+	&__remove {
+		background: none;
+		border: none;
+		color: $tasting-text-muted;
+		cursor: pointer;
+		font-size: 1rem;
+		line-height: 1;
+		padding: 0;
+		@include transition(color, 0.15s);
 
-    &:hover { color: $color-white; }
-  }
+		&:hover {
+			color: $color-white;
+		}
+	}
 }
 
-// ── Custom select ─────────────────────────────────────────────────────────────
+// ── Custom select (dropdown trigger) ─────────────────────────────────────────
+.tasting-search-input-wrap--select {
+	cursor: pointer;
+	user-select: none;
+	justify-content: space-between;
+
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.tasting-select-value {
+	flex: 1;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
+	color: $color-white;
+
+	&--placeholder {
+		color: $tasting-text-muted;
+	}
+}
+
+.tasting-select-chevron {
+	flex-shrink: 0;
+	transition: transform 0.15s ease;
+
+	&--open {
+		transform: rotate(180deg);
+	}
+}
+
+// ── Native select (kept for fallback use) ────────────────────────────────────
 .tasting-select {
-  position: relative;
-  width: 100%;
+	position: relative;
+	width: 100%;
 
-  &__native {
-    appearance: none;
-    width: 100%;
-    background-color: $color-surface-variant;
-    border: 1px solid $tasting-border-mid;
-    border-radius: 6px;
-    padding: 0 36px 0 $spacing-sm;
-    height: 40px;
-    font-size: $font-size-sm;
-    font-family: $font-display-normal-family;
-    color: $color-white;
-    cursor: pointer;
-    @include transition(border-color, 0.15s);
+	&__native {
+		appearance: none;
+		width: 100%;
+		background-color: $color-surface-variant;
+		border: 1px solid $tasting-border-mid;
+		border-radius: 6px;
+		padding: 0 36px 0 $spacing-sm;
+		height: 40px;
+		font-size: $font-size-sm;
+		font-family: $font-display-normal-family;
+		color: $color-white;
+		cursor: pointer;
+		@include transition(border-color, 0.15s);
 
-    option { background-color: $color-darkGrey; }
+		option {
+			background-color: $color-darkGrey;
+		}
 
-    &:invalid,
-    &:has(option[value=""]:checked) { color: $tasting-text-muted; }
-  }
+		&:invalid,
+		&:has(option[value='']:checked) {
+			color: $tasting-text-muted;
+		}
+	}
 
-  &__chevron {
-    position: absolute;
-    right: $spacing-sm;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: $color-white;
-  }
+	&__chevron {
+		position: absolute;
+		right: $spacing-sm;
+		top: 50%;
+		transform: translateY(-50%);
+		pointer-events: none;
+		color: $color-white;
+	}
 }
 
 // ── Autocomplete wrapper ──────────────────────────────────────────────────────
 .tasting-autocomplete {
-  flex: 1;
-  position: relative;
+	flex: 1;
+	position: relative;
 }
 
 .tasting-autocomplete__dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background-color: $color-darkGrey;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 6px;
-  padding: 4px 0;
-  margin: 0;
-  list-style: none;
-  z-index: 50;
-  max-height: 200px;
-  overflow-y: auto;
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 6px;
+	padding: 4px 0;
+	margin: 0;
+	list-style: none;
+	z-index: 50;
+	max-height: 200px;
+	overflow-y: auto;
 }
 
 .tasting-autocomplete__option {
-  padding: 7px $spacing-sm;
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
-  color: $tasting-text-secondary;
-  cursor: pointer;
-  @include transition(background-color color, 0.1s);
+	padding: 7px $spacing-sm;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
+	color: $tasting-text-secondary;
+	cursor: pointer;
+	@include transition(background-color color, 0.1s);
 
-  &:hover,
-  &--active {
-    background-color: rgba(139, 69, 87, 0.15);
-    color: $color-white;
-  }
+	&:hover,
+	&--active {
+		background-color: rgba(139, 69, 87, 0.15);
+		color: $color-white;
+	}
 }

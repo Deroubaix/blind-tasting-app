@@ -1,41 +1,41 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Palate Assessment page
 // ─────────────────────────────────────────────────────────────────────────────
 
-
 // ── 2-column category grid ────────────────────────────────────────────────────
 .palate-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: $spacing-md;
+	margin-bottom: $spacing-lg;
 }
 
 // ── Card required marker ──────────────────────────────────────────────────────
 .palate-card__required {
-  color: $tasting-accent;
-  margin-left: 3px;
-  font-size: 0.7rem;
-  line-height: 1;
-  vertical-align: middle;
+	color: $tasting-accent;
+	margin-left: 3px;
+	font-size: 0.7rem;
+	line-height: 1;
+	vertical-align: middle;
 }
 
 // ── Confirm the Nose textarea card ────────────────────────────────────────────
 .palate-notes {
-  margin-bottom: $spacing-lg;
+	margin-bottom: $spacing-lg;
 
-  &__header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: $spacing-sm;
-  }
+	&__header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-bottom: $spacing-sm;
+	}
 
-  &__sublabel {
-    font-size: $font-size-xs;
-    font-family: $font-display-normal-family;
-    color: $tasting-text-muted;
-    font-style: italic;
-    font-weight: $font-weight-regular;
-  }
+	&__sublabel {
+		font-size: $font-size-xs;
+		font-family: $font-display-normal-family;
+		color: $tasting-text-muted;
+		font-style: italic;
+		font-weight: $font-weight-regular;
+	}
 }

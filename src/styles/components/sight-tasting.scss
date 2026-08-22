@@ -1,124 +1,123 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Sight Assessment page
 // Local palette (accent colours specific to the tasting assessment UI)
 // ─────────────────────────────────────────────────────────────────────────────
 
-
-
 // ── Three-column assessment grid ──────────────────────────────────────────────
 .sight-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: $spacing-md;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: $spacing-md;
 }
 
 // ── Card modifiers (base styles from .tasting-card) ──────────────────────────
 .sight-card {
-  &--evidence {
-    grid-row: span 2;
-    display: flex;
-    flex-direction: column;
-  }
+	&--evidence {
+		grid-row: span 2;
+		display: flex;
+		flex-direction: column;
+	}
 
-  &--span-cols { grid-column: 1 / 3; }
+	&--span-cols {
+		grid-column: 1 / 3;
+	}
 }
 
 // Sight cards need a slightly larger label gap than the shared default
 .sight-grid .tasting-card__label {
-  margin-bottom: $spacing-md;
+	margin-bottom: $spacing-md;
 }
 
 .sight-card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-md;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: $spacing-md;
 
-  // When inside a header wrapper, the label loses its own bottom margin
-  .tasting-card__label { margin-bottom: 0; }
+	// When inside a header wrapper, the label loses its own bottom margin
+	.tasting-card__label {
+		margin-bottom: 0;
+	}
 }
 
 .sight-card__sublabel {
-  @include eyebrow-label(0.56rem);
-  color: $tasting-text-muted;
-  letter-spacing: 0.1em;
+	@include eyebrow-label(0.56rem);
+	color: $tasting-text-muted;
+	letter-spacing: 0.1em;
 }
 
 // ── Yes / No toggles ─────────────────────────────────────────────────────────
 .sight-toggle-group {
-  display: flex;
-  gap: $spacing-md;
+	display: flex;
+	gap: $spacing-md;
 }
-
 
 // ── Physical evidence field stack ─────────────────────────────────────────────
 .sight-evidence-fields {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+	flex: 1;
 }
 
 .sight-evidence-field {
-  &__label {
-    display: block;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-    color: $tasting-text-secondary;
-    font-family: $font-display-normal-family;
-    margin-bottom: $spacing-xs;
-  }
+	&__label {
+		display: block;
+		font-size: $font-size-xs;
+		font-weight: $font-weight-medium;
+		color: $tasting-text-secondary;
+		font-family: $font-display-normal-family;
+		margin-bottom: $spacing-xs;
+	}
 }
 
 // ── Color swatches ────────────────────────────────────────────────────────────
 .sight-swatches {
-  display: flex;
-  gap: $spacing-md;
+	display: flex;
+	gap: $spacing-md;
 }
 
 .sight-swatch-item {
-  position: relative;
-  flex: 1;
-  cursor: pointer;
+	position: relative;
+	flex: 1;
+	cursor: pointer;
 }
 
 .sight-swatch-rect {
-  width: 100%;
-  height: 50px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  // background is set inline (dynamic hex value)
-  @include transition(border-color box-shadow, 0.15s);
+	width: 100%;
+	height: 50px;
+	border-radius: 8px;
+	border: 2px solid transparent;
+	// background is set inline (dynamic hex value)
+	@include transition(border-color box-shadow, 0.15s);
 
-  &--selected {
-    border-color: $tasting-accent-light;
-    box-shadow: 0 0 0 1px $tasting-accent-light;
-  }
+	&--selected {
+		border-color: $tasting-accent-light;
+		box-shadow: 0 0 0 1px $tasting-accent-light;
+	}
 }
 
 .sight-swatch-label {
-  margin-top: $spacing-xs;
-  font-size: $font-size-xs;
-  text-align: center;
-  color: $tasting-text-secondary;
-  font-family: $font-display-normal-family;
-  font-weight: $font-weight-regular;
+	margin-top: $spacing-xs;
+	font-size: $font-size-xs;
+	text-align: center;
+	color: $tasting-text-secondary;
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-regular;
 
-  &--selected {
-    color: $tasting-accent-light;
-    font-weight: $font-weight-semibold;
-  }
+	&--selected {
+		color: $tasting-accent-light;
+		font-weight: $font-weight-semibold;
+	}
 }
 
 .sight-swatch-desc {
-  margin-top: 3px;
-  font-size: $font-size-xs;
-  text-align: center;
-  color: $tasting-text-secondary;
-  font-family: $font-display-normal-family;
-  font-weight: $font-weight-regular;
-  line-height: 1.4;
+	margin-top: 3px;
+	font-size: $font-size-xs;
+	text-align: center;
+	color: $tasting-text-secondary;
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-regular;
+	line-height: 1.4;
 }
-
-
-

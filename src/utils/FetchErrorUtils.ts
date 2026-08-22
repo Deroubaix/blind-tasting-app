@@ -1,4 +1,4 @@
-import { AbortType } from './AbortUtils';
+import { type AbortType } from './AbortUtils';
 
 export default class FetchUtilsError extends Error {
 	constructor(

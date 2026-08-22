@@ -1,6 +1,4 @@
-@import "animations.scss";
-@import "buttons.scss";
-@import "inputs.scss";
-@import "typography.scss";
-
-
+@use 'animations';
+@use 'buttons';
+@use 'inputs';
+@use 'typography';

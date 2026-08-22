@@ -1,11 +1,16 @@
+@use 'sass:color';
 @use 'sass:math';
+@use 'theme-only' as *;
 
 // Calculate the luminance for a color.
 // See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests
+//
+// Channels are read through `sass:color`. The global `red()`/`green()`/`blue()` these used to call
+// are deprecated and go away in Dart Sass 3.
 @function luminance($color) {
-	$red: linearColorChannel(red($color) + 1);
-	$green: linearColorChannel(green($color) + 1);
-	$blue: linearColorChannel(blue($color) + 1);
+	$red: linearColorChannel(color.channel($color, 'red', $space: rgb) + 1);
+	$green: linearColorChannel(color.channel($color, 'green', $space: rgb) + 1);
+	$blue: linearColorChannel(color.channel($color, 'blue', $space: rgb) + 1);
 
 	@return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
 }

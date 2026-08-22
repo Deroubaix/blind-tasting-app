@@ -1,82 +1,83 @@
+@use '../abstracts' as *;
 @keyframes rotating {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .Loading {
-  vertical-align: middle;
+	vertical-align: middle;
 
-  &.dark {
-    --color: $color-white;
-  }
+	&.dark {
+		--color: $color-white;
+	}
 
-  &.light {
-    --color: $color-primary;
-  }
+	&.light {
+		--color: $color-primary;
+	}
 
-  &.primary {
-    --color: $color-primary;
-  }
+	&.primary {
+		--color: $color-primary;
+	}
 
-  &.secondary {
-    --color: $color-secondary;
-  }
+	&.secondary {
+		--color: $color-secondary;
+	}
 
-  &.white {
-    --color: $color-white;
-  }
+	&.white {
+		--color: $color-white;
+	}
 
-  &.success {
-    --color: $color-success;
-  }
+	&.success {
+		--color: $color-success;
+	}
 
-  &.accent-1 {
-    --color: $color-accent-1;
-  }
+	&.accent-1 {
+		--color: $color-accent-1;
+	}
 
-  &.accent-2 {
-    --color: $color-accent-2;
-  }
+	&.accent-2 {
+		--color: $color-accent-2;
+	}
 
-  &.brand-1 {
-    --color: $color-brand-1;
-  }
+	&.brand-1 {
+		--color: $color-brand-1;
+	}
 
-  &.brand-2 {
-    --color: $color-brand-2;
-  }
+	&.brand-2 {
+		--color: $color-brand-2;
+	}
 
-  &.warning {
-    --color: $color-warning;
-  }
+	&.warning {
+		--color: $color-warning;
+	}
 
-  &.error {
-    --color: $color-error;
-  }
+	&.error {
+		--color: $color-error;
+	}
 
-  &.success {
-    --color: $color-success;
-  }
+	&.success {
+		--color: $color-success;
+	}
 
-  --color: $color-primary;
+	--color: $color-primary;
 
-  .tabler-icon {
-    width: unset;
-    height: unset;
+	.tabler-icon {
+		width: unset;
+		height: unset;
 
-    path {
-      color: var(--color);
-    }
+		path {
+			color: var(--color);
+		}
 
-    animation: rotating 700ms linear infinite;
-  }
+		animation: rotating 700ms linear infinite;
+	}
 }
 
 span.Loading {
-  display: inline-block;
-  padding-left: $spacing-sm;
+	display: inline-block;
+	padding-left: $spacing-sm;
 }

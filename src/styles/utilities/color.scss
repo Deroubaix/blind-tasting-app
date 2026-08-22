@@ -1,3 +1,4 @@
+@use '../abstracts' as *;
 @use 'sass:color';
 
 .color-primary {
@@ -37,6 +38,6 @@
 	color: var(--color);
 }
 .color-success-darker {
-	--color: #{darken($color-success, 30%)};
+	--color: #{color.adjust($color-success, $lightness: -30%)};
 	color: var(--color);
 }

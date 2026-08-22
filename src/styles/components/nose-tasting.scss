@@ -1,19 +1,19 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Nose Assessment page
 // ─────────────────────────────────────────────────────────────────────────────
 
-
 // ── Assessment grids ──────────────────────────────────────────────────────────
 .nose-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-md;
-  margin-bottom: $spacing-md;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: $spacing-md;
+	margin-bottom: $spacing-md;
 
-  // Primary Fruit Profile uses 2 columns
-  &--two-col {
-    grid-template-columns: repeat(2, 1fr);
-  }
+	// Primary Fruit Profile uses 2 columns
+	&--two-col {
+		grid-template-columns: repeat(2, 1fr);
+	}
 }
 
 // ── Category card (base styles from .tasting-card) ───────────────────────────
@@ -21,138 +21,155 @@
 // ── Fruit category (no background) ───────────────────────────────────────────
 // Used for: Primary Fruit Profile — sits directly on page background
 .nose-fruit-category {
-  padding: $spacing-xs 0;
+	padding: $spacing-xs 0;
 
-  &__label {
-    @include eyebrow-label(0.58rem);
-    color: $tasting-accent-light;
-    margin-bottom: $spacing-xs;
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-  }
+	&__label {
+		@include eyebrow-label(0.58rem);
+		color: $tasting-accent-light;
+		margin-bottom: $spacing-xs;
+		display: flex;
+		align-items: center;
+		gap: $spacing-xs;
+	}
 }
 
 // ── Fruit category color dots ─────────────────────────────────────────────────
 .nose-fruit-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
 
-  // Red wine fruit types
-  &--red     { background-color: #9B1B30; }
-  &--blue    { background-color: #5C2D6E; }
-  &--black   { background-color: #3D1515; box-shadow: 0 0 0 1px rgba(228, 228, 204, 0.15); }
-  &--dried   { background-color: #8B5E3C; }
+	// Red wine fruit types
+	&--red {
+		background-color: #9b1b30;
+	}
+	&--blue {
+		background-color: #5c2d6e;
+	}
+	&--black {
+		background-color: #3d1515;
+		box-shadow: 0 0 0 1px rgba(228, 228, 204, 0.15);
+	}
+	&--dried {
+		background-color: #8b5e3c;
+	}
 
-  // White wine fruit types
-  &--citrus  { background-color: #C8A020; }
-  &--stone   { background-color: #C07848; }
-  &--orchard { background-color: #5C8B5C; }
-  &--tropical { background-color: #B87820; }
+	// White wine fruit types
+	&--citrus {
+		background-color: #c8a020;
+	}
+	&--stone {
+		background-color: #c07848;
+	}
+	&--orchard {
+		background-color: #5c8b5c;
+	}
+	&--tropical {
+		background-color: #b87820;
+	}
 }
 
 // ── Equal-width pill variant (Fruit Character, Condition) ─────────────────────
 .tasting-options--equal {
-  flex-wrap: nowrap;
+	flex-wrap: nowrap;
 
-  .tasting-option {
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-    padding: 9px 10px;
-  }
+	.tasting-option {
+		flex: 1;
+		justify-content: center;
+		text-align: center;
+		padding: 9px 10px;
+	}
 }
 
 // ── Custom "other" input ──────────────────────────────────────────────────────
 .nose-other-input {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
+	display: inline-flex;
+	align-items: center;
+	gap: $spacing-xs;
 }
 
 // ── Non-collapsible section divider (Primary Fruit Profile) ───────────────────
 .nose-section-divider {
-  margin-top: $spacing-xl;
-  margin-bottom: $spacing-md;
-  padding-bottom: $spacing-sm;
-  border-bottom: 1px solid $tasting-border;
+	margin-top: $spacing-xl;
+	margin-bottom: $spacing-md;
+	padding-bottom: $spacing-sm;
+	border-bottom: 1px solid $tasting-border;
 
-  &__title {
-    @include eyebrow-label(0.65rem);
-    color: $tasting-accent-light;
-  }
+	&__title {
+		@include eyebrow-label(0.65rem);
+		color: $tasting-accent-light;
+	}
 }
 
 // ── Wood Exposure layout ──────────────────────────────────────────────────────
 // Wood Aromas (wide, no bg) on the left; Origin + Condition stacked on the right
 .nose-wood-layout {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: $spacing-md;
-  align-items: start;
+	display: grid;
+	grid-template-columns: 3fr 2fr;
+	gap: $spacing-md;
+	align-items: start;
 
-  &__assessment {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-  }
+	&__assessment {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-md;
+	}
 }
 
 // ── Collapsible section header ────────────────────────────────────────────────
 .nose-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: $spacing-sm 0;
-  background: none;
-  border: none;
-  border-bottom: 1px solid $tasting-border;
-  cursor: pointer;
-  margin-top: $spacing-xl;
-  margin-bottom: $spacing-md;
-  @include transition(border-color, 0.2s);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: $spacing-sm 0;
+	background: none;
+	border: none;
+	border-bottom: 1px solid $tasting-border;
+	cursor: pointer;
+	margin-top: $spacing-xl;
+	margin-bottom: $spacing-md;
+	@include transition(border-color, 0.2s);
 
-  &:hover {
-    border-bottom-color: rgba(228, 228, 204, 0.22);
-  }
+	&:hover {
+		border-bottom-color: rgba(228, 228, 204, 0.22);
+	}
 
-  &__title {
-    @include eyebrow-label(0.65rem);
-    color: $tasting-accent-light;
-  }
+	&__title {
+		@include eyebrow-label(0.65rem);
+		color: $tasting-accent-light;
+	}
 
-  &__right {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    color: $tasting-text-secondary;
-  }
+	&__right {
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+		color: $tasting-text-secondary;
+	}
 
-  &__count {
-    font-size: $font-size-xs;
-    font-family: $font-display-normal-family;
-    color: $tasting-text-muted;
-    font-style: italic;
-    font-weight: $font-weight-regular;
-  }
+	&__count {
+		font-size: $font-size-xs;
+		font-family: $font-display-normal-family;
+		color: $tasting-text-muted;
+		font-style: italic;
+		font-weight: $font-weight-regular;
+	}
 }
 
 // ── Collapsible content wrapper ───────────────────────────────────────────────
 // CSS grid trick for smooth height animation without JS measuring
 .nose-collapsible {
-  display: grid;
-  grid-template-rows: 1fr;
-  @include transition(grid-template-rows, 0.25s, ease);
-  overflow: hidden;
+	display: grid;
+	grid-template-rows: 1fr;
+	@include transition(grid-template-rows, 0.25s, ease);
+	overflow: hidden;
 
-  &--collapsed {
-    grid-template-rows: 0fr;
-  }
+	&--collapsed {
+		grid-template-rows: 0fr;
+	}
 
-  &__inner {
-    overflow: hidden;
-  }
+	&__inner {
+		overflow: hidden;
+	}
 }

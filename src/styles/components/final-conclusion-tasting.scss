@@ -1,94 +1,94 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Final Conclusion page
 // Search inputs and chips use shared .tasting-* classes from tasting-inputs.scss
 // ─────────────────────────────────────────────────────────────────────────────
 
-
 // ── Two-column page layout ────────────────────────────────────────────────────
 .fc-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: $spacing-xxl;
-  align-items: start;
+	display: grid;
+	grid-template-columns: 300px 1fr;
+	gap: $spacing-xxl;
+	align-items: start;
 }
 
 .fc-left {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 // ── Your Analysis panel ───────────────────────────────────────────────────────
 .fc-analysis {
-  background-color: $color-surface-variant;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 10px;
-  padding: $spacing-md;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
+	background-color: $color-surface-variant;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	padding: $spacing-md;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-sm;
 
-  &__header {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: $spacing-xs;
-  }
+	&__header {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		margin-bottom: $spacing-xs;
+	}
 
-  &__title {
-    @include eyebrow-label(0.62rem);
-    color: $tasting-accent-light;
-    letter-spacing: 0.14em;
-  }
+	&__title {
+		@include eyebrow-label(0.62rem);
+		color: $tasting-accent-light;
+		letter-spacing: 0.14em;
+	}
 
-  &__subtitle {
-    font-size: $font-size-sm;
-    font-style: italic;
-    color: $tasting-text-tertiary;
-  }
+	&__subtitle {
+		font-size: $font-size-sm;
+		font-style: italic;
+		color: $tasting-text-tertiary;
+	}
 
-  &__row {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
+	&__row {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
 
-  &__row-label {
-    @include eyebrow-label(0.58rem);
-    color: $tasting-text-muted;
-    letter-spacing: 0.1em;
-  }
+	&__row-label {
+		@include eyebrow-label(0.58rem);
+		color: $tasting-text-muted;
+		letter-spacing: 0.1em;
+	}
 
-  &__row-value {
-    font-size: 0.78rem;
-    color: $tasting-text-secondary;
-    line-height: 1.5;
+	&__row-value {
+		font-size: 0.78rem;
+		color: $tasting-text-secondary;
+		line-height: 1.5;
 
-    &--identity {
-      font-style: italic;
-      color: $tasting-accent-light;
-    }
-  }
+		&--identity {
+			font-style: italic;
+			color: $tasting-accent-light;
+		}
+	}
 
-  &__divider {
-    height: 1px;
-    background-color: $tasting-border-mid;
-    margin: $spacing-xs 0;
-  }
+	&__divider {
+		height: 1px;
+		background-color: $tasting-border-mid;
+		margin: $spacing-xs 0;
+	}
 }
 
 // ── Form grid (single column inside the right panel) ─────────────────────────
 .fc-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-lg;
-  align-items: start;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: $spacing-lg;
+	align-items: start;
 }
 
 // ── Field ─────────────────────────────────────────────────────────────────────
 .fc-field {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-xs;
 }
 
 // ── Quality Level select ──────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-@import "general.scss";
-@import "home-page.scss";
-@import "auth-pages.scss";
-@import "tastings-page.scss";
+@use 'general';
+@use 'home-page';
+@use 'auth-pages';
+@use 'tastings-page';

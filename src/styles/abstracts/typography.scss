@@ -1,48 +1,11 @@
-@use "sass:math";
-
-@import "../fonts/poppins.scss";
-// Lora is loaded via next/font/google in layout.tsx as --font-lora
-
-// -----------------------------------------
-// Font size scale
-// -----------------------------------------
-$text-base-size: 16px;
-$text-scale-ratio: 1.25;
-
-$font-size-xxs: math.div($text-base-size, math.pow($text-scale-ratio, 3));
-$font-size-xs:  math.div($text-base-size, math.pow($text-scale-ratio, 2));
-$font-size-sm:  math.div($text-base-size, math.pow($text-scale-ratio, 1));
-$font-size-md:  $text-base-size;
-$font-size-lg:  $text-base-size * math.pow($text-scale-ratio, 1);
-$font-size-xl:  $text-base-size * math.pow($text-scale-ratio, 2);
-$font-size-xxl: $text-base-size * math.pow($text-scale-ratio, 3);
-$font-size-xxxl: $text-base-size * math.pow($text-scale-ratio, 4);
-$font-size-xxxxl: $text-base-size * math.pow($text-scale-ratio, 5);
-
-// -----------------------------------------
-// Font weight scale (designer spec)
-// -----------------------------------------
-$font-weight-regular:   400;
-$font-weight-medium:    500;
-$font-weight-semibold:  600;
-$font-weight-bold:      700;
-$font-weight-extrabold: 800;
-
-// -----------------------------------------
-// Font family aliases
-// -----------------------------------------
-// Manrope — primary font for all headings, body, UI
-$font-display-normal-family: $font-primary;        // var(--font-manrope)
-$font-display-normal-weight: $font-weight-regular;
-$font-display-bold-family:   $font-primary-bold;   // var(--font-manrope)
-$font-display-bold-weight:   $font-weight-bold;
-
-// Lora — serif, used only for the italic accent in the hero
-$font-body-normal-family: var(--font-lora), serif;
-$font-body-normal-weight: $font-weight-regular;
-$font-body-bold-family:   var(--font-lora), serif;
-$font-body-bold-spacing:  0.03em;
-$font-body-bold-weight:   $font-weight-bold;
+// Base typography rules — headings, body copy and links.
+//
+// The scale itself lives in `_font-scale.scss`; this file is the CSS it produces. Sibling `@use`s
+// rather than the `abstracts` barrel, because the barrel forwards this file.
+@use 'theme-only' as *;
+@use 'font-scale' as *;
+@use 'mixins' as *;
+@use 'responsiveness' as *;
 
 // -----------------------------------------
 // Heading styles (Manrope — product UI)
@@ -50,12 +13,12 @@ $font-body-bold-weight:   $font-weight-bold;
 // -----------------------------------------
 h1,
 h2 {
-  font-family: $font-display-bold-family;
-  margin: 1.5em 0;
+	font-family: $font-display-bold-family;
+	margin: 1.5em 0;
 
-  &:first-child {
-    margin-top: 0;
-  }
+	&:first-child {
+		margin-top: 0;
+	}
 }
 
 // With base=16px, ratio=1.25:
@@ -66,49 +29,61 @@ h2 {
 // sm    ≈ 12.8px → Labels (designer: 12px)
 
 h1 {
-  font-size: $font-size-xxxxl;          // ≈ 48.8px
-  font-weight: $font-weight-extrabold;
-  letter-spacing: -0.03em;
+	font-size: $font-size-xxxxl; // ≈ 48.8px
+	font-weight: $font-weight-extrabold;
+	letter-spacing: -0.03em;
 }
 
 h2 {
-  font-size: $font-size-xxl;            // ≈ 31.3px
-  font-weight: $font-weight-bold;
-  letter-spacing: -0.02em;
+	font-size: $font-size-xxl; // ≈ 31.3px
+	font-weight: $font-weight-bold;
+	letter-spacing: -0.02em;
 }
 
 h3 {
-  font-size: $font-size-lg;             // 20px
-  font-family: $font-display-normal-family;
-  font-weight: $font-weight-semibold;
-  letter-spacing: 0;
+	font-size: $font-size-lg; // 20px
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-semibold;
+	letter-spacing: 0;
 }
 
 h4 {
-  font-size: $font-size-md;             // 16px
-  font-family: $font-display-normal-family;
-  font-weight: $font-weight-semibold;
+	font-size: $font-size-md; // 16px
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-semibold;
 }
 
 h5 {
-  font-size: $font-size-md;
-  font-family: $font-display-normal-family;
-  font-weight: $font-weight-medium;
+	font-size: $font-size-md;
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-medium;
 }
 
 h6 {
-  font-size: $font-size-sm;
-  font-family: $font-display-normal-family;
-  font-weight: $font-weight-medium;
+	font-size: $font-size-sm;
+	font-family: $font-display-normal-family;
+	font-weight: $font-weight-medium;
 }
 
 @include responsive($breakpoint-mobile) {
-  h1 { font-size: $font-size-xxl; }    // ≈ 31px on mobile
-  h2 { font-size: $font-size-xl; }     // 25px on mobile
-  h3 { font-size: $font-size-md; }     // 16px on mobile
-  h4 { font-size: $font-size-md; }
-  h5 { font-size: $font-size-md; }
-  h6 { font-size: $font-size-md; }
+	h1 {
+		font-size: $font-size-xxl;
+	} // ≈ 31px on mobile
+	h2 {
+		font-size: $font-size-xl;
+	} // 25px on mobile
+	h3 {
+		font-size: $font-size-md;
+	} // 16px on mobile
+	h4 {
+		font-size: $font-size-md;
+	}
+	h5 {
+		font-size: $font-size-md;
+	}
+	h6 {
+		font-size: $font-size-md;
+	}
 }
 
 // -----------------------------------------
@@ -117,96 +92,115 @@ h6 {
 p,
 li,
 td {
-  font-weight: $font-weight-medium;
-  line-height: 1.75;   // relaxed
+	font-weight: $font-weight-medium;
+	line-height: 1.75; // relaxed
 }
 
 p,
 td {
-  font-size: 0.95rem;
+	font-size: 0.95rem;
 }
 
 p {
-  margin-bottom: 1.75em;
+	margin-bottom: 1.75em;
 }
 
 li,
 ol {
-  margin-bottom: 0.4em;
-  font-size: 0.9rem;
+	margin-bottom: 0.4em;
+	font-size: 0.9rem;
 
-  &:last-child { margin-bottom: 0; }
+	&:last-child {
+		margin-bottom: 0;
+	}
 
-  p {
-    font-size: 0.9rem;
-    &:last-of-type  { margin-bottom: 0; }
-    &:first-of-type { margin-top: 0; }
-  }
+	p {
+		font-size: 0.9rem;
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
 
-  ul,
-  ol { margin-bottom: 0.25em; }
+	ul,
+	ol {
+		margin-bottom: 0.25em;
+	}
 }
 
 .no-list-style {
-  ol, ul { list-style-type: none; }
+	ol,
+	ul {
+		list-style-type: none;
+	}
 }
 
 .underline-headings {
-  h2 {
-    border-bottom: 2px solid $color-primary;
-    padding-bottom: 0.75em;
-    margin-top: 2.5em;
-  }
+	h2 {
+		border-bottom: 2px solid $color-primary;
+		padding-bottom: 0.75em;
+		margin-top: 2.5em;
+	}
 }
 
 // -----------------------------------------
 // Links
 // -----------------------------------------
 a {
-  position: relative;
-  word-break: auto-phrase;
-  overflow-wrap: normal;
+	position: relative;
+	word-break: auto-phrase;
+	overflow-wrap: normal;
 
-  &:after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 0;
-    left: 0;
-    bottom: -0.5rem;
-    border-bottom: 1.5px solid $color-text-dark;
-    transition: width 0.5s ease-in-out;
-  }
+	&:after {
+		content: '';
+		display: block;
+		position: absolute;
+		width: 0;
+		left: 0;
+		bottom: -0.5rem;
+		border-bottom: 1.5px solid $color-text-dark;
+		transition: width 0.5s ease-in-out;
+	}
 
-  &.no-underline {
-    text-decoration: none;
-    &:after { display: none; }
-  }
+	&.no-underline {
+		text-decoration: none;
+		&:after {
+			display: none;
+		}
+	}
 
-  @include active-state {
-    cursor: pointer;
-    &:after { width: 100%; }
-  }
+	@include active-state {
+		cursor: pointer;
+		&:after {
+			width: 100%;
+		}
+	}
 }
 
 .dark-bg {
-  color: $color-text-light;
-  border-color: $color-text-light;
-  a:after { border-color: $color-text-light; }
+	color: $color-text-light;
+	border-color: $color-text-light;
+	a:after {
+		border-color: $color-text-light;
+	}
 }
 
 .switch-link-underline-direction a,
 .switch-link-underline-direction {
-  &:after {
-    right: 0;
-    left: unset;
-  }
+	&:after {
+		right: 0;
+		left: unset;
+	}
 }
 
 .light-bg,
 .dark-bg {
-  p a {
-    color: $color-accent-1;
-    &:after { border-color: $color-accent-1; }
-  }
+	p a {
+		color: $color-accent-1;
+		&:after {
+			border-color: $color-accent-1;
+		}
+	}
 }

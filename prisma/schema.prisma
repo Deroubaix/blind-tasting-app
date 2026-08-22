@@ -8,30 +8,37 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  password      String
-  displayName   String   
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  id               String    @id @default(uuid()) @db.VarChar(36)
+  email            String    @unique
+  password         String
+  displayName      String
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
 
-  tastings      Tasting[]
+  tastings Tasting[]
 }
-
 
 model Tasting {
-  id             Int      @id @default(autoincrement())
-  userId         Int
-  wineType       String?
-  sight          Json?
-  nose           Json?
-  palate         Json?
-  conclusion     Json?
-  wineName       String?
-  timerEnabled   Boolean  @default(false)
-  timerDuration  Int?
-  isArchived     Boolean  @default(false)
-  notes          String?
-  created_at     DateTime @default(now())
-  user           User     @relation(fields: [userId], references: [id])
-}
+  id            String   @id @default(uuid()) @db.VarChar(36)
+  /// Per-user display number ("No. 1", "No. 2"). Starts at 1 for every account and is
+  /// what the UI shows — the uuid id is never surfaced.
+  number        Int
+  userId        String   @db.VarChar(36)
+  wineType      String?
+  sight         Json?
+  nose          Json?
+  palate        Json?
+  conclusion    Json?
+  wineName      String?
+  timerEnabled  Boolean  @default(false)
+  timerDuration Int?
+  isArchived    Boolean  @default(false)
+  notes         String?
+  created_at    DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
 
+  /// Makes the per-user numbering race-safe: a concurrent insert that picks the same
+  /// number fails the constraint instead of silently duplicating.
+  @@unique([userId, number])
+}

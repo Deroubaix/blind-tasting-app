@@ -1,3 +1,4 @@
+@use '../abstracts' as *;
 @mixin set-input-group-colors($color) {
 	label {
 		color: $color;
@@ -64,10 +65,6 @@ select {
 
 	border-width: 0px;
 	border-bottom-width: 2px;
-
-	& + .error {
-		margin-top: -2em;
-	}
 }
 
 // ------------------------------------------------------------------

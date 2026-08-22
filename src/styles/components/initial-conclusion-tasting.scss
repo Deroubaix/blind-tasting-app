@@ -1,30 +1,29 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Initial Conclusion page
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── 2-column layout ───────────────────────────────────────────────────────────
 .ic-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-xl;
-  align-items: start;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: $spacing-xl;
+	align-items: start;
 }
 
 .ic-col {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
 }
 
 // ── Section eyebrow label ─────────────────────────────────────────────────────
 .ic-section-label {
-  @include eyebrow-label(0.62rem);
-  color: $tasting-text-secondary;
-  letter-spacing: 0.12em;
+	@include eyebrow-label(0.62rem);
+	color: $tasting-text-secondary;
+	letter-spacing: 0.12em;
 
-  &--mt {
-    margin-top: $spacing-sm;
-  }
+	&--mt {
+		margin-top: $spacing-sm;
+	}
 }
-
-

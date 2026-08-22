@@ -1,0 +1,5 @@
+// The palette on its own, with none of the rest of `abstracts` attached.
+//
+// Files *inside* `abstracts/` cannot `@use '../abstracts'` — the barrel forwards them, so that would
+// be a dependency cycle. They reach for this instead when all they need is colour.
+@forward '../theme/blind-tasting';
