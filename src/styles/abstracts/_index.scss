@@ -1,0 +1,14 @@
+// What every stylesheet in this app writes against: `@use '../abstracts' as *;`.
+//
+// The theme comes first so the real palette is in scope before anything reads a colour. Order is
+// otherwise the order these files were `@import`ed in, which keeps the emitted CSS (only
+// `typography.scss` produces any) exactly where it was.
+@forward 'theme-only';
+@forward 'font-scale';
+@forward 'functions';
+@forward 'layers';
+@forward 'mixins';
+@forward 'responsiveness';
+@forward 'spacing';
+@forward 'typography';
+@forward 'tasting-tokens';

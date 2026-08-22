@@ -1,7 +1,8 @@
+@use '../abstracts' as *;
 @use 'sass:color';
 
 body.menu-open {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 $menu-padding-top: $page-spacing * 0.6;
@@ -10,384 +11,433 @@ $item-gap: $page-spacing * 1.5;
 
 // ── Account dropdown — shared between navbar and tasting header ───────────────
 .nav-user {
-  position: relative;
-  display: flex;
-  align-items: center;
+	position: relative;
+	display: flex;
+	align-items: center;
 }
 
 .nav-icon-btn {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  color: $color-text-muted;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 50%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-transform: none;
-  letter-spacing: 0;
-  transition: color 0.2s ease, background-color 0.2s ease;
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border-radius: 50%;
+	background: transparent !important;
+	border: none !important;
+	cursor: pointer;
+	text-transform: none;
+	letter-spacing: 0;
+	transition: opacity 0.2s ease;
 
-  &:after { display: none; }
+	&:after {
+		display: none;
+	}
 
-  &:hover {
-    color: $color-white;
-    background-color: rgba(228, 228, 204, 0.08);
-  }
+	&:hover {
+		opacity: 0.75;
+	}
+}
+
+.nav-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: rgba(228, 228, 204, 0.1);
+	border: 1px solid rgba(228, 228, 204, 0.15);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: $font-display-normal-family;
+	font-size: 0.68rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: $color-accent-light;
+	pointer-events: none;
+	flex-shrink: 0;
 }
 
 .nav-dropdown {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  min-width: 210px;
-  background: #1a1816;
-  border: 1px solid rgba(228, 228, 204, 0.08);
-  border-radius: 4px;
-  z-index: $index-navbar + 1;
-  overflow: hidden;
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	min-width: 210px;
+	background: #1a1816;
+	border: 1px solid rgba(228, 228, 204, 0.08);
+	border-radius: 4px;
+	z-index: $index-navbar + 1;
+	overflow: hidden;
 
-  &__profile {
-    padding: 1rem 1rem 0.85rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
+	&__profile {
+		padding: 1rem 1rem 0.85rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
 
-  &__name {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: $color-white;
-    font-family: $font-display-normal-family;
-  }
+	&__name {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: $color-white;
+		font-family: $font-display-normal-family;
+	}
 
-  &__email {
-    font-size: 0.75rem;
-    color: $color-text-muted;
-    font-family: $font-display-normal-family;
-  }
+	&__email {
+		font-size: 0.75rem;
+		color: $color-text-muted;
+		font-family: $font-display-normal-family;
+	}
 
-  &__divider {
-    height: 1px;
-    background: rgba(228, 228, 204, 0.08);
-  }
+	&__divider {
+		height: 1px;
+		background: rgba(228, 228, 204, 0.08);
+	}
 
-  &__item {
-    display: block;
-    width: 100%;
-    padding: 0.7rem 1rem;
-    font-size: 0.8rem;
-    font-family: $font-display-normal-family;
-    color: $color-text-muted;
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    letter-spacing: 0;
-    text-transform: none;
+	&__item {
+		display: block;
+		width: 100%;
+		padding: 0.7rem 1rem;
+		font-size: 0.8rem;
+		font-family: $font-display-normal-family;
+		color: $color-text-muted;
+		text-align: left;
+		background: none;
+		border: none;
+		cursor: pointer;
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease;
+		letter-spacing: 0;
+		text-transform: none;
 
-    &:after { display: none; }
+		&:after {
+			display: none;
+		}
 
-    &:hover {
-      color: $color-white;
-      background: rgba(228, 228, 204, 0.06);
-    }
+		&:hover {
+			color: $color-white;
+			background: rgba(228, 228, 204, 0.06);
+		}
 
-    &--logout { color: rgba(229, 115, 115, 0.8); }
-  }
+		&--logout {
+			color: rgba(229, 115, 115, 0.8);
+		}
+	}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 .navbar {
-  position: fixed;
-  z-index: $index-navbar;
-  width: 100%;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 0 0 $menu-padding-sides;
-  height: var(--navbar-height_approx);
-  background-color: rgba(20, 19, 19, 0.92);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(228, 228, 204, 0.06);
-  font-family: $font-display-normal-family;
+	position: fixed;
+	z-index: $index-navbar;
+	width: 100%;
+	top: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 0 0 $menu-padding-sides;
+	height: var(--navbar-height_approx);
+	background-color: rgba(20, 19, 19, 0.92);
+	backdrop-filter: blur(8px);
+	border-bottom: 1px solid rgba(228, 228, 204, 0.06);
+	font-family: $font-display-normal-family;
 
-  .header-logo {
-    @include eyebrow-label(0.75rem);
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: $color-white;
-    white-space: nowrap;
-    flex-shrink: 0;
+	.header-logo {
+		@include eyebrow-label(0.75rem);
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		color: $color-white;
+		white-space: nowrap;
+		flex-shrink: 0;
 
-    &:after { display: none; }
-  }
+		&:after {
+			display: none;
+		}
+	}
 
-  .nav {
-    display: flex;
-    align-items: stretch;
-    align-self: stretch;
-    gap: $page-spacing * 2;
-  }
+	.nav {
+		display: flex;
+		align-items: stretch;
+		align-self: stretch;
+		gap: 0;
+	}
 
-  .desktop-nav-links {
-    display: flex;
-    align-items: center;
-    gap: $item-gap;
+	.desktop-nav-links {
+		display: flex;
+		align-items: center;
+		gap: $item-gap;
 
-    @include responsive($breakpoint-tablet) {
-      display: none;
-    }
-  }
+		@include responsive($breakpoint-tablet) {
+			display: none;
+		}
+	}
 
-  .nav-link {
-    position: relative;
-    display: flex;
-    align-items: center;
-    align-self: stretch;
-    padding: 0 1.5rem;
-    font-size: 0.85rem;
-    color: $color-text-muted;
-    font-family: $font-display-normal-family;
-    transition: color 0.2s ease;
+	.nav-link {
+		position: relative;
+		display: flex;
+		align-items: center;
+		align-self: stretch;
+		padding: 0 1.5rem;
+		font-size: 0.85rem;
+		color: $color-text-muted;
+		font-family: $font-display-normal-family;
+		transition: color 0.2s ease;
 
-    &:after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 4px;
-      width: 100%;
-      background-color: $color-white;
-      transition: opacity 0.2s ease;
-      opacity: 0;
-    }
+		&:after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			height: 4px;
+			width: 100%;
+			background-color: $color-white;
+			transition: opacity 0.2s ease;
+			opacity: 0;
+		}
 
-    &:hover,
-    &.active {
-      color: $color-white;
-      &:after { opacity: 1; }
-    }
-  }
+		&.active {
+			color: $color-white;
+			&:after {
+				opacity: 1;
+			}
+		}
+	}
 
-  .nav-user {
-    padding-right: $menu-padding-sides;
+	.nav-user {
+		padding-right: $menu-padding-sides;
 
-    @include responsive($breakpoint-tablet) {
-      display: none;
-    }
-  }
+		@include responsive($breakpoint-tablet) {
+			display: none;
+		}
+	}
 
-  .nav-auth {
-    display: flex;
-    align-items: center;
-    align-self: stretch;
-    gap: 0;
-    padding-right: $menu-padding-sides;
+	.nav-auth {
+		display: flex;
+		align-items: center;
+		align-self: stretch;
+		gap: 0;
+		padding-right: $menu-padding-sides;
 
-    @include responsive($breakpoint-tablet) {
-      display: none;
-    }
-  }
+		@include responsive($breakpoint-tablet) {
+			display: none;
+		}
+	}
 
-  .nav-signup-btn {
-    // Colours, hover, and focus ring come from .btn-primary.
-    // Only nav-specific layout lives here.
-    font-size: 0.8rem;
-    text-transform: none;
-    letter-spacing: 0.06em;
-  }
+	.nav-signup-btn {
+		// Colours, hover, and focus ring come from .btn-primary.
+		// Only nav-specific layout lives here.
+		font-size: 0.8rem;
+		text-transform: none;
+		letter-spacing: 0.06em;
+	}
 
-  .hamburger-menu {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    color: $color-text-muted;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.25rem;
-    text-transform: none;
-    letter-spacing: 0;
+	.hamburger-menu {
+		display: none;
+		align-items: center;
+		justify-content: center;
+		color: $color-text-muted;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0.25rem;
+		text-transform: none;
+		letter-spacing: 0;
 
-    &.hidden { display: none; }
+		&.hidden {
+			display: none;
+		}
 
-    @include responsive($breakpoint-tablet) {
-      display: flex;
-    }
-  }
+		@include responsive($breakpoint-tablet) {
+			display: flex;
+		}
+	}
 
-  .close-menu {
-    cursor: pointer;
-    color: $color-text-muted;
-    align-self: flex-end;
-    padding: $menu-padding-top $menu-padding-sides;
+	.close-menu {
+		cursor: pointer;
+		color: $color-text-muted;
+		align-self: flex-end;
+		padding: $menu-padding-top $menu-padding-sides;
 
-    &:hover { color: $color-white; }
-  }
+		&:hover {
+			color: $color-white;
+		}
+	}
 
-  .menu-links {
-    display: none;
+	.menu-links {
+		display: none;
 
-    &.show { display: flex; }
+		&.show {
+			display: flex;
+		}
 
-    @include responsive($breakpoint-tablet) {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100dvh;
-      width: 100%;
-      background: $color-black;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: $page-spacing;
-      font-size: 1.1rem;
-      z-index: $index-navbar;
-      padding-top: $page-spacing * 2;
+		@include responsive($breakpoint-tablet) {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100dvh;
+			width: 100%;
+			background: $color-black;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: $page-spacing;
+			font-size: 1.1rem;
+			z-index: $index-navbar;
+			padding-top: $page-spacing * 2;
 
-      > a {
-        padding: 0.25rem $menu-padding-sides;
-        color: $color-text-muted;
-        text-decoration: none;
-        font-weight: 500;
-        font-family: $font-display-normal-family;
+			> a {
+				padding: 0.25rem $menu-padding-sides;
+				color: $color-text-muted;
+				text-decoration: none;
+				font-weight: 500;
+				font-family: $font-display-normal-family;
 
-        &:after { display: none; }
+				&:after {
+					display: none;
+				}
 
-        &:hover { color: $color-white; }
-      }
-    }
-  }
+				&:hover {
+					color: $color-white;
+				}
+			}
+		}
+	}
 
-  .menu-logout-btn {
-    padding: 0.25rem $menu-padding-sides;
-    color: $color-text-muted;
-    font-size: 1.1rem;
-    font-weight: 500;
-    font-family: $font-display-normal-family;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
+	.menu-logout-btn {
+		padding: 0.25rem $menu-padding-sides;
+		color: $color-text-muted;
+		font-size: 1.1rem;
+		font-weight: 500;
+		font-family: $font-display-normal-family;
+		background: none;
+		border: none;
+		cursor: pointer;
+		text-align: left;
 
-    &:hover { color: $color-white; }
-  }
+		&:hover {
+			color: $color-white;
+		}
+	}
 }
 
 // ----------------------------------------
 // Footer
 // ----------------------------------------
 .site-footer {
-  background-color: $color-darkGrey;
-  border-top: 1px solid rgba(228, 228, 204, 0.06);
-  padding: $page-spacing * 3 $page-spacing * 3 $page-spacing * 1.5;
-  font-family: $font-display-normal-family;
+	background-color: $color-darkGrey;
+	border-top: 1px solid rgba(228, 228, 204, 0.06);
+	padding: $page-spacing * 3 $page-spacing * 3 $page-spacing * 1.5;
+	font-family: $font-display-normal-family;
 
-  @include responsive($breakpoint-tablet) {
-    padding: $page-spacing * 2 $page-spacing * 2 $page-spacing;
-  }
+	@include responsive($breakpoint-tablet) {
+		padding: $page-spacing * 2 $page-spacing * 2 $page-spacing;
+	}
 
-  .footer-main {
-    display: flex;
-    justify-content: space-between;
-    gap: $page-spacing * 3;
-    margin-bottom: $page-spacing * 3;
+	.footer-main {
+		display: flex;
+		justify-content: space-between;
+		gap: $page-spacing * 3;
+		margin-bottom: $page-spacing * 3;
 
-    @include responsive($breakpoint-tablet) {
-      flex-direction: column;
-      gap: $page-spacing * 2;
-    }
-  }
+		@include responsive($breakpoint-tablet) {
+			flex-direction: column;
+			gap: $page-spacing * 2;
+		}
+	}
 
-  .footer-brand {
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: $page-spacing * 0.75;
-  }
+	.footer-brand {
+		max-width: 300px;
+		display: flex;
+		flex-direction: column;
+		gap: $page-spacing * 0.75;
+	}
 
-  .footer-logo {
-    @include eyebrow-label(0.75rem);
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: $color-white;
+	.footer-logo {
+		@include eyebrow-label(0.75rem);
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		color: $color-white;
 
-    &:after { display: none; }
-  }
+		&:after {
+			display: none;
+		}
+	}
 
-  .footer-tagline {
-    font-size: 0.8rem;
-    color: $color-text-muted;
-    line-height: 1.6;
-    margin: 0;
-  }
+	.footer-tagline {
+		font-size: 0.8rem;
+		color: $color-text-muted;
+		line-height: 1.6;
+		margin: 0;
+	}
 
-  .footer-links {
-    display: flex;
-    gap: $page-spacing * 4;
+	.footer-links {
+		display: flex;
+		gap: $page-spacing * 4;
 
-    @include responsive($breakpoint-mobile) {
-      gap: $page-spacing * 2;
-    }
-  }
+		@include responsive($breakpoint-mobile) {
+			gap: $page-spacing * 2;
+		}
+	}
 
-  .footer-col {
-    display: flex;
-    flex-direction: column;
-    gap: $page-spacing * 0.6;
+	.footer-col {
+		display: flex;
+		flex-direction: column;
+		gap: $page-spacing * 0.6;
 
-    h4 {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: $color-white;
-      margin: 0 0 0.4rem;
-      letter-spacing: 0.05em;
-    }
+		h4 {
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: $color-white;
+			margin: 0 0 0.4rem;
+			letter-spacing: 0.05em;
+		}
 
-    a {
-      font-size: 0.8rem;
-      color: $color-text-muted;
-      transition: color 0.2s ease;
+		a {
+			font-size: 0.8rem;
+			color: $color-text-muted;
+			transition: color 0.2s ease;
 
-      &:after { display: none; }
+			&:after {
+				display: none;
+			}
 
-      &:hover { color: $color-white; }
-    }
-  }
+			&:hover {
+				color: $color-white;
+			}
+		}
+	}
 
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: $page-spacing;
-    border-top: 1px solid rgba(228, 228, 204, 0.06);
-    font-size: 0.75rem;
-    color: $color-text-muted;
+	.footer-bottom {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-top: $page-spacing;
+		border-top: 1px solid rgba(228, 228, 204, 0.06);
+		font-size: 0.75rem;
+		color: $color-text-muted;
 
-    @include responsive($breakpoint-mobile) {
-      flex-direction: column;
-      gap: 0.5rem;
-      text-align: center;
-    }
-  }
+		@include responsive($breakpoint-mobile) {
+			flex-direction: column;
+			gap: 0.5rem;
+			text-align: center;
+		}
+	}
 
-  .footer-legal {
-    display: flex;
-    gap: $page-spacing;
+	.footer-legal {
+		display: flex;
+		gap: $page-spacing;
 
-    a {
-      font-size: 0.75rem;
-      color: $color-text-muted;
-      transition: color 0.2s ease;
+		a {
+			font-size: 0.75rem;
+			color: $color-text-muted;
+			transition: color 0.2s ease;
 
-      &:after { display: none; }
+			&:after {
+				display: none;
+			}
 
-      &:hover { color: $color-white; }
-    }
-  }
+			&:hover {
+				color: $color-white;
+			}
+		}
+	}
 }

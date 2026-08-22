@@ -1,0 +1,50 @@
+// Type scale, weights and family aliases.
+//
+// Split out of `typography.scss` to break a cycle: `typography.scss` needs `active-state` from
+// `mixins.scss`, and `mixins.scss` needs `$font-size-sm` and friends from here. `@import` tolerated
+// that because everything shared one namespace; `@use` rejects it outright. Nothing else moved —
+// `abstracts/_index.scss` forwards this file, so `$font-size-*` is still in scope everywhere it was.
+@use 'sass:math';
+@use '../fonts/poppins' as *;
+// Lora is loaded via next/font/google in layout.tsx as --font-lora
+
+// -----------------------------------------
+// Font size scale
+// -----------------------------------------
+$text-base-size: 16px;
+$text-scale-ratio: 1.25;
+
+$font-size-xxs: math.div($text-base-size, math.pow($text-scale-ratio, 3));
+$font-size-xs: math.div($text-base-size, math.pow($text-scale-ratio, 2));
+$font-size-sm: math.div($text-base-size, math.pow($text-scale-ratio, 1));
+$font-size-md: $text-base-size;
+$font-size-lg: $text-base-size * math.pow($text-scale-ratio, 1);
+$font-size-xl: $text-base-size * math.pow($text-scale-ratio, 2);
+$font-size-xxl: $text-base-size * math.pow($text-scale-ratio, 3);
+$font-size-xxxl: $text-base-size * math.pow($text-scale-ratio, 4);
+$font-size-xxxxl: $text-base-size * math.pow($text-scale-ratio, 5);
+
+// -----------------------------------------
+// Font weight scale (designer spec)
+// -----------------------------------------
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+// -----------------------------------------
+// Font family aliases
+// -----------------------------------------
+// Manrope — primary font for all headings, body, UI
+$font-display-normal-family: $font-primary; // var(--font-manrope)
+$font-display-normal-weight: $font-weight-regular;
+$font-display-bold-family: $font-primary-bold; // var(--font-manrope)
+$font-display-bold-weight: $font-weight-bold;
+
+// Lora — serif, used only for the italic accent in the hero
+$font-body-normal-family: var(--font-lora), serif;
+$font-body-normal-weight: $font-weight-regular;
+$font-body-bold-family: var(--font-lora), serif;
+$font-body-bold-spacing: 0.03em;
+$font-body-bold-weight: $font-weight-bold;

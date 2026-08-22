@@ -1,115 +1,124 @@
+@use '../abstracts' as *;
 @use 'sass:color';
 // ─────────────────────────────────────────────────────────────────────────────
 // Tasting Footer — sticky bottom bar shared by all tasting phase pages
 // ─────────────────────────────────────────────────────────────────────────────
 
 .tasting-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background-color: $color-darkGrey;
-  border-top: 1px solid $tasting-border;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 $page-spacing;
-  z-index: $index-navbar - 100;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	background-color: $color-darkGrey;
+	border-top: 1px solid $tasting-border;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 $page-spacing;
+	z-index: $index-navbar - 100;
 
-  // Reset global button defaults for all footer buttons
-  button {
-    text-transform: none;
-    letter-spacing: normal;
-    min-width: unset;
-  }
+	// Reset global button defaults for all footer buttons
+	button {
+		text-transform: none;
+		letter-spacing: normal;
+		min-width: unset;
+	}
 
-  &__left {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-  }
+	&__left {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+	}
 
-  &__reset-confirm {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-  }
+	&__reset-confirm {
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+	}
 
-  &__reset-question {
-    color: $tasting-text-tertiary;
-    font-size: $font-size-xs;
-    font-family: $font-display-normal-family;
-  }
+	&__reset-question {
+		color: $tasting-text-tertiary;
+		font-size: $font-size-xs;
+		font-family: $font-display-normal-family;
+	}
 
-  &__reset-yes {
-    background: none;
-    border: 1px solid rgba(228, 228, 204, 0.25);
-    border-radius: 4px;
-    padding: 2px 8px;
-    color: #e05555;
-    font-size: $font-size-xs;
-    font-family: $font-display-normal-family;
-    cursor: pointer;
-    @include transition(color border-color, 0.15s);
+	&__reset-yes {
+		background: none;
+		border: 1px solid rgba(228, 228, 204, 0.25);
+		border-radius: 4px;
+		padding: 2px 8px;
+		color: #e05555;
+		font-size: $font-size-xs;
+		font-family: $font-display-normal-family;
+		cursor: pointer;
+		@include transition(color border-color, 0.15s);
 
-    &:hover { color: #ff6b6b; border-color: rgba(228, 228, 204, 0.5); }
-  }
+		&:hover {
+			color: #ff6b6b;
+			border-color: rgba(228, 228, 204, 0.5);
+		}
+	}
 
-  &__reset-no {
-    background: none;
-    border: 1px solid rgba(228, 228, 204, 0.25);
-    border-radius: 4px;
-    padding: 2px 8px;
-    color: $tasting-text-tertiary;
-    font-size: $font-size-xs;
-    font-family: $font-display-normal-family;
-    cursor: pointer;
-    @include transition(color border-color, 0.15s);
+	&__reset-no {
+		background: none;
+		border: 1px solid rgba(228, 228, 204, 0.25);
+		border-radius: 4px;
+		padding: 2px 8px;
+		color: $tasting-text-tertiary;
+		font-size: $font-size-xs;
+		font-family: $font-display-normal-family;
+		cursor: pointer;
+		@include transition(color border-color, 0.15s);
 
-    &:hover { color: $color-white; border-color: rgba(228, 228, 204, 0.5); }
-  }
+		&:hover {
+			color: $color-white;
+			border-color: rgba(228, 228, 204, 0.5);
+		}
+	}
 
-  &__reset {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: 1px solid rgba(228, 228, 204, 0.2);
-    border-radius: 4px;
-    padding: 3px 10px;
-    color: $tasting-text-tertiary;
-    font-size: $font-size-xs;
-    font-family: $font-display-normal-family;
-    cursor: pointer;
-    @include transition(color border-color, 0.15s);
+	&__reset {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		background: none;
+		border: 1px solid rgba(228, 228, 204, 0.2);
+		border-radius: 4px;
+		padding: 3px 10px;
+		color: $tasting-text-tertiary;
+		font-size: $font-size-xs;
+		font-family: $font-display-normal-family;
+		cursor: pointer;
+		@include transition(color border-color, 0.15s);
 
-    &:hover {
-      color: rgba(228, 228, 204, 0.7);
-      border-color: rgba(228, 228, 204, 0.4);
-    }
-  }
+		&:hover {
+			color: rgba(228, 228, 204, 0.7);
+			border-color: rgba(228, 228, 204, 0.4);
+		}
+	}
 
-  &__reset-icon {
-    font-size: 0.85em;
-    line-height: 1;
-  }
+	&__reset-icon {
+		font-size: 0.85em;
+		line-height: 1;
+	}
 
-  &__back-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    color: $tasting-text-tertiary;
-    font-size: $font-size-sm;
-    font-family: $font-display-normal-family;
-    cursor: pointer;
-    letter-spacing: 0.05em;
-    @include transition(color, 0.2s);
+	&__back-btn {
+		background: none;
+		border: none;
+		padding: 0;
+		color: $tasting-text-tertiary;
+		font-size: $font-size-sm;
+		font-family: $font-display-normal-family;
+		cursor: pointer;
+		letter-spacing: 0.05em;
+		@include transition(color, 0.2s);
 
-    &:hover { color: $color-white; }
-  }
+		&:hover {
+			color: $color-white;
+		}
+	}
 
-  &__next {
-    // All styles come from .btn-primary — no overrides needed.
-  }
+	&__next {
+		// All styles come from .btn-primary — no overrides needed.
+	}
 }

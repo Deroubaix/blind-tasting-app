@@ -1,0 +1,48 @@
+// The palette. This is the single source of truth for colour in the app — it is forwarded first by
+// `abstracts/_index.scss`, so every stylesheet (including the ones inside `abstracts/`) sees these
+// values rather than a placeholder.
+//
+// It used to be the other way around: `abstracts/colors.scss` declared white/black/grey stand-ins
+// and this file redefined them afterwards. Under `@import` that mostly worked, because most consumers
+// were mixins and mixins resolve their variables when they are included, not when they are defined.
+// Plain rules are not lazy though, so anything in `abstracts/` that used a colour directly baked in
+// the stand-in: `.underline-headings h2` drew a *white* border, and link underlines a *black* one.
+// Making the theme the source removes the ordering hazard entirely.
+
+// Core palette — backgrounds & surfaces
+$color-black: #141313;
+$color-darkGrey: #1c1b1b;
+$color-surface-variant: #211f1f;
+
+// Brand & accents
+$color-burgundy: #4a0e0e;
+$color-accent: #8b4557; // promoted from $tasting-accent
+$color-accent-light: #d4a0ab; // promoted from $tasting-accent-light
+$color-display-accent: #ffb3ad; // landing page hero/decorative peach — not part of the burgundy system
+$color-roseGold: #dac1bf; // tertiary text — start screen only
+
+// White wine
+$color-white-wine-bg: #2d4a3e;
+
+// Status / semantic ok — also used as white-wine icon foreground
+$color-status-ok: #8ebc8e;
+$color-white-wine-accent: $color-status-ok; // alias — kept for white wine card icon
+
+// Typography
+$color-white: #e4e4cc;
+$color-text-muted: rgba(228, 228, 204, 0.6);
+
+// Status
+$color-success: $color-status-ok; // alias — used by toast color="success"
+$color-error: #e57373;
+$color-warning: #ffb74d;
+
+// Variable mapping
+$color-primary: $color-burgundy;
+$color-secondary: $color-white;
+$color-accent-1: $color-darkGrey;
+$color-accent-2: $color-surface-variant;
+$color-brand-1: $color-accent-light;
+$color-brand-2: $color-accent;
+$color-text-light: $color-white;
+$color-text-dark: $color-burgundy;

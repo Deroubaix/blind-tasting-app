@@ -1,116 +1,117 @@
+@use '../abstracts' as *;
 .flex {
-  display: flex;
+	display: flex;
 
-  &,
-  &.r {
-    flex-direction: row;
-  }
+	&,
+	&.r {
+		flex-direction: row;
+	}
 
-  &.rr {
-    flex-direction: row-reverse;
-  }
+	&.rr {
+		flex-direction: row-reverse;
+	}
 
-  &.c {
-    flex-direction: column;
-  }
+	&.c {
+		flex-direction: column;
+	}
 
-  &.cr {
-    flex-direction: column-reverse;
-  }
+	&.cr {
+		flex-direction: column-reverse;
+	}
 
-  &.w {
-    flex-wrap: wrap;
-  }
+	&.w {
+		flex-wrap: wrap;
+	}
 
-  &.wr {
-    flex-wrap: wrap-reverse;
-  }
+	&.wr {
+		flex-wrap: wrap-reverse;
+	}
 
-  &.nw {
-    flex-wrap: nowrap;
-  }
+	&.nw {
+		flex-wrap: nowrap;
+	}
 
-  &.js {
-    justify-content: flex-start;
-  }
+	&.js {
+		justify-content: flex-start;
+	}
 
-  &.je {
-    justify-content: flex-end;
-  }
+	&.je {
+		justify-content: flex-end;
+	}
 
-  &.jc {
-    justify-content: center;
-  }
+	&.jc {
+		justify-content: center;
+	}
 
-  &.jb {
-    justify-content: space-between;
-  }
+	&.jb {
+		justify-content: space-between;
+	}
 
-  &.ja {
-    justify-content: space-around;
-  }
+	&.ja {
+		justify-content: space-around;
+	}
 
-  &.as {
-    align-items: flex-start;
-  }
+	&.as {
+		align-items: flex-start;
+	}
 
-  &.ae {
-    align-items: flex-end;
-  }
+	&.ae {
+		align-items: flex-end;
+	}
 
-  &.ac {
-    align-items: center;
-  }
+	&.ac {
+		align-items: center;
+	}
 
-  &.ab {
-    align-items: baseline;
-  }
+	&.ab {
+		align-items: baseline;
+	}
 
-  &.ast {
-    align-items: stretch;
-  }
+	&.ast {
+		align-items: stretch;
+	}
 
-  &.gxxs {
-    gap: $spacing-xxs;
-  }
+	&.gxxs {
+		gap: $spacing-xxs;
+	}
 
-  &.gxs {
-    gap: $spacing-xs;
-  }
+	&.gxs {
+		gap: $spacing-xs;
+	}
 
-  &.gsm {
-    gap: $spacing-sm;
-  }
+	&.gsm {
+		gap: $spacing-sm;
+	}
 
-  &.gmd {
-    gap: $spacing-md;
-  }
+	&.gmd {
+		gap: $spacing-md;
+	}
 
-  &.glg {
-    gap: $spacing-lg;
-  }
+	&.glg {
+		gap: $spacing-lg;
+	}
 
-  &.gxl {
-    gap: $spacing-xl;
-  }
+	&.gxl {
+		gap: $spacing-xl;
+	}
 
-  &.gxxl {
-    gap: $spacing-xxl;
-  }
+	&.gxxl {
+		gap: $spacing-xxl;
+	}
 }
 
 .fg0 {
-  flex-grow: 0;
+	flex-grow: 0;
 }
 
 .fg1 {
-  flex-grow: 1;
+	flex-grow: 1;
 }
 
 .fs0 {
-  flex-shrink: 0;
+	flex-shrink: 0;
 }
 
 .fs1 {
-  flex-shrink: 1;
+	flex-shrink: 1;
 }

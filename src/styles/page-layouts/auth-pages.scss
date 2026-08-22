@@ -1,297 +1,341 @@
+@use '../abstracts' as *;
 @use 'sass:color';
 
 .auth-page {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background-color: $color-black;
+	min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	background-color: $color-black;
 }
 
 // ── Auth header ───────────────────────────────────────────────────────────────
 .auth-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 ($page-spacing * 1.5);
-  height: var(--navbar-height_approx);
-  border-bottom: 1px solid rgba(228, 228, 204, 0.06);
-  flex-shrink: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 ($page-spacing * 1.5);
+	height: var(--navbar-height_approx);
+	border-bottom: 1px solid rgba(228, 228, 204, 0.06);
+	flex-shrink: 0;
 }
 
 .auth-header-logo {
-  @include eyebrow-label(0.75rem);
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: $color-white;
+	@include eyebrow-label(0.75rem);
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	color: $color-white;
 
-  &:after { display: none; }
+	&:after {
+		display: none;
+	}
 }
 
 .auth-header-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-family: $font-display-normal-family;
-  transition: color 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	font-family: $font-display-normal-family;
+	transition: color 0.2s ease;
 
-  &:after { display: none; }
+	&:after {
+		display: none;
+	}
 
-  &:hover .auth-nav-label { color: $color-text-muted; }
+	&:hover .auth-nav-label {
+		color: $color-text-muted;
+	}
 }
 
 .auth-nav-label {
-  color: rgba(228, 228, 204, 0.45);
-  transition: color 0.2s ease;
+	color: rgba(228, 228, 204, 0.45);
+	transition: color 0.2s ease;
 }
 
 .auth-nav-action {
-  color: $color-white;
+	color: $color-white;
 }
 
 .auth-nav-arrow {
-  color: $color-roseGoldDark;
-  display: flex;
-  align-items: center;
+	color: $color-display-accent;
+	display: flex;
+	align-items: center;
 }
 
 // ── Main form area ────────────────────────────────────────────────────────────
 .auth-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem ($page-spacing * 1.5);
-  position: relative;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem ($page-spacing * 1.5);
+	position: relative;
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(700px 500px at 50% 0%, rgba(74, 14, 14, 0.22), transparent 65%);
-  }
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: radial-gradient(700px 500px at 50% 0%, rgba(74, 14, 14, 0.22), transparent 65%);
+	}
 
-  @include responsive($breakpoint-mobile) {
-    padding: 2rem ($page-spacing * 1.5);
-  }
+	@include responsive($breakpoint-mobile) {
+		padding: 2rem ($page-spacing * 1.5);
+	}
 }
 
 .auth-container {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  gap: 2.25rem;
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 420px;
+	display: flex;
+	flex-direction: column;
+	gap: 2.25rem;
 }
 
 // ── Card head (eyebrow + heading + subtitle) ──────────────────────────────────
 .auth-card-head {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 .auth-heading {
-  font-family: $font-display-bold-family;
-  font-size: clamp(2rem, 4.5vw, 2.6rem);
-  font-weight: $font-weight-extrabold;
-  color: $color-white;
-  margin: 0;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+	font-family: $font-display-bold-family;
+	font-size: clamp(2rem, 4.5vw, 2.6rem);
+	font-weight: $font-weight-extrabold;
+	color: $color-white;
+	margin: 0;
+	letter-spacing: -0.035em;
+	line-height: 1.05;
 
-  em {
-    font-family: $font-body-normal-family;
-    font-style: italic;
-    font-weight: 400;
-    color: $color-roseGoldDark;
-  }
+	em {
+		font-family: $font-body-normal-family;
+		font-style: italic;
+		font-weight: 400;
+		color: $color-display-accent;
+	}
 }
 
 .auth-subheading {
-  font-size: 0.92rem;
-  color: $color-text-muted;
-  line-height: 1.65;
-  margin: 0;
+	font-size: 0.92rem;
+	color: $color-text-muted;
+	line-height: 1.65;
+	margin: 0;
 
-  strong {
-    color: rgba(228, 228, 204, 0.78);
-    font-weight: 600;
-  }
+	strong {
+		color: rgba(228, 228, 204, 0.78);
+		font-weight: 600;
+	}
 }
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 .auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.1rem;
 }
 
 .auth-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .auth-label {
-  @include eyebrow-label;
+	@include eyebrow-label;
 }
 
 .auth-label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
 }
 
 .auth-input-hint {
-  font-size: 0.62rem;
-  letter-spacing: 0.04em;
-  color: rgba(228, 228, 204, 0.45);
-  font-weight: 500;
-  font-family: $font-display-normal-family;
+	font-size: 0.62rem;
+	letter-spacing: 0.04em;
+	color: rgba(228, 228, 204, 0.45);
+	font-weight: 500;
+	font-family: $font-display-normal-family;
 }
 
 .auth-forgot {
-  @include eyebrow-label(0.6rem);
-  transition: color 0.2s ease;
+	@include eyebrow-label(0.6rem);
+	transition: color 0.2s ease;
 
-  &:after { display: none; }
+	&:after {
+		display: none;
+	}
 
-  &:hover { color: $color-white; }
+	&:hover {
+		color: $color-white;
+	}
 }
 
 .auth-input-wrapper {
-  position: relative;
+	position: relative;
 
-  .auth-input {
-    width: 100%;
-    padding-right: 2.75rem;
-  }
+	.auth-input {
+		width: 100%;
+		padding-right: 2.75rem;
+	}
 }
 
 .auth-input {
-  width: 100%;
-  background-color: $color-darkGrey;
-  border: 1px solid rgba(228, 228, 204, 0.06);
-  border-radius: 6px;
-  color: $color-white;
-  padding: 0.95rem 1rem;
-  font-family: $font-display-normal-family;
-  font-size: 0.95rem;
-  line-height: 1.3;
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+	width: 100%;
+	background-color: $color-darkGrey;
+	border: 1px solid rgba(228, 228, 204, 0.06);
+	border-radius: 6px;
+	color: $color-white;
+	padding: 0.95rem 1rem;
+	font-family: $font-display-normal-family;
+	font-size: 0.95rem;
+	line-height: 1.3;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease,
+		box-shadow 0.2s ease;
 
-  &::placeholder { color: rgba(228, 228, 204, 0.22); }
+	&::placeholder {
+		color: rgba(228, 228, 204, 0.22);
+	}
 
-  &:hover { border-color: rgba(228, 228, 204, 0.12); }
+	&:hover {
+		border-color: rgba(228, 228, 204, 0.12);
+	}
 
-  &:focus {
-    outline: none;
-    border-color: $color-roseGoldDark;
-    background-color: $color-surface-variant;
-  }
+	&:focus {
+		outline: none;
+		border-color: $color-accent;
+		background-color: $color-surface-variant;
+	}
 
-  &:focus-visible {
-    box-shadow: 0 0 0 3px rgba(255, 179, 173, 0.16);
-  }
+	&:focus-visible {
+		box-shadow: 0 0 0 3px rgba(139, 69, 87, 0.25);
+	}
 
-  // Override browser autofill — prevent background + text colour changes
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover,
-  &:-webkit-autofill:focus,
-  &:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px $color-surface-variant inset;
-    -webkit-text-fill-color: $color-white;
-    caret-color: $color-white;
-    transition: background-color 9999s ease-in-out, color 9999s ease-in-out;
-  }
+	// Override browser autofill — prevent background + text colour changes
+	&:-webkit-autofill,
+	&:-webkit-autofill:hover,
+	&:-webkit-autofill:focus,
+	&:-webkit-autofill:active {
+		-webkit-box-shadow: 0 0 0 1000px $color-surface-variant inset;
+		-webkit-text-fill-color: $color-white;
+		caret-color: $color-white;
+		transition:
+			background-color 9999s ease-in-out,
+			color 9999s ease-in-out;
+	}
 }
 
 .auth-eye-btn {
-  position: absolute;
-  right: 0.7rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: $color-text-muted;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.4rem;
-  border-radius: 4px;
-  transition: color 0.15s ease, background-color 0.15s ease;
-  text-transform: none;
-  letter-spacing: 0;
+	position: absolute;
+	right: 0.7rem;
+	top: 50%;
+	transform: translateY(-50%);
+	background: none;
+	border: none;
+	color: $color-text-muted;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.4rem;
+	border-radius: 4px;
+	transition:
+		color 0.15s ease,
+		background-color 0.15s ease;
+	text-transform: none;
+	letter-spacing: 0;
 
-  &:after { display: none; }
+	&:after {
+		display: none;
+	}
 
-  &:hover {
-    color: $color-white;
-    background-color: rgba(228, 228, 204, 0.06);
-  }
+	&:hover {
+		color: $color-white;
+	}
 
-  &:focus-visible {
-    outline: 2px solid $color-roseGoldDark;
-    outline-offset: 1px;
-  }
+	&:focus-visible {
+		outline: 2px solid $color-accent;
+		outline-offset: 1px;
+	}
 }
 
 // Colours, sizing, hover, focus, and disabled come from .btn-primary.btn-primary--auth.
 // Only the form-specific margin lives here.
 .auth-submit {
-  margin-top: 0.4rem;
+	margin-top: 0.4rem;
 }
 
 .auth-fineprint {
-  font-size: 0.72rem;
-  line-height: 1.6;
-  color: rgba(228, 228, 204, 0.45);
-  text-align: center;
+	font-size: 0.72rem;
+	line-height: 1.6;
+	color: rgba(228, 228, 204, 0.45);
+	text-align: center;
 
-  a {
-    color: rgba(228, 228, 204, 0.78);
-    border-bottom: 1px solid rgba(228, 228, 204, 0.12);
-    padding-bottom: 1px;
-    transition: border-color 0.2s ease;
+	a {
+		color: rgba(228, 228, 204, 0.78);
+		border-bottom: 1px solid rgba(228, 228, 204, 0.12);
+		padding-bottom: 1px;
+		transition: border-color 0.2s ease;
 
-    &:after { display: none; }
-    &:hover { border-color: $color-roseGoldDark; }
-  }
+		&:after {
+			display: none;
+		}
+		&:hover {
+			border-color: $color-display-accent;
+		}
+	}
 }
 
 .auth-error {
-  font-size: 0.8rem;
-  color: $color-error;
-  margin: 0;
-  padding: 0.5rem 0.75rem;
-  background-color: rgba(229, 115, 115, 0.1);
-  border-left: 2px solid $color-error;
+	font-size: 0.8rem;
+	color: $color-error;
+	margin: 0;
+	padding: 0.5rem 0.75rem;
+	background-color: rgba(229, 115, 115, 0.1);
+	border-left: 2px solid $color-error;
+}
+
+// ── Success state icon ────────────────────────────────────────────────────────
+.auth-success-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	background: rgba($color-status-ok, 0.12);
+	border: 1px solid rgba($color-status-ok, 0.3);
+	color: $color-status-ok;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
 }
 
 // ── Cross-link ────────────────────────────────────────────────────────────────
 .auth-switch {
-  font-size: 0.85rem;
-  color: $color-text-muted;
-  text-align: center;
-  margin: 0;
+	font-size: 0.85rem;
+	color: $color-text-muted;
+	text-align: center;
+	margin: 0;
 }
 
 .auth-switch-link {
-  color: $color-white;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(228, 228, 204, 0.12);
-  padding-bottom: 1px;
-  transition: border-color 0.2s ease;
+	color: $color-white;
+	font-weight: 600;
+	border-bottom: 1px solid rgba(228, 228, 204, 0.12);
+	padding-bottom: 1px;
+	transition: border-color 0.2s ease;
 
-  &:after { display: none; }
-  &:hover { border-color: $color-roseGoldDark; }
+	&:after {
+		display: none;
+	}
+	&:hover {
+		border-color: $color-display-accent;
+	}
 }
-

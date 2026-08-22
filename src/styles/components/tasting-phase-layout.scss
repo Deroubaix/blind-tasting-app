@@ -1,61 +1,62 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Tasting Phase Layout — generic page shell shared by all tasting phase pages
 // (Sight, Nose, Palate, Initial Conclusion, Final Conclusion)
 // ─────────────────────────────────────────────────────────────────────────────
 
 .tasting-phase-page {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: $color-black;
-  color: $color-white;
-  overflow: hidden;
-  font-family: $font-display-normal-family;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	background-color: $color-black;
+	color: $color-white;
+	overflow: hidden;
+	font-family: $font-display-normal-family;
 
-  // Reset global button defaults for all buttons inside tasting pages
-  button {
-    text-transform: none;
-    letter-spacing: normal;
-    min-width: unset;
-  }
+	// Reset global button defaults for all buttons inside tasting pages
+	button {
+		text-transform: none;
+		letter-spacing: normal;
+		min-width: unset;
+	}
 }
 
 .tasting-phase-body {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
+	display: flex;
+	flex: 1;
+	overflow: hidden;
 }
 
 .tasting-phase-main {
-  flex: 1;
-  overflow: auto;
-  background-color: $color-black;
-  padding-bottom: 80px; // clear the sticky footer
+	flex: 1;
+	overflow: auto;
+	background-color: $color-black;
+	padding-bottom: 80px; // clear the sticky footer
 }
 
 .tasting-phase-content {
-  padding: $spacing-xxl $spacing-xxl 0;
+	padding: $spacing-xxl $spacing-xxl 0;
 }
 
 // ── Shared page heading elements (used on every phase page) ───────────────────
 
 .phase-label {
-  @include eyebrow-label(0.65rem);
-  color: $tasting-accent;
-  margin-bottom: $spacing-xxxs;
+	@include eyebrow-label(0.65rem);
+	color: $color-accent;
+	margin-bottom: $spacing-xxxs;
 }
 
 .phase-heading {
-  font-size: $font-size-xxxl;
-  color: $color-white;
-  margin: 0 0 $spacing-sm;
-  line-height: 1.2;
+	font-size: $font-size-xxxl;
+	color: $color-white;
+	margin: 0 0 $spacing-sm;
+	line-height: 1.2;
 }
 
 .phase-description {
-  font-size: $font-size-sm;
-  font-style: italic;
-  color: $tasting-text-tertiary;
-  margin: 0 0 $spacing-lg;
-  line-height: 1.6;
+	font-size: $font-size-sm;
+	font-style: italic;
+	color: $tasting-text-tertiary;
+	margin: 0 0 $spacing-lg;
+	line-height: 1.6;
 }

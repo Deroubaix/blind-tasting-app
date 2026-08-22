@@ -1,216 +1,221 @@
+@use '../abstracts' as *;
 // ─────────────────────────────────────────────────────────────────────────────
 // Archives page — card grid + tasting detail view
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
 .archives-hero {
-  padding: $spacing-xxl $spacing-xxl $spacing-xl;
-  max-width: 1200px;
-  margin: 0 auto;
+	padding: $spacing-xxl $spacing-xxl $spacing-xl;
+	max-width: 1200px;
+	margin: 0 auto;
 
-  &__title {
-    font-size: $font-size-xxxl;
-    color: $color-white;
-    margin: 0 0 $spacing-sm;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-  }
+	&__title {
+		font-size: $font-size-xxxl;
+		color: $color-white;
+		margin: 0 0 $spacing-sm;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+	}
 
-  &__description {
-    font-size: $font-size-sm;
-    color: $tasting-text-tertiary;
-    font-style: italic;
-    margin: 0;
-    line-height: 1.6;
-  }
+	&__description {
+		font-size: $font-size-sm;
+		color: $tasting-text-tertiary;
+		font-style: italic;
+		margin: 0;
+		line-height: 1.6;
+	}
 }
 
 // ── Card grid ─────────────────────────────────────────────────────────────────
 .archives-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-lg;
-  padding: 0 $spacing-xxl $spacing-xxl;
-  max-width: 1200px;
-  margin: 0 auto;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: $spacing-lg;
+	padding: 0 $spacing-xxl $spacing-xxl;
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 // ── Archive card ──────────────────────────────────────────────────────────────
 .archive-card {
-  background-color: $color-darkGrey;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 10px;
-  padding: $spacing-lg;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  cursor: pointer;
-  @include transition(border-color, 0.2s);
-  text-decoration: none;
-  color: $color-white;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	padding: $spacing-lg;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-sm;
+	cursor: pointer;
+	@include transition(border-color, 0.2s);
+	text-decoration: none;
+	color: $color-white;
 
-  &:hover {
-    border-color: rgba(228, 228, 204, 0.22);
-  }
+	&:hover {
+		border-color: rgba(228, 228, 204, 0.22);
+	}
 
-  // suppress the global link underline animation
-  &::after { display: none; }
+	// suppress the global link underline animation
+	&::after {
+		display: none;
+	}
 
-  &__top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+	&__top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
 
-  &__id {
-    font-size: 0.68rem;
-    color: $tasting-text-muted;
-    letter-spacing: 0.05em;
-  }
+	&__id {
+		font-size: 0.68rem;
+		color: $tasting-text-muted;
+		letter-spacing: 0.05em;
+	}
 
-  &__title {
-    font-size: 1.5rem;
-    font-weight: $font-weight-bold;
-    color: $color-white;
-    margin: 0;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
+	&__title {
+		font-size: 1.5rem;
+		font-weight: $font-weight-bold;
+		color: $color-white;
+		margin: 0;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+	}
 
-  &__subtitle {
-    font-size: 0.82rem;
-    color: $tasting-text-secondary;
-    margin: 0;
-    line-height: 1.4;
-  }
+	&__subtitle {
+		font-size: 0.82rem;
+		color: $tasting-text-secondary;
+		margin: 0;
+		line-height: 1.4;
+	}
 
-  &__conclusions {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-    margin-top: $spacing-xs;
-  }
+	&__conclusions {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-xs;
+		margin-top: $spacing-xs;
+	}
 
-  &__conclusions-label {
-    @include eyebrow-label(0.58rem);
-    color: $tasting-text-muted;
-    letter-spacing: 0.1em;
-  }
+	&__conclusions-label {
+		@include eyebrow-label(0.58rem);
+		color: $tasting-text-muted;
+		letter-spacing: 0.1em;
+	}
 
-  &__conclusions-text {
-    font-size: 0.82rem;
-    font-style: italic;
-    color: $tasting-text-secondary;
-    line-height: 1.55;
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+	&__conclusions-text {
+		font-size: 0.82rem;
+		font-style: italic;
+		color: $tasting-text-secondary;
+		line-height: 1.55;
+		margin: 0;
+		display: -webkit-box;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
 
-  &__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: auto;
-    padding-top: $spacing-sm;
-    border-top: 1px solid $tasting-border;
-  }
+	&__footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: auto;
+		padding-top: $spacing-sm;
+		border-top: 1px solid $tasting-border;
+	}
 
-  &__date {
-    font-size: 0.72rem;
-    color: $tasting-text-muted;
-  }
+	&__date {
+		font-size: 0.72rem;
+		color: $tasting-text-muted;
+	}
 
-  &__details {
-    @include eyebrow-label(0.62rem);
-    color: $tasting-accent-light;
-    letter-spacing: 0.1em;
-  }
+	&__details {
+		@include eyebrow-label(0.62rem);
+		color: $tasting-accent-light;
+		letter-spacing: 0.1em;
+	}
 
-  &:hover &__details {
-    color: $color-white;
-  }
+	&:hover &__details {
+		color: $color-white;
+	}
 
-  // ── New tasting card ────────────────────────────────────────────────────────
-  &--new {
-    border-style: dashed;
-    background-color: transparent;
-    align-items: center;
-    justify-content: center;
-    min-height: 160px;
-    cursor: pointer;
-    gap: $spacing-sm;
-    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+	// ── New tasting card ────────────────────────────────────────────────────────
+	&--new {
+		border-style: dashed;
+		background-color: transparent;
+		align-items: center;
+		justify-content: center;
+		min-height: 160px;
+		cursor: pointer;
+		gap: $spacing-sm;
+		transition:
+			border-color 0.2s ease-in-out,
+			background-color 0.2s ease-in-out;
 
-    &:hover {
-      border-color: rgba(228, 228, 204, 0.3);
-      background-color: rgba(228, 228, 204, 0.03);
-    }
-  }
+		&:hover {
+			border-color: rgba(228, 228, 204, 0.3);
+			background-color: rgba(228, 228, 204, 0.03);
+		}
+	}
 
-  &__new-icon {
-    font-size: 1.6rem;
-    color: $tasting-text-tertiary;
-    line-height: 1;
-    width: 40px;
-    height: 40px;
-    border: 1px solid $tasting-border-mid;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+	&__new-icon {
+		font-size: 1.6rem;
+		color: $tasting-text-tertiary;
+		line-height: 1;
+		width: 40px;
+		height: 40px;
+		border: 1px solid $tasting-border-mid;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-  &__new-label {
-    @include eyebrow-label(0.62rem);
-    color: $tasting-text-tertiary;
-    letter-spacing: 0.15em;
-  }
+	&__new-label {
+		@include eyebrow-label(0.62rem);
+		color: $tasting-text-tertiary;
+		letter-spacing: 0.15em;
+	}
 }
 
 // ── Wine type badge ───────────────────────────────────────────────────────────
 .wine-type-badge {
-  @include eyebrow-label(0.58rem);
-  padding: 3px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.1em;
+	@include eyebrow-label(0.58rem);
+	padding: 3px 8px;
+	border-radius: 4px;
+	letter-spacing: 0.1em;
 
-  &--red {
-    background-color: rgba(139, 69, 87, 0.25);
-    border: 1px solid rgba(139, 69, 87, 0.5);
-    color: $tasting-accent-light;
-  }
+	&--red {
+		background-color: rgba(139, 69, 87, 0.25);
+		border: 1px solid rgba(139, 69, 87, 0.5);
+		color: $tasting-accent-light;
+	}
 
-  &--white {
-    background-color: rgba(45, 74, 62, 0.4);
-    border: 1px solid rgba(142, 188, 142, 0.3);
-    color: $color-white-wine-accent;
-  }
+	&--white {
+		background-color: rgba(45, 74, 62, 0.4);
+		border: 1px solid rgba($color-status-ok, 0.3);
+		color: $color-status-ok;
+	}
 }
 
 // ── State: loading / error / empty ────────────────────────────────────────────
 .archives-loading,
 .archives-error {
-  padding: $spacing-xxl;
-  text-align: center;
-  color: $tasting-text-secondary;
-  font-size: $font-size-sm;
+	padding: $spacing-xxl;
+	text-align: center;
+	color: $tasting-text-secondary;
+	font-size: $font-size-sm;
 }
 
 .archives-empty {
-  padding: $spacing-xxl $spacing-xxl 0;
-  max-width: 1200px;
-  margin: 0 auto;
+	padding: $spacing-xxl $spacing-xxl 0;
+	max-width: 1200px;
+	margin: 0 auto;
 
-  p {
-    color: $tasting-text-secondary;
-    font-size: $font-size-sm;
-    font-style: italic;
-    margin-bottom: $spacing-lg;
-  }
+	p {
+		color: $tasting-text-secondary;
+		font-size: $font-size-sm;
+		font-style: italic;
+		margin-bottom: $spacing-lg;
+	}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -218,109 +223,113 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 .tasting-detail__container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: $spacing-xxl $spacing-xxl $spacing-xxxl;
+	max-width: 900px;
+	margin: 0 auto;
+	padding: $spacing-xxl $spacing-xxl $spacing-xxxl;
 }
 
 .tasting-detail__back {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: $font-size-sm;
-  color: $tasting-text-tertiary;
-  text-decoration: none;
-  margin-bottom: $spacing-xl;
-  @include transition(color, 0.15s);
+	display: inline-flex;
+	align-items: center;
+	gap: $spacing-xs;
+	font-size: $font-size-sm;
+	color: $tasting-text-tertiary;
+	text-decoration: none;
+	margin-bottom: $spacing-xl;
+	@include transition(color, 0.15s);
 
-  &::after { display: none; }
-  &:hover { color: $color-white; }
+	&::after {
+		display: none;
+	}
+	&:hover {
+		color: $color-white;
+	}
 }
 
 .tasting-detail__hero-top {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-md;
+	display: flex;
+	align-items: center;
+	gap: $spacing-sm;
+	margin-bottom: $spacing-md;
 }
 
 .tasting-detail__hero-meta {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: $spacing-md;
 }
 
 .tasting-detail__id,
 .tasting-detail__date {
-  font-size: 0.72rem;
-  color: $tasting-text-muted;
+	font-size: 0.72rem;
+	color: $tasting-text-muted;
 }
 
 .tasting-detail__title {
-  font-size: $font-size-xxxl;
-  color: $color-white;
-  margin: 0 0 $spacing-xs;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+	font-size: $font-size-xxxl;
+	color: $color-white;
+	margin: 0 0 $spacing-xs;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
 }
 
 .tasting-detail__subtitle {
-  font-size: $font-size-sm;
-  color: $tasting-text-secondary;
-  margin: 0 0 $spacing-xl;
-  line-height: 1.4;
+	font-size: $font-size-sm;
+	color: $tasting-text-secondary;
+	margin: 0 0 $spacing-xl;
+	line-height: 1.4;
 }
 
 .tasting-detail__divider {
-  height: 1px;
-  background-color: $tasting-border-mid;
-  margin: $spacing-xl 0;
+	height: 1px;
+	background-color: $tasting-border-mid;
+	margin: $spacing-xl 0;
 }
 
 .tasting-detail__section {
-  background-color: $color-darkGrey;
-  border: 1px solid $tasting-border-mid;
-  border-radius: 10px;
-  padding: $spacing-lg;
-  margin-bottom: $spacing-lg;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	padding: $spacing-lg;
+	margin-bottom: $spacing-lg;
 }
 
 .tasting-detail__section-label {
-  @include eyebrow-label(0.62rem);
-  color: $tasting-accent-light;
-  letter-spacing: 0.12em;
-  margin-bottom: $spacing-md;
+	@include eyebrow-label(0.62rem);
+	color: $tasting-accent-light;
+	letter-spacing: 0.12em;
+	margin-bottom: $spacing-md;
 }
 
 .tasting-detail__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: $spacing-md $spacing-lg;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	gap: $spacing-md $spacing-lg;
 }
 
 .tasting-detail__field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .tasting-detail__field-label {
-  @include eyebrow-label(0.56rem);
-  color: $tasting-text-muted;
-  letter-spacing: 0.1em;
+	@include eyebrow-label(0.56rem);
+	color: $tasting-text-muted;
+	letter-spacing: 0.1em;
 }
 
 .tasting-detail__field-value {
-  font-size: 0.85rem;
-  color: $color-white;
-  line-height: 1.4;
+	font-size: 0.85rem;
+	color: $color-white;
+	line-height: 1.4;
 }
 
 .tasting-detail__notes {
-  font-size: $font-size-sm;
-  font-style: italic;
-  color: $tasting-text-secondary;
-  line-height: 1.65;
-  margin: 0;
+	font-size: $font-size-sm;
+	font-style: italic;
+	color: $tasting-text-secondary;
+	line-height: 1.65;
+	margin: 0;
 }

@@ -1,0 +1,193 @@
+@use '../abstracts' as *;
+
+// Ported from dr-pam's `common-components/Styles/Components/Modal.scss` — same structure, same
+// scale-in/scale-out animations, same 60ms duration the component's `closing` hand-off is timed
+// against. Recoloured for this app: dr-pam puts the panel on `light-bg`, everything here is dark.
+
+$modal-padding-vertical: 2.5rem;
+$modal-padding-horizontal: 2rem;
+
+.Modal {
+	@keyframes modal-overlay-transition-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	@keyframes modal-overlay-transition-out {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+	@keyframes modal-content-transition-in {
+		from {
+			scale: 0.9;
+			opacity: 0;
+		}
+		to {
+			scale: 1;
+			opacity: 1;
+		}
+	}
+	@keyframes modal-content-transition-out {
+		from {
+			scale: 1;
+			opacity: 1;
+		}
+		to {
+			scale: 0.9;
+			opacity: 0;
+		}
+	}
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	z-index: $index-above-navbar;
+
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(10, 9, 9, 0.72);
+		backdrop-filter: blur(2px);
+		animation-name: modal-overlay-transition-in;
+		animation-iteration-count: 1;
+		animation-timing-function: ease-out;
+		animation-duration: 120ms;
+		z-index: 10;
+	}
+
+	.inner {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		min-width: min(340px, 100dvw);
+		max-width: min(560px, calc(100dvw - 2rem));
+		max-height: 95dvh;
+		width: max-content;
+		overflow: auto;
+		z-index: 11;
+		display: grid;
+		grid-template-rows: 1fr;
+
+		@include responsive($breakpoint-mobile) {
+			min-width: unset;
+			max-width: calc(100dvw - 1.5rem);
+			max-height: 90dvh;
+		}
+	}
+
+	.content {
+		background-color: $color-darkGrey;
+		border: 1px solid $tasting-border-mid;
+		border-radius: 12px;
+		box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+		animation-name: modal-content-transition-in;
+		animation-iteration-count: 1;
+		animation-timing-function: ease-out;
+		animation-duration: 140ms;
+		scale: 1;
+		padding: $modal-padding-vertical $modal-padding-horizontal;
+		height: 100%;
+		display: grid;
+		grid-template-rows: auto 1fr;
+		overflow: auto;
+
+		@include responsive($breakpoint-mobile) {
+			padding: $spacing-xxl $spacing-lg;
+		}
+	}
+
+	.header {
+		margin-bottom: $spacing-lg;
+		padding-bottom: $spacing-md;
+		border-bottom: 1px solid $tasting-border;
+		display: flex;
+		gap: $spacing-sm;
+		justify-content: space-between;
+		align-items: flex-start;
+
+		h4 {
+			color: $color-white;
+			margin: 0;
+			font-weight: $font-weight-bold;
+			font-family: $font-display-bold-family;
+			font-size: $font-size-xl;
+			letter-spacing: -0.01em;
+			flex-grow: 1;
+		}
+
+		.close-btn {
+			color: $tasting-text-secondary;
+			cursor: pointer;
+			flex-shrink: 0;
+			@include transition(color, 0.2s);
+
+			&:hover {
+				color: $color-white;
+			}
+		}
+	}
+
+	.body {
+		overflow: auto;
+		min-height: 36px;
+		color: $tasting-text-secondary;
+
+		@include scrollbar(5px, $tasting-accent, $color-surface-variant);
+	}
+
+	&.closing {
+		.overlay {
+			animation-name: modal-overlay-transition-out;
+			opacity: 0;
+		}
+		.content {
+			animation-name: modal-content-transition-out;
+			opacity: 0;
+			scale: 0.9;
+		}
+	}
+}
+
+// End-of-session modal, shown when the final phase's timer expires.
+.timeup {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+
+	&__lead {
+		color: $color-white;
+		font-size: $font-size-md;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	&__note {
+		color: $tasting-text-tertiary;
+		font-size: 0.85rem;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	&__action {
+		margin-top: $spacing-xs;
+		align-self: flex-start;
+		cursor: pointer;
+
+		@include responsive($breakpoint-mobile) {
+			align-self: stretch;
+		}
+	}
+}

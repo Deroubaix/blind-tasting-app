@@ -9,7 +9,7 @@ $article-list-breakpoint: 45rem;
 $masked-section-breakpoint: 48rem; //768px
 
 @mixin responsive($size, $basis: max, $type: width) {
-  @media only screen and (#{$basis}-#{$type}: #{$size}) {
-    @content;
-  }
+	@media only screen and (#{$basis}-#{$type}: #{$size}) {
+		@content;
+	}
 }
