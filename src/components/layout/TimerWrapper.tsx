@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { IconArrowRight } from '@tabler/icons-react';
 import Timer from '../layout/Timer';
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
@@ -54,9 +55,8 @@ export default function TimerWrapper({ defaultDuration, destination, nextLabel, 
 			navigator.vibrate([200, 100, 200]);
 		}
 
-		// Mid-session the clock is the point of the exercise, so expiry never blocks: it moves on and
-		// says so afterwards. Stopping for a confirmation five times in a four-minute session would
-		// hand back unlimited thinking time at exactly the boundary being trained against.
+		// Mid-session expiry never blocks — confirming five times in a four-minute session hands
+		// back unlimited thinking time at exactly the boundary being trained against.
 		if (!isFinalPhase) {
 			showToast({
 				title: 'Time',
@@ -67,8 +67,7 @@ export default function TimerWrapper({ defaultDuration, destination, nextLabel, 
 			return;
 		}
 
-		// The last phase is different — the timed portion is over, so there is nothing left to rush.
-		// This is the natural stopping point, and the one place a modal earns the interruption.
+		// The timed portion is over, so this is the one place a modal earns the interruption.
 		const modalId = 'tasting-time-up';
 		openModal({
 			modalId,
@@ -90,12 +89,14 @@ export default function TimerWrapper({ defaultDuration, destination, nextLabel, 
 							router.push(destination);
 						}}
 					>
-						Review &amp; Save →
+						Review &amp; Save
+						<IconArrowRight size={16} />
 					</button>
 				</div>
 			),
 		});
 	};
 
-	return <Timer initialTime={defaultDuration} onTimeUp={handleTimeUp} />;
+	// key: a duration change restarts the clock by remounting rather than by resetting state.
+	return <Timer key={defaultDuration} initialTime={defaultDuration} onTimeUp={handleTimeUp} />;
 }

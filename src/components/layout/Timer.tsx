@@ -14,27 +14,49 @@ export default function Timer({ initialTime, onTimeUp }: TimerProps) {
 		onTimeUpRef.current = onTimeUp;
 	}, [onTimeUp]);
 
+	// Anchored to a wall-clock deadline, not decremented per tick: mobile browsers throttle
+	// background intervals and iOS suspends them on screen lock, which stalls a per-tick clock.
+	const endsAtRef = useRef<number | null>(null);
+	const hasFiredRef = useRef(false);
+
+	// Reading the clock is impure, so the deadline is stamped on mount rather than
+	// during render. The ticker below no-ops until this has run.
 	useEffect(() => {
-		if (timeLeft <= 0) {
-			onTimeUpRef.current?.();
-			return;
-		}
-		const intervalId = setInterval(() => {
-			setTimeLeft((prev) => prev - 1);
-		}, 1000);
-		return () => clearInterval(intervalId);
-	}, [timeLeft]); // onTimeUp intentionally excluded — reads via ref
+		endsAtRef.current = Date.now() + initialTime * 1000;
+		hasFiredRef.current = false;
+	}, [initialTime]);
+
+	useEffect(() => {
+		const sync = () => {
+			if (endsAtRef.current === null) {
+				return;
+			}
+			const remaining = Math.max(0, Math.round((endsAtRef.current - Date.now()) / 1000));
+			setTimeLeft(remaining);
+
+			if (remaining === 0 && !hasFiredRef.current) {
+				hasFiredRef.current = true;
+				onTimeUpRef.current?.();
+			}
+		};
+
+		sync();
+		const intervalId = setInterval(sync, 500);
+		// Catches up the instant the tab is foregrounded again.
+		document.addEventListener('visibilitychange', sync);
+
+		return () => {
+			clearInterval(intervalId);
+			document.removeEventListener('visibilitychange', sync);
+		};
+	}, []);
 
 	const minutes = Math.floor(timeLeft / 60);
 	const seconds = timeLeft % 60;
 	const formattedTime = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
-	// Warn over the last quarter of the phase, floored at 5s.
-	//
-	// This used to be a flat `timeLeft <= 60`. Four of the five phases run for 30 seconds, so the
-	// warning colour was on from the first tick and therefore told you nothing; only the nose (120s)
-	// ever changed, and it did so at the halfway mark. A proportional threshold means the amber
-	// actually marks "wrap up" in every phase: 7s into a 30s phase, 30s into the nose.
+	// Proportional, not a flat 60s — four of the five phases only run for 30s, so a fixed
+	// threshold would be on from the first tick. Marks "wrap up" in every phase.
 	const warnAt = Math.max(5, Math.round(initialTime * 0.25));
 	const stateClass = timeLeft === 0 ? 'timer-display--expired' : timeLeft <= warnAt ? 'timer-display--warning' : '';
 
