@@ -140,3 +140,8 @@ phases run for 30 seconds and a flat 60-second threshold would be on from the fi
   never finished.
 - **No `db:*` scripts.** Migrations are run through `pnpm exec prisma` directly.
 - **No tests.** The phase-completion and timer logic are the parts that would most repay them.
+
+## License
+
+Copyright © 2024–2026 Marisha Deroubaix. All rights reserved. Published for viewing and evaluation
+only — see [LICENSE](LICENSE).
