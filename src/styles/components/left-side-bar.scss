@@ -1,17 +1,17 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
-// Tasting left sidebar
-// Used on every tasting phase page (Sight, Nose, Palate, etc.)
-// ─────────────────────────────────────────────────────────────────────────────
+// Tasting left sidebar — Used on every tasting phase page (Sight, Nose, Palate, etc.)
 
-// Re-use the sight page's local accent tokens — defined in sight-tasting.scss.
-// If this file is imported before sight-tasting.scss, declare fallback values.
-// In practice both files are compiled together via _components.scss.
-$sidebar-accent: #8b4557 !default;
-$sidebar-accent-light: #d4a0ab !default;
-$sidebar-border: rgba(228, 228, 204, 0.08) !default;
-$sidebar-text-tertiary: rgba(228, 228, 204, 0.4) !default;
-$sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
+// Aliases, not a second palette — hand-copied values here drift out of the shared ramp.
+$sidebar-accent: $tasting-accent !default;
+$sidebar-accent-light: $tasting-accent-light !default;
+$sidebar-border: $tasting-border !default;
+
+// Decorative only — the unfilled progress segment and the not-visited dot outline.
+// Deliberately below text contrast: these are track marks, not labels.
+$sidebar-track: rgba(228, 228, 204, 0.22) !default;
+// "Done" is a status report, so it takes the status green rather than the accent.
+// Declared once here and consumed by the segment, the nav check, and the phone rail.
+$sidebar-done: $color-status-ok !default;
 
 .tasting-sidebar {
 	width: 300px;
@@ -30,8 +30,7 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 	}
 
 	&__title {
-		@include eyebrow-label(0.72rem);
-		color: $color-white;
+		@include eyebrow-label(0.72rem, $color-white);
 		letter-spacing: 0.2em;
 		margin-bottom: $spacing-xs;
 	}
@@ -45,14 +44,13 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 	}
 
 	&__role {
-		@include eyebrow-label(0.56rem);
-		color: $sidebar-text-tertiary;
+		@include eyebrow-label(0.56rem, $color-text-muted);
 		letter-spacing: 0.15em;
 	}
 
 	&__app-name {
 		font-size: $font-size-sm;
-		color: $sidebar-text-muted;
+		color: $color-text-muted;
 		font-family: $font-display-normal-family;
 	}
 
@@ -63,8 +61,7 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 	}
 
 	&__exam-label {
-		@include eyebrow-label(0.58rem);
-		color: $sidebar-text-tertiary;
+		@include eyebrow-label(0.58rem, $color-text-muted);
 		letter-spacing: 0.12em;
 		display: flex;
 		align-items: baseline;
@@ -86,15 +83,15 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 		flex: 1;
 		height: 4px;
 		border-radius: 2px;
-		background-color: $sidebar-text-muted;
+		background-color: $sidebar-track;
 		@include transition(background-color, 0.25s);
 
 		&--active {
-			background-color: rgba(139, 69, 87, 0.45);
+			background-color: $sidebar-accent;
 		}
 
 		&--done {
-			background-color: $sidebar-accent;
+			background-color: $sidebar-done;
 		}
 	}
 
@@ -105,8 +102,7 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 	}
 
 	&__progress-label {
-		@include eyebrow-label(0.58rem);
-		color: $sidebar-text-tertiary;
+		@include eyebrow-label(0.58rem, $color-text-muted);
 		letter-spacing: 0.12em;
 		margin-bottom: $spacing-xs;
 		display: flex;
@@ -149,7 +145,7 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 	gap: $spacing-sm;
 	padding: $spacing-sm $spacing-xl;
 	border-left: 2px solid transparent;
-	color: $sidebar-text-tertiary;
+	color: $color-text-muted;
 	font-size: $font-size-sm;
 	font-weight: $font-weight-regular;
 	font-family: $font-display-normal-family;
@@ -177,19 +173,114 @@ $sidebar-text-muted: rgba(228, 228, 204, 0.22) !default;
 		}
 	}
 
+	// Not-yet-visited marker. Completed phases render __check instead.
 	&__dot {
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		border: 1px solid $sidebar-text-muted;
+		border: 1px solid $sidebar-track;
 		background: transparent;
 		margin-left: auto;
 		flex-shrink: 0;
 		@include transition(background-color border-color, 0.2s);
+	}
 
-		&--done {
-			background-color: $sidebar-accent;
-			border-color: $sidebar-accent;
+	&__check {
+		margin-left: auto;
+		flex-shrink: 0;
+		color: $sidebar-done;
+	}
+}
+
+// Rendered on every breakpoint; only the phone stepper shows it.
+.tasting-nav-item__short {
+	display: none;
+}
+
+// ── Phone stepper ────────────────────────────────────────────────────────────
+// The 300px sidebar collapses into one sticky strip that is both nav and progress:
+// a 4px bar per phase, burgundy for current, green for done.
+@include responsive($breakpoint-mobile) {
+	.tasting-sidebar {
+		position: sticky;
+		// The header strip above is sticky at 56px tall; the stepper parks under it.
+		top: 56px;
+		z-index: 5;
+		width: 100%;
+		flex-shrink: 0;
+		padding: 0 16px 12px;
+		background-color: $tasting-m-chrome;
+		border-right: none;
+		border-bottom: 1px solid $tasting-border;
+
+		// Identity and both progress readouts are represented by the stepper itself.
+		&__brand,
+		&__exam-progress,
+		&__progress-section {
+			display: none;
+		}
+
+		&__nav {
+			display: flex;
+			flex-direction: row; // desktop stacks the nav; the stepper runs across
+			gap: 6px;
+			padding: 0;
+		}
+	}
+
+	.tasting-nav-item {
+		flex: 1;
+		min-width: 0;
+		flex-direction: column;
+		align-items: center;
+		gap: 5px;
+		border-left: none;
+		background: none;
+
+		// Icon and completion dot are redundant once the bar carries the state.
+		svg,
+		.tasting-nav-item__dot,
+		.tasting-nav-item__label {
+			display: none;
+		}
+
+		// The mock draws this at ~20px, contradicting its own "every target is 46-54px" rule.
+		// Bar and label keep their drawn size; the segment pads out to a 44px touch target.
+		min-height: 44px;
+		justify-content: center;
+		padding: 6px 0;
+
+		&::before {
+			content: '';
+			width: 100%;
+			height: 4px;
+			border-radius: 2px;
+			background-color: rgba(228, 228, 204, 0.16);
+		}
+
+		&__short {
+			display: block;
+			font-size: 9px;
+			font-weight: 500;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: $color-text-muted;
+			text-align: center;
+		}
+
+		// :has lets the bar read the completion check the markup already renders,
+		// so "done" needs no extra class plumbing in the component.
+		&:has(.tasting-nav-item__check)::before {
+			background-color: $sidebar-done;
+		}
+
+		&--active::before {
+			background-color: $tasting-accent;
+		}
+
+		&--active .tasting-nav-item__short {
+			color: $tasting-accent-light;
+			font-weight: 700;
 		}
 	}
 }

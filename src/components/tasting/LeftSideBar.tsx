@@ -3,16 +3,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { IconEye, IconWind, IconGlass, IconBrain, IconSquareCheck } from '@tabler/icons-react';
+import { IconEye, IconWind, IconGlass, IconBrain, IconSquareCheck, IconCheck } from '@tabler/icons-react';
 import useAuthenticatedUser from '../../hooks/UseAuthenticatedUser';
 import { useTastingContext } from './TastingContext';
+import { phaseComplete } from './phaseCompletion';
 
+// shortLabel is what the phone stepper shows — five segments across 390px cannot
+// carry "Initial Conclusion". Both render; CSS picks one per breakpoint.
 const navItems = [
-	{ href: '/tastings/sight', Icon: IconEye, label: 'Sight' },
-	{ href: '/tastings/nose', Icon: IconWind, label: 'Nose' },
-	{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate' },
-	{ href: '/tastings/initial-conclusion', Icon: IconBrain, label: 'Initial Conclusion' },
-	{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Final Conclusion' },
+	{ href: '/tastings/sight', Icon: IconEye, label: 'Sight', shortLabel: 'Sight' },
+	{ href: '/tastings/nose', Icon: IconWind, label: 'Nose', shortLabel: 'Nose' },
+	{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate', shortLabel: 'Palate' },
+	{ href: '/tastings/initial-conclusion', Icon: IconBrain, label: 'Initial Conclusion', shortLabel: 'Initial' },
+	{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Final Conclusion', shortLabel: 'Final' },
 ];
 
 const phaseNames: Record<string, string> = {
@@ -27,34 +30,6 @@ type LeftSidebarProps = {
 	wineType?: string;
 	progress?: number;
 };
-
-function phaseComplete(href: string, tastingData: ReturnType<typeof useTastingContext>['tastingData']): boolean {
-	switch (href) {
-		case '/tastings/sight':
-			return Object.keys(tastingData.sight ?? {}).length > 0;
-		case '/tastings/nose':
-			return Object.values(tastingData.nose ?? {}).some((arr) => arr.length > 0);
-		case '/tastings/palate':
-			return Object.keys(tastingData.palate ?? {}).length > 0;
-		case '/tastings/initial-conclusion': {
-			const ic = tastingData.conclusion?.initial;
-			return !!(
-				ic &&
-				(ic.worldOrigin ||
-					ic.climate ||
-					ic.ageRange ||
-					(ic.grapeVarieties?.length ?? 0) > 0 ||
-					(ic.possibleCountries?.length ?? 0) > 0)
-			);
-		}
-		case '/tastings/final-conclusion': {
-			const fc = tastingData.conclusion?.final;
-			return !!(fc && Object.values(fc).some(Boolean));
-		}
-		default:
-			return false;
-	}
-}
 
 export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 	const pathname = usePathname();
@@ -114,7 +89,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 			)}
 
 			<nav className="tasting-sidebar__nav">
-				{navItems.map(({ href, Icon, label }) => {
+				{navItems.map(({ href, Icon, label, shortLabel }) => {
 					const active = pathname === href;
 					const done = phaseComplete(href, tastingData);
 					const linkHref = wineType ? `${href}?wineType=${wineType}` : href;
@@ -125,8 +100,13 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 							className={`tasting-nav-item${active ? ' tasting-nav-item--active' : ''}`}
 						>
 							<Icon size={16} />
-							<span>{label}</span>
-							<span className={`tasting-nav-item__dot${done ? ' tasting-nav-item__dot--done' : ''}`} />
+							<span className="tasting-nav-item__label">{label}</span>
+							<span className="tasting-nav-item__short">{shortLabel}</span>
+							{done ? (
+								<IconCheck size={15} strokeWidth={2.5} className="tasting-nav-item__check" />
+							) : (
+								<span className="tasting-nav-item__dot" />
+							)}
 						</Link>
 					);
 				})}
