@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
+import useDropPlacement from './useDropPlacement';
 
 interface Props {
 	options: string[];
@@ -13,6 +14,7 @@ interface Props {
 export default function TastingCustomSelect({ options, value, onChange, placeholder = 'Select...' }: Props) {
 	const [open, setOpen] = useState(false);
 	const wrapRef = useRef<HTMLDivElement>(null);
+	const { dropUp, maxHeight } = useDropPlacement(wrapRef, open);
 
 	useEffect(() => {
 		const handler = (e: MouseEvent) => {
@@ -52,7 +54,10 @@ export default function TastingCustomSelect({ options, value, onChange, placehol
 				/>
 			</div>
 			{open && (
-				<ul className="tasting-autocomplete__dropdown">
+				<ul
+					className={`tasting-autocomplete__dropdown${dropUp ? ' tasting-autocomplete__dropdown--up' : ''}`}
+					style={{ maxHeight }}
+				>
 					{options.map((opt) => (
 						<li
 							key={opt}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import useDropPlacement from './useDropPlacement';
 
 interface Props {
 	suggestions: string[];
@@ -20,6 +21,7 @@ export default function TastingAutocomplete({ suggestions, value, onChange, onCo
 		value.trim().length > 0 ? suggestions.filter((s) => s.toLowerCase().includes(value.toLowerCase().trim())) : [];
 
 	const showDropdown = open && filtered.length > 0;
+	const { dropUp, maxHeight } = useDropPlacement(wrapRef, showDropdown);
 
 	const select = (suggestion: string) => {
 		onConfirm(suggestion);
@@ -82,7 +84,10 @@ export default function TastingAutocomplete({ suggestions, value, onChange, onCo
 				/>
 			</div>
 			{showDropdown && (
-				<ul className="tasting-autocomplete__dropdown">
+				<ul
+					className={`tasting-autocomplete__dropdown${dropUp ? ' tasting-autocomplete__dropdown--up' : ''}`}
+					style={{ maxHeight }}
+				>
 					{filtered.map((s, i) => (
 						<li
 							key={s}
