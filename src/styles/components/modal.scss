@@ -1,8 +1,7 @@
 @use '../abstracts' as *;
 
-// Ported from an earlier project's `common-components/Styles/Components/Modal.scss` — same structure, same
-// scale-in/scale-out animations, same 60ms duration the component's `closing` hand-off is timed
-// against. Recoloured for this app: an earlier project puts the panel on `light-bg`, everything here is dark.
+// Ported from an earlier project's `Styles/Components/Modal.scss` — same structure and animations, same 60ms
+// the component's `closing` hand-off is timed against. Recoloured: everything here is dark.
 
 $modal-padding-vertical: 2.5rem;
 $modal-padding-horizontal: 2rem;
@@ -119,17 +118,14 @@ $modal-padding-horizontal: 2rem;
 		align-items: flex-start;
 
 		h4 {
-			color: $color-white;
-			margin: 0;
 			font-weight: $font-weight-bold;
-			font-family: $font-display-bold-family;
 			font-size: $font-size-xl;
 			letter-spacing: -0.01em;
 			flex-grow: 1;
 		}
 
 		.close-btn {
-			color: $tasting-text-secondary;
+			color: $color-text-secondary;
 			cursor: pointer;
 			flex-shrink: 0;
 			@include transition(color, 0.2s);
@@ -143,7 +139,7 @@ $modal-padding-horizontal: 2rem;
 	.body {
 		overflow: auto;
 		min-height: 36px;
-		color: $tasting-text-secondary;
+		color: $color-text-secondary;
 
 		@include scrollbar(5px, $tasting-accent, $color-surface-variant);
 	}
@@ -175,7 +171,7 @@ $modal-padding-horizontal: 2rem;
 	}
 
 	&__note {
-		color: $tasting-text-tertiary;
+		color: $color-text-secondary;
 		font-size: 0.85rem;
 		line-height: 1.6;
 		margin: 0;
@@ -189,5 +185,76 @@ $modal-padding-horizontal: 2rem;
 		@include responsive($breakpoint-mobile) {
 			align-self: stretch;
 		}
+	}
+}
+
+// Start-over confirmation, opened from the tasting footer.
+.start-over {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+
+	&__lead {
+		color: $color-white;
+		font-size: $font-size-md;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	&__note {
+		color: $color-text-secondary;
+		font-size: 0.85rem;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+		margin-top: $spacing-xs;
+
+		// Both actions are sized by their padding, so their content boxes have to agree.
+		// The confirm button is a flex row around a 16px icon; pinning the line box to the
+		// same 16px is what keeps the outlined button from standing 2px taller.
+		> button {
+			line-height: 16px;
+		}
+
+		@include responsive($breakpoint-mobile) {
+			flex-direction: column-reverse;
+			align-items: stretch;
+		}
+	}
+
+	// The shared .outline button. Its --color defaults to $color-primary, which is
+	// near-black on this ground, so the dark theme has to name its own.
+	&__cancel {
+		--color: #{$color-text-secondary};
+
+		border-radius: 6px;
+		cursor: pointer;
+
+		// Compounded with .outline on purpose: the mixin sets both border and padding at
+		// `button.outline`, which outranks this class on its own. The values match
+		// .btn-primary so the two actions stand the same height.
+		&.outline {
+			border-width: 1px;
+			padding: 1.2rem 1.6rem;
+			font-size: 13px;
+		}
+
+		&:hover {
+			--color: #{$color-white};
+		}
+	}
+
+	&__confirm {
+		@include icon-label(8px);
+
+		// .btn-primary has no border; without a transparent one it stands 2px shorter
+		// than the outlined button beside it.
+		border: 1px solid transparent;
+		cursor: pointer;
 	}
 }

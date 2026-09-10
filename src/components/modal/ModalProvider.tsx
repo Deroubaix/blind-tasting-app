@@ -21,12 +21,9 @@ export type ModalProviderProps = {
 };
 
 /**
- * Ported from an earlier project's `common-components/Components/Modal/ModalProvider`. Same API — `openModal`
- * returns the id, `closeModal` goes through the child's imperative handle so the exit animation
- * plays before the modal is dropped from the list.
- *
- * `openModal` takes an optional `modalId` (mirroring this repo's `ToastProvider`) rather than
- * mutating the caller's props object to backfill one, which is what the original did.
+ * Ported from an earlier project's `ModalProvider`. `closeModal` goes through the child's imperative handle so
+ * the exit animation plays before the modal leaves the list. `openModal` takes an optional
+ * `modalId` (as ToastProvider does) rather than backfilling one onto the caller's props object.
  */
 export default function ModalProvider(props: ModalProviderProps) {
 	const { children } = props;

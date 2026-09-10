@@ -20,14 +20,11 @@ export type ModalImperativeRef = {
 };
 
 /**
- * Ported from an earlier project's `common-components/Components/Modal`, so modals behave and animate the same
- * way in both projects: same `.Modal > .overlay + .inner > .content > .header/.body` structure, same
- * `closing` class driving the exit animation, same 60ms hand-off before the provider unmounts it.
+ * Ported from an earlier project's `common-components/Components/Modal` — same DOM structure, same `closing`
+ * class driving the exit animation, same 60ms hand-off before the provider unmounts it.
  *
- * Two things from the original are deliberately not carried over. `setTitle` rendered a ReactNode to
- * an HTML string with `ReactDOMServer.renderToStaticMarkup` and assigned it to `innerHTML`, which
- * steps outside React and is an injection shape we do not want in a new codebase — nothing here
- * needs to retitle a live modal. `homeHref` was project-specific navigation.
+ * `setTitle` and `homeHref` are deliberately dropped: `setTitle` assigned
+ * `renderToStaticMarkup` output to `innerHTML`, and nothing here retitles a live modal.
  */
 export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, ref) {
 	const { className, children, modalId, title, onClose, closeOnClickOutside, closeOnEsc } = props;
