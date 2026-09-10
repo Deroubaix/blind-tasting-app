@@ -9,3 +9,8 @@ $spacing-xxl: 2rem;
 $spacing-xxxl: 2.5rem;
 
 $page-spacing: 2rem;
+
+// ── Corner radii ─────────────────────────────────────────────────────────────
+// Large enough that the corners always meet at the midpoint, so a chip reads as
+// a full pill at any height without hand-tuning the value per control.
+$radius-pill: 100px;

@@ -1,13 +1,5 @@
-// The palette. This is the single source of truth for colour in the app — it is forwarded first by
-// `abstracts/_index.scss`, so every stylesheet (including the ones inside `abstracts/`) sees these
-// values rather than a placeholder.
-//
-// It used to be the other way around: `abstracts/colors.scss` declared white/black/grey stand-ins
-// and this file redefined them afterwards. Under `@import` that mostly worked, because most consumers
-// were mixins and mixins resolve their variables when they are included, not when they are defined.
-// Plain rules are not lazy though, so anything in `abstracts/` that used a colour directly baked in
-// the stand-in: `.underline-headings h2` drew a *white* border, and link underlines a *black* one.
-// Making the theme the source removes the ordering hazard entirely.
+// The palette — the single source of truth for colour. Forwarded first by `abstracts/_index.scss`,
+// so every stylesheet (including those inside `abstracts/`) sees these values and not a placeholder.
 
 // Core palette — backgrounds & surfaces
 $color-black: #141313;
@@ -19,18 +11,22 @@ $color-burgundy: #4a0e0e;
 $color-accent: #8b4557; // promoted from $tasting-accent
 $color-accent-light: #d4a0ab; // promoted from $tasting-accent-light
 $color-display-accent: #ffb3ad; // landing page hero/decorative peach — not part of the burgundy system
-$color-roseGold: #dac1bf; // tertiary text — start screen only
 
-// White wine
-$color-white-wine-bg: #2d4a3e;
+// Wine hues — depict role only (swatches, and icons that depict wine).
+// Glyph tints are lighter than the swatch fills they stand for: a 2px stroke
+// needs more lightness than a 74px block to clear 3:1.
+$color-wine-red-tint: #c8455c;
+$color-wine-gold-tint: #e0c840; // matches the "Gold" hue in sightData
 
-// Status / semantic ok — also used as white-wine icon foreground
+// Status / semantic ok — success toasts, completed phases, archive badges.
 $color-status-ok: #8ebc8e;
-$color-white-wine-accent: $color-status-ok; // alias — kept for white wine card icon
 
-// Typography
-$color-white: #e4e4cc;
-$color-text-muted: rgba(228, 228, 204, 0.6);
+// Typography — three text levels, every one AA-verified on the app's dark grounds
+// (worst case #2a2727). A fourth level is what made 0.60 and 0.65 indistinguishable;
+// if you need another shade, reach for weight or size instead.
+$color-white: #e4e4cc; // primary   — 16.2:1
+$color-text-secondary: rgba(228, 228, 204, 0.65); // secondary —  5.74:1
+$color-text-muted: rgba(228, 228, 204, 0.55); // muted     —  4.54:1
 
 // Status
 $color-success: $color-status-ok; // alias — used by toast color="success"

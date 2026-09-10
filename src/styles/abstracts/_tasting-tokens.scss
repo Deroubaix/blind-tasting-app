@@ -1,14 +1,33 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// Tasting session design tokens
-// Single source of truth for the accent palette shared by all tasting phase
-// pages: Sight, Nose, Palate, Initial/Final Conclusion, footer, and header.
-// ─────────────────────────────────────────────────────────────────────────────
+// Accent palette shared by every tasting phase page, plus the footer and header.
+// Reaches the palette through the theme-only shim; the barrel would be a cycle.
+@use 'theme-only' as *;
 
 // Mirrors $color-accent / $color-accent-light — retire these after one release
 $tasting-accent: #8b4557;
 $tasting-accent-light: #d4a0ab;
 $tasting-border: rgba(228, 228, 204, 0.08);
 $tasting-border-mid: rgba(228, 228, 204, 0.12);
-$tasting-text-secondary: rgba(228, 228, 204, 0.65);
-$tasting-text-tertiary: rgba(228, 228, 204, 0.6); // ≈ 6.7:1 on #141313 — AA pass
-$tasting-text-muted: rgba(228, 228, 204, 0.45); // ≈ 4.7:1 on #141313 — AA pass
+// Text levels stay in the palette. Mirroring them here is what drifted the sidebar
+// and the tasting pages onto different, failing values.
+
+// ── Phone layout surfaces ────────────────────────────────────────────────────
+// Scoped to the phone layout; desktop still uses $color-black / $color-darkGrey, so
+// the two can be reconciled in one deliberate step later.
+$tasting-m-page: #121111; // page behind everything
+$tasting-m-chrome: #1a1818; // sticky header strip and action bar
+$tasting-m-card: #1e1c1c; // question cards
+$tasting-m-control: #2a2727; // unselected option / icon squares
+// Neutral on purpose: the design's warm #f2f0e6 pushes adjacent hues cooler by
+// simultaneous contrast, and garnet-vs-ruby is exactly the call that biases. Dimmed
+// 3 points of L* off paper-white for glare; #dedede is the next safe step down.
+$tasting-swatch-tile: #e8e8e8;
+
+// ── Text on the light swatch tile ────────────────────────────────────────────
+// The only light ground in the app, so it needs its own ramp off the page black.
+// Alphas floor at 0.62, where 4.5:1 is cleared here; the design's 0.55 and 0.4
+// measure 3.87:1 and 2.51:1 and fail AA at the sizes they are set in.
+$tasting-on-light-strong: $color-black; // selected swatch name, selected ring — 15.1:1
+$tasting-on-light: rgba(20, 19, 19, 0.7); // swatch name — 6.26:1
+$tasting-on-light-muted: rgba(20, 19, 19, 0.66); // swatch description — 5.45:1
+$tasting-on-light-faint: rgba(20, 19, 19, 0.62); // right-hand caption — 4.81:1
+$tasting-on-light-accent: #6b3444; // the tile's own label — burgundy, darkened for contrast — 7.79:1

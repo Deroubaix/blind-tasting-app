@@ -139,25 +139,22 @@ a.button {
 }
 
 // ── Primary action button ─────────────────────────────────────────────────────
-// Shared by the hero CTA, tasting footer Next, and any future primary action.
-// Structural styles (padding, radius) are canonical here — override per context only if needed.
+// Shared by the hero CTA and the tasting footer Next; padding and radius are canonical here.
 .btn-primary {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.6rem;
-	background-color: $color-burgundy;
+	background-color: $color-accent;
 	color: $color-white;
 	border: none;
 	border-radius: 6px;
 	// Default size — hero CTA and tasting footer Next
 	padding: 1.2rem 1.6rem;
-	font-size: 0.84rem;
-	font-weight: $font-weight-medium;
-	font-family: $font-display-normal-family;
-	letter-spacing: 0.06em;
-	text-transform: none;
 	cursor: pointer;
+
+	@include action-label;
+
 	transition:
 		background-color 0.2s ease,
 		box-shadow 0.25s ease;
@@ -167,7 +164,7 @@ a.button {
 	}
 
 	&:hover:not(:disabled) {
-		background-color: color.scale($color-burgundy, $lightness: 8%);
+		background-color: color.scale($color-accent, $lightness: 8%);
 	}
 
 	&:focus-visible {
@@ -180,35 +177,29 @@ a.button {
 		cursor: not-allowed;
 	}
 
-	// Auth variant — form submit on Log in / Sign up pages
-	// Slightly taller and full-width; uppercase tracking because it's the sole action on the page.
+	// Auth submit — full-width and taller because it is the sole action on the page.
 	&--auth {
 		width: 100%;
 		padding: 1.05rem 1.25rem;
-		font-size: 0.78rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
 	}
 }
 
 // ── Tasting option pill ───────────────────────────────────────────────────────
-// Shared by Sight, Nose, Palate, and Initial Conclusion assessment pages.
-// Use .tasting-option--selected to mark the active state.
-// Use .tasting-option--wide for slightly more horizontal padding (IC climate/age rows).
-// Use .tasting-option--ghost for the dashed "+ Other" trigger button.
+// Shared by Sight, Nose, Palate and Initial Conclusion.
 .tasting-option {
 	// Reset global button defaults
 	text-transform: none;
 	letter-spacing: normal;
 	min-width: unset;
 
-	// Component styles
-	padding: 6px 14px;
-	border-radius: 6px;
+	// Vertical follows the design (11px); horizontal stays wider because these chips
+	// hug their labels in a wrapping row. Only --equal chips stretch, and set their own.
+	padding: 12px 14px;
+	border-radius: 8px;
 	border: 1px solid $tasting-border-mid;
 	background-color: $color-surface-variant;
-	color: $tasting-text-secondary;
-	font-size: $font-size-sm;
+	color: $color-text-secondary;
+	font-size: 0.825rem; // 13.2px
 	font-weight: $font-weight-regular;
 	font-family: $font-display-normal-family;
 	cursor: pointer;
@@ -231,25 +222,25 @@ a.button {
 	}
 
 	&--selected {
-		border-color: $tasting-accent;
-		background-color: rgba(139, 69, 87, 0.15);
-		color: $tasting-accent-light;
-
-		@include active-state {
-			background-color: rgba(139, 69, 87, 0.15);
-			border-color: $tasting-accent;
-			color: $tasting-accent-light;
-		}
+		@include selected-outline;
 	}
 
+	// Extra horizontal room only (IC climate/age rows) — vertical tracks the base.
 	&--wide {
-		padding: 6px 16px;
+		padding: 11px 16px;
+	}
+
+	// Pill for free-flowing descriptor chips (Nose aromas); equal-width rows keep the rect.
+	&--pill {
+		@include set-rounded-corners($radius-pill);
+		padding: 7px 11px;
+		font-size: 0.72rem;
 	}
 
 	&--ghost {
 		border-style: dashed;
 		background: none;
-		color: $tasting-text-tertiary;
+		color: $color-text-secondary;
 
 		@include active-state {
 			border-color: rgba(228, 228, 204, 0.25);
@@ -264,16 +255,15 @@ a.button {
 }
 
 // ── Tasting toggle button ─────────────────────────────────────────────────────
-// Solid-fill toggle for binary/exclusive choices (e.g. Clarity, Red/White).
-// Use .tasting-toggle-btn--selected to mark the active state.
+// Solid-fill toggle for binary choices (Clarity, Red/White).
 .tasting-toggle-btn {
 	flex: 1;
-	padding: 6px 10px;
-	border-radius: 4px;
+	padding: 12px 10px;
+	border-radius: 8px;
 	border: 1px solid $tasting-border-mid;
 	background-color: $color-surface-variant;
-	color: $tasting-text-tertiary;
-	font-size: $font-size-sm;
+	color: $color-text-secondary;
+	font-size: 0.825rem;
 	font-family: $font-display-normal-family;
 	font-weight: $font-weight-regular;
 	cursor: pointer;
@@ -290,5 +280,60 @@ a.button {
 		border-color: $tasting-accent;
 		color: $color-white;
 		font-weight: $font-weight-semibold;
+	}
+}
+
+// ── Phone: option targets ────────────────────────────────────────────────────
+// The desktop pill stands ~30px, under the 44px minimum. On a phone options stretch
+// to 46px and unselected lifts to $tasting-m-control to separate at arm's length.
+@include responsive($breakpoint-mobile) {
+	.tasting-options {
+		gap: 10px;
+	}
+
+	// Physical-evidence Yes/No pairs are the same kind of target as an option.
+	.tasting-toggle-btn {
+		min-height: 46px;
+		border-radius: 10px;
+		font-size: 0.875rem;
+	}
+
+	// Scoped to the page on purpose: `.tasting-phase-page button` resets min-width at
+	// (0,1,1), and a media query adds no specificity, so a lone class never wins it.
+	.tasting-phase-page .tasting-option {
+		// Hug the label, as on desktop. Growing turns a descriptor chip into a segmented
+		// row, so a lone "Tomato Leaf" ends up wider than "Savory Herbs" and chip size
+		// stops meaning anything. `.tasting-options--equal` still stretches — it is a
+		// more specific selector — which is the distinction the phone rule was flattening.
+		flex: 0 0 auto;
+		min-width: 84px;
+		min-height: 46px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 8px 12px;
+		border-radius: 10px;
+		background-color: $tasting-m-control;
+		font-size: 0.875rem;
+		line-height: 1.25;
+
+		// Keep the pill a pill — this block would otherwise override it.
+		&--pill {
+			@include set-rounded-corners($radius-pill);
+		}
+
+		@include active-state {
+			background-color: $tasting-m-control;
+		}
+
+		&--selected {
+			background-color: rgba(139, 69, 87, 0.2);
+			color: $color-white;
+			font-weight: $font-weight-medium;
+
+			@include active-state {
+				background-color: rgba(139, 69, 87, 0.2);
+			}
+		}
 	}
 }

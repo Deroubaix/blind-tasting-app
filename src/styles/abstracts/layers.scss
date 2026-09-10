@@ -1,3 +1,5 @@
 $index-navbar: 1000;
 $index-navbar-logo: $index-navbar - 100;
 $index-above-navbar: 1100;
+// Open menus clear the sticky tasting footer ($index-navbar - 100) but stay under the navbar.
+$index-dropdown: $index-navbar - 50;

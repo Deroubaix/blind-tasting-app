@@ -1,5 +1,4 @@
-// Entry point. Only `@use` rules, in the order the stylesheets were previously `@import`ed, so the
-// emitted CSS keeps its original order. The rules that used to live here are in `_base.scss`.
+// Entry point. The `@use` order below is the order of the emitted CSS.
 @use 'base';
 @use 'elements/elements';
 @use 'utilities/utilities';

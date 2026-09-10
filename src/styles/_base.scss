@@ -1,8 +1,4 @@
-// Global element and document rules. These used to sit at the bottom of `main.scss`; `main.scss` is
-// now nothing but `@use` rules, so they live here.
-//
-// One duplicate was dropped on the way: `* { box-sizing: border-box }` was declared both here (as
-// `theme/_base.scss`) and again in `main.scss`.
+// Global element and document rules.
 @use 'abstracts' as *;
 
 * {

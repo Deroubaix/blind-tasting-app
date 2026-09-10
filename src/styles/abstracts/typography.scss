@@ -1,94 +1,82 @@
-// Base typography rules — headings, body copy and links.
-//
-// The scale itself lives in `_font-scale.scss`; this file is the CSS it produces. Sibling `@use`s
-// rather than the `abstracts` barrel, because the barrel forwards this file.
+// Base typography — headings, body copy and links; the scale itself is in `_font-scale.scss`.
+// Sibling `@use`s rather than the `abstracts` barrel, because the barrel forwards this file.
 @use 'theme-only' as *;
 @use 'font-scale' as *;
 @use 'mixins' as *;
 @use 'responsiveness' as *;
 
-// -----------------------------------------
-// Heading styles (Manrope — product UI)
-// Lora serif is marketing-surface only, via home-page.scss overrides
-// -----------------------------------------
+// Headings (Manrope; Lora is the `em` accent only)
+// Everything a heading always wants lives here — family, weight, colour, tracking, the
+// accent `em` — so a page-level class only ever restates what it genuinely differs on.
+// Sizes are fluid, which is also why there is no mobile override for h1/h2 below.
 h1,
-h2 {
-	font-family: $font-display-bold-family;
-	margin: 1.5em 0;
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $font-display-normal-family;
+	color: $color-white;
+	margin: 0;
 
-	&:first-child {
-		margin-top: 0;
+	// `<em>` inside a heading is the Lora italic flourish. It keeps the heading's own
+	// colour — only the marketing page pays the accent on top.
+	em {
+		@include serif-italic;
 	}
 }
 
-// With base=16px, ratio=1.25:
-// xxxxl ≈ 48.8px → H1 (designer: 48px)
-// xxl   ≈ 31.3px → H2 (designer: 30px)
-// lg    =  20px  → H3 (designer: 20px)
-// md    =  16px  → Body (designer: 16px)
-// sm    ≈ 12.8px → Labels (designer: 12px)
+h1,
+h2 {
+	font-family: $font-display-bold-family;
+}
 
+// One size for every screen title in the app — auth, start, archives, a saved tasting,
+// each tasting phase. Capped at the top of the scale (≈49px); bold rather than extrabold,
+// which is what lets it run this large without shouting. The marketing hero is the sole
+// h1 that scales past this, and it says so itself in home-page.scss.
 h1 {
-	font-size: $font-size-xxxxl; // ≈ 48.8px
-	font-weight: $font-weight-extrabold;
-	letter-spacing: -0.03em;
+	font-size: clamp(2rem, 4.5vw, #{$font-size-xxxxl});
+	font-weight: $font-weight-bold;
+	letter-spacing: -0.035em;
+	line-height: 1.05;
 }
 
 h2 {
-	font-size: $font-size-xxl; // ≈ 31.3px
+	font-size: clamp(1.56rem, 3.5vw, 1.95rem);
 	font-weight: $font-weight-bold;
-	letter-spacing: -0.02em;
+	letter-spacing: -0.025em;
+	line-height: 1.08;
 }
 
 h3 {
 	font-size: $font-size-lg; // 20px
-	font-family: $font-display-normal-family;
 	font-weight: $font-weight-semibold;
-	letter-spacing: 0;
+	line-height: 1.25;
 }
 
 h4 {
 	font-size: $font-size-md; // 16px
-	font-family: $font-display-normal-family;
 	font-weight: $font-weight-semibold;
 }
 
 h5 {
 	font-size: $font-size-md;
-	font-family: $font-display-normal-family;
 	font-weight: $font-weight-medium;
 }
 
 h6 {
 	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
 	font-weight: $font-weight-medium;
 }
 
 @include responsive($breakpoint-mobile) {
-	h1 {
-		font-size: $font-size-xxl;
-	} // ≈ 31px on mobile
-	h2 {
-		font-size: $font-size-xl;
-	} // 25px on mobile
 	h3 {
-		font-size: $font-size-md;
-	} // 16px on mobile
-	h4 {
-		font-size: $font-size-md;
-	}
-	h5 {
-		font-size: $font-size-md;
-	}
-	h6 {
 		font-size: $font-size-md;
 	}
 }
 
-// -----------------------------------------
 // Body text
-// -----------------------------------------
 p,
 li,
 td {
@@ -145,9 +133,7 @@ ol {
 	}
 }
 
-// -----------------------------------------
 // Links
-// -----------------------------------------
 a {
 	position: relative;
 	word-break: auto-phrase;

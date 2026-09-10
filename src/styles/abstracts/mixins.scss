@@ -4,9 +4,8 @@
 @use 'responsiveness' as *;
 @use 'spacing' as *;
 
-// Repeated pattern for small uppercase tracking labels (eyebrow text, field labels, tags)
-// Designer spec: weight 700, tracking 0.2em, uppercase, muted color
-@mixin eyebrow-label($size: $font-size-sm, $color: $color-text-muted) {
+// Small uppercase tracking label: eyebrow text, field labels, tags.
+@mixin eyebrow-label($size: $font-size-sm, $color: $color-text-secondary) {
 	font-size: $size;
 	font-weight: $font-weight-bold;
 	letter-spacing: 0.2em;
@@ -14,6 +13,76 @@
 	color: $color;
 	font-family: $font-display-normal-family;
 	line-height: 1;
+}
+
+// Low-emphasis text action beside a .btn-primary; tracking matches it so the pair reads as one set.
+@mixin quiet-link($size: 0.72rem, $color: $color-text-secondary, $hover: $color-white) {
+	font-size: $size;
+	font-weight: $font-weight-semibold;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: $color;
+	font-family: $font-display-normal-family;
+	transition: color 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: $hover;
+	}
+}
+
+// Lora italic flourish; type only, colour is inherited.
+@mixin serif-italic {
+	font-family: $font-body-normal-family;
+	font-style: italic;
+	font-weight: $font-weight-regular;
+}
+
+// serif-italic in the display accent. Marketing surfaces only, never inside a tasting.
+@mixin serif-italic-accent($color: $color-display-accent) {
+	@include serif-italic;
+
+	color: $color;
+}
+
+// The action-button type — uppercase, tracked, 13px bold. Shared by .btn-primary and the
+// quieter actions that sit beside it, so one button row never mixes two label treatments.
+@mixin action-label {
+	font-size: 13px;
+	font-weight: $font-weight-bold;
+	font-family: $font-display-normal-family;
+	letter-spacing: 0.65px;
+	text-transform: uppercase;
+}
+
+// Chosen option/pill: tinted outline, not the solid fill actions get.
+@mixin selected-outline($accent: $color-accent, $text: $color-accent-light) {
+	border-color: $accent;
+	background-color: rgba($accent, 0.15);
+	color: $text;
+
+	&:hover,
+	&:focus,
+	&:active {
+		border-color: $accent;
+		background-color: rgba($accent, 0.15);
+		color: $text;
+	}
+}
+
+// Glyph at full hue on a 10% wash of it — a thin stroke needs the extra lightness to clear 3:1.
+// Pass only wine hues or status colours.
+@mixin icon-tile($hue) {
+	background: rgba($hue, 0.1);
+	border: 1px solid rgba($hue, 0.28);
+	color: $hue;
+}
+
+// Icon + label on one centre line; without it an svg child sits on the text baseline and rides high.
+@mixin icon-label($gap: 5px) {
+	display: inline-flex;
+	align-items: center;
+	gap: $gap;
 }
 
 @mixin active-state {

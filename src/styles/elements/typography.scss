@@ -1,13 +1,11 @@
 @use '../abstracts' as *;
 // ── Logo serif mark — the italic 's in "The Sommelier's Ledger" ───────────────
 .logo-serif {
-	font-family: $font-body-normal-family;
-	font-style: italic;
-	font-weight: 400;
+	@include serif-italic-accent;
+
 	letter-spacing: 0;
 	text-transform: none;
 	font-size: 1.05em;
-	color: $color-accent-light;
 }
 
 // ── Shared eyebrow label with rosegold dot ─────────────────────────────────────
@@ -17,7 +15,7 @@
 	font-weight: 700;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: $color-text-muted;
+	color: $color-brand-1;
 	line-height: 1;
 	display: inline-flex;
 	align-items: center;
@@ -29,8 +27,24 @@
 		width: 6px;
 		height: 6px;
 		border-radius: 50%;
-		background: $color-display-accent;
-		box-shadow: 0 0 12px rgba($color-display-accent, 0.55);
+		background: $color-brand-1;
+		box-shadow: 0 0 12px rgba($color-brand-1, 0.55);
 		flex-shrink: 0;
 	}
+}
+
+// ── Shared section label ──────────────────────────────────────────────────────
+// The cream tier that names a group of cards within a phase — Initial and Final
+// Conclusion, and both kinds of Nose section header. One step above the accent
+// .tasting-card__label that sits on the cards themselves.
+.section-label {
+	@include eyebrow-label(0.65rem, $color-white);
+}
+
+// ── Shared item label ─────────────────────────────────────────────────────────
+// Names one thing in a list or form: an auth field, a numbered step on the start
+// page, a phase in the home page preview. Brighter and a step larger than
+// .section-label, which names a whole group.
+.item-label {
+	@include eyebrow-label(0.78rem, $color-white);
 }
