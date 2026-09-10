@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import PhaseHeading from '../layout/PhaseHeading';
+import { PALATE_REQUIRED } from './palateFields';
 
-const REQUIRED_CATEGORIES = new Set(['Sweetness', 'Acid', 'Tannin', 'Alcohol', 'Body', 'Finish']);
+const REQUIRED_CATEGORIES = new Set(PALATE_REQUIRED);
 
 const palateTastingOptions = {
 	red: {
@@ -64,20 +64,17 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 			progress={palatePct}
 			timerPage="palate"
 			timerDestination={`/tastings/initial-conclusion?wineType=${wineType}`}
+			phase="Phase 03"
+			title="The Palate"
+			description="Analyze the structural components and flavor profile on the palate to confirm your nasal assessments."
 			footer={{
 				onBack: handlePreviousPhase,
-				backLabel: '← Back to Nose',
-				nextLabel: 'Next: Initial Conclusion →',
+				backLabel: 'Back to Nose',
+				nextLabel: 'Next: Initial Conclusion',
 				onNext: handleNextPhase,
 				nextDisabled: !requiredFilled,
 			}}
 		>
-			<PhaseHeading
-				phase="Phase 03"
-				title="The Palate"
-				description="Analyze the structural components and flavor profile on the palate to confirm your nasal assessments."
-			/>
-
 			{/* 2-column category grid */}
 			<div className="palate-grid">
 				{Object.entries(currentOptions).map(([category, options]) => (

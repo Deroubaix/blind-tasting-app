@@ -1,7 +1,5 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
 // Palate Assessment page
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ── 2-column category grid ────────────────────────────────────────────────────
 .palate-grid {
@@ -34,8 +32,16 @@
 	&__sublabel {
 		font-size: $font-size-xs;
 		font-family: $font-display-normal-family;
-		color: $tasting-text-muted;
+		color: $color-text-muted;
 		font-style: italic;
 		font-weight: $font-weight-regular;
+	}
+}
+
+// ── Phone: one column ────────────────────────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	.palate-grid {
+		grid-template-columns: 1fr;
+		gap: 12px;
 	}
 }

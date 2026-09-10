@@ -5,10 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthProvider } from '../auth/AuthProvider';
 import TimerConditional from './TimerConditional';
+import splitPhaseLabel from './phaseLabel';
 import { useTastingContext } from '../tasting/TastingContext';
 
 type TastingPageHeaderProps = {
 	wineType?: 'red' | 'white';
+	/** Phone only — the strip carries the phase and title the desktop page shows in body copy. */
+	phase?: string;
+	title?: string;
 	timerPage?: 'sight' | 'nose' | 'palate' | 'initialConclusion' | 'finalConclusion';
 	timerDestination?: string;
 	cancelHref?: string;
@@ -16,6 +20,8 @@ type TastingPageHeaderProps = {
 
 export default function TastingPageHeader({
 	wineType,
+	phase,
+	title,
 	timerPage,
 	timerDestination,
 	cancelHref,
@@ -52,11 +58,25 @@ export default function TastingPageHeader({
 
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
 
+	const wineWord = wineType === 'red' ? 'Red' : wineType === 'white' ? 'White' : null;
+	const { name: phaseName, number: phaseNumber } = splitPhaseLabel(phase ?? '');
+
 	return (
 		<header className={`tasting-page-header${showTimer ? '' : ' tasting-page-header--no-timer'}`}>
 			<Link href="/" className="tasting-page-header__logo">
 				The Sommelier<em className="logo-serif">&apos;s</em> Ledger
 			</Link>
+
+			{title && (
+				<div className="tasting-page-header__phase">
+					<span className="tasting-page-header__phase-label">
+						{wineWord && <>{wineWord} &middot; </>}
+						{phaseName}
+						{phaseNumber && <span className="tasting-page-header__phase-num"> {phaseNumber}</span>}
+					</span>
+					<span className="tasting-page-header__phase-title">{title}</span>
+				</div>
+			)}
 
 			<div className="tasting-page-header__center">
 				{showTimer && (

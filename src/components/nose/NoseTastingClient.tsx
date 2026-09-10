@@ -5,18 +5,7 @@ import { useTastingContext } from '../tasting/TastingContext';
 import { useEffect, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import PhaseHeading from '../layout/PhaseHeading';
-
-// ── Single-select categories ───────────────────────────────────────────────────
-const SINGLE_SELECT = new Set([
-	'Clean or Faulty',
-	'Intensity',
-	'Age Assessment',
-	'Fruit Character',
-	'Condition',
-	'Wood Aromas Origin',
-	'Wood Aromas Condition',
-]);
+import { NOSE_ASSESSMENTS as SINGLE_SELECT } from './noseFields';
 
 // ── Aroma data ─────────────────────────────────────────────────────────────────
 const noseTastingOptions = {
@@ -28,10 +17,21 @@ const noseTastingOptions = {
 		'Blue Fruits': ['Plum', 'Blueberry'],
 		'Black Fruits': ['Blackberry', 'Black Cherry', 'Blackcurrant'],
 		'Dried Fruits': ['Dates', 'Figs', 'Prunes'],
-		'Fruit Character': ['Tart', 'Ripe/Lush', 'Jammy'],
+		'Fruit Character': ['Tart', 'Ripe/Lush', 'Jammy', 'Baked', 'Stewed', 'Dried'],
 		Condition: ['Fresh', 'Dried'],
 		Floral: ['Rose', 'Lavender', 'Violet', 'Black Tea'],
-		'Veg/Herbal': ['Savory Herbs', 'Provençal Herbs', 'Garrigue', 'Tarragon', 'Bell Pepper'],
+		'Veg/Herbal': [
+			'Savory Herbs',
+			'Provençal Herbs',
+			'Garrigue',
+			'Tarragon',
+			'Bell Pepper',
+			'Olives',
+			'Mint/Eucalyptus',
+			'Dill',
+			'Beet',
+			'Tomato Leaf',
+		],
 		Spices: ['Black Pepper', 'Anise', 'Clove', 'Juniper'],
 		Animal: ['Barbecue', 'Blood', 'Game', 'Grilled Meat', 'Leather', 'Stable', 'Brett'],
 		Nuts: ['Almond', 'Hazelnut', 'Marzipan', 'Peanut', 'Nutmeg'],
@@ -290,7 +290,6 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	const countSelected = (keys: string[]) =>
 		keys.reduce((total, cat) => total + (selectedOptions[cat]?.length || 0), 0);
 
-	// Overall nose completion %
 	const allNoseKeys = [
 		...topAssessmentKeys[wineType],
 		...primaryFruitKeys[wineType],
@@ -305,78 +304,84 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 	// ── Sub-renderers ────────────────────────────────────────────────────────────
 
-	// Shared pill renderer — used by both card and fruit variants
 	const renderPills = (
 		category: string,
 		options: string[],
 		selections: string[],
 		customValues: string[],
 		equalWidth = false,
-	) => (
-		<div className={`tasting-options${equalWidth ? ' tasting-options--equal' : ''}`}>
-			{options.map((option) => {
-				const selected = selections.includes(option);
-				return (
-					<button
-						key={option}
-						onClick={() => handleOptionToggle(category, option)}
-						className={`tasting-option${selected ? ' tasting-option--selected' : ''}`}
-					>
-						{option}
-					</button>
-				);
-			})}
-			{customValues.map((val) => (
-				<button
-					key={val}
-					onClick={() => handleRemoveCustom(category, val)}
-					className="tasting-option tasting-option--selected tasting-option--custom"
-					title="Click to remove"
-				>
-					{val} ×
-				</button>
-			))}
-			{!SINGLE_SELECT.has(category) &&
-				(showCustomInput[category] ? (
-					<span className="nose-other-input">
-						<input
-							type="text"
-							className="tasting-input"
-							value={customInputs[category] || ''}
-							onChange={(e) => setCustomInputs((prev) => ({ ...prev, [category]: e.target.value }))}
-							placeholder="Type custom note..."
-							onKeyDown={(e) => {
-								if (e.key === 'Enter') {
-									handleAddCustom(category);
-								}
-								if (e.key === 'Escape') {
-									setShowCustomInput((prev) => ({ ...prev, [category]: false }));
-								}
-							}}
-							autoFocus
-						/>
-						<button className="tasting-option" onClick={() => handleAddCustom(category)}>
-							Add
-						</button>
+	) => {
+		// The design splits chips by selection mode, not by layout: single-select
+		// rows are segmented rectangles, multi-select descriptors are pills.
+		const pill = SINGLE_SELECT.has(category) ? '' : ' tasting-option--pill';
+
+		return (
+			<div className={`tasting-options${equalWidth ? ' tasting-options--equal' : ''}`}>
+				{options.map((option) => {
+					const selected = selections.includes(option);
+					return (
 						<button
-							className="tasting-option"
-							onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: false }))}
+							key={option}
+							onClick={() => handleOptionToggle(category, option)}
+							className={`tasting-option${pill}${selected ? ' tasting-option--selected' : ''}`}
 						>
-							✕
+							{option}
 						</button>
-					</span>
-				) : (
+					);
+				})}
+				{customValues.map((val) => (
 					<button
-						className="tasting-option tasting-option--ghost"
-						onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: true }))}
+						key={val}
+						onClick={() => handleRemoveCustom(category, val)}
+						className={`tasting-option${pill} tasting-option--selected tasting-option--custom`}
+						title="Click to remove"
 					>
-						+ Other
+						{val} ×
 					</button>
 				))}
-		</div>
-	);
+				{!SINGLE_SELECT.has(category) &&
+					(showCustomInput[category] ? (
+						<span className="nose-other-input">
+							<input
+								type="text"
+								className="tasting-input"
+								value={customInputs[category] || ''}
+								onChange={(e) => setCustomInputs((prev) => ({ ...prev, [category]: e.target.value }))}
+								placeholder="Type custom note..."
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										handleAddCustom(category);
+									}
+									if (e.key === 'Escape') {
+										setShowCustomInput((prev) => ({ ...prev, [category]: false }));
+									}
+								}}
+								autoFocus
+							/>
+							<button className="tasting-confirm-btn" onClick={() => handleAddCustom(category)}>
+								Add
+							</button>
+							<button
+								className="tasting-dismiss-btn"
+								aria-label="Cancel custom note"
+								onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: false }))}
+							>
+								✕
+							</button>
+						</span>
+					) : (
+						<button
+							className={`tasting-option${pill} tasting-option--ghost`}
+							onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: true }))}
+						>
+							+ Other
+						</button>
+					))}
+			</div>
+		);
+	};
 
-	// Renders inside a .nose-card (with dark background — top assessment, complex, wood)
+	// Into .nose-card — top assessment, complex, wood.
 	const renderCategory = (category: string, equalWidth = false) => {
 		const options = presetOptions[category];
 		const selections = selectedOptions[category] || [];
@@ -391,7 +396,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
-	// Renders inside a .nose-fruit-category (no background) with colored dot
+	// Into .nose-fruit-category — no background, coloured dot.
 	const renderFruitCategory = (category: string) => {
 		const options = presetOptions[category];
 		const selections = selectedOptions[category] || [];
@@ -410,10 +415,9 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
-	// Renders a collapsible section header button
 	const renderSectionHeader = (title: string, isOpen: boolean, onToggle: () => void, selectedCount: number) => (
 		<button className="nose-section-header" onClick={onToggle}>
-			<span className="nose-section-header__title">{title}</span>
+			<span className="section-label">{title}</span>
 			<span className="nose-section-header__right">
 				{!isOpen && selectedCount > 0 && (
 					<span className="nose-section-header__count">{selectedCount} selected</span>
@@ -430,19 +434,16 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			progress={nosePct}
 			timerPage="nose"
 			timerDestination={`/tastings/palate?wineType=${wineType}`}
+			phase="Phase 02"
+			title="The Nose"
+			description="Assess the aromatic profile — start with condition and intensity, then identify fruit, secondary, and tertiary aromas."
 			footer={{
 				onBack: handlePreviousPhase,
-				backLabel: '← Back to Sight',
-				nextLabel: 'Next: Palate →',
+				backLabel: 'Back to Sight',
+				nextLabel: 'Next: Palate',
 				onNext: handleNextPhase,
 			}}
 		>
-			<PhaseHeading
-				phase="Phase 02"
-				title="The Nose"
-				description="Assess the aromatic profile — start with condition and intensity, then identify fruit, secondary, and tertiary aromas."
-			/>
-
 			{/* ── Top assessment (3 cols) ── */}
 			<div className="nose-grid">
 				{topAssessmentKeys[wineType].map((cat) => (
@@ -454,7 +455,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 			{/* ── Primary Fruit Profile ── */}
 			<div className="nose-section-divider">
-				<span className="nose-section-divider__title">Primary Fruit Profile</span>
+				<span className="section-label">Primary Fruit Profile</span>
 			</div>
 
 			{/* Fruit types — no card background */}

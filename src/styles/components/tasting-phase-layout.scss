@@ -1,8 +1,6 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
 // Tasting Phase Layout — generic page shell shared by all tasting phase pages
 // (Sight, Nose, Palate, Initial Conclusion, Final Conclusion)
-// ─────────────────────────────────────────────────────────────────────────────
 
 .tasting-phase-page {
 	display: flex;
@@ -12,13 +10,6 @@
 	color: $color-white;
 	overflow: hidden;
 	font-family: $font-display-normal-family;
-
-	// Reset global button defaults for all buttons inside tasting pages
-	button {
-		text-transform: none;
-		letter-spacing: normal;
-		min-width: unset;
-	}
 }
 
 .tasting-phase-body {
@@ -36,27 +27,82 @@
 
 .tasting-phase-content {
 	padding: $spacing-xxl $spacing-xxl 0;
+
+	// Answers and toggles are labels, not calls to action, so they drop the global
+	// uppercase. Scoped to the form: the footer is chrome, and its actions keep the
+	// action-button treatment so the row reads as one set.
+	button {
+		text-transform: none;
+		letter-spacing: normal;
+		min-width: unset;
+	}
 }
 
 // ── Shared page heading elements (used on every phase page) ───────────────────
 
 .phase-label {
 	@include eyebrow-label(0.65rem);
-	color: $color-accent;
 	margin-bottom: $spacing-xxxs;
+
+	// The number is the part worth reading; the word is just its frame.
+	&__num {
+		color: $color-brand-1;
+		font-size: 1.15em;
+	}
 }
 
-.phase-heading {
-	font-size: $font-size-xxxl;
-	color: $color-white;
-	margin: 0 0 $spacing-sm;
-	line-height: 1.2;
+// The phase title is a bare h1; all it needs is the gap down to its description.
+.phase-label + h1 {
+	margin-bottom: $spacing-sm;
 }
 
 .phase-description {
 	font-size: $font-size-sm;
 	font-style: italic;
-	color: $tasting-text-tertiary;
+	color: $color-text-secondary;
 	margin: 0 0 $spacing-lg;
 	line-height: 1.6;
+}
+
+// ── Phone layout ─────────────────────────────────────────────────────────────
+// The desktop shell locks the viewport (100vh + overflow:hidden) around a 300px sidebar,
+// leaving 90px of unreachable content at 390px. The phone layout scrolls normally instead.
+@include responsive($breakpoint-mobile) {
+	.tasting-phase-page {
+		height: auto;
+		min-height: 100dvh;
+		overflow: visible;
+		background-color: $tasting-m-page;
+	}
+
+	.tasting-phase-body {
+		flex-direction: column;
+		overflow: visible;
+	}
+
+	.tasting-phase-main {
+		overflow: visible;
+		background-color: $tasting-m-page;
+		padding-bottom: 116px; // clears the taller thumb-zone action bar
+	}
+
+	.tasting-phase-content {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 16px;
+	}
+
+	// Both are in the header strip on this breakpoint; showing them twice would push
+	// the first question below the fold.
+	.phase-label,
+	.phase-label + h1 {
+		display: none;
+	}
+
+	.phase-description {
+		font-size: 0.78rem;
+		line-height: 1.55;
+		margin-bottom: 0;
+	}
 }

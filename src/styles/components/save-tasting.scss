@@ -1,8 +1,6 @@
 @use '../abstracts' as *;
 @use 'sass:color';
-// ─────────────────────────────────────────────────────────────────────────────
 // Review & Save page
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ── Two-column layout ─────────────────────────────────────────────────────────
 .save-layout {
@@ -10,6 +8,13 @@
 	grid-template-columns: 1fr 1fr;
 	gap: $spacing-lg;
 	margin-bottom: $spacing-lg;
+
+	// Side by side on a phone leaves the notes field ~180px wide, which wraps the
+	// placeholder to five lines and gives the taster a column to write in.
+	@include responsive($breakpoint-mobile) {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
 }
 
 // ── Photo upload ──────────────────────────────────────────────────────────────
@@ -21,7 +26,7 @@
 	border-radius: 6px;
 	border: 1px dashed $tasting-border-mid;
 	background: none;
-	color: $tasting-text-secondary;
+	color: $color-text-secondary;
 	font-size: $font-size-sm;
 	font-family: $font-display-normal-family;
 	cursor: pointer;
@@ -57,7 +62,7 @@
 	border: 1px solid $tasting-border-mid;
 	border-radius: 6px;
 	padding: 4px 10px;
-	color: $tasting-text-secondary;
+	color: $color-text-secondary;
 	font-size: $font-size-sm;
 	font-family: $font-display-normal-family;
 	cursor: pointer;

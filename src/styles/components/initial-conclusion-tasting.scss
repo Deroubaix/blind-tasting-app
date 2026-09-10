@@ -1,7 +1,5 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
 // Initial Conclusion page
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ── 2-column layout ───────────────────────────────────────────────────────────
 .ic-layout {
@@ -17,13 +15,15 @@
 	gap: $spacing-md;
 }
 
-// ── Section eyebrow label ─────────────────────────────────────────────────────
-.ic-section-label {
-	@include eyebrow-label(0.62rem);
-	color: $tasting-text-secondary;
-	letter-spacing: 0.12em;
+// Sections after the first in a column need air above them; the type is .section-label.
+.section-label--mt {
+	margin-top: $spacing-sm;
+}
 
-	&--mt {
-		margin-top: $spacing-sm;
+// ── Phone: one column ────────────────────────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	.ic-layout {
+		grid-template-columns: 1fr;
+		gap: 12px;
 	}
 }

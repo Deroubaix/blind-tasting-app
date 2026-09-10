@@ -1,4 +1,5 @@
 import React, { type ReactNode } from 'react';
+import splitPhaseLabel from './phaseLabel';
 
 type PhaseHeadingProps = {
 	phase: string;
@@ -7,10 +8,20 @@ type PhaseHeadingProps = {
 };
 
 export default function PhaseHeading({ phase, title, description }: PhaseHeadingProps) {
+	const { name, number } = splitPhaseLabel(phase);
+
 	return (
 		<>
-			<div className="phase-label">{phase}</div>
-			<h1 className="phase-heading">{title}</h1>
+			<div className="phase-label">
+				{number ? (
+					<>
+						{name} <span className="phase-label__num">{number}</span>
+					</>
+				) : (
+					phase
+				)}
+			</div>
+			<h1>{title}</h1>
 			<p className="phase-description">{description}</p>
 		</>
 	);

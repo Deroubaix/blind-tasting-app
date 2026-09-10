@@ -1,8 +1,5 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
-// Sight Assessment page
-// Local palette (accent colours specific to the tasting assessment UI)
-// ─────────────────────────────────────────────────────────────────────────────
+// Sight Assessment page — Local palette (accent colours specific to the tasting assessment UI)
 
 // ── Three-column assessment grid ──────────────────────────────────────────────
 .sight-grid {
@@ -21,6 +18,46 @@
 
 	&--span-cols {
 		grid-column: 1 / 3;
+	}
+
+	// ── Light swatch tile ────────────────────────────────────────────────────
+	// Wine colour is judged against a neutral light ground, the app's one light surface.
+	// Every on-light colour is scoped here so nothing leaks to the dark cards.
+	&--light {
+		// Compounded with .tasting-card on purpose: this file is imported first, so at equal
+		// specificity .tasting-card would win. The descendant rules below are already 0,2,0.
+		&.tasting-card {
+			background-color: $tasting-swatch-tile;
+			border: none;
+			border-radius: 12px;
+			padding: 20px;
+		}
+
+		.tasting-card__label {
+			color: $tasting-on-light-accent;
+		}
+
+		.sight-card__sublabel {
+			color: $tasting-on-light-faint;
+		}
+
+		.sight-swatch-label {
+			color: $tasting-on-light;
+
+			&--selected {
+				color: $tasting-on-light-strong;
+				font-weight: $font-weight-bold;
+			}
+		}
+
+		.sight-swatch-desc {
+			color: $tasting-on-light-muted;
+		}
+
+		.sight-swatch-rect--selected {
+			border-color: $tasting-on-light-strong;
+			box-shadow: none;
+		}
 	}
 }
 
@@ -42,14 +79,17 @@
 }
 
 .sight-card__sublabel {
-	@include eyebrow-label(0.56rem);
-	color: $tasting-text-muted;
+	@include eyebrow-label(0.625rem, $color-text-muted);
 	letter-spacing: 0.1em;
 }
 
 // ── Yes / No toggles ─────────────────────────────────────────────────────────
 .sight-toggle-group {
-	display: flex;
+	// Equal columns rather than flex: "No" is a character shorter than "Yes", and in an
+	// auto-width flex row `flex: 1` resolves to each button's own content size, so the
+	// pair comes out 4px apart. At this size that reads as misaligned.
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
 	gap: $spacing-md;
 }
 
@@ -62,13 +102,19 @@
 }
 
 .sight-evidence-field {
+	// Label and toggles share a line. Stacked, three of these make the evidence card
+	// taller than the two rows of option cards it spans, and the grid stretches those
+	// cards to match — leaving ~57px of dead space inside each one.
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $spacing-md;
+
 	&__label {
-		display: block;
-		font-size: $font-size-xs;
+		font-size: 12px;
 		font-weight: $font-weight-medium;
-		color: $tasting-text-secondary;
+		color: $color-text-secondary;
 		font-family: $font-display-normal-family;
-		margin-bottom: $spacing-xs;
 	}
 }
 
@@ -86,9 +132,9 @@
 
 .sight-swatch-rect {
 	width: 100%;
-	height: 50px;
-	border-radius: 8px;
-	border: 2px solid transparent;
+	height: 64px;
+	border-radius: 9px;
+	border: 3px solid transparent;
 	// background is set inline (dynamic hex value)
 	@include transition(border-color box-shadow, 0.15s);
 
@@ -99,12 +145,12 @@
 }
 
 .sight-swatch-label {
-	margin-top: $spacing-xs;
-	font-size: $font-size-xs;
+	margin-top: 9px;
+	font-size: 0.84rem; // 13.5px
 	text-align: center;
-	color: $tasting-text-secondary;
+	color: $color-text-secondary;
 	font-family: $font-display-normal-family;
-	font-weight: $font-weight-regular;
+	font-weight: $font-weight-semibold;
 
 	&--selected {
 		color: $tasting-accent-light;
@@ -113,11 +159,73 @@
 }
 
 .sight-swatch-desc {
-	margin-top: 3px;
-	font-size: $font-size-xs;
+	margin-top: 4px;
+	font-size: 0.72rem; // 11.5px
 	text-align: center;
-	color: $tasting-text-secondary;
+	color: $color-text-secondary;
 	font-family: $font-display-normal-family;
 	font-weight: $font-weight-regular;
-	line-height: 1.4;
+	line-height: 1.45;
+}
+
+// Desktop spells out all three swatches at once, so the summary line is phone-only.
+.sight-swatch-chosen {
+	display: none;
+	margin: $spacing-sm 0 0;
+	padding-top: $spacing-sm;
+	border-top: 1px solid rgba(20, 19, 19, 0.1);
+	font-size: 0.72rem;
+	line-height: 1.5;
+	color: $tasting-on-light-muted;
+	font-family: $font-display-normal-family;
+
+	strong {
+		color: $tasting-on-light-strong;
+	}
+}
+
+// ── Phone: one column ────────────────────────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	.sight-grid {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	// Colour is the reading this phase turns on, and the swatches are the one thing
+	// here that has to be seen rather than read. They lead on a screen this size.
+	.sight-card--light {
+		order: -1;
+	}
+
+	// Three descriptions stacked under a 390px-wide row is most of a screen; the
+	// chosen one alone says the same thing.
+	.sight-swatch-desc {
+		display: none;
+	}
+
+	.sight-swatch-chosen {
+		display: block;
+	}
+
+	// One column, so the card is never stretched — the toggles go back to full width
+	// rather than sitting as a small pair beside the label.
+	.sight-evidence-field {
+		display: block;
+
+		&__label {
+			margin-bottom: $spacing-xs;
+		}
+	}
+
+	// Both spans are relative to the three-column desktop grid. Left in place they
+	// generate implicit columns and the single-column template never takes effect.
+	.sight-card {
+		&--evidence {
+			grid-row: auto;
+		}
+
+		&--span-cols {
+			grid-column: auto;
+		}
+	}
 }

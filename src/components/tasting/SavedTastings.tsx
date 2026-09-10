@@ -10,7 +10,6 @@ import { useToastProvider } from '../../toast/ToastProvider';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import PhaseHeading from '../layout/PhaseHeading';
 
 export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }) {
 	const { tastingData, updateTastingData, resetTastingData } = useTastingContext();
@@ -90,20 +89,17 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
+			phase="Wrap Up"
+			title="Review & Save"
+			description="Add any final notes and capture the wine label before saving your tasting record."
 			footer={{
 				onBack: () => router.push(`/tastings/final-conclusion?wineType=${wineType}`),
-				backLabel: '← Back to Final Conclusion',
+				backLabel: 'Back to Final Conclusion',
 				nextLabel: 'Save Tasting',
 				onNext: handleSave,
 				nextLoading: isLoading,
 			}}
 		>
-			<PhaseHeading
-				phase="Wrap Up"
-				title="Review & Save"
-				description="Add any final notes and capture the wine label before saving your tasting record."
-			/>
-
 			<div className="save-layout">
 				{/* Notes */}
 				<div className="tasting-card">

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import PhaseHeading from '../layout/PhaseHeading';
+import { SIGHT_MAIN_FIELDS, SIGHT_EVIDENCE_LABELS } from './sightFields';
 import { wineColors } from './sightData';
 
 export default function SightTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
@@ -18,13 +18,12 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 
 	const handleNextPhase = () => router.push(`/tastings/nose?wineType=${wineType}`);
 
-	const handleReset = () => updateTastingData({ sight: {} });
-
 	const colors = wineColors[wineType];
 
 	// Completion %
-	const mainFields = ['Clarity', 'Brightness', 'Concentration', 'Viscosity', 'Color', 'Hue'];
-	const pct = Math.round((mainFields.filter((f) => selectedOptions[f] != null).length / mainFields.length) * 100);
+	const pct = Math.round(
+		(SIGHT_MAIN_FIELDS.filter((f) => selectedOptions[f] != null).length / SIGHT_MAIN_FIELDS.length) * 100,
+	);
 
 	// ─── Sub-renderers ───────────────────────────────────────────────────────────
 
@@ -62,30 +61,43 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 		</div>
 	);
 
-	const renderSwatches = (category: string, items: typeof colors.spectrum) => (
-		<div className="sight-swatches">
-			{items.map((item) => {
-				const selected = selectedOptions[category] === item.name;
-				return (
-					<div
-						key={item.name}
-						className="sight-swatch-item"
-						onClick={() => handleOptionSelect(category, item.name)}
-					>
-						{/* background is dynamic (wine hex value) — only this one inline style */}
-						<div
-							className={`sight-swatch-rect${selected ? ' sight-swatch-rect--selected' : ''}`}
-							style={{ backgroundColor: item.hex }}
-						/>
-						<div className={`sight-swatch-label${selected ? ' sight-swatch-label--selected' : ''}`}>
-							{item.name}
-						</div>
-						<div className="sight-swatch-desc">{item.desc}</div>
-					</div>
-				);
-			})}
-		</div>
-	);
+	// Each swatch carries its own description on desktop, where there is room for three
+	// side by side. On phone only the chosen one is spelled out, below the row.
+	const renderSwatches = (category: string, items: typeof colors.spectrum) => {
+		const chosen = items.find((item) => item.name === selectedOptions[category]);
+
+		return (
+			<>
+				<div className="sight-swatches">
+					{items.map((item) => {
+						const selected = selectedOptions[category] === item.name;
+						return (
+							<div
+								key={item.name}
+								className="sight-swatch-item"
+								onClick={() => handleOptionSelect(category, item.name)}
+							>
+								{/* background is dynamic (wine hex value) — only this one inline style */}
+								<div
+									className={`sight-swatch-rect${selected ? ' sight-swatch-rect--selected' : ''}`}
+									style={{ backgroundColor: item.hex }}
+								/>
+								<div className={`sight-swatch-label${selected ? ' sight-swatch-label--selected' : ''}`}>
+									{item.name}
+								</div>
+								<div className="sight-swatch-desc">{item.desc}</div>
+							</div>
+						);
+					})}
+				</div>
+				{chosen && (
+					<p className="sight-swatch-chosen">
+						<strong>{chosen.name}</strong> &mdash; {chosen.desc}
+					</p>
+				)}
+			</>
+		);
+	};
 
 	// ─── Markup ───────────────────────────────────────────────────────────────────
 	return (
@@ -94,24 +106,20 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 			progress={pct}
 			timerPage="sight"
 			timerDestination={`/tastings/nose?wineType=${wineType}`}
+			phase="Phase 01"
+			title="The Sight"
+			description={
+				wineType === 'red'
+					? 'Examine the wine against a neutral white background under consistent lighting conditions.'
+					: 'Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary hues.'
+			}
 			footer={{
-				onReset: handleReset,
 				onBack: () => router.push(`/tastings/start?wineType=${wineType}`),
-				backLabel: '← Back to Setup',
-				nextLabel: 'Next: The Nose →',
+				backLabel: 'Back to Setup',
+				nextLabel: 'Next: The Nose',
 				onNext: handleNextPhase,
 			}}
 		>
-			<PhaseHeading
-				phase="Phase 01"
-				title="The Sight"
-				description={
-					wineType === 'red'
-						? 'Examine the wine against a neutral white background under consistent lighting conditions.'
-						: 'Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary hues.'
-				}
-			/>
-
 			{/*
               Three-column assessment grid
               ┌──────────────┬──────────────┬───────────────────────────┐
@@ -141,53 +149,38 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				<div className="tasting-card sight-card--evidence">
 					<div className="tasting-card__label">Physical Evidence</div>
 					<div className="sight-evidence-fields">
-						{wineType === 'red' && (
-							<div className="sight-evidence-field">
-								<span className="sight-evidence-field__label">Stained Tears</span>
-								{renderToggle('StainedTears', ['No', 'Yes'])}
-							</div>
-						)}
 						<div className="sight-evidence-field">
-							<span className="sight-evidence-field__label">Gas Evidence</span>
+							<span className="sight-evidence-field__label">{SIGHT_EVIDENCE_LABELS.StainedTears}</span>
+							{renderToggle('StainedTears', ['No', 'Yes'])}
+						</div>
+						<div className="sight-evidence-field">
+							<span className="sight-evidence-field__label">{SIGHT_EVIDENCE_LABELS.GasEvidence}</span>
 							{renderToggle('GasEvidence', ['No', 'Yes'])}
 						</div>
 						<div className="sight-evidence-field">
-							<span className="sight-evidence-field__label">Sediment/Particles</span>
-							{wineType === 'red'
-								? renderToggle('SedimentParticles', ['No', 'Yes'])
-								: renderToggle('SedimentParticles', ['None', 'Present'])}
+							<span className="sight-evidence-field__label">
+								{SIGHT_EVIDENCE_LABELS.SedimentParticles}
+							</span>
+							{renderToggle('SedimentParticles', ['No', 'Yes'])}
 						</div>
 					</div>
 				</div>
 
-				{/* Row 2, Col 1 — Concentration (red) or Viscosity (white) */}
-				{wineType === 'red' ? (
-					<div className="tasting-card">
-						<div className="tasting-card__label">Concentration</div>
-						{renderOptions('Concentration', ['Pale', 'Moderate', 'Deep'])}
-					</div>
-				) : (
-					<div className="tasting-card">
-						<div className="tasting-card__label">Viscosity</div>
-						{renderOptions('Viscosity', ['Low', 'Medium', 'High'])}
-					</div>
-				)}
+				{/* Row 2, Col 1 — Concentration. Both wine types: it is one of the six
+				    SIGHT_MAIN_FIELDS, so leaving it off a type caps that type below 100%. */}
+				<div className="tasting-card">
+					<div className="tasting-card__label">Concentration</div>
+					{renderOptions('Concentration', ['Pale', 'Moderate', 'Deep'])}
+				</div>
 
-				{/* Row 2, Col 2 — Viscosity (red) or Tears (white) */}
-				{wineType === 'red' ? (
-					<div className="tasting-card">
-						<div className="tasting-card__label">Viscosity</div>
-						{renderOptions('Viscosity', ['Low', 'Medium', 'High'])}
-					</div>
-				) : (
-					<div className="tasting-card">
-						<div className="tasting-card__label">Tears</div>
-						{renderOptions('Tears', ['Slow', 'Fast'])}
-					</div>
-				)}
+				{/* Row 2, Col 2 — Viscosity */}
+				<div className="tasting-card">
+					<div className="tasting-card__label">Viscosity</div>
+					{renderOptions('Viscosity', ['Low', 'Medium', 'High'])}
+				</div>
 
 				{/* Row 3, Cols 1–2 — Color Spectrum */}
-				<div className="tasting-card sight-card--span-cols">
+				<div className="tasting-card sight-card--span-cols sight-card--light">
 					<div className="sight-card__header">
 						<div className="tasting-card__label">Color Spectrum</div>
 						<span className="sight-card__sublabel">Core Color</span>
@@ -196,7 +189,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				</div>
 
 				{/* Row 4, Cols 1–2 — Hue Rim / Secondary Hue */}
-				<div className="tasting-card sight-card--span-cols">
+				<div className="tasting-card sight-card--span-cols sight-card--light">
 					<div className="sight-card__header">
 						<div className="tasting-card__label">{wineType === 'red' ? 'Hue Rim' : 'Secondary Hue'}</div>
 						<span className="sight-card__sublabel">Rim Quality</span>

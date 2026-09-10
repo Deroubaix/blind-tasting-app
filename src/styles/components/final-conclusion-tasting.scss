@@ -1,8 +1,5 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
-// Final Conclusion page
-// Search inputs and chips use shared .tasting-* classes from tasting-inputs.scss
-// ─────────────────────────────────────────────────────────────────────────────
+// Final Conclusion page — Search inputs and chips use shared .tasting-* classes from tasting-inputs.scss
 
 // ── Two-column page layout ────────────────────────────────────────────────────
 .fc-layout {
@@ -12,9 +9,13 @@
 	align-items: start;
 }
 
-.fc-left {
-	display: flex;
-	flex-direction: column;
+// ── Right column: the declaration ─────────────────────────────────────────────
+// The recap is far taller than these five fields, so without pinning, the form scrolls out
+// of view while you read your notes. Needs `align-items: start` above and an unclipped path
+// up to .tasting-phase-main, the scroll container.
+.fc-right {
+	position: sticky;
+	top: $spacing-md;
 }
 
 // ── Your Analysis panel ───────────────────────────────────────────────────────
@@ -34,16 +35,10 @@
 		margin-bottom: $spacing-xs;
 	}
 
-	&__title {
-		@include eyebrow-label(0.62rem);
-		color: $tasting-accent-light;
-		letter-spacing: 0.14em;
-	}
-
 	&__subtitle {
 		font-size: $font-size-sm;
 		font-style: italic;
-		color: $tasting-text-tertiary;
+		color: $color-text-secondary;
 	}
 
 	&__row {
@@ -52,21 +47,45 @@
 		gap: 3px;
 	}
 
+	// Recap labels sit below the section tier, so they take the accent.
 	&__row-label {
-		@include eyebrow-label(0.58rem);
-		color: $tasting-text-muted;
-		letter-spacing: 0.1em;
+		@include eyebrow-label(0.6rem, $tasting-accent-light);
+		letter-spacing: 0.14em;
 	}
 
 	&__row-value {
 		font-size: 0.78rem;
-		color: $tasting-text-secondary;
+		color: $color-text-secondary;
 		line-height: 1.5;
 
 		&--identity {
 			font-style: italic;
 			color: $tasting-accent-light;
 		}
+	}
+
+	// Attribute / answer pairs. Two columns so the answers align down the panel
+	// and can be scanned without reading the attribute names again.
+	&__pairs {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: $spacing-sm;
+		row-gap: 2px;
+		margin: 0;
+	}
+
+	&__pair-key {
+		font-size: 0.72rem;
+		color: $color-text-muted;
+		line-height: 1.5;
+		white-space: nowrap;
+	}
+
+	&__pair-value {
+		font-size: 0.78rem;
+		color: $color-text-secondary;
+		line-height: 1.5;
+		margin: 0;
 	}
 
 	&__divider {
@@ -92,3 +111,21 @@
 }
 
 // ── Quality Level select ──────────────────────────────────────────────────────
+
+// ── Phone: one column ────────────────────────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	.fc-layout {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	.fc-grid {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	// One column here, so there is nothing to pin against.
+	.fc-right {
+		position: static;
+	}
+}

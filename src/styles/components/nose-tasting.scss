@@ -1,7 +1,5 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
 // Nose Assessment page
-// ─────────────────────────────────────────────────────────────────────────────
 
 // ── Assessment grids ──────────────────────────────────────────────────────────
 .nose-grid {
@@ -23,9 +21,11 @@
 .nose-fruit-category {
 	padding: $spacing-xs 0;
 
+	// Group label beside its wine-hue dot — accent, one step down from a card
+	// label on both size and tracking.
 	&__label {
-		@include eyebrow-label(0.58rem);
-		color: $tasting-accent-light;
+		@include eyebrow-label(0.6rem, $tasting-accent-light);
+		letter-spacing: 0.18em;
 		margin-bottom: $spacing-xs;
 		display: flex;
 		align-items: center;
@@ -78,7 +78,7 @@
 		flex: 1;
 		justify-content: center;
 		text-align: center;
-		padding: 9px 10px;
+		padding: 11px 10px;
 	}
 }
 
@@ -95,11 +95,6 @@
 	margin-bottom: $spacing-md;
 	padding-bottom: $spacing-sm;
 	border-bottom: 1px solid $tasting-border;
-
-	&__title {
-		@include eyebrow-label(0.65rem);
-		color: $tasting-accent-light;
-	}
 }
 
 // ── Wood Exposure layout ──────────────────────────────────────────────────────
@@ -136,22 +131,17 @@
 		border-bottom-color: rgba(228, 228, 204, 0.22);
 	}
 
-	&__title {
-		@include eyebrow-label(0.65rem);
-		color: $tasting-accent-light;
-	}
-
 	&__right {
 		display: flex;
 		align-items: center;
 		gap: $spacing-sm;
-		color: $tasting-text-secondary;
+		color: $color-text-secondary;
 	}
 
 	&__count {
 		font-size: $font-size-xs;
 		font-family: $font-display-normal-family;
-		color: $tasting-text-muted;
+		color: $color-text-muted;
 		font-style: italic;
 		font-weight: $font-weight-regular;
 	}
@@ -171,5 +161,18 @@
 
 	&__inner {
 		overflow: hidden;
+	}
+}
+
+// ── Phone: one column ────────────────────────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	.nose-grid {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	.nose-wood-layout {
+		grid-template-columns: 1fr;
+		gap: 12px;
 	}
 }

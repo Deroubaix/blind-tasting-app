@@ -1,8 +1,5 @@
 @use '../abstracts' as *;
-// ─────────────────────────────────────────────────────────────────────────────
-// Tasting session header
-// Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
-// ─────────────────────────────────────────────────────────────────────────────
+// Tasting session header — Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
 
 $tph-border: rgba(228, 228, 204, 0.06);
 
@@ -18,8 +15,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	font-family: $font-display-normal-family;
 
 	&__logo {
-		@include eyebrow-label(0.72rem);
-		color: $color-white;
+		@include eyebrow-label(0.72rem, $color-white);
 		letter-spacing: 0.15em;
 		justify-self: start;
 		text-decoration: none;
@@ -38,6 +34,11 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 	}
 
+	// The phone strip carries the phase and title; on desktop the page body does.
+	&__phase {
+		display: none;
+	}
+
 	// ── Center — timer block ────────────────────────────────────────────────────
 	&__center {
 		display: flex;
@@ -49,23 +50,20 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	}
 
 	&__timer-label {
-		@include eyebrow-label(0.5rem);
-		color: $tasting-text-muted;
+		@include eyebrow-label(0.5rem, $color-text-muted);
 		letter-spacing: 0.18em;
 	}
 
 	&__timer-display {
-		font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
+		font-family: $font-mono-family;
 		font-size: 1.4rem;
 		font-weight: 600;
 		letter-spacing: 0.06em;
 		line-height: 1;
 		color: $color-white;
 
-		// `<Timer>` renders its own <span class="timer-display …"> inside this element, so the state
-		// classes have to be matched as descendants. Written as `&.timer-display--warning` they
-		// required the modifier on this wrapper div, where it is never applied — which meant the
-		// amber and expired colours had simply never rendered.
+		// `<Timer>` renders its own <span class="timer-display …"> inside this element, so the
+		// state classes must be matched as descendants, not as `&.timer-display--warning`.
 		.timer-display {
 			color: inherit;
 			@include transition(color, 0.3s);
@@ -90,8 +88,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	}
 
 	&__wine-label {
-		@include eyebrow-label(0.65rem);
-		color: rgba(228, 228, 204, 0.55);
+		@include eyebrow-label(0.65rem, rgba(228, 228, 204, 0.55));
 		letter-spacing: 0.2em;
 	}
 
@@ -100,7 +97,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		font-weight: 600;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: $tasting-text-muted;
+		color: $color-text-muted;
 		font-family: $font-display-normal-family;
 		transition: color 0.2s ease;
 
@@ -135,6 +132,84 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 		&:hover {
 			opacity: 0.75;
+		}
+	}
+}
+
+// ── Phone: one strip carrying phase, title and clock ─────────────────────────
+// Sticky rather than fixed so the stepper below can sit at the strip's height without a
+// hand-maintained offset. Expiry navigates on by itself, so the clock cannot scroll away.
+@include responsive($breakpoint-mobile) {
+	.tasting-page-header {
+		position: sticky;
+		top: 0;
+		z-index: 6;
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+		height: 56px;
+		padding: 4px 16px 8px;
+		background-color: $tasting-m-chrome;
+		border-bottom: none;
+
+		&__logo,
+		&__wine-label,
+		&__right {
+			display: none;
+		}
+
+		&__timer-label {
+			@include eyebrow-label(0.56rem, $color-text-muted);
+			letter-spacing: 0.16em;
+			order: 2; // under the clock, not above it
+			margin-top: 3px;
+		}
+
+		&__phase {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			flex: 1;
+			min-width: 0;
+		}
+
+		&__phase-label {
+			@include eyebrow-label(0.59rem, $color-text-muted);
+			letter-spacing: 0.18em;
+		}
+
+		&__phase-num {
+			color: $tasting-accent-light;
+		}
+
+		&__phase-title {
+			font-size: 1rem;
+			font-weight: $font-weight-bold;
+			letter-spacing: -0.01em;
+			color: $color-white;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		&__center {
+			flex: 0 0 auto;
+			flex-direction: column;
+			align-items: flex-end;
+		}
+
+		&__timer-display {
+			// Accent-light rather than white: the clock is a readout, not the loudest
+			// thing on the strip. The warning and expired states still override it.
+			color: $tasting-accent-light;
+			text-align: right;
+		}
+
+		&__timer-display .timer-display {
+			font-size: 1.375rem;
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: 0.02em;
 		}
 	}
 }

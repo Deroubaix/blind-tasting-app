@@ -1,17 +1,41 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { IconSearch, IconMapPin, IconCalendar } from '@tabler/icons-react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import PhaseHeading from '../layout/PhaseHeading';
 import TastingAutocomplete from './TastingAutocomplete';
 import TastingCustomSelect from './TastingCustomSelect';
 import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from './autocompleteData';
+import { SIGHT_MAIN_FIELDS, SIGHT_EVIDENCE_LABELS, SIGHT_EVIDENCE_ABSENT } from '../sight/sightFields';
+import { NOSE_ASSESSMENTS } from '../nose/noseFields';
+import { fcAnsweredCount, FC_REQUIRED } from './conclusionFields';
 
 const qualityTiers = ['Regional', 'Village', 'Premier Cru', 'Grand Cru', 'Single Vineyard', 'Estate'];
 
+// Values like "Medium (-)" or "High" mean nothing alone, so the attribute they answer
+// travels with them — flattened, five "Medium (-)" in a row name neither acid nor tannin.
+function AnalysisPairs({ label, pairs }: { label: string; pairs: [string, string][] }) {
+	if (!pairs.length) {
+		return null;
+	}
+	return (
+		<div className="fc-analysis__row">
+			<div className="fc-analysis__row-label">{label}</div>
+			<dl className="fc-analysis__pairs">
+				{pairs.map(([key, value]) => (
+					<Fragment key={key}>
+						<dt className="fc-analysis__pair-key">{key}</dt>
+						<dd className="fc-analysis__pair-value">{value}</dd>
+					</Fragment>
+				))}
+			</dl>
+		</div>
+	);
+}
+
+// For self-describing values only — aroma descriptors, country names.
 function AnalysisRow({ label, value }: { label: string; value: string }) {
 	if (!value) {
 		return null;
@@ -28,17 +52,9 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 
-	// The five committed answers live in the shared context, not in local state, and every setter
-	// writes straight through.
-	//
-	// They used to be `useState` that was only flushed to the context in `handleNext`/`handleBack`.
-	// The phase timer does not go through either: `TimerWrapper` navigates with a bare
-	// `router.push(destination)` when it expires, so the component unmounted with everything still
-	// held locally and the tasting saved with `conclusion.final: {}` — the whole final identification
-	// silently lost, with no error shown. This matches how sight, nose, palate and the initial
-	// conclusion already behave, which is why they survive the timer and this did not.
-	//
-	// Only the three autocomplete text boxes stay local; they are transient input, not answers.
+	// The five committed answers write straight through to the shared context. Local state would
+	// be lost when the phase timer expires — TimerWrapper navigates with a bare `router.push`,
+	// so nothing gets a chance to flush. Only the autocomplete text boxes stay local.
 	const fc = tastingData.conclusion?.final ?? {};
 	const grapeVariety = fc['grapeVariety'] ?? '';
 	const countryOfOrigin = fc['countryOfOrigin'] ?? '';
@@ -59,22 +75,48 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const setQualityLevel = (v: string) => updateFC({ qualityLevel: v });
 	const setVintage = (v: string) => updateFC({ vintage: v });
 
-	// Analysis summaries derived from prior phases
-	const sightSummary = tastingData.sight ? Object.values(tastingData.sight).filter(Boolean).join(' · ') : '';
-	const noseSummary = tastingData.nose ? Object.values(tastingData.nose).flat().filter(Boolean).join(' · ') : '';
-	const palateSummary = tastingData.palate ? Object.values(tastingData.palate).filter(Boolean).join(' · ') : '';
+	// Summaries of prior phases. Each keeps its attribute name; only self-describing
+	// lists (aroma descriptors, countries) go flat.
+	const sight = tastingData.sight ?? {};
+	const sightPairs = SIGHT_MAIN_FIELDS.filter((f) => sight[f]).map((f) => [f, sight[f]] as [string, string]);
+
+	// A recap lists what was found; "No" answers are the default state, so they collapse to one line.
+	const evidenceFound = Object.entries(SIGHT_EVIDENCE_LABELS)
+		.filter(([key]) => sight[key] && !SIGHT_EVIDENCE_ABSENT.includes(sight[key]))
+		.map(([, label]) => label)
+		.join(' · ');
+	const evidenceAnswered = Object.keys(SIGHT_EVIDENCE_LABELS).some((key) => sight[key]);
+	const evidenceSummary = evidenceFound || (evidenceAnswered ? 'None noted' : '');
+
+	// Nose splits two ways: assessments are ambiguous without their attribute, descriptors are not.
+	const nose = tastingData.nose ?? {};
+	const nosePairs = Object.entries(nose)
+		.filter(([key, values]) => NOSE_ASSESSMENTS.has(key) && values?.length)
+		.map(([key, values]) => [key, values.join(' · ')] as [string, string]);
+	const noseDescriptors = Object.entries(nose)
+		.filter(([key, values]) => !NOSE_ASSESSMENTS.has(key) && values?.length)
+		.flatMap(([, values]) => values)
+		.join(' · ');
+
+	const palatePairs = Object.entries(tastingData.palate ?? {})
+		.filter(([, value]) => Boolean(value))
+		.map(([key, value]) => [key, value] as [string, string]);
+
 	const initial = tastingData.conclusion?.initial;
-	const initialCallSummary = initial
-		? [initial.worldOrigin, initial.climate, initial.ageRange, ...(initial.grapeVarieties ?? [])]
-				.filter(Boolean)
-				.join(' · ')
-		: '';
+	const initialPairs = (
+		[
+			['World Origin', initial?.worldOrigin],
+			['Climate', initial?.climate],
+			['Age Range', initial?.ageRange],
+			['Grape Varieties', (initial?.grapeVarieties ?? []).join(' · ')],
+		] as [string, string | null | undefined][]
+	)
+		.filter(([, value]) => Boolean(value))
+		.map(([key, value]) => [key, value as string] as [string, string]);
 	const possibleOriginSummary = (initial?.possibleCountries ?? []).join(' · ');
 	const finalIdentity = [vintage, grapeVariety, qualityLevel, countryOfOrigin].filter(Boolean).join(' · ');
 
-	const conclusionPct = Math.round(
-		([grapeVariety, countryOfOrigin, regionAppellation, qualityLevel, vintage].filter(Boolean).length / 5) * 100,
-	);
+	const conclusionPct = Math.round((fcAnsweredCount(fc) / FC_REQUIRED.length) * 100);
 
 	// No flush needed before navigating — the answers are already in the context.
 	const handleNext = () => router.push(`/tastings/save?wineType=${wineType}`);
@@ -94,46 +136,43 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 			progress={conclusionPct}
 			timerPage="finalConclusion"
 			timerDestination={`/tastings/save?wineType=${wineType}`}
+			phase="Phase 05"
+			title="Final Conclusion"
+			description="Commit to a single, specific identification — grape variety, country, region, quality level, and vintage."
 			footer={{
 				onBack: handleBack,
-				backLabel: '← Back to Initial Conclusion',
-				nextLabel: 'Review & Save →',
+				backLabel: 'Back to Initial Conclusion',
+				nextLabel: 'Review & Save',
 				onNext: handleNext,
 			}}
 		>
 			<div className="fc-layout">
-				{/* ── Left: heading + analysis panel ── */}
-				<div className="fc-left">
-					<PhaseHeading
-						phase="Phase 05"
-						title="Final Conclusion"
-						description="Commit to your definitive identification. Synthesize everything — sight, nose, palate — into a single declaration."
-					/>
-
-					<div className="fc-analysis">
-						<div className="fc-analysis__header">
-							<span className="fc-analysis__title">Your Analysis</span>
-							<span className="fc-analysis__subtitle">Confirmed so far</span>
-						</div>
-
-						<AnalysisRow label="Color & Sight" value={sightSummary} />
-						<AnalysisRow label="Primary Aromas" value={noseSummary} />
-						<AnalysisRow label="Palate Structure" value={palateSummary} />
-						<AnalysisRow label="Initial Call" value={initialCallSummary} />
-						<AnalysisRow label="Possible Origin" value={possibleOriginSummary} />
-
-						{finalIdentity && (
-							<>
-								<div className="fc-analysis__divider" />
-								<div className="fc-analysis__row">
-									<div className="fc-analysis__row-label">Final Identity</div>
-									<div className="fc-analysis__row-value fc-analysis__row-value--identity">
-										{finalIdentity}
-									</div>
-								</div>
-							</>
-						)}
+				{/* ── Left: what you recorded ── */}
+				<div className="fc-analysis">
+					<div className="fc-analysis__header">
+						<span className="section-label">Your Analysis</span>
+						<span className="fc-analysis__subtitle">What you recorded</span>
 					</div>
+
+					<AnalysisPairs label="Color & Sight" pairs={sightPairs} />
+					<AnalysisRow label="Physical Evidence" value={evidenceSummary} />
+					<AnalysisPairs label="Nose" pairs={nosePairs} />
+					<AnalysisRow label="Aroma Descriptors" value={noseDescriptors} />
+					<AnalysisPairs label="Palate Structure" pairs={palatePairs} />
+					<AnalysisPairs label="Initial Call" pairs={initialPairs} />
+					<AnalysisRow label="Possible Origin" value={possibleOriginSummary} />
+
+					{finalIdentity && (
+						<>
+							<div className="fc-analysis__divider" />
+							<div className="fc-analysis__row">
+								<div className="fc-analysis__row-label">Final Identity</div>
+								<div className="fc-analysis__row-value fc-analysis__row-value--identity">
+									{finalIdentity}
+								</div>
+							</div>
+						</>
+					)}
 				</div>
 
 				{/* ── Right: form ── */}
