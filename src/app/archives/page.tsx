@@ -15,7 +15,7 @@ export default function ArchivesPage() {
 				<LeftSidebar />
 				<main className="tasting-phase-main">
 					<div className="archives-hero">
-						<h1 className="archives-hero__title">Tasting Archives</h1>
+						<h1>Tasting Archives</h1>
 						<p className="archives-hero__description">
 							Your personal collection of deductive tastings. Review historical notes and master your
 							sensory analysis.

@@ -63,7 +63,7 @@ export default function Homepage() {
 					<div className="hp-hero__left">
 						<span className="hp-eyebrow">Built on the CMS deductive tasting method</span>
 
-						<h1 className="hp-hero__h1">
+						<h1>
 							The deductive
 							<br />
 							tasting sheet,
@@ -76,15 +76,14 @@ export default function Homepage() {
 							optional timers, and save your sessions to review later.
 						</p>
 
+						{/* Log in lives in the nav; repeating it here left sign-up with no route in
+						    from the landing page at all. */}
 						<div className="hp-hero__ctas">
 							<Link href="/tastings/start" className="btn-primary no-underline">
 								Start a Tasting <IconArrowRight size={16} />
 							</Link>
-							<Link href="/login" className="hp-link-quiet no-underline">
-								Log in{' '}
-								<span className="hp-link-quiet__arrow">
-									<IconArrowRight size={12} />
-								</span>
+							<Link href="/signup" className="hp-link-quiet no-underline">
+								Sign up
 							</Link>
 						</div>
 					</div>
@@ -96,7 +95,7 @@ export default function Homepage() {
 								<div className="hp-preview__phase">
 									<span className="hp-phase-pip">01</span>
 									<div>
-										<span className="hp-phase-title">Sight</span>
+										<span className="item-label hp-phase-title">Sight</span>
 										<span className="hp-phase-sub">analytical pass</span>
 									</div>
 								</div>

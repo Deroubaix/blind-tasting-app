@@ -55,7 +55,7 @@ export default function ForgotPasswordForm() {
 						<>
 							<header className="auth-card-head">
 								<span className="page-eyebrow">Check your inbox</span>
-								<h1 className="auth-heading">
+								<h1>
 									Email <em>sent</em>.
 								</h1>
 								<p className="auth-subheading">
@@ -78,7 +78,7 @@ export default function ForgotPasswordForm() {
 						<>
 							<header className="auth-card-head">
 								<span className="page-eyebrow">Forgot password</span>
-								<h1 className="auth-heading">
+								<h1>
 									Reset your <em>access</em>.
 								</h1>
 								<p className="auth-subheading">
@@ -90,7 +90,7 @@ export default function ForgotPasswordForm() {
 								{error && <p className="auth-error">{error}</p>}
 
 								<FormControl className="auth-field" name="email">
-									<Label className="auth-label">Email Address</Label>
+									<Label className="item-label">Email Address</Label>
 									<TextInput
 										className="auth-input"
 										type="email"

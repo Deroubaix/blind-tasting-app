@@ -20,10 +20,8 @@
 }
 
 .auth-header-logo {
-	@include eyebrow-label(0.75rem);
-	font-weight: 700;
+	@include eyebrow-label(0.75rem, $color-white);
 	letter-spacing: 0.18em;
-	color: $color-white;
 
 	&:after {
 		display: none;
@@ -46,12 +44,12 @@
 	}
 
 	&:hover .auth-nav-label {
-		color: $color-text-muted;
+		color: $color-text-secondary;
 	}
 }
 
 .auth-nav-label {
-	color: rgba(228, 228, 204, 0.45);
+	color: $color-text-muted;
 	transition: color 0.2s ease;
 }
 
@@ -104,26 +102,9 @@
 	gap: 1rem;
 }
 
-.auth-heading {
-	font-family: $font-display-bold-family;
-	font-size: clamp(2rem, 4.5vw, 2.6rem);
-	font-weight: $font-weight-extrabold;
-	color: $color-white;
-	margin: 0;
-	letter-spacing: -0.035em;
-	line-height: 1.05;
-
-	em {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-weight: 400;
-		color: $color-display-accent;
-	}
-}
-
 .auth-subheading {
 	font-size: 0.92rem;
-	color: $color-text-muted;
+	color: $color-text-secondary;
 	line-height: 1.65;
 	margin: 0;
 
@@ -137,17 +118,13 @@
 .auth-form {
 	display: flex;
 	flex-direction: column;
-	gap: 1.1rem;
+	gap: $page-spacing;
 }
 
 .auth-field {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-}
-
-.auth-label {
-	@include eyebrow-label;
 }
 
 .auth-label-row {
@@ -159,7 +136,7 @@
 .auth-input-hint {
 	font-size: 0.62rem;
 	letter-spacing: 0.04em;
-	color: rgba(228, 228, 204, 0.45);
+	color: $color-text-muted;
 	font-weight: 500;
 	font-family: $font-display-normal-family;
 }
@@ -202,7 +179,7 @@
 		box-shadow 0.2s ease;
 
 	&::placeholder {
-		color: rgba(228, 228, 204, 0.22);
+		color: $color-text-muted;
 	}
 
 	&:hover {
@@ -240,7 +217,7 @@
 	transform: translateY(-50%);
 	background: none;
 	border: none;
-	color: $color-text-muted;
+	color: $color-text-secondary;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -276,7 +253,7 @@
 .auth-fineprint {
 	font-size: 0.72rem;
 	line-height: 1.6;
-	color: rgba(228, 228, 204, 0.45);
+	color: $color-text-muted;
 	text-align: center;
 
 	a {
@@ -289,7 +266,7 @@
 			display: none;
 		}
 		&:hover {
-			border-color: $color-display-accent;
+			border-color: $color-accent;
 		}
 	}
 }
@@ -308,9 +285,8 @@
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
-	background: rgba($color-status-ok, 0.12);
-	border: 1px solid rgba($color-status-ok, 0.3);
-	color: $color-status-ok;
+	@include icon-tile($color-status-ok);
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -320,7 +296,7 @@
 // ── Cross-link ────────────────────────────────────────────────────────────────
 .auth-switch {
 	font-size: 0.85rem;
-	color: $color-text-muted;
+	color: $color-text-secondary;
 	text-align: center;
 	margin: 0;
 }
@@ -336,6 +312,6 @@
 		display: none;
 	}
 	&:hover {
-		border-color: $color-display-accent;
+		border-color: $color-accent;
 	}
 }

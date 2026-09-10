@@ -1,11 +1,7 @@
 @use '../abstracts' as *;
 @use 'sass:color';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Landing page — home-page.scss
-// Uses project design tokens from blindTasting.scss / _tasting-tokens.scss.
-// All CSS custom properties from the HTML reference are mapped to SCSS vars.
-// ─────────────────────────────────────────────────────────────────────────────
+// Landing page. Uses the shared design tokens.
 
 $hp-gutter: clamp(20px, 4vw, 56px);
 $hp-max: 1320px;
@@ -15,9 +11,7 @@ $hp-radius-lg: 10px;
 .home-page {
 	padding-top: var(--navbar-height_approx);
 
-	// ─────────────────────────────────────────
 	// Shared atoms
-	// ─────────────────────────────────────────
 
 	.hp-eyebrow {
 		@include eyebrow-label(0.68rem, $color-display-accent);
@@ -38,34 +32,13 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-link-quiet {
-		font-size: 0.72rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: $color-text-muted;
-		font-weight: $font-weight-semibold;
-		font-family: $font-display-normal-family;
+		@include quiet-link;
+
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
-		transition: color 0.2s ease;
-
-		&:hover {
-			color: $color-white;
-		}
-
-		&__arrow {
-			color: $tasting-text-muted;
-			transition: color 0.2s ease;
-		}
-
-		&:hover .hp-link-quiet__arrow {
-			color: $color-display-accent;
-		}
 	}
 
-	// ─────────────────────────────────────────
 	// Hero
-	// ─────────────────────────────────────────
 
 	.hp-hero {
 		position: relative;
@@ -109,21 +82,18 @@ $hp-radius-lg: 10px;
 		max-width: 620px;
 	}
 
-	.hp-hero__h1 {
-		font-family: $font-display-bold-family;
+	// The one h1 in the app that outgrows the shared screen title, and the only one that
+	// goes extrabold — this is the marketing hero, and it is the only h1 on the page.
+	h1 {
 		font-size: clamp(2.8rem, 5.8vw, 5.2rem);
 		font-weight: $font-weight-extrabold;
 		line-height: 0.98;
 		letter-spacing: -0.045em;
-		color: $color-white;
-		margin: 0;
 	}
 
 	.hp-hero__italic {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-weight: $font-weight-regular;
-		color: $color-display-accent;
+		@include serif-italic-accent;
+
 		font-size: 1.02em;
 		display: inline-block;
 		transform: translateY(0.04em);
@@ -137,7 +107,7 @@ $hp-radius-lg: 10px;
 	.hp-hero__lede {
 		font-size: 1.05rem;
 		line-height: 1.7;
-		color: $color-text-muted;
+		color: $color-text-secondary;
 		max-width: 48ch;
 		margin: 0;
 	}
@@ -150,9 +120,7 @@ $hp-radius-lg: 10px;
 		margin-top: 0.5rem;
 	}
 
-	// ─────────────────────────────────────────
 	// Hero right: stacked preview cards
-	// ─────────────────────────────────────────
 
 	.hp-hero__right {
 		position: relative;
@@ -164,10 +132,25 @@ $hp-radius-lg: 10px;
 			margin: 0 auto;
 			width: 100%;
 		}
+
+		// The two cards overlap by absolute positioning, which needs a fixed-height box
+		// to overlap inside. There is no room for that at this width, so they stack and
+		// the box sizes to them.
+		@include responsive($breakpoint-mobile) {
+			height: auto;
+			display: flex;
+			flex-direction: column;
+			gap: $spacing-lg;
+		}
 	}
 
 	.hp-preview {
 		position: absolute;
+
+		@include responsive($breakpoint-mobile) {
+			position: static;
+		}
+
 		background: linear-gradient(180deg, $color-darkGrey 0%, rgba(28, 27, 27, 0.96) 100%);
 		border: 1px solid $tasting-border;
 		border-radius: $hp-radius-lg;
@@ -176,15 +159,23 @@ $hp-radius-lg: 10px;
 			0 0 0 1px rgba(255, 179, 173, 0.04);
 
 		&--main {
+			// Hangs 10% past the hero column on desktop, where there is gutter to spare.
 			inset: 0 -10% 0 0;
 			padding: 1.6rem;
 			display: flex;
 			flex-direction: column;
 			gap: 1.1rem;
 			z-index: 2;
+
+			// Once the hero is one column that overhang is 10% of the viewport, which
+			// scrolls the whole page sideways.
+			@include responsive($breakpoint-tablet) {
+				inset: 0;
+			}
 		}
 
 		&--ledger {
+			// Hangs off the main card's bottom-right corner where there is gutter for it.
 			width: 62%;
 			top: auto;
 			bottom: -2.5rem;
@@ -193,8 +184,12 @@ $hp-radius-lg: 10px;
 			z-index: 3;
 			background: linear-gradient(180deg, $color-surface-variant 0%, $color-darkGrey 100%);
 
+			// Full width under the main card rather than hidden: "your sessions are kept"
+			// is half of what the hero is saying, and a phone should still hear it.
 			@include responsive($breakpoint-mobile) {
-				display: none;
+				width: 100%;
+				bottom: auto;
+				right: auto;
 			}
 		}
 
@@ -233,32 +228,27 @@ $hp-radius-lg: 10px;
 		width: 28px;
 		height: 28px;
 		border-radius: 50%;
-		border: 1.5px solid $color-display-accent;
+		border: 1.5px solid $color-accent;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		font-size: 0.65rem;
-		color: $color-display-accent;
+		color: $color-accent-light;
 		font-weight: $font-weight-bold;
 		font-variant-numeric: tabular-nums;
 		font-family: $font-display-normal-family;
 		flex-shrink: 0;
 	}
 
+	// Type is .item-label; the block is what drops .hp-phase-sub onto its own line.
 	.hp-phase-title {
-		font-size: 0.72rem;
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
-		color: $color-white;
-		font-weight: $font-weight-bold;
-		font-family: $font-display-normal-family;
 		display: block;
 	}
 
 	.hp-phase-sub {
 		font-family: $font-body-normal-family;
 		font-style: italic;
-		color: $color-text-muted;
+		color: $color-text-secondary;
 		font-size: 0.85rem;
 		margin-left: 0.5rem;
 	}
@@ -267,7 +257,7 @@ $hp-radius-lg: 10px;
 		font-size: 0.55rem;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
-		color: $tasting-text-muted;
+		color: $color-text-muted;
 		font-weight: $font-weight-bold;
 		font-family: $font-display-normal-family;
 	}
@@ -296,7 +286,7 @@ $hp-radius-lg: 10px;
 		&__hint {
 			font-size: 0.62rem;
 			letter-spacing: 0.12em;
-			color: $tasting-text-muted;
+			color: $color-text-muted;
 			font-weight: $font-weight-semibold;
 		}
 	}
@@ -367,7 +357,7 @@ $hp-radius-lg: 10px;
 		padding: 0.4rem 0.75rem;
 		border-radius: $hp-radius;
 		border: 1px solid $tasting-border-mid;
-		color: $color-text-muted;
+		color: $color-text-secondary;
 		font-weight: $font-weight-medium;
 		letter-spacing: 0.02em;
 		font-family: $font-display-normal-family;
@@ -401,14 +391,14 @@ $hp-radius-lg: 10px;
 				content: '';
 				position: absolute;
 				inset: 0 50% 0 0;
-				background: $color-display-accent;
+				background: $color-accent;
 				border-radius: 2px;
 			}
 		}
 
 		&__pct {
 			font-size: 0.7rem;
-			color: $color-display-accent;
+			color: $color-accent-light;
 			font-weight: $font-weight-semibold;
 			font-variant-numeric: tabular-nums;
 			font-family: $font-display-normal-family;
@@ -428,7 +418,7 @@ $hp-radius-lg: 10px;
 
 		&::after {
 			content: '→';
-			color: $color-display-accent;
+			color: $color-accent-light;
 		}
 	}
 
@@ -456,7 +446,7 @@ $hp-radius-lg: 10px;
 
 	.hp-ledger__when {
 		font-size: 0.6rem;
-		color: $tasting-text-muted;
+		color: $color-text-muted;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		font-weight: $font-weight-semibold;
@@ -475,7 +465,7 @@ $hp-radius-lg: 10px;
 
 	.hp-ledger__sub {
 		font-size: 0.72rem;
-		color: $color-text-muted;
+		color: $color-text-secondary;
 		margin: 0 0 0.85rem;
 	}
 
@@ -488,7 +478,7 @@ $hp-radius-lg: 10px;
 
 		&-label {
 			font-size: 0.58rem;
-			color: $tasting-text-muted;
+			color: $color-text-muted;
 			letter-spacing: 0.18em;
 			text-transform: uppercase;
 			font-weight: $font-weight-bold;
@@ -504,9 +494,7 @@ $hp-radius-lg: 10px;
 		}
 	}
 
-	// ─────────────────────────────────────────
 	// Method section
-	// ─────────────────────────────────────────
 
 	.hp-method {
 		padding: 6rem $hp-gutter;
@@ -532,13 +520,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-method__h2 {
-		font-family: $font-display-bold-family;
 		font-size: clamp(2rem, 3.5vw, 3rem);
-		font-weight: $font-weight-bold;
-		letter-spacing: -0.025em;
-		line-height: 1.08;
-		color: $color-white;
-		margin: 0;
 	}
 
 	.hp-method__italic {
@@ -551,15 +533,13 @@ $hp-radius-lg: 10px;
 
 	.hp-method__desc {
 		font-size: 0.92rem;
-		color: $color-text-muted;
+		color: $color-text-secondary;
 		line-height: 1.75;
 		max-width: 38ch;
 		margin: 0;
 	}
 
-	// ─────────────────────────────────────────
 	// Phase grid
-	// ─────────────────────────────────────────
 
 	.hp-phase-grid {
 		position: relative;
@@ -643,16 +623,11 @@ $hp-radius-lg: 10px;
 		&__name {
 			font-size: 1.25rem;
 			font-weight: $font-weight-bold;
-			letter-spacing: -0.01em;
-			color: $color-white;
-			line-height: 1.2;
-			margin: 0;
 			font-family: $font-display-bold-family;
+			letter-spacing: -0.01em;
+			line-height: 1.2;
 
 			em {
-				font-family: $font-body-normal-family;
-				font-style: italic;
-				font-weight: $font-weight-regular;
 				color: $color-display-accent;
 				font-size: 1.1em;
 			}
@@ -660,7 +635,7 @@ $hp-radius-lg: 10px;
 
 		&__desc {
 			font-size: 0.82rem;
-			color: $color-text-muted;
+			color: $color-text-secondary;
 			line-height: 1.65;
 			flex: 1;
 			margin: 0;
@@ -673,7 +648,7 @@ $hp-radius-lg: 10px;
 			font-size: 0.6rem;
 			letter-spacing: 0.18em;
 			text-transform: uppercase;
-			color: $tasting-text-muted;
+			color: $color-text-muted;
 			font-weight: $font-weight-bold;
 			font-family: $font-display-normal-family;
 			padding-top: 0.85rem;

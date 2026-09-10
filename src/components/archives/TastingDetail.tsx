@@ -146,7 +146,7 @@ export default function TastingDetail({ id }: { id: string }) {
 				</div>
 			</div>
 
-			<h1 className="tasting-detail__title">{title}</h1>
+			<h1>{title}</h1>
 			{subtitle && <p className="tasting-detail__subtitle">{subtitle}</p>}
 
 			<PhaseSection label="Sight" data={tasting.sight as Record<string, string>} />

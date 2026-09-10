@@ -57,7 +57,7 @@ export default function TastingStartClient() {
 			{/* ── Page head ── */}
 			<header className="start-head">
 				<span className="page-eyebrow">New session</span>
-				<h1 className="start-heading">
+				<h1>
 					Begin your <em>tasting</em>.
 				</h1>
 				<p className="start-sub">
@@ -70,7 +70,7 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">01</span>
-						<span className="start-step-name">Wine type</span>
+						<span className="item-label">Wine type</span>
 						<span className="start-step-hint">required</span>
 					</header>
 
@@ -82,11 +82,8 @@ export default function TastingStartClient() {
 							className={`start-wine-card start-wine-card--red${wineType === 'Red' ? ' start-wine-card--selected' : ''}`}
 							onClick={() => setWineType('Red')}
 						>
-							<div className="start-wine-card__top">
-								<div className="start-wine-icon start-wine-icon--red">
-									<IconGlassFull size={22} />
-								</div>
-								{/* <div className={`start-wine-check${wineType === "Red" ? " start-wine-check--visible" : ""}`}>✓</div> */}
+							<div className="start-wine-icon start-wine-icon--red">
+								<IconGlassFull size={22} />
 							</div>
 							<div>
 								<h3 className="start-wine-name">
@@ -103,11 +100,8 @@ export default function TastingStartClient() {
 							className={`start-wine-card start-wine-card--white${wineType === 'White' ? ' start-wine-card--selected' : ''}`}
 							onClick={() => setWineType('White')}
 						>
-							<div className="start-wine-card__top">
-								<div className="start-wine-icon start-wine-icon--white">
-									<IconBottle size={22} />
-								</div>
-								{/* <div className={`start-wine-check${wineType === "White" ? " start-wine-check--visible" : ""}`}>✓</div> */}
+							<div className="start-wine-icon start-wine-icon--white">
+								<IconBottle size={22} />
 							</div>
 							<div>
 								<h3 className="start-wine-name">
@@ -123,7 +117,7 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">02</span>
-						<span className="start-step-name">Session settings</span>
+						<span className="item-label">Session settings</span>
 						<span className="start-step-hint">optional</span>
 					</header>
 
@@ -203,12 +197,11 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">03</span>
-						<span className="start-step-name">Wine identity</span>
+						<span className="item-label">Wine identity</span>
 						<span className="start-step-hint">optional — for your records</span>
 					</header>
 
 					<div className="start-identity-wrap">
-						<span className="start-identity-prefix">Wine</span>
 						<input
 							className="start-identity-input"
 							type="text"

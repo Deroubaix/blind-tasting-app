@@ -17,9 +17,7 @@
 	}
 }
 
-// -----------------------------------------
 // General content page styles
-// -----------------------------------------
 
 .topbar-padding {
 	padding-top: var(--navbar-height_approx);
@@ -122,9 +120,7 @@ input {
 	border-radius: 0;
 }
 
-// -----------------------------------------
 // General classes
-// -----------------------------------------
 
 .anchor {
 	top: calc((#{var(--navbar-height_approx)} + #{$page-spacing * 2}) * -1);

@@ -76,7 +76,7 @@ export default function SignupForm() {
 				<div className="auth-container">
 					<header className="auth-card-head">
 						<span className="page-eyebrow">Create account</span>
-						<h1 className="auth-heading">
+						<h1>
 							Begin your <em>ledger</em>.
 						</h1>
 						<p className="auth-subheading">
@@ -88,7 +88,7 @@ export default function SignupForm() {
 						{error && <p className="auth-error">{error}</p>}
 
 						<FormControl className="auth-field" name="displayName">
-							<Label className="auth-label">Display Name</Label>
+							<Label className="item-label">Display Name</Label>
 							<TextInput
 								className="auth-input"
 								type="text"
@@ -98,7 +98,7 @@ export default function SignupForm() {
 						</FormControl>
 
 						<FormControl className="auth-field" name="email">
-							<Label className="auth-label">Email Address</Label>
+							<Label className="item-label">Email Address</Label>
 							<TextInput
 								className="auth-input"
 								type="email"
@@ -109,7 +109,7 @@ export default function SignupForm() {
 
 						<FormControl className="auth-field" name="password">
 							<div className="auth-label-row">
-								<Label className="auth-label">Password</Label>
+								<Label className="item-label">Password</Label>
 								<span className="auth-input-hint">{PASSWORD_MIN_LENGTH}+ characters</span>
 							</div>
 							<div className="auth-input-wrapper">

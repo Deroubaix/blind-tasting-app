@@ -71,7 +71,7 @@ export default function LoginForm() {
 				<div className="auth-container">
 					<header className="auth-card-head">
 						<span className="page-eyebrow">Welcome back</span>
-						<h1 className="auth-heading">
+						<h1>
 							Open the <em>ledger</em>.
 						</h1>
 						<p className="auth-subheading">Log in to access your saved tastings.</p>
@@ -81,7 +81,7 @@ export default function LoginForm() {
 						{error && <p className="auth-error">{error}</p>}
 
 						<FormControl className="auth-field" name="email">
-							<Label className="auth-label">Email Address</Label>
+							<Label className="item-label">Email Address</Label>
 							<TextInput
 								className="auth-input"
 								type="email"
@@ -92,7 +92,7 @@ export default function LoginForm() {
 
 						<FormControl className="auth-field" name="password">
 							<div className="auth-label-row">
-								<Label className="auth-label">Password</Label>
+								<Label className="item-label">Password</Label>
 								<Link href="/forgot-password" className="auth-forgot">
 									Forgot?
 								</Link>

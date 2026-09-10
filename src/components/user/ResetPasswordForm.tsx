@@ -72,7 +72,7 @@ export default function ResetPasswordForm() {
 					<div className="auth-container">
 						<header className="auth-card-head">
 							<span className="page-eyebrow">Invalid link</span>
-							<h1 className="auth-heading">
+							<h1>
 								Link <em>expired</em>.
 							</h1>
 							<p className="auth-subheading">
@@ -99,7 +99,7 @@ export default function ResetPasswordForm() {
 				<div className="auth-container">
 					<header className="auth-card-head">
 						<span className="page-eyebrow">New password</span>
-						<h1 className="auth-heading">
+						<h1>
 							Choose a new <em>key</em>.
 						</h1>
 						<p className="auth-subheading">
@@ -112,7 +112,7 @@ export default function ResetPasswordForm() {
 
 						<FormControl className="auth-field" name="password">
 							<div className="auth-label-row">
-								<Label className="auth-label">New Password</Label>
+								<Label className="item-label">New Password</Label>
 								<span className="auth-input-hint">{PASSWORD_MIN_LENGTH}+ characters</span>
 							</div>
 							<div className="auth-input-wrapper">
@@ -134,7 +134,7 @@ export default function ResetPasswordForm() {
 						</FormControl>
 
 						<FormControl className="auth-field" name="confirmPassword">
-							<Label className="auth-label">Confirm Password</Label>
+							<Label className="item-label">Confirm Password</Label>
 							<TextInput
 								className="auth-input"
 								type={showPassword ? 'text' : 'password'}
