@@ -43,7 +43,7 @@
 
 	.body {
 		font-size: 0.8rem;
-		color: rgba(228, 228, 204, 0.65);
+		color: $color-text-secondary;
 		line-height: 1.4;
 	}
 
@@ -54,7 +54,7 @@
 		width: 14px;
 		height: 14px;
 		cursor: pointer;
-		color: rgba(228, 228, 204, 0.4);
+		color: $color-text-muted;
 		flex-shrink: 0;
 
 		&:hover {
