@@ -49,6 +49,11 @@ export const wineColors: Record<string, WineColorGroup> = {
 	white: {
 		spectrum: [
 			{
+				name: 'White',
+				hex: '#F3F1DB',
+				desc: 'Water-white with almost no pigment. Very young, unoaked, high-acid wines. Vinho Verde, Txakoli.',
+			},
+			{
 				name: 'Straw',
 				hex: '#E8D8A0',
 				desc: 'Very pale yellow, almost watery. Young Pinot Grigio, Muscadet, Albariño.',
