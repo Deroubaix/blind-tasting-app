@@ -1,5 +1,5 @@
 /**
- * Flat ESLint config, adapted from an earlier project's `shared-config/eslint.js` for a single-package repo.
+ * Flat ESLint config for a single-package repo.
  *
  * The layering matters. `eslint-config-next` already registers the `react`, `react-hooks`,
  * `jsx-a11y` and `import` plugins, and flat config throws "Cannot redefine plugin" if any of them is

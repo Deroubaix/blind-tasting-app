@@ -20,11 +20,8 @@ export type ModalImperativeRef = {
 };
 
 /**
- * Ported from an earlier project's `common-components/Components/Modal` — same DOM structure, same `closing`
- * class driving the exit animation, same 60ms hand-off before the provider unmounts it.
- *
- * `setTitle` and `homeHref` are deliberately dropped: `setTitle` assigned
- * `renderToStaticMarkup` output to `innerHTML`, and nothing here retitles a live modal.
+ * A `closing` class drives the exit animation, with a 60ms hand-off before the provider
+ * unmounts the modal.
  */
 export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, ref) {
 	const { className, children, modalId, title, onClose, closeOnClickOutside, closeOnEsc } = props;

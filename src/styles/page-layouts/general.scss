@@ -61,35 +61,13 @@
 		align-items: center;
 		justify-content: center;
 	}
-	.image-masked-container {
-		img {
-			mask-image: url(/images/masks/circle-shape.png);
-			mask-repeat: no-repeat;
-			mask-position: center;
-			mask-size: contain;
-			width: auto;
-			height: calc(100% - 12px);
-		}
-
-		background-image: url(/images/masks/circle-shape.png);
-		background-position: center;
-		background-size: contain;
-		background-repeat: no-repeat;
-		width: var(--image-width);
-		height: var(--image-width);
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
 
 	@mixin switch-layout {
 		display: flex;
 		flex-direction: column;
 		row-gap: $page-spacing * 2;
 		align-items: flex-start;
-		.image-container,
-		.image-masked-container {
+		.image-container {
 			order: -1;
 			align-self: center;
 		}

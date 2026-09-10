@@ -1,7 +1,6 @@
 @use '../abstracts' as *;
 
-// Ported from an earlier project's `Styles/Components/Modal.scss` — same structure and animations, same 60ms
-// the component's `closing` hand-off is timed against. Recoloured: everything here is dark.
+// The 60ms here is what the component's `closing` hand-off is timed against.
 
 $modal-padding-vertical: 2.5rem;
 $modal-padding-horizontal: 2rem;

@@ -19,7 +19,7 @@ allowBuilds:
 
 # Refuse lockfile entries published in the last 24 hours (the value is in minutes).
 #
-# A supply-chain guard carried over from an earlier project: when a package is compromised, the malicious version
+# A supply-chain guard: when a package is compromised, the malicious version
 # is usually pulled within hours, so declining to be the first to install anything brand new removes
 # most of the exposure for almost no cost. When a dependency is too new to install, downgrade it to a
 # version that has aged past this window rather than removing the setting.

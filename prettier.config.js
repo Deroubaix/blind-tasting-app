@@ -1,6 +1,5 @@
 /**
- * Formatting for the whole repo. Mirrors an earlier project's `shared-config/prettier.config.js` so code moving
- * between the two projects does not reflow.
+ * Formatting for the whole repo.
  */
 const config = {
 	semi: true,
