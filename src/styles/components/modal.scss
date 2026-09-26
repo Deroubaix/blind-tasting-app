@@ -187,8 +187,8 @@ $modal-padding-horizontal: 2rem;
 	}
 }
 
-// Start-over confirmation, opened from the tasting footer.
-.start-over {
+// Confirmation dialogs: "Start over" in the tasting footer, "Delete tasting" on a saved tasting.
+.confirm-dialog {
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;

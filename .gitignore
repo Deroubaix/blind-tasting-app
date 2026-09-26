@@ -7,3 +7,6 @@ node_modules
 
 # Claude Code local settings
 .claude/
+
+# Label photos written by the local storage driver
+/uploads

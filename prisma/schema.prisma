@@ -33,8 +33,12 @@ model Tasting {
   wineName      String?
   timerEnabled  Boolean  @default(false)
   timerDuration Int?
-  isArchived    Boolean  @default(false)
   notes         String?
+  /// Palate's "Confirm the Nose": aromas that only showed up once the wine was tasted.
+  confirmNose   String?
+  /// Storage key of the label photograph, `labels/<userId>/<uuid>.jpg`. Served through
+  /// /api/photos/<key>, which checks ownership, never by a URL stored here.
+  photoKey      String?
   created_at    DateTime @default(now())
   user          User     @relation(fields: [userId], references: [id])
 

@@ -159,9 +159,6 @@ export default function Header() {
 					<Link href="/" onClick={closeMenu}>
 						Home
 					</Link>
-					<Link href="/methodology" onClick={closeMenu}>
-						Methodology
-					</Link>
 					{isLoggedIn && (
 						<Link href="/archives" onClick={closeMenu}>
 							Archive

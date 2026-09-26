@@ -7,7 +7,7 @@ import TastingFooter from './TastingFooter';
 import LeftSidebar from '../tasting/LeftSideBar';
 import { usePathname } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
-import { phaseIndex } from '../tasting/phaseCompletion';
+import { advanceFurthestPhase } from '../tasting/phaseCompletion';
 
 type FooterProps = {
 	onReset?: () => void;
@@ -48,8 +48,7 @@ export default function TastingPhaseLayout({
 	const { tastingData, updateTastingData } = useTastingContext();
 	const furthestPhase = tastingData.furthestPhase ?? 0;
 
-	// Advancing to a phase is what completes the ones behind it. Only ever moves
-	// forward, so stepping back to review does not reset the sidebar.
+	// Advancing to a phase is what completes the ones behind it (see advanceFurthestPhase).
 	//
 	// Guarded on there being a tasting at all: "Start over" empties the context while this
 	// page is still mounted, and an unguarded stamp would carry the phase we are leaving
@@ -58,9 +57,9 @@ export default function TastingPhaseLayout({
 		if (!tastingData.wineType) {
 			return;
 		}
-		const index = phaseIndex(pathname);
-		if (index > furthestPhase) {
-			updateTastingData({ furthestPhase: index });
+		const next = advanceFurthestPhase(furthestPhase, pathname);
+		if (next !== furthestPhase) {
+			updateTastingData({ furthestPhase: next });
 		}
 	}, [pathname, furthestPhase, updateTastingData, tastingData.wineType]);
 

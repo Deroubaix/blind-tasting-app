@@ -18,6 +18,7 @@ import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
 import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
+import { isSavingTasting } from '../../utils/AuthRedirectUtils';
 
 export default function SignupForm() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -79,9 +80,16 @@ export default function SignupForm() {
 						<h1>
 							Begin your <em>ledger</em>.
 						</h1>
-						<p className="auth-subheading">
-							<strong>Three fields, thirty seconds.</strong> Save your sessions to review later.
-						</p>
+						{isSavingTasting(redirectTo) ? (
+							<p className="auth-subheading">
+								<strong>Your tasting is waiting.</strong> Create an account and it will be saved
+								straight away.
+							</p>
+						) : (
+							<p className="auth-subheading">
+								<strong>Three fields, thirty seconds.</strong> Save your sessions to review later.
+							</p>
+						)}
 					</header>
 
 					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
@@ -142,11 +150,6 @@ export default function SignupForm() {
 							{isLoading ? 'Creating account…' : 'Sign up'}
 							<IconArrowRight size={15} />
 						</button>
-
-						<p className="auth-fineprint">
-							By signing up you agree to our <Link href="/terms">Terms</Link> and{' '}
-							<Link href="/privacy">Privacy Policy</Link>.
-						</p>
 					</Form>
 
 					<p className="auth-switch">

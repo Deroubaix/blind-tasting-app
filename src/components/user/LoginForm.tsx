@@ -18,6 +18,7 @@ import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
 import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
+import { isSavingTasting } from '../../utils/AuthRedirectUtils';
 
 export default function LoginForm() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -74,7 +75,13 @@ export default function LoginForm() {
 						<h1>
 							Open the <em>ledger</em>.
 						</h1>
-						<p className="auth-subheading">Log in to access your saved tastings.</p>
+						{isSavingTasting(redirectTo) ? (
+							<p className="auth-subheading">
+								<strong>Your tasting is waiting.</strong> Log in and it will be saved straight away.
+							</p>
+						) : (
+							<p className="auth-subheading">Log in to access your saved tastings.</p>
+						)}
 					</header>
 
 					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>

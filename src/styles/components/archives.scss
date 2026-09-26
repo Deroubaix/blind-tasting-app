@@ -32,6 +32,7 @@
 
 // ── Archive card ──────────────────────────────────────────────────────────────
 .archive-card {
+	position: relative; // the box the Details link stretches over
 	background-color: $color-darkGrey;
 	border: 1px solid $tasting-border-mid;
 	border-radius: 10px;
@@ -125,6 +126,61 @@
 
 	&:hover &__details {
 		color: $color-white;
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+	}
+
+	// The whole card is the Details link's hit area: a pseudo-element covering the card, so the
+	// card stays one big target without being an <a> that the Delete button could not sit inside.
+	&__link::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+	}
+
+	// The card is the link visually, so it takes the keyboard focus ring too.
+	&:has(&__link:focus-visible) {
+		outline: 2px solid $tasting-accent-light;
+		outline-offset: 2px;
+	}
+
+	&__link:focus-visible {
+		outline: none;
+	}
+
+	// Raised above the stretched link so it gets its own clicks. Quiet until hovered, so it is
+	// findable without competing with Details.
+	&__delete {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		height: 28px;
+		padding: 0;
+		background: none;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		color: $color-text-muted;
+		cursor: pointer;
+		@include transition(color border-color, 0.15s);
+
+		&:hover:not(:disabled),
+		&:focus-visible {
+			color: $color-error;
+			border-color: rgba(229, 115, 115, 0.4);
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: default;
+		}
 	}
 
 	// ── New tasting card ────────────────────────────────────────────────────────
@@ -253,8 +309,20 @@
 	color: $color-text-muted;
 }
 
+// Title and subtitle on the left, the photo thumbnail beside them.
+.tasting-detail__title-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: $spacing-lg;
+}
+
+.tasting-detail__title-text {
+	min-width: 0;
+}
+
 // The saved-tasting title sits tight to its subtitle.
-.tasting-detail__container > h1 {
+.tasting-detail__title-text > h1 {
 	margin-bottom: $spacing-xs;
 }
 
@@ -314,4 +382,34 @@
 	color: $color-text-secondary;
 	line-height: 1.65;
 	margin: 0;
+}
+
+// A thumbnail; the link opens the full-size photo in a new tab.
+.tasting-detail__photo-link {
+	flex-shrink: 0;
+	border-radius: 8px;
+	border: 1px solid $tasting-border-mid;
+	overflow: hidden;
+	@include transition(border-color, 0.15s);
+
+	&::after {
+		display: none;
+	}
+
+	&:hover,
+	&:focus-visible {
+		border-color: $tasting-accent-light;
+	}
+}
+
+.tasting-detail__photo {
+	display: block;
+	width: 96px;
+	height: 96px;
+	object-fit: cover;
+
+	@include responsive($breakpoint-mobile) {
+		width: 64px;
+		height: 64px;
+	}
 }

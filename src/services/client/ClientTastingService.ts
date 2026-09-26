@@ -24,6 +24,10 @@ export default class ClientTastingService {
 		return response.tastings;
 	}
 
+	public async deleteTasting(id: string): Promise<void> {
+		await FetchUtils.execute(`/api/tastings/${id}`, { method: 'DELETE', credentials: 'same-origin' }).response;
+	}
+
 	public async getTasting(id: string): Promise<TastingData & { id: string; created_at: string }> {
 		const request = FetchUtils.getJson<{ tasting: TastingData & { id: string; created_at: string } }>(
 			`/api/tastings/${id}`,

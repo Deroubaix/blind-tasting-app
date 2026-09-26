@@ -1,24 +1,10 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
 import { JsonApiError } from '../../../utils/ErrorUtils';
 import { errorResponse, logServerError } from '../../../utils/ApiUtils';
-import { cookies } from 'next/headers';
+import { requireUserId } from '../../../lib/auth';
+import { MAX_PHOTO_BYTES, ownsPhotoKey, photoSize } from '../../../lib/storage';
 
 const prisma = new PrismaClient();
-const SECRET_KEY = process.env.JWT_SECRET!;
-
-async function getUserIdFromToken() {
-	const cookieStore = await cookies();
-	const token = cookieStore.get('auth-token')?.value;
-
-	if (!token) {
-		throw new JsonApiError('Unauthorized', 'Access denied: no token provided', 401);
-	}
-
-	const decoded = jwt.verify(token, SECRET_KEY) as { userId: string };
-
-	return decoded.userId;
-}
 
 /** Postgres unique-constraint violation. */
 const UNIQUE_VIOLATION = 'P2002';
@@ -56,11 +42,35 @@ async function createWithNextNumber(userId: string, data: Omit<Prisma.TastingUnc
 	throw new Error('Could not allocate a tasting number after repeated collisions');
 }
 
+/**
+ * The label photo is uploaded before the tasting exists, so the key arrives from the browser and is
+ * taken on trust for nothing: it must be one this user was issued, and the file must be in storage
+ * at a size the upload would have allowed. The size is read back rather than believed, because on R2
+ * the browser PUTs to the bucket directly and nothing of ours saw the bytes.
+ */
+async function verifiedPhotoKey(userId: string, photoKey: unknown) {
+	if (photoKey === undefined || photoKey === null) {
+		return null;
+	}
+	if (typeof photoKey !== 'string' || !ownsPhotoKey(userId, photoKey)) {
+		throw new JsonApiError('BadRequest', 'That photo does not belong to this account.', 400);
+	}
+	const size = await photoSize(photoKey);
+	if (size === null) {
+		throw new JsonApiError('BadRequest', 'The photo upload did not finish. Please try again.', 400);
+	}
+	if (size > MAX_PHOTO_BYTES) {
+		throw new JsonApiError('PayloadTooLarge', 'That photo is too large.', 413);
+	}
+	return photoKey;
+}
+
 export async function GET() {
 	try {
-		const userId = await getUserIdFromToken();
+		const userId = await requireUserId();
 		const tastings = await prisma.tasting.findMany({
 			where: { userId },
+			orderBy: { number: 'desc' },
 		});
 
 		return new Response(JSON.stringify({ tastings }), {
@@ -75,7 +85,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
 	try {
-		const userId = await getUserIdFromToken();
+		const userId = await requireUserId();
 		const body = await request.json();
 
 		if (!body.wineType) {
@@ -90,13 +100,14 @@ export async function POST(request: Request) {
 			wineType: body.wineType,
 			timerEnabled: body.timerEnabled ?? false,
 			timerDuration: body.timerDuration ?? null,
-			isArchived: false,
 			notes: body.notes ?? null,
+			confirmNose: body.confirmNose || null,
 			sight: body.sight ?? null,
 			nose: body.nose ?? null,
 			palate: body.palate ?? null,
 			conclusion: body.conclusion ?? null,
 			wineName: body.wineName ?? null,
+			photoKey: await verifiedPhotoKey(userId, body.photoKey),
 		};
 
 		const tasting = await createWithNextNumber(userId, data);

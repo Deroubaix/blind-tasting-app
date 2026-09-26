@@ -5,6 +5,8 @@ import Toast, { type ToastProps } from './Toast';
 import { v4 as uuid } from 'uuid';
 import NotificationUtils from '../utils/NotificationsUtils';
 
+const DEFAULT_AUTO_CLOSE_MS = 8000;
+
 export type OpenToast = Omit<ToastProps, 'toastId'> & Partial<Pick<ToastProps, 'toastId'>>;
 
 export type ToastProviderValue = {
@@ -24,12 +26,16 @@ export default function ToastProvider(props: ToastProviderProps) {
 
 	const [toasts, setToasts] = useState<ToastProps[]>([]);
 
+	// Toasts close themselves unless told otherwise, matching NotificationUtils: one that waits for
+	// its close button outlives the page it was about — it follows the taster through a redirect.
+	// Pass `autoCloseMs: 0` for the rare toast that genuinely has to be dismissed.
 	const showToast = (toast: OpenToast) => {
 		const toastId = toast.toastId ?? uuid();
 		setToasts((current) => [
 			...current,
 			{
 				...toast,
+				autoCloseMs: toast.autoCloseMs ?? DEFAULT_AUTO_CLOSE_MS,
 				toastId,
 			},
 		]);

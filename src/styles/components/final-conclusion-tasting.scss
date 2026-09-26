@@ -2,24 +2,24 @@
 // Final Conclusion page — Search inputs and chips use shared .tasting-* classes from tasting-inputs.scss
 
 // ── Two-column page layout ────────────────────────────────────────────────────
+// The form leads; the recap is reference material beside it. Rows stretch (the grid default),
+// which is what lets the recap take exactly the form's height — see .fc-analysis.
 .fc-layout {
 	display: grid;
-	grid-template-columns: 300px 1fr;
+	grid-template-columns: 1fr 320px;
 	gap: $spacing-xxl;
-	align-items: start;
-}
-
-// ── Right column: the declaration ─────────────────────────────────────────────
-// The recap is far taller than these five fields, so without pinning, the form scrolls out
-// of view while you read your notes. Needs `align-items: start` above and an unclipped path
-// up to .tasting-phase-main, the scroll container.
-.fc-right {
-	position: sticky;
-	top: $spacing-md;
 }
 
 // ── Your Analysis panel ───────────────────────────────────────────────────────
+// The recap is far taller than the five fields beside it. Left to grow, it made the whole page
+// scroll, carrying the form away while you filled it in. `contain: size` stops it contributing to
+// the row's height, so the row is exactly as tall as the form; the stretch then hands it that
+// height and it scrolls inside itself. The page is only ever as tall as the form.
 .fc-analysis {
+	contain: size;
+	min-height: 240px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	background-color: $color-surface-variant;
 	border: 1px solid $tasting-border-mid;
 	border-radius: 10px;
@@ -124,8 +124,11 @@
 		gap: 12px;
 	}
 
-	// One column here, so there is nothing to pin against.
-	.fc-right {
-		position: static;
+	// One column that scrolls as a page, so the recap simply follows the form at full height.
+	// Without this, size containment would collapse it to its min-height.
+	.fc-analysis {
+		contain: none;
+		min-height: 0;
+		overflow-y: visible;
 	}
 }

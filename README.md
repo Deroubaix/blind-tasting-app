@@ -24,7 +24,7 @@ single wine, seven and a half for a longer sitting — and the per-phase splits 
 The nose gets four times the budget of any other phase, which is the method's own weighting, not an
 arbitrary one — it is where the most information is available and the most candidates get ruled out.
 
-After the final conclusion comes **Save**: notes, an optional photograph of the label, and the sheet
+After the final conclusion comes **Save**: notes, an optional photo, and the sheet
 is written to your archive. Timing is entirely optional; leaving the timer off gives you the same
 grid with no clock.
 
@@ -71,6 +71,9 @@ pnpm start                     # http://localhost:3002
 | `RESEND_API_KEY`      | Password-reset email. Reset is the only feature that needs it        |
 | `RESEND_TEST_EMAIL`   | Optional — redirects all reset mail here instead of the real address |
 | `NEXT_PUBLIC_APP_URL` | Base URL used to build reset links. Defaults to `localhost:3002`     |
+| `STORAGE_DRIVER`      | `local` (default) or `r2` — where label photos are stored            |
+| `UPLOAD_DIR`          | Local driver only. Defaults to `./uploads`                           |
+| `R2_*`                | R2 driver only: account id, access key pair, bucket name             |
 
 ## How it fits together
 
@@ -87,6 +90,11 @@ pnpm start                     # http://localhost:3002
   sidebar disagrees
 - `src/app/api/` — auth and tastings route handlers
 - `src/styles/abstracts/` — tokens, mixins and the type scale, forwarded through `_index.scss`
+- `src/lib/storage.ts` — label photo storage. The browser resizes the photo to a 1200px JPEG, asks
+  `/api/photos/sign` for a key, PUTs it (to `/api/photos/upload` on local disk, straight to a
+  private R2 bucket on `r2`), then saves the tasting with the key; the save route checks the file
+  arrived. Keys embed the owner's id, so `/api/photos/<key>` serves a photo to its owner only. On
+  R2 the bucket needs a CORS rule allowing `PUT` from the app's origin
 
 One layout constraint worth naming, because it explains code that otherwise looks paranoid: the
 tasting shell is **viewport-locked**. `.tasting-phase-main` scrolls with `overflow: auto` and the
@@ -95,7 +103,7 @@ the scroll container — and no `z-index` escapes a clip. `useDropPlacement` mea
 is actually left and shrinks the menu to fit, flipping it upward only when there is too little room
 to show a useful number of options.
 
-### Three things worth knowing
+### Four things worth knowing
 
 **The tasting exists only in memory until you save it.** `TastingContext` is plain React state —
 no `localStorage`, no draft row, nothing on the server. A refresh loses the session, which is why
@@ -103,6 +111,14 @@ the provider installs a `beforeunload` guard while a tasting is in progress and 
 can say, truthfully, that there is nothing to come back to. This is a defensible choice for an
 exercise that is meant to be finished in four minutes, but it is a choice: any feature that wants
 to survive a reload has to add persistence first, not assume it.
+
+**An answer is written to the tasting the moment it is committed, never on the way out.** Every
+choice, chip and note goes straight into `TastingContext` as it changes. Nothing is held in the
+page and flushed on Next, because Next is not the only way out: the phase timer navigates with a
+bare `router.push`, and so do Back and the sidebar, so anything a page was holding back is lost
+without a word. The one deliberate exception is the search boxes on the nose and the two
+conclusions. Their text only becomes an answer when it is picked from the dropdown, entered, or
+added; a half-typed word is not a call, so losing it when time runs out is intended.
 
 **Phase completion is a high-water mark, not "has answers".** A phase turns green in the sidebar
 once you have moved _past_ it, tracked as `furthestPhase` on the tasting. The obvious alternatives
@@ -130,16 +146,14 @@ phases run for 30 seconds and a flat 60-second threshold would be on from the fi
 | `pnpm lint`              | eslint                                |
 | `pnpm format`            | prettier                              |
 | `pnpm exec tsc --noEmit` | Typecheck                             |
+| `pnpm test`              | Run the tests once (Vitest)           |
+| `pnpm test:watch`        | Re-run the tests on every change      |
 
 ## Still to do
 
-- **The label photograph is not persisted.** The save page captures it and shows a preview, but it
-  is a client-side `FileReader` data URL that never reaches the API — it is lost on save. Wiring it
-  up means picking a storage target first.
-- **`isArchived` exists on the model with no UI behind it.** Archiving is a schema decision that was
-  never finished.
+- **Orphaned label photos are never cleaned up.** A photo is uploaded before its tasting is saved,
+  so one whose save then fails for good stays in storage with no row pointing at it.
 - **No `db:*` scripts.** Migrations are run through `pnpm exec prisma` directly.
-- **No tests.** The phase-completion and timer logic are the parts that would most repay them.
 
 ## License
 

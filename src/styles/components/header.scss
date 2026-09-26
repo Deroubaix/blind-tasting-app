@@ -403,23 +403,4 @@ $item-gap: $page-spacing * 1.5;
 			text-align: center;
 		}
 	}
-
-	.footer-legal {
-		display: flex;
-		gap: $page-spacing;
-
-		a {
-			font-size: 0.75rem;
-			color: $color-text-secondary;
-			transition: color 0.2s ease;
-
-			&:after {
-				display: none;
-			}
-
-			&:hover {
-				color: $color-white;
-			}
-		}
-	}
 }

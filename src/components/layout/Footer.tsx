@@ -16,15 +16,8 @@ export default function Footer() {
 
 				<div className="footer-links">
 					<div className="footer-col">
-						<h4>Resources</h4>
-						<Link href="/deductive-grid">Deductive Grid 101</Link>
-						<Link href="/study-guides">Study Guides</Link>
-						<Link href="/flashcards">Flashcards</Link>
-					</div>
-					<div className="footer-col">
 						<h4>Tools</h4>
 						<Link href="/archives">My Ledger</Link>
-						<Link href="/account">Settings</Link>
 						<Link href="/login">Log in</Link>
 					</div>
 				</div>
@@ -32,10 +25,6 @@ export default function Footer() {
 
 			<div className="footer-bottom">
 				<span>© 2024 The Sommelier&apos;s Ledger.</span>
-				<div className="footer-legal">
-					<Link href="/privacy">Privacy</Link>
-					<Link href="/terms">Terms</Link>
-				</div>
 			</div>
 		</footer>
 	);

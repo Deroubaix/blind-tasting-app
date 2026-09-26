@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { PALATE_REQUIRED } from './palateFields';
@@ -36,7 +35,9 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 	const { tastingData, updateTastingData } = useTastingContext();
 
 	const selectedOptions: Record<string, string | null> = tastingData.palate || {};
-	const [confirmNose, setConfirmNose] = useState(tastingData.confirmNose || '');
+	// Written straight through to the context, not held locally and flushed on Next/Back: the phase
+	// timer navigates with a bare `router.push`, so a local copy was lost whenever time ran out.
+	const confirmNose = tastingData.confirmNose ?? '';
 
 	const currentOptions = palateTastingOptions[wineType];
 
@@ -45,12 +46,10 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 	};
 
 	const handleNextPhase = () => {
-		updateTastingData({ confirmNose });
 		router.push(`/tastings/initial-conclusion?wineType=${wineType}`);
 	};
 
 	const handlePreviousPhase = () => {
-		updateTastingData({ confirmNose });
 		router.push(`/tastings/nose?wineType=${wineType}`);
 	};
 
@@ -116,7 +115,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 					rows={4}
 					placeholder="Describe any secondary or tertiary notes that emerged on the palate..."
 					value={confirmNose}
-					onChange={(e) => setConfirmNose(e.target.value)}
+					onChange={(e) => updateTastingData({ confirmNose: e.target.value })}
 				/>
 			</div>
 		</TastingPhaseLayout>

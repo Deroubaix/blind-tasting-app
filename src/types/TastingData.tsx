@@ -27,4 +27,6 @@ export type TastingData = {
 		final?: Record<string, string | null>;
 	};
 	notes?: string;
+	/** Storage key of the label photo, set by the server-issued upload. Absent until saved. */
+	photoKey?: string | null;
 };

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { type TastingData } from '../../types/TastingData';
 import ClientTastingService from '../../services/client/ClientTastingService';
+import ClientPhotoService from '../../services/client/ClientPhotoService';
 
 const service = new ClientTastingService();
 
@@ -146,12 +147,42 @@ export default function TastingDetail({ id }: { id: string }) {
 				</div>
 			</div>
 
-			<h1>{title}</h1>
-			{subtitle && <p className="tasting-detail__subtitle">{subtitle}</p>}
+			<div className="tasting-detail__title-row">
+				<div className="tasting-detail__title-text">
+					<h1>{title}</h1>
+					{subtitle && <p className="tasting-detail__subtitle">{subtitle}</p>}
+				</div>
+
+				{tasting.photoKey && (
+					<a
+						href={ClientPhotoService.url(tasting.photoKey)}
+						target="_blank"
+						rel="noopener"
+						className="tasting-detail__photo-link no-underline"
+						aria-label="Open photo full size"
+					>
+						{/* Served by an authenticated route with its own caching; next/image's optimiser
+						    would fetch it without the taster's cookie and get a 401. */}
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							src={ClientPhotoService.url(tasting.photoKey)}
+							alt={`Photo for ${title}`}
+							className="tasting-detail__photo"
+						/>
+					</a>
+				)}
+			</div>
 
 			<PhaseSection label="Sight" data={tasting.sight as Record<string, string>} />
 			<PhaseSection label="Nose" data={tasting.nose as Record<string, string[]>} />
 			<PhaseSection label="Palate" data={tasting.palate as Record<string, string>} />
+
+			{tasting.confirmNose && (
+				<div className="tasting-detail__section">
+					<div className="tasting-detail__section-label">Confirm the Nose</div>
+					<p className="tasting-detail__notes">&ldquo;{tasting.confirmNose}&rdquo;</p>
+				</div>
+			)}
 
 			{Object.keys(initialFields).length > 0 && (
 				<div className="tasting-detail__section">

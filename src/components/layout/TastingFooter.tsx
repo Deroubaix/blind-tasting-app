@@ -39,20 +39,20 @@ export default function TastingFooter({
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
-				<div className="start-over">
-					<p className="start-over__lead">
+				<div className="confirm-dialog">
+					<p className="confirm-dialog__lead">
 						This clears every answer in this tasting — sight, nose, palate and both conclusions — and takes
 						you back to setup.
 					</p>
-					<p className="start-over__note">
+					<p className="confirm-dialog__note">
 						The tasting has not been saved yet, so there is nothing to come back to.
 					</p>
-					<div className="start-over__actions">
-						<button className="outline start-over__cancel" onClick={() => closeModal(START_OVER_MODAL)}>
+					<div className="confirm-dialog__actions">
+						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(START_OVER_MODAL)}>
 							Keep tasting
 						</button>
 						<button
-							className="btn-primary start-over__confirm"
+							className="btn-primary confirm-dialog__confirm"
 							onClick={() => {
 								closeModal(START_OVER_MODAL);
 								resetTastingData();

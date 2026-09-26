@@ -147,36 +147,8 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 			}}
 		>
 			<div className="fc-layout">
-				{/* ── Left: what you recorded ── */}
-				<div className="fc-analysis">
-					<div className="fc-analysis__header">
-						<span className="section-label">Your Analysis</span>
-						<span className="fc-analysis__subtitle">What you recorded</span>
-					</div>
-
-					<AnalysisPairs label="Color & Sight" pairs={sightPairs} />
-					<AnalysisRow label="Physical Evidence" value={evidenceSummary} />
-					<AnalysisPairs label="Nose" pairs={nosePairs} />
-					<AnalysisRow label="Aroma Descriptors" value={noseDescriptors} />
-					<AnalysisPairs label="Palate Structure" pairs={palatePairs} />
-					<AnalysisPairs label="Initial Call" pairs={initialPairs} />
-					<AnalysisRow label="Possible Origin" value={possibleOriginSummary} />
-
-					{finalIdentity && (
-						<>
-							<div className="fc-analysis__divider" />
-							<div className="fc-analysis__row">
-								<div className="fc-analysis__row-label">Final Identity</div>
-								<div className="fc-analysis__row-value fc-analysis__row-value--identity">
-									{finalIdentity}
-								</div>
-							</div>
-						</>
-					)}
-				</div>
-
-				{/* ── Right: form ── */}
-				<div className="fc-right">
+				{/* ── Left: the declaration ── */}
+				<div className="fc-form">
 					<div className="fc-grid">
 						{/* Grape Variety/Blend */}
 						<div className="fc-field">
@@ -317,6 +289,33 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							</div>
 						</div>
 					</div>
+				</div>
+				{/* ── Right: what you recorded. A reference, so it scrolls on its own ── */}
+				<div className="fc-analysis">
+					<div className="fc-analysis__header">
+						<span className="section-label">Your Analysis</span>
+						<span className="fc-analysis__subtitle">What you recorded</span>
+					</div>
+
+					<AnalysisPairs label="Color & Sight" pairs={sightPairs} />
+					<AnalysisRow label="Physical Evidence" value={evidenceSummary} />
+					<AnalysisPairs label="Nose" pairs={nosePairs} />
+					<AnalysisRow label="Aroma Descriptors" value={noseDescriptors} />
+					<AnalysisPairs label="Palate Structure" pairs={palatePairs} />
+					<AnalysisPairs label="Initial Call" pairs={initialPairs} />
+					<AnalysisRow label="Possible Origin" value={possibleOriginSummary} />
+
+					{finalIdentity && (
+						<>
+							<div className="fc-analysis__divider" />
+							<div className="fc-analysis__row">
+								<div className="fc-analysis__row-label">Final Identity</div>
+								<div className="fc-analysis__row-value fc-analysis__row-value--identity">
+									{finalIdentity}
+								</div>
+							</div>
+						</>
+					)}
 				</div>
 			</div>
 		</TastingPhaseLayout>

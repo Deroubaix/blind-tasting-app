@@ -8,12 +8,23 @@ type TastingContextValue = {
 	tastingData: Partial<TastingData>;
 	updateTastingData: (updates: Partial<TastingData>) => void;
 	resetTastingData: () => void;
+	/**
+	 * The label photo, resized and ready to upload. Held here rather than on the save page so it
+	 * survives the log-in detour that page makes for a signed-out taster, and kept out of
+	 * `tastingData` because that object is sent to the API as JSON, which a Blob does not survive.
+	 */
+	labelPhoto: LabelPhoto | null;
+	setLabelPhoto: (photo: LabelPhoto | null) => void;
 };
+
+/** The upload-ready JPEG and a data URL of it to preview, made once when the photo is picked. */
+export type LabelPhoto = { blob: Blob; preview: string };
 
 const TastingContext = createContext<TastingContextValue | undefined>(undefined);
 
 export const TastingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const [tastingData, setTastingData] = useState<Partial<TastingData>>({});
+	const [labelPhoto, setLabelPhoto] = useState<LabelPhoto | null>(null);
 	const pathname = usePathname();
 
 	const updateTastingData = (updates: Partial<TastingData>) => {
@@ -22,6 +33,7 @@ export const TastingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
 	const resetTastingData = () => {
 		setTastingData({});
+		setLabelPhoto(null);
 	};
 
 	useEffect(() => {
@@ -40,7 +52,9 @@ export const TastingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 	}, [tastingData, pathname]);
 
 	return (
-		<TastingContext.Provider value={{ tastingData, updateTastingData, resetTastingData }}>
+		<TastingContext.Provider
+			value={{ tastingData, updateTastingData, resetTastingData, labelPhoto, setLabelPhoto }}
+		>
 			{children}
 		</TastingContext.Provider>
 	);

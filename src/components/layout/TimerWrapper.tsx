@@ -79,8 +79,8 @@ export default function TimerWrapper({ defaultDuration, destination, nextLabel, 
 				<div className="timeup">
 					<p className="timeup__lead">That is the full deductive sequence — all five phases complete.</p>
 					<p className="timeup__note">
-						Your answers are saved as you go, so nothing is lost. Add any closing notes and a label photo on
-						the next screen.
+						Your answers are saved as you go, so nothing is lost. Add any closing notes and a photo on the
+						next screen.
 					</p>
 					<button
 						className="btn-primary timeup__action"

@@ -18,6 +18,15 @@ export function phaseIndex(pathname: string): number {
 	return PHASE_ORDER.indexOf(pathname);
 }
 
+/**
+ * The high-water mark after visiting `pathname`: only ever moves forward, so stepping back to
+ * review an earlier phase does not reset the sidebar. Returns the current mark unchanged for a
+ * backwards step or a page that is not a phase.
+ */
+export function advanceFurthestPhase(furthestPhase: number, pathname: string): number {
+	return Math.max(furthestPhase, phaseIndex(pathname));
+}
+
 export function phaseComplete(href: string, tastingData: Partial<TastingData>): boolean {
 	const index = phaseIndex(href);
 	return index >= 0 && index < (tastingData.furthestPhase ?? 0);

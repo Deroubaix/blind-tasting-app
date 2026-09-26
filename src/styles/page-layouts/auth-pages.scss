@@ -250,27 +250,6 @@
 	margin-top: 0.4rem;
 }
 
-.auth-fineprint {
-	font-size: 0.72rem;
-	line-height: 1.6;
-	color: $color-text-muted;
-	text-align: center;
-
-	a {
-		color: rgba(228, 228, 204, 0.78);
-		border-bottom: 1px solid rgba(228, 228, 204, 0.12);
-		padding-bottom: 1px;
-		transition: border-color 0.2s ease;
-
-		&:after {
-			display: none;
-		}
-		&:hover {
-			border-color: $color-accent;
-		}
-	}
-}
-
 .auth-error {
 	font-size: 0.8rem;
 	color: $color-error;
