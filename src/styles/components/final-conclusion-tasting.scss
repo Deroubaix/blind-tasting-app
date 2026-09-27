@@ -49,7 +49,7 @@
 
 	// Recap labels sit below the section tier, so they take the accent.
 	&__row-label {
-		@include eyebrow-label($text-9-5, $tasting-accent-light);
+		@include eyebrow-label($text-11, $tasting-accent-light);
 		letter-spacing: 0.14em;
 	}
 

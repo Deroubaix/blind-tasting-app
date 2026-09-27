@@ -66,8 +66,10 @@
 
 .sight-card__header {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: center;
+	align-items: baseline;
+	gap: 4px $spacing-sm;
 	margin-bottom: $spacing-md;
 
 	// When inside a header wrapper, the label loses its own bottom margin
@@ -77,8 +79,10 @@
 }
 
 .sight-card__sublabel {
-	@include eyebrow-label($text-10, $color-text-muted);
+	@include eyebrow-label($text-11, $color-text-muted);
 	letter-spacing: 0.1em;
+	// Kept on one line: on a narrow card it drops below the label rather than breaking into a column.
+	white-space: nowrap;
 }
 
 // ── Yes / No toggles ─────────────────────────────────────────────────────────

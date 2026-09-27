@@ -54,6 +54,18 @@ select {
 	}
 }
 
+// iOS Safari zooms the page into any focused field whose text is under 16px, and does not zoom
+// back out — mid-tasting, with the clock running, that throws the whole layout off screen. Touch
+// screens therefore get 16px in every field. `!important` because the tasting inputs set their
+// own compact size at higher specificity; this one rule has to win over all of them.
+@media (pointer: coarse) {
+	input:not([type='checkbox']):not([type='radio']),
+	textarea,
+	select {
+		font-size: max(1rem, 16px) !important;
+	}
+}
+
 input:not([type='checkbox']),
 select {
 	padding: 1em 1em;

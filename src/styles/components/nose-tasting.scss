@@ -24,8 +24,8 @@
 	// Group label beside its wine-hue dot — accent, one step down from a card
 	// label on both size and tracking.
 	&__label {
-		@include eyebrow-label($text-9-5, $tasting-accent-light);
-		letter-spacing: 0.18em;
+		@include eyebrow-label($text-11, $tasting-accent-light);
+		letter-spacing: 0.14em;
 		margin-bottom: $spacing-xs;
 		display: flex;
 		align-items: center;

@@ -62,3 +62,7 @@ $text-16: 1rem;
 // shared by the desktop header, the phone strip and the home-page preview, which had drifted to
 // 22.4px, 22px and 21.6px.
 $text-timer: 1.375rem;
+
+// The live countdown on the tasting pages. Larger than the preview's: it is read at arm's length,
+// glass in hand, and is the one thing on screen that has to be legible at a glance.
+$text-timer-live: 1.75rem;

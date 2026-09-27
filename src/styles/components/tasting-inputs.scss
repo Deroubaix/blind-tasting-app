@@ -13,7 +13,8 @@
 // The accent label tier: one per card, above its controls. Section headers sit
 // quieter (muted cream) and leaf group labels brighter (full cream).
 .tasting-card__label {
-	@include eyebrow-label($text-10, $tasting-accent-light);
+	@include eyebrow-label($text-12, $tasting-accent-light);
+	letter-spacing: 0.14em;
 	margin-bottom: $spacing-sm;
 }
 
