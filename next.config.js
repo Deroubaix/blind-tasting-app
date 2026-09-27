@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig = {
-	serverExternalPackages: ['bcrypt'],
 	eslint: {
 		// Linting is its own gate — `pnpm lint`. Next runs ESLint during `next build` by default,
 		// which turns every lint finding into a failed build. Adding a config to a repo that had
