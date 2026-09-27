@@ -32,7 +32,11 @@ model Tasting {
   conclusion    Json?
   wineName      String?
   timerEnabled  Boolean  @default(false)
-  timerDuration Int?
+  /// Seconds for the whole wine (240 = Advanced/Master pace, 675 = Certified). Seconds, not
+  /// minutes: the old minutes column was an Int and silently stored 7:30 as 7.
+  timerSeconds  Int?
+  /// "guided" (a clock per phase) or "exam" (one clock for the whole wine).
+  timerMode     String?
   notes         String?
   /// Palate's "Confirm the Nose": aromas that only showed up once the wine was tasted.
   confirmNose   String?

@@ -70,6 +70,30 @@ describe('Timer', () => {
 		expect(onTimeUp).toHaveBeenCalledTimes(1);
 	});
 
+	// Exam mode: one clock for the whole wine. Each phase page mounts its own Timer, and every one
+	// must count to the same deadline rather than restarting.
+	describe('with a shared deadline', () => {
+		it('carries on where the last page left off', () => {
+			const endsAt = Date.now() + 240_000;
+			const first = render(<Timer initialTime={240} endsAt={endsAt} />);
+			act(() => vi.advanceTimersByTime(100_000));
+			first.unmount();
+
+			const { container } = render(<Timer initialTime={240} endsAt={endsAt} />);
+
+			expect(display(container).textContent).toBe('02:20');
+		});
+
+		it('fires once when the whole-wine time runs out', () => {
+			const onTimeUp = vi.fn();
+			render(<Timer initialTime={240} endsAt={Date.now() + 5_000} onTimeUp={onTimeUp} />);
+
+			act(() => vi.advanceTimersByTime(10_000));
+
+			expect(onTimeUp).toHaveBeenCalledTimes(1);
+		});
+	});
+
 	describe('amber warning', () => {
 		it('comes on at 25% of the phase time', () => {
 			// 120s phase: warns from 30s left.

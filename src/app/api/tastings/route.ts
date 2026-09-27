@@ -65,6 +65,19 @@ async function verifiedPhotoKey(userId: string, photoKey: unknown) {
 	return photoKey;
 }
 
+/**
+ * The timer settings, or nulls. Checked rather than passed through: a non-integer reaching the
+ * Int column makes Prisma throw, which turned into a 500 and lost the whole sheet.
+ */
+function timerFields(body: { timerEnabled?: unknown; timerSeconds?: unknown; timerMode?: unknown }) {
+	const seconds = body.timerSeconds;
+	const valid = body.timerEnabled === true && Number.isInteger(seconds) && (seconds as number) > 0;
+	return {
+		timerSeconds: valid ? (seconds as number) : null,
+		timerMode: valid ? (body.timerMode === 'exam' ? 'exam' : 'guided') : null,
+	};
+}
+
 export async function GET() {
 	try {
 		const userId = await requireUserId();
@@ -99,7 +112,7 @@ export async function POST(request: Request) {
 			userId,
 			wineType: body.wineType,
 			timerEnabled: body.timerEnabled ?? false,
-			timerDuration: body.timerDuration ?? null,
+			...timerFields(body),
 			notes: body.notes ?? null,
 			confirmNose: body.confirmNose || null,
 			sight: body.sight ?? null,

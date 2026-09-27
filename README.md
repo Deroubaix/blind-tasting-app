@@ -12,18 +12,26 @@ held up once you knew the answer.
 
 ## The tasting flow
 
-One wine, five phases, then save. The 4-minute preset is the Advanced and Master exam pace (six
-wines in 25 minutes, about four minutes each); 7.5 minutes is a slower pace for practice. The exam
-times the whole flight, not each phase — the per-phase splits are the app's own, giving the nose
-the most time because it is where most candidates get ruled out.
+One wine, five phases, then save. The two presets are the exam paces per wine: **4:00** for
+Advanced and Master (six wines in 25 minutes) and **11:15** for Certified (four wines in 45
+minutes). There are two clocks:
 
-| Phase                  | What you record (2024 grid)                                                                                            | 4 min | 7.5 min |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----: | ------: |
-| **Sight**              | Clarity, intensity of color, primary and secondary color(s), rim variation and staining (reds), tearing, gas           |   30s |     56s |
-| **Nose**               | Minor faults, aromatic intensity, age, fruit and fruit condition, non-fruit, earth, mineral, oak                       |  120s |    225s |
-| **Palate**             | Sweetness, acidity, alcohol, body, tannin (reds) or phenolic bitterness (whites), texture, balance, finish, complexity |   30s |     56s |
-| **Initial conclusion** | Possible grapes, climate, possible countries, age range                                                                |   30s |     56s |
-| **Final conclusion**   | The call: grape or blend, country, region and appellation, quality level and style where appropriate, vintage          |   30s |     56s |
+- **Guided** gives each phase its own share and moves you on when it runs out. The split is the
+  app's own scaffolding for learning to pace — the exam has no per-phase times — with half for the
+  nose, where most candidates are ruled out, and an eighth for each other phase.
+- **Exam** runs one clock for the whole wine, as the exam does. You move between phases yourself;
+  when the total runs out you go to Save from wherever you are. The deadline is stamped when Start
+  is pressed and carried in the tasting context, so every phase page counts down to the same moment.
+
+The table shows the guided split. The timer is stored as `timerSeconds` and `timerMode`.
+
+| Phase                  | What you record (2024 grid)                                                                                            | 4:00 | 11:15 |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- | ---: | ----: |
+| **Sight**              | Clarity, intensity of color, primary and secondary color(s), rim variation and staining (reds), tearing, gas           | 0:30 |  1:24 |
+| **Nose**               | Minor faults, aromatic intensity, age, fruit and fruit condition, non-fruit, earth, mineral, oak                       | 2:00 |  5:39 |
+| **Palate**             | Sweetness, acidity, alcohol, body, tannin (reds) or phenolic bitterness (whites), texture, balance, finish, complexity | 0:30 |  1:24 |
+| **Initial conclusion** | Possible grapes, climate, possible countries, age range                                                                | 0:30 |  1:24 |
+| **Final conclusion**   | The call: grape or blend, country, region and appellation, quality level and style where appropriate, vintage          | 0:30 |  1:24 |
 
 After the final conclusion comes **Save**: notes, an optional photo, and the sheet
 is written to your archive. Timing is entirely optional; leaving the timer off gives you the same
@@ -136,8 +144,8 @@ un-complete anything.
 counting a `setInterval` down. Mobile browsers throttle background intervals and iOS suspends them
 outright on screen lock, so a per-tick clock silently stalls — on a timed exercise, the one failure
 that invalidates the whole point. It also re-syncs on `visibilitychange`, so foregrounding the tab
-catches up instantly. The amber warning is proportional (`max(5s, 25%)`), because four of the five
-phases run for 30 seconds and a flat 60-second threshold would be on from the first tick.
+catches up instantly. The amber warning is proportional (`max(5s, 25%)`), because at the 4:00 pace four of
+the five guided phases run for 30 seconds and a flat 60-second threshold would be on from the first tick.
 
 ## Commands
 

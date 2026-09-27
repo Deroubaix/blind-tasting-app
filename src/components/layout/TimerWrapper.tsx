@@ -10,6 +10,8 @@ import { useToastProvider } from '../../toast/ToastProvider';
 
 interface TimerWrapperProps {
 	defaultDuration: number;
+	/** Exam mode: the whole-wine deadline shared by every phase page. */
+	endsAt?: number;
 	destination: string;
 	/** Display name of the phase being handed over to. Absent on the last phase. */
 	nextLabel?: string | null;
@@ -41,7 +43,13 @@ function playBeep() {
 	}
 }
 
-export default function TimerWrapper({ defaultDuration, destination, nextLabel, isFinalPhase }: TimerWrapperProps) {
+export default function TimerWrapper({
+	defaultDuration,
+	endsAt,
+	destination,
+	nextLabel,
+	isFinalPhase,
+}: TimerWrapperProps) {
 	const router = useRouter();
 	const { tastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
@@ -77,7 +85,11 @@ export default function TimerWrapper({ defaultDuration, destination, nextLabel, 
 			closeOnEsc: true,
 			children: (
 				<div className="timeup">
-					<p className="timeup__lead">That is the full deductive sequence — all five phases complete.</p>
+					<p className="timeup__lead">
+						{tastingData.timerMode === 'exam'
+							? 'Time is up for this wine.'
+							: 'That is the full deductive sequence — all five phases complete.'}
+					</p>
 					<p className="timeup__note">
 						Your answers are saved as you go, so nothing is lost. Add any closing notes and a photo on the
 						next screen.
@@ -98,5 +110,7 @@ export default function TimerWrapper({ defaultDuration, destination, nextLabel, 
 	};
 
 	// key: a duration change restarts the clock by remounting rather than by resetting state.
-	return <Timer key={defaultDuration} initialTime={defaultDuration} onTimeUp={handleTimeUp} />;
+	return (
+		<Timer key={endsAt ?? defaultDuration} initialTime={defaultDuration} endsAt={endsAt} onTimeUp={handleTimeUp} />
+	);
 }

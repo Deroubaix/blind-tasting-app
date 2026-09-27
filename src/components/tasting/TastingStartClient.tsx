@@ -5,11 +5,22 @@ import { useRouter } from 'next/navigation';
 import { IconGlassFull, IconBottle, IconVolumeOff, IconStopwatch, IconArrowRight } from '@tabler/icons-react';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { useTastingContext } from '../../components/tasting/TastingContext';
-import { PHASE_TIMER_SECONDS, formatTimerSeconds } from '../../data/timerData';
+import {
+	DEFAULT_TIMER_MODE,
+	DEFAULT_TIMER_SECONDS,
+	TIMER_PRESETS,
+	type TimerMode,
+	type TimerPhase,
+	formatTimerSeconds,
+	phaseSeconds,
+} from '../../data/timerData';
 
-type TimerDuration = 4 | 7.5;
+const TIMER_MODES: { mode: TimerMode; name: string; label: string }[] = [
+	{ mode: 'guided', name: 'Guided', label: 'A clock per phase' },
+	{ mode: 'exam', name: 'Exam', label: 'One clock per wine' },
+];
 
-const PHASE_KEYS: { num: string; name: string; key: string }[] = [
+const PHASE_KEYS: { num: string; name: string; key: TimerPhase }[] = [
 	{ num: '01', name: 'Sight', key: 'sight' },
 	{ num: '02', name: 'Nose', key: 'nose' },
 	{ num: '03', name: 'Palate', key: 'palate' },
@@ -25,7 +36,8 @@ export default function TastingStartClient() {
 	const [wineType, setWineType] = useState<'White' | 'Red' | null>(null);
 	const [soundEnabled, setSoundEnabled] = useState(false);
 	const [timerEnabled, setTimerEnabled] = useState(true);
-	const [timerDuration, setTimerDuration] = useState<TimerDuration>(4);
+	const [timerSeconds, setTimerSeconds] = useState<number>(DEFAULT_TIMER_SECONDS);
+	const [timerMode, setTimerMode] = useState<TimerMode>(DEFAULT_TIMER_MODE);
 	const [wineName, setWineName] = useState('');
 
 	const handleStart = (e: React.FormEvent) => {
@@ -43,7 +55,10 @@ export default function TastingStartClient() {
 		updateTastingData({
 			wineType,
 			timerEnabled,
-			timerDuration: timerEnabled ? timerDuration : null,
+			timerSeconds: timerEnabled ? timerSeconds : null,
+			timerMode: timerEnabled ? timerMode : undefined,
+			// Sight starts the moment this is pressed, so the whole-wine clock starts here too.
+			timerEndsAt: timerEnabled && timerMode === 'exam' ? Date.now() + timerSeconds * 1000 : undefined,
 			soundEnabled,
 			wineName: wineName.trim() || '',
 			conclusion: { initial: {}, final: {} },
@@ -128,9 +143,7 @@ export default function TastingStartClient() {
 							</div>
 							<div className="start-setting-text">
 								<div className="start-setting-name">Sound</div>
-								<p className="start-setting-desc">
-									Audible cue when each phase&apos;s timer reaches zero.
-								</p>
+								<p className="start-setting-desc">Audible cue when the timer reaches zero.</p>
 							</div>
 							<button
 								type="button"
@@ -150,7 +163,8 @@ export default function TastingStartClient() {
 							<div className="start-setting-text">
 								<div className="start-setting-name">Timer</div>
 								<p className="start-setting-desc">
-									Run each phase under the deductive clock. Auto-advances when time is up.
+									Practise under the clock. Guided moves you on phase by phase; Exam gives you one
+									clock for the whole wine, as the exam does.
 								</p>
 							</div>
 							<button
@@ -167,27 +181,45 @@ export default function TastingStartClient() {
 						<div
 							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
 						>
-							<div className="start-duration" role="radiogroup" aria-label="Timer duration">
-								<button
-									type="button"
-									role="radio"
-									aria-checked={timerDuration === 4}
-									className={`start-duration-pill${timerDuration === 4 ? ' start-duration-pill--on' : ''}`}
-									onClick={() => setTimerDuration(4)}
-								>
-									<span className="start-duration-pill__time">4:00</span>
-									<span className="start-duration-pill__label">Standard</span>
-								</button>
-								<button
-									type="button"
-									role="radio"
-									aria-checked={timerDuration === 7.5}
-									className={`start-duration-pill${timerDuration === 7.5 ? ' start-duration-pill--on' : ''}`}
-									onClick={() => setTimerDuration(7.5)}
-								>
-									<span className="start-duration-pill__time">7:30</span>
-									<span className="start-duration-pill__label">Extended</span>
-								</button>
+							<div className="start-duration" role="radiogroup" aria-label="Time per wine">
+								{TIMER_PRESETS.map((preset) => (
+									<button
+										key={preset.seconds}
+										type="button"
+										role="radio"
+										aria-checked={timerSeconds === preset.seconds}
+										title={preset.note}
+										disabled={!timerEnabled}
+										className={`start-duration-pill${timerSeconds === preset.seconds ? ' start-duration-pill--on' : ''}`}
+										onClick={() => setTimerSeconds(preset.seconds)}
+									>
+										<span className="start-duration-pill__time">
+											{formatTimerSeconds(preset.seconds)}
+										</span>
+										<span className="start-duration-pill__label">{preset.label}</span>
+									</button>
+								))}
+							</div>
+						</div>
+
+						<div
+							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
+						>
+							<div className="start-duration" role="radiogroup" aria-label="Clock">
+								{TIMER_MODES.map((option) => (
+									<button
+										key={option.mode}
+										type="button"
+										role="radio"
+										aria-checked={timerMode === option.mode}
+										disabled={!timerEnabled}
+										className={`start-duration-pill${timerMode === option.mode ? ' start-duration-pill--on' : ''}`}
+										onClick={() => setTimerMode(option.mode)}
+									>
+										<span className="start-duration-pill__time">{option.name}</span>
+										<span className="start-duration-pill__label">{option.label}</span>
+									</button>
+								))}
 							</div>
 						</div>
 					</div>
@@ -230,15 +262,14 @@ export default function TastingStartClient() {
 			{/* ── Phase preview rail ── */}
 			<div className="start-phase-rail" aria-hidden="true">
 				{PHASE_KEYS.map((p) => {
-					const timerKey = timerEnabled ? (timerDuration === 7.5 ? '7.5 min' : '4 min') : '4 min';
-					const seconds = PHASE_TIMER_SECONDS[p.key][timerKey];
+					const seconds = phaseSeconds(timerSeconds, p.key);
+					// In exam mode the split is only a pacing guide, so it is shown muted.
+					const muted = !timerEnabled || timerMode === 'exam';
 					return (
 						<div key={p.num} className="start-phase-chip">
 							<span className="start-phase-chip__num">{p.num}</span>
 							<span className="start-phase-chip__name">{p.name}</span>
-							<span
-								className={`start-phase-chip__time${!timerEnabled ? ' start-phase-chip__time--muted' : ''}`}
-							>
+							<span className={`start-phase-chip__time${muted ? ' start-phase-chip__time--muted' : ''}`}>
 								{timerEnabled ? formatTimerSeconds(seconds) : '—'}
 							</span>
 						</div>

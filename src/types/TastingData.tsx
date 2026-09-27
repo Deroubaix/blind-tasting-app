@@ -4,7 +4,14 @@ export type TastingData = {
 	number?: number;
 	wineType: 'White' | 'Red';
 	timerEnabled: boolean;
-	timerDuration: number | null;
+	/** Seconds for the whole wine; null with the timer off. See TIMER_PRESETS. */
+	timerSeconds: number | null;
+	timerMode?: 'guided' | 'exam';
+	/**
+	 * Exam mode only, and never saved: the wall-clock moment the whole-wine clock runs out,
+	 * stamped when Start is pressed so every phase page counts down to the same deadline.
+	 */
+	timerEndsAt?: number;
 	soundEnabled?: boolean;
 	wineName?: string;
 	/**

@@ -2,10 +2,10 @@
 
 import TimerWrapper from '../layout/TimerWrapper';
 import { useTastingContext } from '../../components/tasting/TastingContext';
-import { NEXT_PHASE_LABEL, PHASE_TIMER_SECONDS } from '../../data/timerData';
+import { DEFAULT_TIMER_SECONDS, NEXT_PHASE_LABEL, type TimerPhase, phaseSeconds } from '../../data/timerData';
 
 interface TimerConditionalProps {
-	page: 'sight' | 'nose' | 'palate' | 'initialConclusion' | 'finalConclusion';
+	page: TimerPhase;
 	destination: string;
 }
 
@@ -17,13 +17,25 @@ export default function TimerConditional({ page, destination }: TimerConditional
 		return null;
 	}
 
-	const selectedOption = tastingData.timerDuration === 7.5 ? '7.5 min' : '4 min';
+	const totalSeconds = tastingData.timerSeconds ?? DEFAULT_TIMER_SECONDS;
 
-	const defaultDuration = PHASE_TIMER_SECONDS[page][selectedOption];
+	// Exam mode: one clock for the whole wine, counting to the deadline stamped at Start. Running
+	// out ends the wine wherever the taster is, so it always hands over to Save.
+	if (tastingData.timerMode === 'exam' && tastingData.timerEndsAt) {
+		return (
+			<TimerWrapper
+				defaultDuration={totalSeconds}
+				endsAt={tastingData.timerEndsAt}
+				destination={`/tastings/save?wineType=${tastingData.wineType?.toLowerCase() ?? 'red'}`}
+				nextLabel={null}
+				isFinalPhase
+			/>
+		);
+	}
 
 	return (
 		<TimerWrapper
-			defaultDuration={defaultDuration}
+			defaultDuration={phaseSeconds(totalSeconds, page)}
 			destination={destination}
 			nextLabel={NEXT_PHASE_LABEL[page]}
 			isFinalPhase={page === 'finalConclusion'}
