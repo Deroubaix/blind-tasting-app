@@ -70,7 +70,7 @@ export default function Homepage() {
 							<br />
 							tasting sheet,
 							<br />
-							<em className="hp-hero__italic">digitised</em>
+							<em className="hp-hero__italic">digitized</em>
 						</h1>
 
 						<p className="hp-hero__lede">

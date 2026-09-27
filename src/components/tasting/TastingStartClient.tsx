@@ -153,7 +153,7 @@ export default function TastingStartClient() {
 					Begin your <em>tasting</em>.
 				</h1>
 				<p className="start-sub">
-					Configure the session below. You can practise without an account — sign up later to save it.
+					Configure the session below. You can practice without an account — sign up later to save it.
 				</p>
 			</header>
 
@@ -274,7 +274,7 @@ export default function TastingStartClient() {
 							<div className="start-setting-text">
 								<div className="start-setting-name">Timer</div>
 								<p className="start-setting-desc">
-									Practise under the clock. Guided moves you on phase by phase; Exam gives you one
+									Practice under the clock. Guided moves you on phase by phase; Exam gives you one
 									clock for the whole wine, as the exam does.
 								</p>
 							</div>

@@ -43,7 +43,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 	return (
 		<aside className="tasting-sidebar">
 			<div className="tasting-sidebar__brand">
-				<div className="tasting-sidebar__title">The Ledger</div>
+				<div className="tasting-sidebar__title">The Sommelier&apos;s Ledger</div>
 				{isLoggedIn ? (
 					<>
 						<div className="tasting-sidebar__username">{user?.displayName || user?.email}</div>

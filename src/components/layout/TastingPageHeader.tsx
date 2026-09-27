@@ -160,6 +160,14 @@ export default function TastingPageHeader({
 											<span className="nav-dropdown__email">{user.email}</span>
 										</div>
 										<div className="nav-dropdown__divider" />
+										<Link
+											href="/archives"
+											className="nav-dropdown__item"
+											role="menuitem"
+											onClick={() => setDropdownOpen(false)}
+										>
+											Archive
+										</Link>
 										<button
 											className="nav-dropdown__item nav-dropdown__item--logout"
 											role="menuitem"

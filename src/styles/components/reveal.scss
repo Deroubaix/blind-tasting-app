@@ -189,6 +189,13 @@ $reveal-statuses: (
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 22px 20px;
 
+	// As on the phase pages: controls in the form drop the global uppercase ("Add", not "ADD").
+	button {
+		text-transform: none;
+		letter-spacing: normal;
+		min-width: unset;
+	}
+
 	&--wide {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}

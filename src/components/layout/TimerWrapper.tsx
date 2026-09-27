@@ -86,8 +86,8 @@ export default function TimerWrapper({
 							: 'That is the full deductive sequence — all five phases complete.'}
 					</p>
 					<p className="timeup__note">
-						Your answers are saved as you go, so nothing is lost. Add any closing notes and a photo on the
-						next screen.
+						Your answers are kept as you go, so nothing is lost. Save the tasting on the next screen, with
+						any closing notes and a photo.
 					</p>
 					<button
 						className="btn-primary timeup__action"

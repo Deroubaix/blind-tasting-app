@@ -17,7 +17,7 @@ export default function Footer() {
 				<div className="footer-links">
 					<div className="footer-col">
 						<h4>Tools</h4>
-						<Link href="/archives">My Ledger</Link>
+						<Link href="/archives">Archive</Link>
 						<Link href="/login">Log in</Link>
 					</div>
 				</div>

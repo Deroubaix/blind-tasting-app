@@ -45,7 +45,8 @@ export default function TastingFooter({
 						you back to setup.
 					</p>
 					<p className="confirm-dialog__note">
-						The tasting has not been saved yet, so there is nothing to come back to.
+						Nothing from this tasting has been saved to your archive yet, so there is nothing to come back
+						to.
 					</p>
 					<div className="confirm-dialog__actions">
 						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(START_OVER_MODAL)}>
