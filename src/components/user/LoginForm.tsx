@@ -18,7 +18,7 @@ import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
 import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
-import { isSavingTasting } from '../../utils/AuthRedirectUtils';
+import { isSavingTasting, safeRedirect } from '../../utils/AuthRedirectUtils';
 
 export default function LoginForm() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +29,7 @@ export default function LoginForm() {
 	const { signIn } = useAuthProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
 
-	const redirectTo = searchParams.get('r') ?? '/archives';
+	const redirectTo = safeRedirect(searchParams.get('r'));
 	const signupHref = `/signup?r=${encodeURIComponent(redirectTo)}`;
 
 	useRedirectIfAuthenticated(redirectTo);
