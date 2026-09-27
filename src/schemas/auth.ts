@@ -3,7 +3,10 @@ import { z } from 'zod';
 /** Minimum length enforced on any *newly chosen* password (signup and reset). */
 export const PASSWORD_MIN_LENGTH = 12;
 
-const email = z.string().min(1, 'Email is required').email('Enter a valid email address');
+// Emails are case-insensitive in practice, so they are stored and looked up lowercase and
+// trimmed. Without this, Tom@x.com and tom@x.com became two accounts, and logging in with the
+// "wrong" case failed. Every auth route parses through here, so they all agree.
+const email = z.string().trim().toLowerCase().min(1, 'Email is required').email('Enter a valid email address');
 
 const newPassword = z
 	.string()
