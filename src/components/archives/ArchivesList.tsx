@@ -107,6 +107,13 @@ export default function ArchivesList() {
 
 	return (
 		<div className="archives-grid">
+			{/* First, not last: the list runs newest first, so a card at the end sank further out of
+			    sight with every tasting saved. */}
+			<Link href="/tastings/start" className="archive-card archive-card--new no-underline">
+				<span className="archive-card__new-icon">+</span>
+				<span className="archive-card__new-label">New Tasting</span>
+			</Link>
+
 			{tastings.map((tasting) => {
 				// Bug fix: read camelCase keys as saved by FinalConclusionTastingClient
 				const final = (tasting.conclusion?.final as Record<string, string | null>) ?? {};
@@ -176,11 +183,6 @@ export default function ArchivesList() {
 					</article>
 				);
 			})}
-
-			<Link href="/tastings/start" className="archive-card archive-card--new no-underline">
-				<span className="archive-card__new-icon">+</span>
-				<span className="archive-card__new-label">New Tasting</span>
-			</Link>
 		</div>
 	);
 }
