@@ -1,11 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../../lib/prisma';
 import { randomBytes, createHash } from 'crypto';
 import { Resend } from 'resend';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
 import { forgotPasswordSchema } from '../../../../schemas/auth';
 import { RATE_LIMITS, clientIp, consume } from '../../../../lib/rateLimit';
 
-const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour

@@ -1,12 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../../lib/prisma';
 import { createHash, timingSafeEqual } from 'crypto';
 import { hashPassword } from '../../../../utils/PasswordUtils';
 import { JsonApiError } from '../../../../utils/ErrorUtils';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
 import { resetPasswordRequestSchema } from '../../../../schemas/auth';
 import { RATE_LIMITS, clientIp, consume } from '../../../../lib/rateLimit';
-
-const prisma = new PrismaClient();
 
 function hashToken(raw: string): string {
 	return createHash('sha256').update(raw).digest('hex');

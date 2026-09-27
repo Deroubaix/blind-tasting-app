@@ -1,8 +1,6 @@
 import { createHash } from 'node:crypto';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './prisma';
 import { JsonApiError } from '../utils/ErrorUtils';
-
-const prisma = new PrismaClient();
 
 /**
  * Attempt limits for the auth routes, counted in Postgres rather than in memory so they hold

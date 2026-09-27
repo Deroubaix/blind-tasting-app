@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../../lib/prisma';
 import { errorResponse, logServerError } from '../../../../utils/ApiUtils';
 import { requireUserId } from '../../../../lib/auth';
 import { deletePhoto } from '../../../../lib/storage';
-
-const prisma = new PrismaClient();
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {

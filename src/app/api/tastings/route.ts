@@ -1,11 +1,10 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { JsonApiError } from '../../../utils/ErrorUtils';
 import { errorResponse, logServerError } from '../../../utils/ApiUtils';
 import { requireUserId } from '../../../lib/auth';
 import { tastingCreateSchema } from '../../../schemas/tasting';
 import { MAX_PHOTO_BYTES, ownsPhotoKey, photoSize } from '../../../lib/storage';
-
-const prisma = new PrismaClient();
 
 /** Postgres unique-constraint violation. */
 const UNIQUE_VIOLATION = 'P2002';
