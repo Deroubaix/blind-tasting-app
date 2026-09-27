@@ -12,12 +12,14 @@ export type TastingData = {
 	 * index, so stepping back to review an earlier phase does not un-complete later ones.
 	 */
 	furthestPhase?: number;
-	sight?: Record<string, string>;
+	/** Single answers, except Secondary Color(s), which is a list. */
+	sight?: Record<string, string | string[]>;
 	nose?: Record<string, string[]>;
 	confirmNose?: string;
 	palate?: Record<string, string>;
 	conclusion?: {
 		initial?: {
+			/** 2016 grid only; still read so older saved tastings display it. */
 			worldOrigin?: string | null;
 			climate?: string | null;
 			ageRange?: string | null;

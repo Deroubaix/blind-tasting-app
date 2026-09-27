@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import { icAnsweredCount, IC_REQUIRED_COUNT } from './conclusionFields';
+import { AGE_RANGES, CLIMATES, icAnsweredCount, IC_REQUIRED_COUNT } from './conclusionFields';
 import TastingAutocomplete from './TastingAutocomplete';
 import { GRAPE_VARIETALS, WINE_COUNTRIES } from './autocompleteData';
 
@@ -49,7 +49,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 			timerDestination={`/tastings/final-conclusion?wineType=${wineType}`}
 			phase="Phase 04"
 			title="Initial Conclusion"
-			description="Synthesize your observations from sight, nose, and palate to form your initial identification — origin, climate, grape variety, and age."
+			description="Synthesize your observations from sight, nose, and palate into possible grape varieties, climate, possible countries, and age range."
 			footer={{
 				onBack: handlePreviousPhase,
 				backLabel: 'Back to Palate',
@@ -60,29 +60,15 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 			<div className="ic-layout">
 				{/* ── Left column ── */}
 				<div className="ic-col">
-					<div className="section-label">Origin &amp; Environment</div>
-
-					<div className="tasting-card">
-						<div className="tasting-card__label">World Origin</div>
-						<div className="tasting-options tasting-options--equal">
-							{['Old World', 'New World'].map((opt) => (
-								<button
-									key={opt}
-									className={`tasting-option${ic.worldOrigin === opt ? ' tasting-option--selected' : ''}`}
-									onClick={() => updateIC({ worldOrigin: opt })}
-								>
-									{opt}
-								</button>
-							))}
-						</div>
-					</div>
+					<div className="section-label">Environment</div>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label">Climate</div>
-						<div className="tasting-options">
-							{['Cool', 'Moderate', 'Warm'].map((opt) => (
+						<div className="tasting-options tasting-options--equal">
+							{CLIMATES.map((opt) => (
 								<button
 									key={opt}
+									aria-pressed={ic.climate === opt}
 									className={`tasting-option${ic.climate === opt ? ' tasting-option--selected' : ''}`}
 									onClick={() => updateIC({ climate: opt })}
 								>
@@ -95,11 +81,12 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 					<div className="section-label section-label--mt">Maturity</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Estimated Age Range (Years)</div>
+						<div className="tasting-card__label">Age Range</div>
 						<div className="tasting-options">
-							{['1-3', '3-5', '5-10', '+10'].map((opt) => (
+							{AGE_RANGES.map((opt) => (
 								<button
 									key={opt}
+									aria-pressed={ic.ageRange === opt}
 									className={`tasting-option${ic.ageRange === opt ? ' tasting-option--selected' : ''}`}
 									onClick={() => updateIC({ ageRange: opt })}
 								>
@@ -115,7 +102,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 					<div className="section-label">Varietal Identification</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Grape Variety/Blend</div>
+						<div className="tasting-card__label">Possible Grape Varieties</div>
 						<div className="tasting-search-row">
 							<TastingAutocomplete
 								suggestions={GRAPE_VARIETALS}

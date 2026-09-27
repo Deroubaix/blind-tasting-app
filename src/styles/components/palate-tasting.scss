@@ -11,14 +11,22 @@
 
 // ── Card required marker ──────────────────────────────────────────────────────
 .palate-card__required {
-	color: $tasting-accent;
+	// The light accent: the base accent measured 2.5:1 on the card, too faint to read.
+	color: $tasting-accent-light;
 	margin-left: 3px;
 	font-size: 0.7rem;
 	line-height: 1;
 	vertical-align: middle;
 }
 
-// ── Confirm the Nose textarea card ────────────────────────────────────────────
+// ── Balance: what dominates ───────────────────────────────────────────────────
+input.palate-balance-note {
+	display: block;
+	width: 100%;
+	margin-top: $spacing-sm;
+}
+
+// ── Confirm from the Nose textarea card ────────────────────────────────────────────
 .palate-notes {
 	margin-bottom: $spacing-lg;
 

@@ -8,14 +8,12 @@ import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import TastingAutocomplete from './TastingAutocomplete';
 import TastingCustomSelect from './TastingCustomSelect';
 import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from './autocompleteData';
-import { SIGHT_MAIN_FIELDS, SIGHT_EVIDENCE_LABELS, SIGHT_EVIDENCE_ABSENT } from '../sight/sightFields';
+import { sightFields } from '../sight/sightFields';
 import { NOSE_ASSESSMENTS } from '../nose/noseFields';
-import { fcAnsweredCount, FC_REQUIRED } from './conclusionFields';
+import { fcAnsweredCount, FC_REQUIRED, QUALITY_LEVELS, STYLE_CATEGORIES } from './conclusionFields';
 
-const qualityTiers = ['Regional', 'Village', 'Premier Cru', 'Grand Cru', 'Single Vineyard', 'Estate'];
-
-// Values like "Medium (-)" or "High" mean nothing alone, so the attribute they answer
-// travels with them — flattened, five "Medium (-)" in a row name neither acid nor tannin.
+// Values like "Medium−" or "High" mean nothing alone, so the attribute they answer
+// travels with them — flattened, five "Medium−" in a row name neither acid nor tannin.
 function AnalysisPairs({ label, pairs }: { label: string; pairs: [string, string][] }) {
 	if (!pairs.length) {
 		return null;
@@ -52,7 +50,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 
-	// The five committed answers write straight through to the shared context. Local state would
+	// The committed answers write straight through to the shared context. Local state would
 	// be lost when the phase timer expires — TimerWrapper navigates with a bare `router.push`,
 	// so nothing gets a chance to flush. Only the autocomplete text boxes stay local.
 	const fc = tastingData.conclusion?.final ?? {};
@@ -60,6 +58,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const countryOfOrigin = fc['countryOfOrigin'] ?? '';
 	const regionAppellation = fc['regionAppellation'] ?? '';
 	const qualityLevel = fc['qualityLevel'] ?? '';
+	const styleCategory = fc['styleCategory'] ?? '';
 	const vintage = fc['vintage'] ?? '';
 
 	const [grapeInput, setGrapeInput] = useState('');
@@ -73,20 +72,15 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const setCountryOfOrigin = (v: string) => updateFC({ countryOfOrigin: v });
 	const setRegionAppellation = (v: string) => updateFC({ regionAppellation: v });
 	const setQualityLevel = (v: string) => updateFC({ qualityLevel: v });
+	const setStyleCategory = (v: string) => updateFC({ styleCategory: v });
 	const setVintage = (v: string) => updateFC({ vintage: v });
 
 	// Summaries of prior phases. Each keeps its attribute name; only self-describing
 	// lists (aroma descriptors, countries) go flat.
 	const sight = tastingData.sight ?? {};
-	const sightPairs = SIGHT_MAIN_FIELDS.filter((f) => sight[f]).map((f) => [f, sight[f]] as [string, string]);
-
-	// A recap lists what was found; "No" answers are the default state, so they collapse to one line.
-	const evidenceFound = Object.entries(SIGHT_EVIDENCE_LABELS)
-		.filter(([key]) => sight[key] && !SIGHT_EVIDENCE_ABSENT.includes(sight[key]))
-		.map(([, label]) => label)
-		.join(' · ');
-	const evidenceAnswered = Object.keys(SIGHT_EVIDENCE_LABELS).some((key) => sight[key]);
-	const evidenceSummary = evidenceFound || (evidenceAnswered ? 'None noted' : '');
+	const sightPairs = sightFields(wineType)
+		.map((f) => [f, Array.isArray(sight[f]) ? (sight[f] as string[]).join(' · ') : sight[f]])
+		.filter(([, value]) => Boolean(value)) as [string, string][];
 
 	// Nose splits two ways: assessments are ambiguous without their attribute, descriptors are not.
 	const nose = tastingData.nose ?? {};
@@ -105,16 +99,17 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const initial = tastingData.conclusion?.initial;
 	const initialPairs = (
 		[
-			['World Origin', initial?.worldOrigin],
+			['Possible Grapes', (initial?.grapeVarieties ?? []).join(' · ')],
 			['Climate', initial?.climate],
 			['Age Range', initial?.ageRange],
-			['Grape Varieties', (initial?.grapeVarieties ?? []).join(' · ')],
 		] as [string, string | null | undefined][]
 	)
 		.filter(([, value]) => Boolean(value))
 		.map(([key, value]) => [key, value as string] as [string, string]);
 	const possibleOriginSummary = (initial?.possibleCountries ?? []).join(' · ');
-	const finalIdentity = [vintage, grapeVariety, qualityLevel, countryOfOrigin].filter(Boolean).join(' · ');
+	const finalIdentity = [vintage, grapeVariety, qualityLevel, styleCategory, countryOfOrigin]
+		.filter(Boolean)
+		.join(' · ');
 
 	const conclusionPct = Math.round((fcAnsweredCount(fc) / FC_REQUIRED.length) * 100);
 
@@ -138,7 +133,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 			timerDestination={`/tastings/save?wineType=${wineType}`}
 			phase="Phase 05"
 			title="Final Conclusion"
-			description="Commit to a single, specific identification — grape variety, country, region, quality level, and vintage."
+			description="Commit to a single, specific identification — grape variety or blend, country, region and appellation, and vintage. Add quality level and style where appropriate."
 			footer={{
 				onBack: handleBack,
 				backLabel: 'Back to Initial Conclusion',
@@ -152,7 +147,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 					<div className="fc-grid">
 						{/* Grape Variety/Blend */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Grape Variety / Blend</label>
+							<label className="tasting-card__label">Grape Variety or Blend</label>
 							<div className="tasting-search-row">
 								<TastingAutocomplete
 									suggestions={GRAPE_VARIETALS}
@@ -216,7 +211,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 
 						{/* Region/Appellation */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Region / Appellation</label>
+							<label className="tasting-card__label">Region and Appellation</label>
 							<div className="tasting-search-row">
 								<TastingAutocomplete
 									suggestions={WINE_REGIONS}
@@ -249,14 +244,27 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							)}
 						</div>
 
-						{/* Quality Level */}
+						{/* Quality level and style category are "where appropriate" on the grid, so each
+						    can be left blank or cleared, and neither counts toward completion. */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Quality Level</label>
+							<label className="tasting-card__label">Official Quality Level</label>
 							<TastingCustomSelect
-								options={qualityTiers}
+								options={QUALITY_LEVELS}
 								value={qualityLevel}
 								onChange={setQualityLevel}
-								placeholder="Select quality tier…"
+								placeholder="Where appropriate…"
+								clearLabel="Not applicable"
+							/>
+						</div>
+
+						<div className="fc-field">
+							<label className="tasting-card__label">Official Style Category</label>
+							<TastingCustomSelect
+								options={STYLE_CATEGORIES}
+								value={styleCategory}
+								onChange={setStyleCategory}
+								placeholder="Where appropriate…"
+								clearLabel="Not applicable"
 							/>
 						</div>
 
@@ -269,6 +277,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 									<input
 										className="tasting-search-input"
 										placeholder="Enter the harvest year"
+										inputMode="numeric"
 										maxLength={4}
 										value={vintage}
 										onChange={(e) => setVintage(e.target.value.replace(/\D/g, ''))}
@@ -297,8 +306,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 						<span className="fc-analysis__subtitle">What you recorded</span>
 					</div>
 
-					<AnalysisPairs label="Color & Sight" pairs={sightPairs} />
-					<AnalysisRow label="Physical Evidence" value={evidenceSummary} />
+					<AnalysisPairs label="Sight" pairs={sightPairs} />
 					<AnalysisPairs label="Nose" pairs={nosePairs} />
 					<AnalysisRow label="Aroma Descriptors" value={noseDescriptors} />
 					<AnalysisPairs label="Palate Structure" pairs={palatePairs} />

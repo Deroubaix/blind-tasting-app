@@ -9,9 +9,17 @@ interface Props {
 	value: string;
 	onChange: (v: string) => void;
 	placeholder?: string;
+	/** When set, the list starts with this entry, which clears the answer (for optional fields). */
+	clearLabel?: string;
 }
 
-export default function TastingCustomSelect({ options, value, onChange, placeholder = 'Select...' }: Props) {
+export default function TastingCustomSelect({
+	options,
+	value,
+	onChange,
+	placeholder = 'Select...',
+	clearLabel,
+}: Props) {
 	const [open, setOpen] = useState(false);
 	const wrapRef = useRef<HTMLDivElement>(null);
 	const { dropUp, maxHeight } = useDropPlacement(wrapRef, open);
@@ -58,6 +66,17 @@ export default function TastingCustomSelect({ options, value, onChange, placehol
 					className={`tasting-autocomplete__dropdown${dropUp ? ' tasting-autocomplete__dropdown--up' : ''}`}
 					style={{ maxHeight }}
 				>
+					{clearLabel && (
+						<li
+							className="tasting-autocomplete__option tasting-autocomplete__option--clear"
+							onMouseDown={(e) => {
+								e.preventDefault();
+								select('');
+							}}
+						>
+							{clearLabel}
+						</li>
+					)}
 					{options.map((opt) => (
 						<li
 							key={opt}

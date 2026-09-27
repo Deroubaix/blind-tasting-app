@@ -2,7 +2,9 @@
 
 A practice tool for the **Court of Master Sommeliers deductive tasting grid** — the formal method
 candidates are examined on, where you work a wine through fixed phases under time pressure and
-commit to a conclusion about what is in the glass.
+commit to a conclusion about what is in the glass. The grid follows the **2024 CMS Americas
+Advanced and Master Sommelier deductive tasting format**. The app is not affiliated with or endorsed
+by the Court of Master Sommeliers.
 
 Tasting blind is a timed exercise, and the timing is the hard part. This app runs the clock, keeps
 the grid in front of you, and saves each completed sheet so you can go back and see how your calls
@@ -10,28 +12,29 @@ held up once you knew the answer.
 
 ## The tasting flow
 
-One wine, five phases, then save. The two timer presets are the exam formats — four minutes for a
-single wine, seven and a half for a longer sitting — and the per-phase splits follow from that.
+One wine, five phases, then save. The 4-minute preset is the Advanced and Master exam pace (six
+wines in 25 minutes, about four minutes each); 7.5 minutes is a slower pace for practice. The exam
+times the whole flight, not each phase — the per-phase splits are the app's own, giving the nose
+the most time because it is where most candidates get ruled out.
 
-| Phase                  | What you record                                                   | 4 min | 7.5 min |
-| ---------------------- | ----------------------------------------------------------------- | ----: | ------: |
-| **Sight**              | Clarity, brightness, concentration, viscosity, colour, hue        |   30s |     56s |
-| **Nose**               | Condition, intensity, fruit and wood character, age assessment    |  120s |    225s |
-| **Palate**             | Sweetness, acid, tannin, alcohol, body, finish                    |   30s |     56s |
-| **Initial conclusion** | Old/New World, climate, age range, candidate grapes and countries |   30s |     56s |
-| **Final conclusion**   | The call: grape, country, region, quality level, vintage          |   30s |     56s |
-
-The nose gets four times the budget of any other phase, which is the method's own weighting, not an
-arbitrary one — it is where the most information is available and the most candidates get ruled out.
+| Phase                  | What you record (2024 grid)                                                                                            | 4 min | 7.5 min |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----: | ------: |
+| **Sight**              | Clarity, intensity of color, primary and secondary color(s), rim variation and staining (reds), tearing, gas           |   30s |     56s |
+| **Nose**               | Minor faults, aromatic intensity, age, fruit and fruit condition, non-fruit, earth, mineral, oak                       |  120s |    225s |
+| **Palate**             | Sweetness, acidity, alcohol, body, tannin (reds) or phenolic bitterness (whites), texture, balance, finish, complexity |   30s |     56s |
+| **Initial conclusion** | Possible grapes, climate, possible countries, age range                                                                |   30s |     56s |
+| **Final conclusion**   | The call: grape or blend, country, region and appellation, quality level and style where appropriate, vintage          |   30s |     56s |
 
 After the final conclusion comes **Save**: notes, an optional photo, and the sheet
 is written to your archive. Timing is entirely optional; leaving the timer off gives you the same
 grid with no clock.
 
-**Sight and palate are single-select** — one answer per attribute. **The nose is multi-select**,
-because a wine genuinely does smell of several things at once. That difference runs all the way
-through the data model: `nose` is `Record<string, string[]>` where every other phase is
-`Record<string, string>`.
+**Most attributes take one answer.** The nose is multi-select, because a wine genuinely does smell
+of several things at once, and so is secondary color on sight. That runs through the data model:
+`nose` is `Record<string, string[]>`, `sight` allows a list for Secondary Color(s), and palate is
+`Record<string, string>`. The grid lives as plain data in `src/components/*/[phase]Fields.ts` and
+`conclusionFields.ts`, pinned by `gridFields.test.ts`. On the nose, each grid heading lists the
+official terms first, then the app's more specific descriptors (Cherry, Violet, Graphite…).
 
 ## Stack
 

@@ -336,4 +336,11 @@ input.tasting-input:focus-visible {
 		background-color: rgba(139, 69, 87, 0.15);
 		color: $color-white;
 	}
+
+	// "Not applicable": clears the answer, so it reads as a different kind of entry.
+	&--clear {
+		font-style: italic;
+		color: $color-text-muted;
+		border-bottom: 1px solid $tasting-border;
+	}
 }

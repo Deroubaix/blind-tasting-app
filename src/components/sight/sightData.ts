@@ -5,13 +5,15 @@ export type WineColorEntry = {
 };
 
 export type WineColorGroup = {
-	spectrum: WineColorEntry[];
-	hue: WineColorEntry[];
+	primary: WineColorEntry[];
+	secondary: WineColorEntry[];
 };
 
+// The 2024 CMS Americas grid's colour terms. Primary is the core of the wine; secondary is
+// what shows toward the rim and can be more than one. Descriptions are study aids, not grid text.
 export const wineColors: Record<string, WineColorGroup> = {
 	red: {
-		spectrum: [
+		primary: [
 			{
 				name: 'Purple',
 				hex: '#4E0D3A',
@@ -20,48 +22,63 @@ export const wineColors: Record<string, WineColorGroup> = {
 			{
 				name: 'Ruby',
 				hex: '#9B1B30',
-				desc: 'Bright clear red, most common red wine color. Young Cabernet, Merlot, Sangiovese.',
+				desc: 'Bright clear red, the most common core. Young Cabernet, Merlot, Sangiovese.',
 			},
 			{
 				name: 'Garnet',
 				hex: '#6E2B3A',
-				desc: 'Red with brownish-orange hints, indicates age. Aged Pinot Noir, Nebbiolo, older Rioja.',
+				desc: 'Red with brownish-orange hints, showing age. Aged Pinot Noir, Nebbiolo, older Rioja.',
 			},
 		],
-		hue: [
+		secondary: [
 			{
 				name: 'Blue',
-				hex: '#5C2D6E',
-				desc: 'Cool blue-purple tint at rim. Indicates youth, low pH, high acidity.',
+				hex: '#4A2A6E',
+				desc: 'Blue-purple tint at the rim. Youth, low pH, high acidity.',
 			},
 			{
-				name: 'Pink',
-				hex: '#B8566E',
-				desc: 'Pinkish-red rim. Mid-age wine, moderate development.',
+				name: 'Magenta',
+				hex: '#9C2A6A',
+				desc: 'Vivid pink-purple rim. Young, vibrant wines.',
+			},
+			{
+				name: 'Ruby',
+				hex: '#A8203A',
+				desc: 'Red rim. Some development under way.',
+			},
+			{
+				name: 'Orange',
+				hex: '#B8612E',
+				desc: 'Orange rim. Maturity; common in aged Nebbiolo and Sangiovese.',
 			},
 			{
 				name: 'Garnet',
 				hex: '#8B4A3A',
-				desc: 'Orange-brown rim. Indicates significant age and evolution.',
+				desc: 'Brick-red rim. Clear development and age.',
+			},
+			{
+				name: 'Brown',
+				hex: '#6B4A2E',
+				desc: 'Brown rim. Significant age or oxidation.',
 			},
 		],
 	},
 	white: {
-		spectrum: [
+		primary: [
 			{
-				name: 'White',
+				name: 'Water White',
 				hex: '#F3F1DB',
-				desc: 'Water-white with almost no pigment. Very young, unoaked, high-acid wines. Vinho Verde, Txakoli.',
+				desc: 'Almost no pigment. Very young, unoaked, high-acid wines. Vinho Verde, Txakoli.',
 			},
 			{
 				name: 'Straw',
 				hex: '#E8D8A0',
-				desc: 'Very pale yellow, almost watery. Young Pinot Grigio, Muscadet, Albariño.',
+				desc: 'Very pale yellow. Young Pinot Grigio, Muscadet, Albariño.',
 			},
 			{
 				name: 'Yellow',
 				hex: '#E0C840',
-				desc: 'Medium yellow. Classic white wines in their prime drinking window. Chardonnay, Pinot Gris.',
+				desc: 'Medium yellow. Whites in their prime. Chardonnay, Pinot Gris.',
 			},
 			{
 				name: 'Gold',
@@ -69,7 +86,7 @@ export const wineColors: Record<string, WineColorGroup> = {
 				desc: 'Rich golden yellow. Oaked Chardonnay, aged Riesling, Viognier.',
 			},
 		],
-		hue: [
+		secondary: [
 			{
 				name: 'Silver',
 				hex: '#D0D0C4',
@@ -78,12 +95,22 @@ export const wineColors: Record<string, WineColorGroup> = {
 			{
 				name: 'Green',
 				hex: '#A8C878',
-				desc: 'Green tint at rim. Very young, high acidity. Sauvignon Blanc, Grüner Veltliner.',
+				desc: 'Green tint. Very young, high acidity. Sauvignon Blanc, Grüner Veltliner.',
 			},
 			{
-				name: 'Orange',
-				hex: '#D4903A',
-				desc: 'Orange/amber tint. Aged whites, oxidative styles, some skin-contact wines.',
+				name: 'Copper',
+				hex: '#C9804A',
+				desc: 'Coppery tint. Skin contact or a pink-skinned grape such as Pinot Gris.',
+			},
+			{
+				name: 'Gold',
+				hex: '#D4A83A',
+				desc: 'Golden tint. Age, oak, ripeness or botrytis.',
+			},
+			{
+				name: 'Brown',
+				hex: '#8A6A3A',
+				desc: 'Brown tint. Oxidation or great age.',
 			},
 		],
 	},

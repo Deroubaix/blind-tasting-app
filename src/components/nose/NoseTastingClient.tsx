@@ -5,221 +5,28 @@ import { useTastingContext } from '../tasting/TastingContext';
 import { useEffect, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import { NOSE_ASSESSMENTS as SINGLE_SELECT } from './noseFields';
+import {
+	FRUIT_FAMILIES,
+	NOSE_ASSESSMENTS as SINGLE_SELECT,
+	NOSE_NON_FRUIT,
+	NOSE_OAK_ASSESSMENT,
+	NOSE_OPTIONS,
+	NOSE_TOP,
+	noseProgressSteps,
+} from './noseFields';
 
-// ── Aroma data ─────────────────────────────────────────────────────────────────
-const noseTastingOptions = {
-	red: {
-		'Clean or Faulty': ['Clean', 'Faulty'],
-		Intensity: ['Delicate', 'Moderate', 'Pronounced'],
-		'Age Assessment': ['Youthful', 'Vinous'],
-		'Red Fruits': ['Cherry', 'Raspberry', 'Strawberry', 'Cranberry'],
-		'Blue Fruits': ['Plum', 'Blueberry'],
-		'Black Fruits': ['Blackberry', 'Black Cherry', 'Blackcurrant'],
-		'Dried Fruits': ['Dates', 'Figs', 'Prunes'],
-		'Fruit Character': ['Tart', 'Ripe/Lush', 'Jammy', 'Baked', 'Stewed', 'Dried'],
-		Condition: ['Fresh', 'Dried'],
-		Floral: ['Rose', 'Lavender', 'Violet', 'Black Tea'],
-		'Veg/Herbal': [
-			'Savory Herbs',
-			'Provençal Herbs',
-			'Garrigue',
-			'Tarragon',
-			'Bell Pepper',
-			'Olives',
-			'Mint/Eucalyptus',
-			'Dill',
-			'Beet',
-			'Tomato Leaf',
-		],
-		Spices: ['Black Pepper', 'Anise', 'Clove', 'Juniper'],
-		Animal: ['Barbecue', 'Blood', 'Game', 'Grilled Meat', 'Leather', 'Stable', 'Brett'],
-		Nuts: ['Almond', 'Hazelnut', 'Marzipan', 'Peanut', 'Nutmeg'],
-		Vinification: [
-			'Butter',
-			'Cream',
-			'Rind',
-			'Yogurt',
-			'Brioche',
-			'Dough',
-			'Graham Cracker',
-			'Bubblegum',
-			'Botrytis',
-		],
-		Earth: [
-			'Baked earth',
-			'Compost',
-			'Forest Floor',
-			'Potting Soil',
-			'Truffle',
-			'Leaves',
-			'Mushroom',
-			'Hay',
-			'Straw',
-		],
-		Rocks: [
-			'Chalk',
-			'Dust',
-			'Flint/Gunpowder',
-			'Granit',
-			'Graphite',
-			'Gravel',
-			'Limestone',
-			'Slate/Petrol',
-			'Volcanic',
-			'Tar',
-			'Sea Spray',
-		],
-		'Wood Aromas': [
-			'Vanilla',
-			'Coconut',
-			'Cigarbox',
-			'Cedar',
-			'Mocha',
-			'Chocolate',
-			'Cocoa',
-			'Caramel',
-			'Butterscotch',
-			'Pencil Shavings',
-		],
-		'Wood Aromas Origin': ['French', 'American', 'Slavonian'],
-		'Wood Aromas Condition': ['New', 'Neutral', 'Large'],
-	},
-	white: {
-		'Clean or Faulty': ['Clean', 'Faulty'],
-		Intensity: ['Delicate', 'Moderate', 'Pronounced'],
-		'Age Assessment': ['Youthful', 'Vinous'],
-		'Citrus Fruit': ['Lime', 'Lemon', 'Orange', 'Grapefruit'],
-		'Stone Fruit': ['Apricot', 'Nectarine', 'Peach'],
-		'Orchard Fruit': ['Apple', 'Pear', 'Quince'],
-		'Tropical Fruit': ['Pineapple', 'Passionfruit', 'Mango', 'Melon', 'Banana', 'Lychee'],
-		'Fruit Character': ['Tart', 'Ripe/Lush', 'Baked', 'Jammy', 'Dried', 'Peel'],
-		Condition: ['Fresh', 'Dried'],
-		Floral: ['Acacia', 'Citrus Blossom', 'Honeysuckle', 'Jasmine', 'Rose'],
-		'Veg/Herbal/Spices': [
-			'Gooseberry',
-			'Asparagus',
-			'Bellpepper',
-			'Jalapeno',
-			'Olives',
-			'Tomato',
-			'Bay Leaf',
-			'Dill',
-			'Eucalyptus/Mint',
-			'Ginger',
-			'Wasabi',
-			'White Pepper',
-			'Lanolin',
-		],
-		Nuts: ['Almond', 'Hazelnut', 'Marzipan', 'Peanut', 'Nutmeg'],
-		Vinification: [
-			'Butter',
-			'Cream',
-			'Rind',
-			'Yogurt',
-			'Brioche',
-			'Dough',
-			'Graham Cracker',
-			'Bubblegum',
-			'Botrytis',
-		],
-		Earth: [
-			'Baked earth',
-			'Compost',
-			'Forest Floor',
-			'Potting Soil',
-			'Truffle',
-			'Leaves',
-			'Mushroom',
-			'Hay',
-			'Straw',
-		],
-		Rocks: [
-			'Chalk',
-			'Dust',
-			'Flint/Gunpowder',
-			'Granit',
-			'Graphite',
-			'Gravel',
-			'Limestone',
-			'Slate/Petrol',
-			'Volcanic',
-			'Tar',
-			'Sea Spray',
-		],
-		'Wood Aromas': [
-			'Vanilla',
-			'Coconut',
-			'Cigarbox',
-			'Cedar',
-			'Mocha',
-			'Chocolate',
-			'Cocoa',
-			'Caramel',
-			'Butterscotch',
-			'Pencil Shavings',
-		],
-		'Wood Aromas Origin': ['French', 'American', 'Slavonian'],
-		'Wood Aromas Condition': ['New', 'Neutral', 'Large'],
-	},
-};
-
-// ── Fruit dot colors (SCSS modifier suffix per category) ──────────────────────
+// ── Fruit dot colors (SCSS modifier suffix per grid fruit group) ───────────────
 const fruitDotClass: Record<string, string> = {
-	'Red Fruits': 'red',
-	'Blue Fruits': 'blue',
-	'Black Fruits': 'black',
-	'Dried Fruits': 'dried',
-	'Citrus Fruit': 'citrus',
+	'Red Fruit': 'red',
+	'Blue Fruit': 'blue',
+	'Black Fruit': 'black',
+	'Other Fruit': 'dried',
+	'Tart Citrus': 'citrus',
+	'Sweet Citrus': 'citrus',
+	'Apple/Pear': 'orchard',
 	'Stone Fruit': 'stone',
-	'Orchard Fruit': 'orchard',
-	'Tropical Fruit': 'tropical',
-};
-
-// ── Section groupings ──────────────────────────────────────────────────────────
-const topAssessmentKeys: Record<'red' | 'white', string[]> = {
-	red: ['Clean or Faulty', 'Intensity', 'Age Assessment'],
-	white: ['Clean or Faulty', 'Intensity', 'Age Assessment'],
-};
-
-// Actual fruit types — rendered without card background
-const primaryFruitTypeKeys: Record<'red' | 'white', string[]> = {
-	red: ['Red Fruits', 'Blue Fruits', 'Black Fruits', 'Dried Fruits'],
-	white: ['Citrus Fruit', 'Stone Fruit', 'Orchard Fruit', 'Tropical Fruit'],
-};
-
-// Assessment rows — rendered with card background
-const primaryFruitAssessmentKeys: Record<'red' | 'white', string[]> = {
-	red: ['Fruit Character', 'Condition'],
-	white: ['Fruit Character', 'Condition'],
-};
-
-// Combined for progress calculation
-const primaryFruitKeys: Record<'red' | 'white', string[]> = {
-	red: [...primaryFruitTypeKeys.red, ...primaryFruitAssessmentKeys.red],
-	white: [...primaryFruitTypeKeys.white, ...primaryFruitAssessmentKeys.white],
-};
-
-const complexSecondaryKeys: Record<'red' | 'white', string[]> = {
-	red: ['Floral', 'Veg/Herbal', 'Spices', 'Animal', 'Nuts', 'Vinification', 'Earth', 'Rocks'],
-	white: ['Floral', 'Veg/Herbal/Spices', 'Nuts', 'Vinification', 'Earth', 'Rocks'],
-};
-
-// Wood Aromas: descriptor (no bg) — Origin + Condition: assessment (split card)
-const woodAromaKeys: Record<'red' | 'white', string[]> = {
-	red: ['Wood Aromas'],
-	white: ['Wood Aromas'],
-};
-
-const woodAssessmentKeys: Record<'red' | 'white', string[]> = {
-	red: ['Wood Aromas Origin', 'Wood Aromas Condition'],
-	white: ['Wood Aromas Origin', 'Wood Aromas Condition'],
-};
-
-// Combined for progress calculation
-const woodExposureKeys: Record<'red' | 'white', string[]> = {
-	red: [...woodAromaKeys.red, ...woodAssessmentKeys.red],
-	white: [...woodAromaKeys.white, ...woodAssessmentKeys.white],
+	Tropical: 'tropical',
+	Melon: 'tropical',
 };
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -290,17 +97,11 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	const countSelected = (keys: string[]) =>
 		keys.reduce((total, cat) => total + (selectedOptions[cat]?.length || 0), 0);
 
-	const allNoseKeys = [
-		...topAssessmentKeys[wineType],
-		...primaryFruitKeys[wineType],
-		...complexSecondaryKeys[wineType],
-		...woodExposureKeys[wineType],
-	];
-	const nosePct = Math.round(
-		(allNoseKeys.filter((k) => (selectedOptions[k]?.length || 0) > 0).length / allNoseKeys.length) * 100,
-	);
+	const steps = noseProgressSteps(wineType);
+	const stepsDone = steps.filter((step) => step.some((k) => (selectedOptions[k]?.length || 0) > 0));
+	const nosePct = Math.round((stepsDone.length / steps.length) * 100);
 
-	const presetOptions = noseTastingOptions[wineType] as Record<string, string[]>;
+	const presetOptions = NOSE_OPTIONS[wineType];
 
 	// ── Sub-renderers ────────────────────────────────────────────────────────────
 
@@ -323,6 +124,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 						<button
 							key={option}
 							onClick={() => handleOptionToggle(category, option)}
+							aria-pressed={selected}
 							className={`tasting-option${pill}${selected ? ' tasting-option--selected' : ''}`}
 						>
 							{option}
@@ -416,7 +218,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	};
 
 	const renderSectionHeader = (title: string, isOpen: boolean, onToggle: () => void, selectedCount: number) => (
-		<button className="nose-section-header" onClick={onToggle}>
+		<button className="nose-section-header" onClick={onToggle} aria-expanded={isOpen}>
 			<span className="section-label">{title}</span>
 			<span className="nose-section-header__right">
 				{!isOpen && selectedCount > 0 && (
@@ -436,7 +238,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			timerDestination={`/tastings/palate?wineType=${wineType}`}
 			phase="Phase 02"
 			title="The Nose"
-			description="Assess the aromatic profile — start with condition and intensity, then identify fruit, secondary, and tertiary aromas."
+			description="Note any faults, judge intensity and age, then work through fruit, non-fruit, earth, mineral, and oak."
 			footer={{
 				onBack: handlePreviousPhase,
 				backLabel: 'Back to Sight',
@@ -444,50 +246,46 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				onNext: handleNextPhase,
 			}}
 		>
-			{/* ── Top assessment (3 cols) ── */}
+			{/* ── Intensity, age and faults (3 cols) ── */}
 			<div className="nose-grid">
-				{topAssessmentKeys[wineType].map((cat) => (
+				{NOSE_TOP.map((cat) => (
 					<div key={cat} className="tasting-card">
 						{renderCategory(cat)}
 					</div>
 				))}
 			</div>
 
-			{/* ── Primary Fruit Profile ── */}
+			{/* ── Fruit ── */}
 			<div className="nose-section-divider">
-				<span className="section-label">Primary Fruit Profile</span>
+				<span className="section-label">Fruit</span>
 			</div>
 
-			{/* Fruit types — no card background */}
+			{/* The grid's fruit groups — no card background */}
 			<div className="nose-grid nose-grid--two-col">
-				{primaryFruitTypeKeys[wineType].map((cat) => (
+				{FRUIT_FAMILIES[wineType].map((cat) => (
 					<div key={cat} className="nose-fruit-category">
 						{renderFruitCategory(cat)}
 					</div>
 				))}
 			</div>
 
-			{/* Fruit Character + Condition — separate cards, equal-width buttons */}
-			<div className="nose-grid nose-grid--two-col">
-				{primaryFruitAssessmentKeys[wineType].map((cat) => (
-					<div key={cat} className="tasting-card">
-						{renderCategory(cat, true)}
-					</div>
-				))}
-			</div>
+			<div className="tasting-card">{renderCategory('Fruit Condition')}</div>
 
-			{/* ── Complex & Secondary Aromas (collapsible) ── */}
+			{/* ── Non-Fruit, Earth & Mineral (collapsible) ── */}
 			{renderSectionHeader(
-				'Complex & Secondary Aromas',
+				'Non-Fruit, Earth & Mineral',
 				complexOpen,
 				() => setComplexOpen((o) => !o),
-				countSelected(complexSecondaryKeys[wineType]),
+				countSelected(NOSE_NON_FRUIT),
 			)}
-			<div className={`nose-collapsible${complexOpen ? '' : ' nose-collapsible--collapsed'}`}>
+			{/* `inert` takes the hidden chips out of the tab order and the accessibility tree. */}
+			<div
+				className={`nose-collapsible${complexOpen ? '' : ' nose-collapsible--collapsed'}`}
+				inert={!complexOpen}
+			>
 				<div className="nose-collapsible__inner">
-					{/* Descriptor categories — no background */}
 					<div className="nose-grid">
-						{complexSecondaryKeys[wineType].map((cat) => (
+						{NOSE_NON_FRUIT.map((cat) => (
 							<div key={cat} className="nose-fruit-category">
 								{renderFruitCategory(cat)}
 							</div>
@@ -496,24 +294,24 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				</div>
 			</div>
 
-			{/* ── Wood Exposure Assessment (collapsible) ── */}
+			{/* ── Oak (collapsible) ── */}
 			{renderSectionHeader(
-				'Wood Exposure Assessment',
+				'Oak',
 				woodOpen,
 				() => setWoodOpen((o) => !o),
-				countSelected(woodExposureKeys[wineType]),
+				countSelected(['Oak Descriptors', ...NOSE_OAK_ASSESSMENT]),
 			)}
-			<div className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`}>
+			<div className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`} inert={!woodOpen}>
 				<div className="nose-collapsible__inner">
 					<div className="nose-wood-layout">
-						{/* Wood Aromas — left, no background */}
+						{/* Descriptors — left, no background */}
 						<div className="nose-fruit-category nose-wood-layout__aromas">
-							{renderFruitCategory('Wood Aromas')}
+							{renderFruitCategory('Oak Descriptors')}
 						</div>
 
-						{/* Origin + Condition — right, stacked, individual cards */}
+						{/* New oak, intensity, type — right, stacked, individual cards */}
 						<div className="nose-wood-layout__assessment">
-							{woodAssessmentKeys[wineType].map((cat) => (
+							{NOSE_OAK_ASSESSMENT.map((cat) => (
 								<div key={cat} className="tasting-card">
 									{renderCategory(cat, true)}
 								</div>

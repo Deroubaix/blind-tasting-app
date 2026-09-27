@@ -11,10 +11,9 @@ const service = new ClientTastingService();
 type SavedTasting = TastingData & { id: string; created_at: string };
 
 function formatKey(key: string): string {
-	return key
-		.replace(/([A-Z])/g, ' $1')
-		.replace(/^./, (s) => s.toUpperCase())
-		.trim();
+	// Splits camelCase keys from older tastings ("StainedTears"); grid labels like
+	// "Apple/Pear" or "Intensity of Color" already read correctly and pass through.
+	return key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (s) => s.toUpperCase());
 }
 
 function PhaseSection({ label, data }: { label: string; data: Record<string, string | string[]> | undefined | null }) {
@@ -82,6 +81,7 @@ export default function TastingDetail({ id }: { id: string }) {
 	const countryOfOrigin = final.countryOfOrigin ?? null;
 	const regionAppellation = final.regionAppellation ?? null;
 	const qualityLevel = final.qualityLevel ?? null;
+	const styleCategory = final.styleCategory ?? null;
 	const vintage = final.vintage ?? null;
 
 	const title = tasting.wineName || grapeVariety || 'Untitled Tasting';
@@ -99,16 +99,19 @@ export default function TastingDetail({ id }: { id: string }) {
 
 	const finalConclusionFields: Record<string, string> = {};
 	if (grapeVariety) {
-		finalConclusionFields['Grape Variety'] = grapeVariety;
+		finalConclusionFields['Grape Variety or Blend'] = grapeVariety;
 	}
 	if (countryOfOrigin) {
 		finalConclusionFields['Country of Origin'] = countryOfOrigin;
 	}
 	if (regionAppellation) {
-		finalConclusionFields['Region / Appellation'] = regionAppellation;
+		finalConclusionFields['Region and Appellation'] = regionAppellation;
 	}
 	if (qualityLevel) {
-		finalConclusionFields['Quality Level'] = qualityLevel;
+		finalConclusionFields['Official Quality Level'] = qualityLevel;
+	}
+	if (styleCategory) {
+		finalConclusionFields['Official Style Category'] = styleCategory;
 	}
 	if (vintage) {
 		finalConclusionFields['Vintage'] = vintage;
@@ -125,7 +128,7 @@ export default function TastingDetail({ id }: { id: string }) {
 		initialFields['Age Range'] = initial.ageRange;
 	}
 	if (initial?.grapeVarieties?.length) {
-		initialFields['Grape Varieties'] = initial.grapeVarieties.join(', ');
+		initialFields['Possible Grape Varieties'] = initial.grapeVarieties.join(', ');
 	}
 	if (initial?.possibleCountries?.length) {
 		initialFields['Possible Countries'] = initial.possibleCountries.join(', ');

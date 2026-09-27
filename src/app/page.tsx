@@ -48,7 +48,7 @@ const PHASES = [
 	},
 ];
 
-const SWATCHES = wineColors.red.spectrum.map((s, i) => ({
+const SWATCHES = wineColors.red.primary.map((s, i) => ({
 	...s,
 	selected: i === 2,
 }));
@@ -107,7 +107,7 @@ export default function Homepage() {
 
 							<div className="hp-preview__field">
 								<div className="hp-field-q">
-									<span>Core spectrum</span>
+									<span>Primary color</span>
 									<span className="hp-field-q__hint">Single select</span>
 								</div>
 								<div className="hp-swatch-grid">
@@ -125,7 +125,7 @@ export default function Homepage() {
 
 							<div className="hp-preview__field">
 								<div className="hp-field-q">
-									<span>Concentration</span>
+									<span>Intensity of color</span>
 									<span className="hp-field-q__hint">Single select</span>
 								</div>
 								<div className="hp-pill-row">
@@ -143,14 +143,11 @@ export default function Homepage() {
 							<div className="hp-preview__field">
 								<div className="hp-field-q">
 									<span>Rim variation</span>
-									<span className="hp-field-q__hint">Single select</span>
+									<span className="hp-field-q__hint">Red wines</span>
 								</div>
 								<div className="hp-pill-row">
-									{['Distinct', 'Slight', 'None'].map((label) => (
-										<span
-											key={label}
-											className={`hp-pill${label === 'Distinct' ? ' hp-pill--on' : ''}`}
-										>
+									{['Yes', 'No'].map((label) => (
+										<span key={label} className={`hp-pill${label === 'Yes' ? ' hp-pill--on' : ''}`}>
 											{label}
 										</span>
 									))}

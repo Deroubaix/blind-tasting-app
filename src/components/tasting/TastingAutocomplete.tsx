@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import useDropPlacement from './useDropPlacement';
+import { matchSuggestions, resolveEnter } from './autocompleteMatch';
 
 interface Props {
 	suggestions: string[];
@@ -17,8 +18,7 @@ export default function TastingAutocomplete({ suggestions, value, onChange, onCo
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const wrapRef = useRef<HTMLDivElement>(null);
 
-	const filtered =
-		value.trim().length > 0 ? suggestions.filter((s) => s.toLowerCase().includes(value.toLowerCase().trim())) : [];
+	const filtered = matchSuggestions(value, suggestions);
 
 	const showDropdown = open && filtered.length > 0;
 	const { dropUp, maxHeight } = useDropPlacement(wrapRef, showDropdown);
@@ -42,7 +42,7 @@ export default function TastingAutocomplete({ suggestions, value, onChange, onCo
 			if (activeIndex >= 0 && filtered[activeIndex]) {
 				select(filtered[activeIndex]);
 			} else {
-				onConfirm(value);
+				onConfirm(resolveEnter(value, suggestions));
 				setOpen(false);
 			}
 		} else if (e.key === 'Escape') {

@@ -14,7 +14,6 @@ describe('icAnsweredCount', () => {
 
 	it('reaches the required count when every field is answered', () => {
 		const full = {
-			worldOrigin: 'Old World',
 			climate: 'Cool',
 			ageRange: '3-5 years',
 			grapeVarieties: ['Pinot Noir'],
@@ -25,7 +24,11 @@ describe('icAnsweredCount', () => {
 	});
 
 	it('does not count a cleared answer', () => {
-		expect(icAnsweredCount({ worldOrigin: null, climate: 'Warm' })).toBe(1);
+		expect(icAnsweredCount({ climate: null, ageRange: '1-3 years' })).toBe(1);
+	});
+
+	it('ignores Old/New World, which the 2024 grid dropped', () => {
+		expect(icAnsweredCount({ worldOrigin: 'Old World' })).toBe(0);
 	});
 });
 
@@ -35,10 +38,14 @@ describe('fcAnsweredCount', () => {
 		expect(fcAnsweredCount({ grapeVariety: 'Malbec', vintage: '' })).toBe(1);
 	});
 
-	it('reaches the full count when all five are answered', () => {
+	it('reaches the full count when grape, country, region and vintage are answered', () => {
 		const full = Object.fromEntries(FC_REQUIRED.map((key) => [key, 'x']));
 
 		expect(fcAnsweredCount(full)).toBe(FC_REQUIRED.length);
+	});
+
+	it('does not require quality level or style, which are "where appropriate"', () => {
+		expect(fcAnsweredCount({ qualityLevel: 'Grand Cru', styleCategory: 'Sec' })).toBe(0);
 	});
 
 	it('ignores fields that are not part of the conclusion', () => {
