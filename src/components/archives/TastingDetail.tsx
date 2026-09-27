@@ -46,7 +46,7 @@ function PhaseSection({ label, data }: { label: string; data: Record<string, str
 	);
 }
 
-export default function TastingDetail({ id }: { id: string }) {
+export default function TastingDetail({ id, openReveal = false }: { id: string; openReveal?: boolean }) {
 	const [tasting, setTasting] = useState<SavedTasting | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -187,7 +187,12 @@ export default function TastingDetail({ id }: { id: string }) {
 				)}
 			</div>
 
-			<RevealPanel tasting={tasting} title={title} onRevealed={(updated) => setTasting(updated)} />
+			<RevealPanel
+				tasting={tasting}
+				title={title}
+				openForm={openReveal}
+				onRevealed={(updated) => setTasting(updated)}
+			/>
 
 			<PhaseSection label="Sight" data={tasting.sight as Record<string, string>} />
 			<PhaseSection label="Nose" data={tasting.nose as Record<string, string[]>} />

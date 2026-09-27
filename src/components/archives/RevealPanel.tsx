@@ -22,15 +22,18 @@ type SavedTasting = TastingData & { id: string; created_at: string };
 export default function RevealPanel({
 	tasting,
 	title,
+	openForm = false,
 	onRevealed,
 }: {
 	tasting: SavedTasting;
 	title: string;
+	/** Start on the form rather than the invitation — the archive card's Reveal button. */
+	openForm?: boolean;
 	onRevealed: (tasting: SavedTasting) => void;
 }) {
 	const revealed = isRevealed(tasting.reveal);
-	const [editing, setEditing] = useState(false);
-	const [draft, setDraft] = useState<Reveal>({});
+	const [editing, setEditing] = useState(openForm && !revealed);
+	const [draft, setDraft] = useState<Reveal>(() => ({ ...(tasting.reveal ?? {}) }));
 	const [saving, setSaving] = useState(false);
 	const { showToast } = useToastProvider();
 

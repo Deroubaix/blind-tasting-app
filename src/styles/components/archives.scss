@@ -85,16 +85,31 @@
 		}
 	}
 
-	// Dashed, so it reads as waiting rather than failed.
-	&__unrevealed {
+	// Not yet revealed: the chip is the way in. Dashed, so it reads as waiting rather than failed,
+	// and raised above the card's stretched Details link so it takes its own clicks.
+	&__reveal {
+		position: relative;
+		z-index: 1;
 		padding: 3px 8px;
 		border-radius: 4px;
-		border: 1px dashed rgba(228, 228, 204, 0.25);
-		font-size: $text-9;
+		border: 1px dashed rgba(228, 228, 204, 0.35);
+		font-size: $text-11;
 		font-weight: $font-weight-bold;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: $color-text-secondary;
+		color: $tasting-accent-light;
+		@include transition(color border-color, 0.15s);
+
+		&:after {
+			display: none;
+		}
+
+		&:hover,
+		&:focus-visible {
+			border-style: solid;
+			border-color: $tasting-accent-light;
+			color: $color-white;
+		}
 	}
 
 	&__call {

@@ -75,7 +75,7 @@ export default function Homepage() {
 
 						<p className="hp-hero__lede">
 							A practice ledger for sommelier students. Walk the five phases of the deductive method, with
-							optional timers, and save your sessions to review later.
+							optional timers, then reveal the wine and see your call scored against the label.
 						</p>
 
 						{/* Log in lives in the nav; repeating it here left sign-up with no route in
@@ -165,17 +165,19 @@ export default function Homepage() {
 							</footer>
 						</article>
 
-						{/* Secondary card — a saved past tasting */}
+						{/* Secondary card — a saved tasting after its reveal, scored as the archive shows it */}
 						<article className="hp-preview hp-preview--ledger">
 							<header className="hp-ledger__head">
-								<span className="hp-ledger__badge">White · Saved</span>
+								<span className="hp-ledger__badge">White · Revealed</span>
 								<span className="hp-ledger__when">2 days ago</span>
 							</header>
-							<p className="hp-ledger__title">Sauvignon Blanc, Marlborough</p>
-							<p className="hp-ledger__sub">2022 · Cool climate · 1-3 years</p>
+							<p className="hp-ledger__title">Sauvignon Blanc, Marlborough 2022</p>
+							<p className="hp-ledger__sub">
+								Your call · Sauvignon Blanc, New Zealand, Marlborough, 2023
+							</p>
 							<div className="hp-ledger__result">
-								<span className="hp-ledger__result-label">Session length</span>
-								<span className="hp-ledger__result-value">04:00</span>
+								<span className="hp-ledger__result-label">Reveal score</span>
+								<span className="hp-ledger__result-value">3 / 4</span>
 							</div>
 						</article>
 					</div>
@@ -194,7 +196,8 @@ export default function Homepage() {
 						</div>
 						<p className="hp-method__desc">
 							Each session walks the five phases of the deductive tasting method in order, under an
-							optional clock at exam pace. Reach the end, add notes, and save.
+							optional clock at exam pace. Save it, then unwrap the bottle: enter the label and your call
+							is scored against it, field by field.
 						</p>
 					</header>
 

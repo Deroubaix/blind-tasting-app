@@ -1,17 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import {
 	IconGlassFull,
 	IconBottle,
+	IconVolume,
 	IconVolumeOff,
 	IconStopwatch,
+	IconX,
 	IconArrowRight,
 	IconInfoCircle,
 } from '@tabler/icons-react';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { useTastingContext } from '../../components/tasting/TastingContext';
+import { unlockAudio } from '../../utils/beep';
 import {
 	DEFAULT_TIMER_MODE,
 	DEFAULT_TIMER_SECONDS,
@@ -35,17 +38,78 @@ const PHASE_KEYS: { num: string; name: string; key: TimerPhase }[] = [
 	{ num: '05', name: 'Final', key: 'finalConclusion' },
 ];
 
+/**
+ * The last settings a taster started with, so a flight of six wines is set up once, not six
+ * times. Only in this browser: a convenience, not something the account needs to keep. Its
+ * absence is also how a first visit is recognised.
+ */
+const SETTINGS_KEY = 'ledger:start-settings';
+
+type StartSettings = {
+	soundEnabled: boolean;
+	timerEnabled: boolean;
+	timerSeconds: number;
+	timerMode: TimerMode;
+};
+
+/** The stored settings as a raw string: a stable snapshot for useSyncExternalStore. */
+function readRawSettings(): string | null {
+	try {
+		return window.localStorage.getItem(SETTINGS_KEY);
+	} catch {
+		return null;
+	}
+}
+
+function parseSettings(raw: string | null | undefined): Partial<StartSettings> | null {
+	if (!raw) {
+		return null;
+	}
+	try {
+		return JSON.parse(raw) as Partial<StartSettings>;
+	} catch {
+		return null;
+	}
+}
+
+// Nothing else writes the settings while this page is open, so there is nothing to subscribe to.
+const noSubscription = () => () => {};
+
+function writeSettings(settings: StartSettings) {
+	try {
+		window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+	} catch {
+		// Private mode or storage blocked: the defaults will do next time.
+	}
+}
+
 export default function TastingStartClient() {
 	const router = useRouter();
 	const { showToast } = useToastProvider();
 	const { updateTastingData } = useTastingContext();
 
 	const [wineType, setWineType] = useState<'White' | 'Red' | null>(null);
-	const [soundEnabled, setSoundEnabled] = useState(false);
-	const [timerEnabled, setTimerEnabled] = useState(true);
-	const [timerSeconds, setTimerSeconds] = useState<number>(DEFAULT_TIMER_SECONDS);
-	const [timerMode, setTimerMode] = useState<TimerMode>(DEFAULT_TIMER_MODE);
+	// `undefined` while server-rendering, where there is no storage; `null` on a first visit.
+	const rawSettings = useSyncExternalStore(noSubscription, readRawSettings, () => undefined);
+	const saved = useMemo(() => parseSettings(rawSettings), [rawSettings]);
+	const firstVisit = rawSettings === null;
+
+	// Each setting is the taster's choice on this page if they made one, else what they last
+	// started with, else the default. A first tasting starts untimed, so the grid can be learned
+	// before it is raced.
+	const [soundChoice, setSoundEnabled] = useState<boolean | null>(null);
+	const [timerChoice, setTimerEnabled] = useState<boolean | null>(null);
+	const [secondsChoice, setTimerSeconds] = useState<number | null>(null);
+	const [modeChoice, setTimerMode] = useState<TimerMode | null>(null);
 	const [wineName, setWineName] = useState('');
+	const [introHidden, setIntroHidden] = useState(false);
+
+	const savedSeconds = TIMER_PRESETS.find((preset) => preset.seconds === saved?.timerSeconds)?.seconds;
+	const savedMode = saved?.timerMode === 'guided' || saved?.timerMode === 'exam' ? saved.timerMode : undefined;
+	const soundEnabled = soundChoice ?? saved?.soundEnabled ?? true;
+	const timerEnabled = timerChoice ?? saved?.timerEnabled ?? !firstVisit;
+	const timerSeconds = secondsChoice ?? savedSeconds ?? DEFAULT_TIMER_SECONDS;
+	const timerMode = modeChoice ?? savedMode ?? DEFAULT_TIMER_MODE;
 
 	const handleStart = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -57,6 +121,12 @@ export default function TastingStartClient() {
 				color: 'error',
 			});
 			return;
+		}
+
+		writeSettings({ soundEnabled, timerEnabled, timerSeconds, timerMode });
+		if (soundEnabled && timerEnabled) {
+			// This tap is what lets the time-up beep sound on iOS later. See beep.ts.
+			unlockAudio();
 		}
 
 		updateTastingData({
@@ -86,6 +156,38 @@ export default function TastingStartClient() {
 					Configure the session below. You can practise without an account — sign up later to save it.
 				</p>
 			</header>
+
+			{firstVisit && !introHidden && (
+				<section className="start-intro" aria-labelledby="start-intro-heading">
+					<button
+						type="button"
+						className="start-intro__close"
+						onClick={() => setIntroHidden(true)}
+						aria-label="Hide how it works"
+					>
+						<IconX size={16} aria-hidden="true" />
+					</button>
+					<h2 className="start-intro__heading" id="start-intro-heading">
+						First time here? How it works
+					</h2>
+					<ol className="start-intro__steps">
+						<li>
+							<strong>Five phases, in the order of the grid:</strong> Sight, Nose, Palate, then an initial
+							and a final conclusion. Tap the terms that describe the wine; tap a chosen term again to
+							clear it.
+						</li>
+						<li>
+							<strong>The clock is optional.</strong> Your first tasting is untimed so you can learn the
+							grid. Later, Guided gives each phase its own clock and moves you on when it runs out; Exam
+							gives one clock for the whole wine. Either can be paused.
+						</li>
+						<li>
+							<strong>Then the reveal.</strong> Save the tasting, unwrap the bottle and enter what&apos;s
+							on the label. Your call is scored against it, field by field.
+						</li>
+					</ol>
+				</section>
+			)}
 
 			<form onSubmit={handleStart}>
 				{/* ── Step 1: Wine type ── */}
@@ -146,18 +248,20 @@ export default function TastingStartClient() {
 					<div className="start-settings">
 						<div className="start-setting-row">
 							<div className="start-setting-icon">
-								<IconVolumeOff size={18} />
+								{soundEnabled ? <IconVolume size={18} /> : <IconVolumeOff size={18} />}
 							</div>
 							<div className="start-setting-text">
 								<div className="start-setting-name">Sound</div>
-								<p className="start-setting-desc">Audible cue when the timer reaches zero.</p>
+								<p className="start-setting-desc">
+									A beep when the timer reaches zero. On iPhone it follows the silent switch.
+								</p>
 							</div>
 							<button
 								type="button"
 								className="start-switch"
 								aria-pressed={soundEnabled}
 								aria-label="Toggle sound"
-								onClick={() => setSoundEnabled((v) => !v)}
+								onClick={() => setSoundEnabled(!soundEnabled)}
 							>
 								<span className="start-switch__knob" />
 							</button>
@@ -179,7 +283,7 @@ export default function TastingStartClient() {
 								className="start-switch"
 								aria-pressed={timerEnabled}
 								aria-label="Toggle timer"
-								onClick={() => setTimerEnabled((v) => !v)}
+								onClick={() => setTimerEnabled(!timerEnabled)}
 							>
 								<span className="start-switch__knob" />
 							</button>

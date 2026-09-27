@@ -97,9 +97,10 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 		try {
 			const photoKey = await uploadPhoto();
 			stage = 'tasting';
-			await tastingService.saveTasting({ ...tastingData, photoKey }).response;
+			const { tasting } = await tastingService.saveTasting({ ...tastingData, photoKey }).response;
 			resetTastingData();
-			router.push('/archives');
+			// Straight to the tasting just saved, where the reveal is waiting, not to the list.
+			router.push(tasting.id ? `/archives/${tasting.id}` : '/archives');
 		} catch (error) {
 			const apiError = JsonApiError.create(error);
 			const isAuthError = apiError.statusCode === 401;

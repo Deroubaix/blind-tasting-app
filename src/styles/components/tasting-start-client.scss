@@ -59,6 +59,62 @@
 	margin: 0;
 }
 
+// ── First-visit intro ─────────────────────────────────────────────────────────
+.start-intro {
+	position: relative;
+	margin-bottom: 3rem;
+	padding: $spacing-lg $spacing-xl;
+	border: 1px solid $tasting-border-mid;
+	border-left: 3px solid $color-accent;
+	border-radius: 8px;
+	background-color: $color-darkGrey;
+
+	@include responsive($breakpoint-mobile) {
+		margin-bottom: 2.5rem;
+		padding: $spacing-md $spacing-lg;
+	}
+
+	&__heading {
+		margin: 0 2.5rem $spacing-md 0;
+		font-size: $text-16;
+		font-weight: $font-weight-bold;
+		color: $color-white;
+	}
+
+	&__steps {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-sm;
+		margin: 0;
+		padding-left: 1.25rem;
+		font-size: $text-14;
+		line-height: 1.6;
+		color: $color-text-secondary;
+
+		strong {
+			color: $color-white;
+			font-weight: $font-weight-semibold;
+		}
+	}
+
+	&__close {
+		@include bare-button;
+
+		position: absolute;
+		top: $spacing-sm;
+		right: $spacing-sm;
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		color: $color-text-muted;
+
+		&:hover,
+		&:focus-visible {
+			color: $color-white;
+		}
+	}
+}
+
 // ── Steps ─────────────────────────────────────────────────────────────────────
 .start-step {
 	display: flex;

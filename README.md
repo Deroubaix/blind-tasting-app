@@ -18,10 +18,20 @@ minutes). There are two clocks:
 
 - **Guided** gives each phase its own share and moves you on when it runs out. The split is the
   app's own scaffolding for learning to pace — the exam has no per-phase times — with half for the
-  nose, where most candidates are ruled out, and an eighth for each other phase.
+  nose, where most candidates are ruled out, and an eighth for each other phase. Each phase's
+  deadline is stamped the first time it is opened, so stepping Back finds its clock where it was
+  rather than full again; a phase whose time has run out shows 00:00 but does not move you on twice.
 - **Exam** runs one clock for the whole wine, as the exam does. You move between phases yourself;
   when the total runs out you go to Save from wherever you are. The deadline is stamped when Start
   is pressed and carried in the tasting context, so every phase page counts down to the same moment.
+
+Either clock can be **paused**, which covers the sheet — it is for stepping away, not for thinking
+time — and resuming pushes every deadline back by the time spent paused (`src/data/timerClock.ts`).
+The time-up beep is on by default; on iOS it only sounds because Start (and the first tap on each
+page) starts the audio from a tap, and it still follows the silent switch.
+
+A first visit to Start shows a short how-it-works and starts untimed; after that, Start remembers
+the last settings in this browser.
 
 The table shows the guided split. The timer is stored as `timerSeconds` and `timerMode`.
 

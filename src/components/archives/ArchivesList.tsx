@@ -155,7 +155,13 @@ export default function ArchivesList() {
 										{comparison.score} / {comparison.outOf}
 									</span>
 								) : (
-									<span className="archive-card__unrevealed">Not revealed</span>
+									<Link
+										href={`/archives/${tasting.id}?reveal=1`}
+										className="archive-card__reveal no-underline"
+										aria-label={`Reveal the wine for ${title}`}
+									>
+										Reveal →
+									</Link>
 								)}
 							</div>
 							{tasting.number != null && <span className="archive-card__id">No. {tasting.number}</span>}
