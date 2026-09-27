@@ -124,6 +124,7 @@ $modal-padding-horizontal: 2rem;
 		}
 
 		.close-btn {
+			@include bare-button;
 			color: $color-text-secondary;
 			cursor: pointer;
 			flex-shrink: 0;

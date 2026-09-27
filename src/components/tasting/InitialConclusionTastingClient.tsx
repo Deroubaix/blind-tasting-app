@@ -63,8 +63,14 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 					<div className="section-label">Environment</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Climate</div>
-						<div className="tasting-options tasting-options--equal">
+						<div className="tasting-card__label" id="ic-climate-label">
+							Climate
+						</div>
+						<div
+							className="tasting-options tasting-options--equal"
+							role="group"
+							aria-labelledby="ic-climate-label"
+						>
 							{CLIMATES.map((opt) => (
 								<button
 									key={opt}
@@ -81,8 +87,10 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 					<div className="section-label section-label--mt">Maturity</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Age Range</div>
-						<div className="tasting-options">
+						<div className="tasting-card__label" id="ic-age-label">
+							Age Range
+						</div>
+						<div className="tasting-options" role="group" aria-labelledby="ic-age-label">
 							{AGE_RANGES.map((opt) => (
 								<button
 									key={opt}
@@ -106,6 +114,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 						<div className="tasting-search-row">
 							<TastingAutocomplete
 								suggestions={GRAPE_VARIETALS}
+								ariaLabel="Possible grape varieties"
 								value={varietalInput}
 								onChange={setVarietalInput}
 								onConfirm={addVarietal}
@@ -127,6 +136,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 										{v}
 										<button
 											className="tasting-chip__remove"
+											aria-label={`Remove ${v}`}
 											onClick={() =>
 												updateIC({ grapeVarieties: ic.grapeVarieties!.filter((x) => x !== v) })
 											}
@@ -146,6 +156,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 						<div className="tasting-search-row">
 							<TastingAutocomplete
 								suggestions={WINE_COUNTRIES}
+								ariaLabel="Possible countries"
 								value={countryInput}
 								onChange={setCountryInput}
 								onConfirm={addCountry}
@@ -167,6 +178,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 										{c}
 										<button
 											className="tasting-chip__remove"
+											aria-label={`Remove ${c}`}
 											onClick={() =>
 												updateIC({
 													possibleCountries: ic.possibleCountries!.filter((x) => x !== c),

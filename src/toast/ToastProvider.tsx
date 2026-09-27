@@ -57,13 +57,13 @@ export default function ToastProvider(props: ToastProviderProps) {
 	return (
 		<ToastProviderContext.Provider value={value}>
 			{children}
-			{toasts.length > 0 && (
-				<div className="ToastProvider">
-					{toasts.map((props) => {
-						return <Toast key={props.toastId} {...props} onClose={hideToast} />;
-					})}
-				</div>
-			)}
+			{/* Always mounted: a live region only announces changes made after it exists, so one
+			    created together with its first toast would stay silent. */}
+			<div className="ToastProvider" role="status" aria-live="polite">
+				{toasts.map((props) => {
+					return <Toast key={props.toastId} {...props} onClose={hideToast} />;
+				})}
+			</div>
 		</ToastProviderContext.Provider>
 	);
 }

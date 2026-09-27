@@ -153,9 +153,9 @@ export default function Header() {
 
 				{/* Mobile menu overlay */}
 				<div className={`menu-links ${showNavbar ? 'show' : ''}`}>
-					<div className="close-menu" onClick={closeMenu}>
-						<IconX size={28} />
-					</div>
+					<button className="close-menu" onClick={closeMenu} aria-label="Close menu">
+						<IconX size={28} aria-hidden="true" />
+					</button>
 					<Link href="/" onClick={closeMenu}>
 						Home
 					</Link>

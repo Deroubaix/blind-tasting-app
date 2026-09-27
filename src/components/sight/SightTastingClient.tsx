@@ -42,7 +42,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 	// ─── Sub-renderers ───────────────────────────────────────────────────────────
 
 	const renderOptions = (field: string, options: readonly string[]) => (
-		<div className="tasting-options">
+		<div className="tasting-options" role="group" aria-label={field}>
 			{options.map((opt) => {
 				const on = isChosen(field, opt);
 				return (
@@ -60,7 +60,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 	);
 
 	const renderToggle = (field: string) => (
-		<div className="sight-toggle-group">
+		<div className="sight-toggle-group" role="group" aria-label={field}>
 			{SIGHT_YES_NO.map((opt) => {
 				const on = isChosen(field, opt);
 				return (
@@ -84,7 +84,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 
 		return (
 			<>
-				<div className="sight-swatches">
+				<div className="sight-swatches" role="group" aria-label={field}>
 					{items.map((item) => {
 						const on = isChosen(field, item.name);
 						return (

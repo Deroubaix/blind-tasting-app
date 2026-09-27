@@ -147,9 +147,12 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 					<div className="fc-grid">
 						{/* Grape Variety/Blend */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Grape Variety or Blend</label>
+							<label className="tasting-card__label" htmlFor="fc-grape">
+								Grape Variety or Blend
+							</label>
 							<div className="tasting-search-row">
 								<TastingAutocomplete
+									id="fc-grape"
 									suggestions={GRAPE_VARIETALS}
 									value={grapeInput}
 									onChange={setGrapeInput}
@@ -169,7 +172,11 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 								<div className="tasting-chips">
 									<span className="tasting-chip">
 										{grapeVariety}
-										<button className="tasting-chip__remove" onClick={() => setGrapeVariety('')}>
+										<button
+											className="tasting-chip__remove"
+											aria-label={`Remove ${grapeVariety}`}
+											onClick={() => setGrapeVariety('')}
+										>
 											×
 										</button>
 									</span>
@@ -179,9 +186,12 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 
 						{/* Country of Origin */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Country of Origin</label>
+							<label className="tasting-card__label" htmlFor="fc-country">
+								Country of Origin
+							</label>
 							<div className="tasting-search-row">
 								<TastingAutocomplete
+									id="fc-country"
 									suggestions={WINE_COUNTRIES}
 									value={countryInput}
 									onChange={setCountryInput}
@@ -201,7 +211,11 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 								<div className="tasting-chips">
 									<span className="tasting-chip">
 										{countryOfOrigin}
-										<button className="tasting-chip__remove" onClick={() => setCountryOfOrigin('')}>
+										<button
+											className="tasting-chip__remove"
+											aria-label={`Remove ${countryOfOrigin}`}
+											onClick={() => setCountryOfOrigin('')}
+										>
 											×
 										</button>
 									</span>
@@ -211,9 +225,12 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 
 						{/* Region/Appellation */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Region and Appellation</label>
+							<label className="tasting-card__label" htmlFor="fc-region">
+								Region and Appellation
+							</label>
 							<div className="tasting-search-row">
 								<TastingAutocomplete
+									id="fc-region"
 									suggestions={WINE_REGIONS}
 									value={regionInput}
 									onChange={setRegionInput}
@@ -235,6 +252,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 										{regionAppellation}
 										<button
 											className="tasting-chip__remove"
+											aria-label={`Remove ${regionAppellation}`}
 											onClick={() => setRegionAppellation('')}
 										>
 											×
@@ -247,9 +265,12 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 						{/* Quality level and style category are "where appropriate" on the grid, so each
 						    can be left blank or cleared, and neither counts toward completion. */}
 						<div className="fc-field">
-							<label className="tasting-card__label">Official Quality Level</label>
+							<span className="tasting-card__label" id="fc-quality-label">
+								Official Quality Level
+							</span>
 							<TastingCustomSelect
 								options={QUALITY_LEVELS}
+								labelId="fc-quality-label"
 								value={qualityLevel}
 								onChange={setQualityLevel}
 								placeholder="Where appropriate…"
@@ -258,9 +279,12 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 						</div>
 
 						<div className="fc-field">
-							<label className="tasting-card__label">Official Style Category</label>
+							<span className="tasting-card__label" id="fc-style-label">
+								Official Style Category
+							</span>
 							<TastingCustomSelect
 								options={STYLE_CATEGORIES}
+								labelId="fc-style-label"
 								value={styleCategory}
 								onChange={setStyleCategory}
 								placeholder="Where appropriate…"
@@ -270,11 +294,14 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 
 						{/* Vintage */}
 						<div className="fc-field fc-field--half">
-							<label className="tasting-card__label">Vintage</label>
+							<label className="tasting-card__label" htmlFor="fc-vintage">
+								Vintage
+							</label>
 							<div className="tasting-search-row">
 								<div className="tasting-search-input-wrap">
 									<IconCalendar size={14} className="tasting-search-icon" />
 									<input
+										id="fc-vintage"
 										className="tasting-search-input"
 										placeholder="Enter the harvest year"
 										inputMode="numeric"

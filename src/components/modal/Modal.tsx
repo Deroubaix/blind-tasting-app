@@ -15,6 +15,9 @@ export type ModalProps = {
 	showClose?: boolean;
 };
 
+const FOCUSABLE =
+	'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+
 export type ModalImperativeRef = {
 	close: () => void;
 };
@@ -28,6 +31,22 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 	const showClose = props.showClose ?? true;
 
 	const elRef = useRef<HTMLDivElement>(null);
+	const innerRef = useRef<HTMLDivElement>(null);
+	const titleId = `${modalId}-title`;
+
+	// Keyboard focus moves into the dialog when it opens and goes back where it came from when it
+	// closes, so a keyboard or screen-reader user is neither left behind it nor lost after it.
+	useEffect(() => {
+		const previous = document.activeElement as HTMLElement | null;
+		// The body's first control rather than the header's close button: in a confirmation that
+		// is the safe choice ("Keep it", "Keep tasting"), not the destructive one.
+		const inner = innerRef.current;
+		const first =
+			inner?.querySelector('.body')?.querySelector<HTMLElement>(FOCUSABLE) ??
+			inner?.querySelector<HTMLElement>(FOCUSABLE);
+		(first ?? inner)?.focus();
+		return () => previous?.focus?.();
+	}, []);
 
 	const closeModal = useCallback(() => {
 		if (elRef.current) {
@@ -48,6 +67,23 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 				e.preventDefault();
 				e.stopPropagation();
 				closeModal();
+				return;
+			}
+			// Tab cycles within the dialog rather than escaping to the page behind it.
+			if (e.key === 'Tab' && innerRef.current) {
+				const focusable = [...innerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)];
+				if (focusable.length === 0) {
+					return;
+				}
+				const first = focusable[0];
+				const last = focusable[focusable.length - 1];
+				if (e.shiftKey && document.activeElement === first) {
+					e.preventDefault();
+					last.focus();
+				} else if (!e.shiftKey && document.activeElement === last) {
+					e.preventDefault();
+					first.focus();
+				}
 			}
 		};
 		document.addEventListener('keydown', handleKeyDown);
@@ -64,22 +100,31 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 		}
 	};
 
-	const handleCloseButtonClicked: MouseEventHandler<SVGSVGElement> = (e) => {
+	const handleCloseButtonClicked: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 		closeModal();
 	};
 
 	return (
-		<div ref={elRef} id={modalId} className={`Modal ${className ?? ''}`} role="dialog" aria-modal="true">
+		<div
+			ref={elRef}
+			id={modalId}
+			className={`Modal ${className ?? ''}`}
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby={title ? titleId : undefined}
+		>
 			<div className="overlay" onClick={handleOverlayClicked}></div>
-			<div className="inner">
+			<div className="inner" ref={innerRef} tabIndex={-1}>
 				<div className="content">
 					{(title || showClose) && (
 						<div className="header">
-							<h4>{title}</h4>
+							<h4 id={titleId}>{title}</h4>
 							{showClose && (
-								<IconX className="close-btn" onClick={handleCloseButtonClicked} stroke={1.5} />
+								<button className="close-btn" onClick={handleCloseButtonClicked} aria-label="Close">
+									<IconX stroke={1.5} aria-hidden="true" />
+								</button>
 							)}
 						</div>
 					)}

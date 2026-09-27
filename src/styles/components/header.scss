@@ -241,6 +241,7 @@ $item-gap: $page-spacing * 1.5;
 	}
 
 	.close-menu {
+		@include bare-button;
 		cursor: pointer;
 		color: $color-text-secondary;
 		align-self: flex-end;

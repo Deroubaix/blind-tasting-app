@@ -58,7 +58,7 @@ export default function Toast(props: ToastProps) {
 		};
 	}, [autoCloseMs, closeToast, toastId]);
 
-	const handleCloseButtonClicked: MouseEventHandler<SVGSVGElement> = (e) => {
+	const handleCloseButtonClicked: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 		closeToast();
@@ -68,7 +68,9 @@ export default function Toast(props: ToastProps) {
 		<div ref={ref} id={toastId} className={`Toast ${color} ${className ?? ''}`}>
 			{title && <h4 className="title">{title}</h4>}
 			{children && <div className="body">{children}</div>}
-			<IconX className="close" onClick={handleCloseButtonClicked} />
+			<button className="close" onClick={handleCloseButtonClicked} aria-label="Dismiss notification">
+				<IconX aria-hidden="true" />
+			</button>
 			{autoCloseMs ? <div ref={progressRef} className="autoclose" /> : null}
 		</div>
 	);

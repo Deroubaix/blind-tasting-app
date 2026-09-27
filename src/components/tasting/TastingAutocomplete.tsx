@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import useDropPlacement from './useDropPlacement';
 import { matchSuggestions, resolveEnter } from './autocompleteMatch';
 
@@ -11,9 +11,28 @@ interface Props {
 	onConfirm: (v: string) => void;
 	placeholder?: string;
 	icon?: React.ReactNode;
+	/** Id for the text box, so a visible <label htmlFor> names it. */
+	id?: string;
+	/** Name for screen readers when there is no <label> pointing at `id`. */
+	ariaLabel?: string;
 }
 
-export default function TastingAutocomplete({ suggestions, value, onChange, onConfirm, placeholder, icon }: Props) {
+/**
+ * A search box with suggestions, following the ARIA combobox pattern so screen readers announce
+ * the list and the highlighted suggestion as the arrows move through it.
+ */
+export default function TastingAutocomplete({
+	suggestions,
+	value,
+	onChange,
+	onConfirm,
+	placeholder,
+	icon,
+	id,
+	ariaLabel,
+}: Props) {
+	const listId = useId();
+	const optionId = (index: number) => `${listId}-option-${index}`;
 	const [open, setOpen] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const wrapRef = useRef<HTMLDivElement>(null);
@@ -67,7 +86,14 @@ export default function TastingAutocomplete({ suggestions, value, onChange, onCo
 			<div className="tasting-search-input-wrap">
 				{icon}
 				<input
+					id={id}
 					className="tasting-search-input"
+					role="combobox"
+					aria-label={ariaLabel}
+					aria-autocomplete="list"
+					aria-expanded={showDropdown}
+					aria-controls={listId}
+					aria-activedescendant={showDropdown && activeIndex >= 0 ? optionId(activeIndex) : undefined}
 					placeholder={placeholder}
 					value={value}
 					onChange={(e) => {
@@ -85,12 +111,18 @@ export default function TastingAutocomplete({ suggestions, value, onChange, onCo
 			</div>
 			{showDropdown && (
 				<ul
+					id={listId}
+					role="listbox"
+					aria-label={ariaLabel ?? 'Suggestions'}
 					className={`tasting-autocomplete__dropdown${dropUp ? ' tasting-autocomplete__dropdown--up' : ''}`}
 					style={{ maxHeight }}
 				>
 					{filtered.map((s, i) => (
 						<li
 							key={s}
+							id={optionId(i)}
+							role="option"
+							aria-selected={i === activeIndex}
 							className={`tasting-autocomplete__option${i === activeIndex ? ' tasting-autocomplete__option--active' : ''}`}
 							onMouseDown={(e) => {
 								e.preventDefault();

@@ -117,7 +117,11 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		const pill = SINGLE_SELECT.has(category) ? '' : ' tasting-option--pill';
 
 		return (
-			<div className={`tasting-options${equalWidth ? ' tasting-options--equal' : ''}`}>
+			<div
+				className={`tasting-options${equalWidth ? ' tasting-options--equal' : ''}`}
+				role="group"
+				aria-label={category}
+			>
 				{options.map((option) => {
 					const selected = selections.includes(option);
 					return (

@@ -62,7 +62,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 								</span>
 							)}
 						</div>
-						<div className="tasting-options">
+						<div className="tasting-options" role="group" aria-label={category}>
 							{options.map((option) => {
 								const selected = selectedOptions[category] === option;
 								return (
