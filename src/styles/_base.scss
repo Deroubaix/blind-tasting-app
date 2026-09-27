@@ -22,7 +22,9 @@ html {
 }
 
 :focus-visible {
-	outline: 2px solid $color-accent;
+	// The light accent: the base accent measures 2.7:1 on the dark ground, under the 3:1 a focus
+	// indicator needs. This one is 7.7:1. Every custom focus style below uses it too.
+	outline: 2px solid $color-accent-light;
 	outline-offset: 2px;
 }
 

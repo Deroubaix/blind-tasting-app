@@ -35,7 +35,7 @@
 		color: $color-text-muted;
 	}
 	&:focus {
-		border-color: $tasting-accent;
+		border-color: $tasting-accent-light;
 	}
 }
 
@@ -66,7 +66,7 @@ input.tasting-input {
 		color: $color-text-muted;
 	}
 	&:focus {
-		border-color: $tasting-accent;
+		border-color: $tasting-accent-light;
 	}
 }
 
@@ -110,10 +110,10 @@ input.tasting-input:focus-visible {
 	height: 40px;
 	@include transition(border-color, 0.15s);
 
-	// The inner input has `outline: none`, so this border is the whole focus signal —
-	// it takes the accent, the same as .tasting-input.
+	// The inner input has `outline: none`, so this border is the whole focus signal — it takes
+	// the light accent, the same as .tasting-input, to clear 3:1 against the page.
 	&:focus-within {
-		border-color: $tasting-accent;
+		border-color: $tasting-accent-light;
 	}
 }
 

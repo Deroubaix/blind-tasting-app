@@ -188,12 +188,12 @@
 
 	&:focus {
 		outline: none;
-		border-color: $color-accent;
+		border-color: $color-accent-light;
 		background-color: $color-surface-variant;
 	}
 
 	&:focus-visible {
-		box-shadow: 0 0 0 3px rgba(139, 69, 87, 0.25);
+		box-shadow: 0 0 0 1px $color-accent-light;
 	}
 
 	// Override browser autofill — prevent background + text colour changes
@@ -239,7 +239,7 @@
 	}
 
 	&:focus-visible {
-		outline: 2px solid $color-accent;
+		outline: 2px solid $color-accent-light;
 		outline-offset: 1px;
 	}
 }
