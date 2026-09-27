@@ -6,6 +6,9 @@ import { revealUpdateSchema } from '../../../../schemas/tasting';
 import { revealFields } from '../../../../lib/reveal';
 import { JsonApiError } from '../../../../utils/ErrorUtils';
 
+// Also what someone else's id gets, so the route never confirms another user's tasting exists.
+const NOT_FOUND = new JsonApiError('NotFound', 'This tasting does not exist, or it was deleted.', 404);
+
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const { id } = await params;
@@ -14,15 +17,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 			where: { id, userId },
 		});
 		if (!tasting) {
-			return new Response(JSON.stringify({ error: 'Not found' }), {
-				status: 404,
-				headers: { 'Content-Type': 'application/json' },
-			});
+			return errorResponse(NOT_FOUND);
 		}
-		return new Response(JSON.stringify({ tasting }), {
-			status: 200,
-			headers: { 'Content-Type': 'application/json' },
-		});
+		return jsonResponse({ tasting });
 	} catch (error) {
 		logServerError('GET /api/tastings/[id]', error);
 		return errorResponse(error);
@@ -40,10 +37,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
 		const userId = await requireUserId();
 		const tasting = await prisma.tasting.findFirst({ where: { id, userId }, select: { photoKey: true } });
 		if (!tasting) {
-			return new Response(JSON.stringify({ error: 'NotFound', message: 'Not found', statusCode: 404 }), {
-				status: 404,
-				headers: { 'Content-Type': 'application/json' },
-			});
+			return errorResponse(NOT_FOUND);
 		}
 
 		await prisma.tasting.deleteMany({ where: { id, userId } });
@@ -74,7 +68,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 		const { count } = await prisma.tasting.updateMany({ where: { id, userId }, data: revealFields(reveal) });
 		if (count === 0) {
-			throw new JsonApiError('NotFound', 'Not found', 404);
+			return errorResponse(NOT_FOUND);
 		}
 
 		const tasting = await prisma.tasting.findFirst({ where: { id, userId } });

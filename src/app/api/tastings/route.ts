@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../../../lib/prisma';
 import { JsonApiError } from '../../../utils/ErrorUtils';
-import { errorResponse, logServerError } from '../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError } from '../../../utils/ApiUtils';
 import { requireUserId } from '../../../lib/auth';
 import { tastingCreateSchema } from '../../../schemas/tasting';
 import { revealFields } from '../../../lib/reveal';
@@ -74,10 +74,7 @@ export async function GET() {
 			orderBy: { number: 'desc' },
 		});
 
-		return new Response(JSON.stringify({ tastings }), {
-			status: 200,
-			headers: { 'Content-Type': 'application/json' },
-		});
+		return jsonResponse({ tastings });
 	} catch (error) {
 		logServerError('GET /api/tastings', error);
 		return errorResponse(error);
@@ -110,10 +107,7 @@ export async function POST(request: Request) {
 
 		const tasting = await createWithNextNumber(userId, data);
 
-		return new Response(JSON.stringify({ message: 'Tasting saved', tasting }), {
-			status: 201,
-			headers: { 'Content-Type': 'application/json' },
-		});
+		return jsonResponse({ message: 'Tasting saved', tasting }, 201);
 	} catch (error) {
 		logServerError('POST /api/tastings', error);
 		return errorResponse(error);

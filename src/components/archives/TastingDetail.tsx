@@ -6,6 +6,7 @@ import { type TastingData } from '../../types/TastingData';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
 import RevealPanel from './RevealPanel';
+import { JsonApiError } from '../../utils/ErrorUtils';
 import { describeWine, isRevealed, revealTitle } from './revealScore';
 
 const service = new ClientTastingService();
@@ -55,7 +56,13 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 		service
 			.getTasting(id)
 			.then(setTasting)
-			.catch(() => setError('Tasting not found.'))
+			.catch((err) =>
+				setError(
+					JsonApiError.create(err).statusCode === 404
+						? 'This tasting does not exist, or it was deleted.'
+						: 'The tasting could not be loaded. Please try again.',
+				),
+			)
 			.finally(() => setIsLoading(false));
 	}, [id]);
 
@@ -71,9 +78,9 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 		return (
 			<div className="tasting-detail__container">
 				<Link href="/archives" className="tasting-detail__back no-underline">
-					← Back to Archives
+					← Back to Archive
 				</Link>
-				<div className="archives-error">{error ?? 'Tasting not found.'}</div>
+				<div className="archives-error">{error ?? 'This tasting does not exist, or it was deleted.'}</div>
 			</div>
 		);
 	}
@@ -141,7 +148,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	return (
 		<div className="tasting-detail__container">
 			<Link href="/archives" className="tasting-detail__back no-underline">
-				← Back to Archives
+				← Back to Archive
 			</Link>
 
 			<div className="tasting-detail__hero-top">
