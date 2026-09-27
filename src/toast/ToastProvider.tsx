@@ -3,7 +3,6 @@
 import React, { type ReactNode, createContext, useCallback, useContext, useState } from 'react';
 import Toast, { type ToastProps } from './Toast';
 import { v4 as uuid } from 'uuid';
-import NotificationUtils from '../utils/NotificationsUtils';
 
 const DEFAULT_AUTO_CLOSE_MS = 8000;
 
@@ -26,8 +25,8 @@ export default function ToastProvider(props: ToastProviderProps) {
 
 	const [toasts, setToasts] = useState<ToastProps[]>([]);
 
-	// Toasts close themselves unless told otherwise, matching NotificationUtils: one that waits for
-	// its close button outlives the page it was about — it follows the taster through a redirect.
+	// Toasts close themselves unless told otherwise: one that waits for its close button outlives
+	// the page it was about.
 	// Pass `autoCloseMs: 0` for the rare toast that genuinely has to be dismissed.
 	const showToast = (toast: OpenToast) => {
 		const toastId = toast.toastId ?? uuid();
@@ -51,8 +50,6 @@ export default function ToastProvider(props: ToastProviderProps) {
 		showToast,
 		hideToast,
 	};
-
-	NotificationUtils.setToastProvider(value);
 
 	return (
 		<ToastProviderContext.Provider value={value}>

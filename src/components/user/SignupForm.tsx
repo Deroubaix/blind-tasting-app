@@ -9,7 +9,7 @@ import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
 import TextInput from '../form/TextInput';
-import NotificationUtils from '../../utils/NotificationsUtils';
+import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { zodResolver } from '../../utils/FormUtils';
 import { signupSchema, PASSWORD_MIN_LENGTH, type SignupFormType } from '../../schemas/auth';
@@ -27,6 +27,7 @@ export default function SignupForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { signUp, signIn } = useAuthProvider();
+	const { showToast } = useToastProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
 
 	const redirectTo = safeRedirect(searchParams.get('r'));
@@ -46,7 +47,7 @@ export default function SignupForm() {
 			await signUp(values.displayName, values.email, values.password);
 			await signIn(values.email, values.password);
 
-			NotificationUtils.showSuccess('Account created successfully!', 'Welcome to the Ledger');
+			showToast({ title: 'Welcome to the Ledger', children: 'Your account is ready.', color: 'success' });
 			router.push(redirectTo);
 		} catch (err) {
 			const isSyntaxError = err instanceof SyntaxError;
@@ -56,8 +57,8 @@ export default function SignupForm() {
 					)
 				: JsonApiError.create(err);
 
+			// Shown on the form only, as on login.
 			setError(apiError.message || 'Failed to sign up');
-			NotificationUtils.showError(apiError, 'Signup Failed');
 		} finally {
 			removeLoader(loader);
 		}

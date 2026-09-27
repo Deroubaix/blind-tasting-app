@@ -9,7 +9,7 @@ import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
 import TextInput from '../form/TextInput';
-import NotificationUtils from '../../utils/NotificationsUtils';
+import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { zodResolver } from '../../utils/FormUtils';
 import { loginSchema, type LoginFormType } from '../../schemas/auth';
@@ -27,6 +27,7 @@ export default function LoginForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { signIn } = useAuthProvider();
+	const { showToast } = useToastProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
 
 	const redirectTo = safeRedirect(searchParams.get('r'));
@@ -45,14 +46,14 @@ export default function LoginForm() {
 
 		try {
 			await signIn(values.email, values.password);
-			NotificationUtils.showSuccess('Login successful', 'Welcome back');
+			showToast({ title: 'Welcome back', children: 'You are logged in.', color: 'success' });
 			router.push(redirectTo);
 		} catch (err) {
 			const apiError = JsonApiError.create(err);
 			const message = apiError.statusCode === 401 ? 'Incorrect email and/or password.' : apiError.message;
 
+			// Shown on the form only; a toast repeating it said the same thing twice.
 			setError(message);
-			NotificationUtils.showError(apiError, 'Login Failed');
 		} finally {
 			removeLoader(loader);
 		}
