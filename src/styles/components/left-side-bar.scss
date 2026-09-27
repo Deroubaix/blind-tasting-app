@@ -197,6 +197,15 @@ $sidebar-done: $color-status-ok !default;
 	display: none;
 }
 
+// ── Tablet: a narrower sidebar ───────────────────────────────────────────────
+// Upright on an iPad the 300px sidebar took over a third of the screen. The phone rules below
+// come later, so on a phone they still win.
+@include responsive($breakpoint-tablet) {
+	.tasting-sidebar {
+		width: 240px;
+	}
+}
+
 // ── Phone stepper ────────────────────────────────────────────────────────────
 // The 300px sidebar collapses into one sticky strip that is both nav and progress:
 // a 4px bar per phase, burgundy for current, green for done.

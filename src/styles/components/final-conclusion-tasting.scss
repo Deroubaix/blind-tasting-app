@@ -132,3 +132,18 @@
 		overflow-y: visible;
 	}
 }
+
+// ── Narrow main area (tablet beside the sidebar): one column ─────────────────
+// Below this the form beside a 320px recap was squeezed to ~50px on an upright iPad. Stacked,
+// the recap follows the form at its natural height, as on a phone.
+@container tasting-main (max-width: 760px) {
+	.fc-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.fc-analysis {
+		contain: none;
+		min-height: 0;
+		overflow-y: visible;
+	}
+}

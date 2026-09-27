@@ -250,3 +250,10 @@
 		flex: 1 0 28%;
 	}
 }
+
+// ── Narrow main area: two columns ─────────────────────────────────────────────
+@container tasting-main (max-width: 720px) {
+	.sight-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}

@@ -74,3 +74,10 @@
 }
 
 // ── Auth notice ───────────────────────────────────────────────────────────────
+
+// ── Narrow main area: one column ──────────────────────────────────────────────
+@container tasting-main (max-width: 600px) {
+	.save-layout {
+		grid-template-columns: 1fr;
+	}
+}

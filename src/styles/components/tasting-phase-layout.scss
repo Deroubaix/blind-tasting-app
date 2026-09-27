@@ -19,6 +19,10 @@
 }
 
 .tasting-phase-main {
+	// The phase grids size themselves to this box, not to the viewport: beside the sidebar on a
+	// tablet the viewport is wide but the room left for a grid is not. Inline-size containment
+	// only, so the main area's height still comes from the flex layout.
+	container: tasting-main / inline-size;
 	flex: 1;
 	overflow: auto;
 	background-color: $color-black;

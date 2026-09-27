@@ -27,3 +27,10 @@
 		gap: 12px;
 	}
 }
+
+// ── Narrow main area: one column ──────────────────────────────────────────────
+@container tasting-main (max-width: 600px) {
+	.ic-layout {
+		grid-template-columns: 1fr;
+	}
+}

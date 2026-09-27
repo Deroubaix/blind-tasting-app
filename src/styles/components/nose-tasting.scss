@@ -176,3 +176,14 @@
 		gap: 12px;
 	}
 }
+
+// ── Narrow main area: two columns, oak stacked ────────────────────────────────
+@container tasting-main (max-width: 720px) {
+	.nose-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.nose-wood-layout {
+		grid-template-columns: 1fr;
+	}
+}

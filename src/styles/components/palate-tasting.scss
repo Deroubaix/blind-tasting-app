@@ -53,3 +53,10 @@ input.palate-balance-note {
 		gap: 12px;
 	}
 }
+
+// ── Narrow main area: one column ──────────────────────────────────────────────
+@container tasting-main (max-width: 520px) {
+	.palate-grid {
+		grid-template-columns: 1fr;
+	}
+}
