@@ -1,17 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconArrowRight } from '@tabler/icons-react';
 import Timer from '../layout/Timer';
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
+import { playBeep, unlockAudio } from '../../utils/beep';
 
 interface TimerWrapperProps {
 	defaultDuration: number;
-	/** Exam mode: the whole-wine deadline shared by every phase page. */
+	/** The deadline: exam mode's whole-wine one, or this guided phase's own. */
 	endsAt?: number;
+	pausedAt?: number | null;
 	destination: string;
 	/** Display name of the phase being handed over to. Absent on the last phase. */
 	nextLabel?: string | null;
@@ -19,33 +21,10 @@ interface TimerWrapperProps {
 	isFinalPhase?: boolean;
 }
 
-function playBeep() {
-	try {
-		const AudioCtx =
-			window.AudioContext ??
-			(window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-		if (!AudioCtx) {
-			return;
-		}
-		const audioCtx = new AudioCtx();
-		const oscillator = audioCtx.createOscillator();
-		const gainNode = audioCtx.createGain();
-		oscillator.connect(gainNode);
-		gainNode.connect(audioCtx.destination);
-		oscillator.type = 'sine';
-		oscillator.frequency.value = 880;
-		gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
-		gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-		oscillator.start(audioCtx.currentTime);
-		oscillator.stop(audioCtx.currentTime + 0.8);
-	} catch {
-		// Audio not available
-	}
-}
-
 export default function TimerWrapper({
 	defaultDuration,
 	endsAt,
+	pausedAt,
 	destination,
 	nextLabel,
 	isFinalPhase,
@@ -54,9 +33,25 @@ export default function TimerWrapper({
 	const { tastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
 	const { showToast } = useToastProvider();
+	const soundOn = tastingData.soundEnabled !== false;
+
+	// The beep can only sound on iOS if audio was started from a tap. Start does that, but a reload
+	// mid-tasting loses it, so the first tap on the page starts it again.
+	useEffect(() => {
+		if (!soundOn) {
+			return;
+		}
+		const unlock = () => unlockAudio();
+		document.addEventListener('pointerdown', unlock, { once: true });
+		document.addEventListener('keydown', unlock, { once: true });
+		return () => {
+			document.removeEventListener('pointerdown', unlock);
+			document.removeEventListener('keydown', unlock);
+		};
+	}, [soundOn]);
 
 	const handleTimeUp = () => {
-		if (tastingData.soundEnabled !== false) {
+		if (soundOn) {
 			playBeep();
 		}
 		if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -111,6 +106,12 @@ export default function TimerWrapper({
 
 	// key: a duration change restarts the clock by remounting rather than by resetting state.
 	return (
-		<Timer key={endsAt ?? defaultDuration} initialTime={defaultDuration} endsAt={endsAt} onTimeUp={handleTimeUp} />
+		<Timer
+			key={endsAt ?? defaultDuration}
+			initialTime={defaultDuration}
+			endsAt={endsAt}
+			pausedAt={pausedAt}
+			onTimeUp={handleTimeUp}
+		/>
 	);
 }

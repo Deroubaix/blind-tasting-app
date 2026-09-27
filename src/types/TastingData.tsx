@@ -12,6 +12,13 @@ export type TastingData = {
 	 * stamped when Start is pressed so every phase page counts down to the same deadline.
 	 */
 	timerEndsAt?: number;
+	/**
+	 * Guided mode only, and never saved: each phase's deadline, stamped the first time the phase is
+	 * opened. Kept here rather than in the page so stepping Back does not hand a phase a fresh clock.
+	 */
+	phaseEndsAt?: Partial<Record<'sight' | 'nose' | 'palate' | 'initialConclusion' | 'finalConclusion', number>>;
+	/** Never saved: when the clock was paused, or null/absent while it runs. See timerClock.ts. */
+	timerPausedAt?: number | null;
 	soundEnabled?: boolean;
 	wineName?: string;
 	/**

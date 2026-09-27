@@ -92,6 +92,33 @@ describe('Timer', () => {
 
 			expect(onTimeUp).toHaveBeenCalledTimes(1);
 		});
+
+		// Guided mode: stepping Back to a phase whose time ran out shows it expired, but must not
+		// throw the taster forward again from the page they chose to reopen.
+		it('does not fire for a deadline already past when it mounts', () => {
+			const onTimeUp = vi.fn();
+			const { container } = render(<Timer initialTime={30} endsAt={Date.now() - 1_000} onTimeUp={onTimeUp} />);
+
+			act(() => vi.advanceTimersByTime(2_000));
+
+			expect(display(container).textContent).toBe('00:00');
+			expect(onTimeUp).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('paused', () => {
+		it('holds the time it had left and does not fire', () => {
+			const onTimeUp = vi.fn();
+			const endsAt = Date.now() + 30_000;
+			const { container, rerender } = render(<Timer initialTime={30} endsAt={endsAt} onTimeUp={onTimeUp} />);
+
+			act(() => vi.advanceTimersByTime(10_000));
+			rerender(<Timer initialTime={30} endsAt={endsAt} pausedAt={Date.now()} onTimeUp={onTimeUp} />);
+			act(() => vi.advanceTimersByTime(60_000));
+
+			expect(display(container).textContent).toBe('00:20');
+			expect(onTimeUp).not.toHaveBeenCalled();
+		});
 	});
 
 	describe('amber warning', () => {

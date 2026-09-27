@@ -3,7 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { IconPlayerPauseFilled, IconPlayerPlayFilled } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
+import { useModalProvider } from '../modal/ModalProvider';
+import { pauseClock, resumeClock } from '../../data/timerClock';
+import { unlockAudio } from '../../utils/beep';
 import TimerConditional from './TimerConditional';
 import splitPhaseLabel from './phaseLabel';
 import { useTastingContext } from '../tasting/TastingContext';
@@ -27,12 +31,40 @@ export default function TastingPageHeader({
 	cancelHref,
 }: TastingPageHeaderProps) {
 	const { user, isInitialLoading, signOut } = useAuthProvider();
-	const { tastingData } = useTastingContext();
+	const { tastingData, updateTastingData } = useTastingContext();
+	const { openModal, closeModal } = useModalProvider();
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
 	const isLoggedIn = !isInitialLoading && !!user;
 	const showTimer = !!timerPage && !!timerDestination && !!tastingData.timerEnabled;
+	const paused = !!tastingData.timerPausedAt;
+
+	// Pausing covers the sheet, so the pause is for stepping away — a phone call, a refill — and
+	// not extra thinking time with the answers still in reach.
+	const pause = () => {
+		unlockAudio();
+		updateTastingData((current) => pauseClock(current, Date.now()));
+		const modalId = 'tasting-paused';
+		openModal({
+			modalId,
+			title: 'Paused',
+			className: 'TimeUpModal',
+			closeOnClickOutside: false,
+			closeOnEsc: true,
+			onClose: () => updateTastingData((current) => resumeClock(current, Date.now())),
+			children: (
+				<div className="timeup">
+					<p className="timeup__lead">The clock is stopped.</p>
+					<p className="timeup__note">It carries on from where it was when you resume.</p>
+					<button className="btn-primary timeup__action" onClick={() => closeModal(modalId)}>
+						Resume
+						<IconPlayerPlayFilled size={14} aria-hidden="true" />
+					</button>
+				</div>
+			),
+		});
+	};
 
 	useEffect(() => {
 		if (!dropdownOpen) {
@@ -81,10 +113,23 @@ export default function TastingPageHeader({
 			<div className="tasting-page-header__center">
 				{showTimer && (
 					<>
-						<span className="tasting-page-header__timer-label">Time Remaining</span>
-						<div className="tasting-page-header__timer-display">
-							<TimerConditional page={timerPage!} destination={timerDestination!} />
+						<div className="tasting-page-header__clock">
+							<span className="tasting-page-header__timer-label">
+								{paused ? 'Paused' : 'Time Remaining'}
+							</span>
+							<div className="tasting-page-header__timer-display">
+								<TimerConditional page={timerPage!} destination={timerDestination!} />
+							</div>
 						</div>
+						<button
+							type="button"
+							className="tasting-page-header__pause"
+							onClick={pause}
+							disabled={paused}
+							aria-label="Pause the timer"
+						>
+							<IconPlayerPauseFilled size={16} aria-hidden="true" />
+						</button>
 					</>
 				)}
 			</div>

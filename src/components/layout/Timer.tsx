@@ -10,10 +10,12 @@ interface TimerProps {
 	 * across phase pages). Without it the clock starts fresh at `initialTime` on mount.
 	 */
 	endsAt?: number;
+	/** While set, the clock is frozen at the time it had left at this moment. See timerClock.ts. */
+	pausedAt?: number | null;
 	onTimeUp?: () => void;
 }
 
-export default function Timer({ initialTime, endsAt, onTimeUp }: TimerProps) {
+export default function Timer({ initialTime, endsAt, pausedAt, onTimeUp }: TimerProps) {
 	const [timeLeft, setTimeLeft] = useState(initialTime);
 	const onTimeUpRef = useRef(onTimeUp);
 	useEffect(() => {
@@ -23,6 +25,7 @@ export default function Timer({ initialTime, endsAt, onTimeUp }: TimerProps) {
 	// Anchored to a wall-clock deadline, not decremented per tick: mobile browsers throttle
 	// background intervals and iOS suspends them on screen lock, which stalls a per-tick clock.
 	const endsAtRef = useRef<number | null>(null);
+	const pausedAtRef = useRef<number | null>(null);
 	const hasFiredRef = useRef(false);
 	// The ticker's sync, so the deadline effect can re-read the clock when the deadline changes.
 	const syncRef = useRef<(() => void) | null>(null);
@@ -31,20 +34,30 @@ export default function Timer({ initialTime, endsAt, onTimeUp }: TimerProps) {
 	// A layout effect, so a clock joining a deadline already under way shows the time actually
 	// left before the first paint rather than flashing its full length.
 	useLayoutEffect(() => {
-		endsAtRef.current = endsAt ?? Date.now() + initialTime * 1000;
-		hasFiredRef.current = false;
+		const now = Date.now();
+		endsAtRef.current = endsAt ?? now + initialTime * 1000;
+		// A deadline already past when the clock appears belongs to a phase revisited after its time
+		// ran out: show 00:00, but don't move the taster on again from a page they chose to reopen.
+		hasFiredRef.current = endsAtRef.current <= now;
 		syncRef.current?.();
 	}, [initialTime, endsAt]);
+
+	useLayoutEffect(() => {
+		pausedAtRef.current = pausedAt ?? null;
+		syncRef.current?.();
+	}, [pausedAt]);
 
 	useLayoutEffect(() => {
 		const sync = () => {
 			if (endsAtRef.current === null) {
 				return;
 			}
-			const remaining = Math.max(0, Math.round((endsAtRef.current - Date.now()) / 1000));
+			const paused = pausedAtRef.current !== null;
+			const now = pausedAtRef.current ?? Date.now();
+			const remaining = Math.max(0, Math.round((endsAtRef.current - now) / 1000));
 			setTimeLeft(remaining);
 
-			if (remaining === 0 && !hasFiredRef.current) {
+			if (remaining === 0 && !paused && !hasFiredRef.current) {
 				hasFiredRef.current = true;
 				onTimeUpRef.current?.();
 			}

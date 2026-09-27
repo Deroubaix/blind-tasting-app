@@ -1,12 +1,15 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { type TastingData } from '../../types/TastingData';
 
 type TastingContextValue = {
 	tastingData: Partial<TastingData>;
-	updateTastingData: (updates: Partial<TastingData>) => void;
+	/** Merges `updates` in. Pass a function when the update depends on the current data. */
+	updateTastingData: (
+		updates: Partial<TastingData> | ((current: Partial<TastingData>) => Partial<TastingData>),
+	) => void;
 	resetTastingData: () => void;
 	/**
 	 * The label photo, resized and ready to upload. Held here rather than on the save page so it
@@ -27,9 +30,10 @@ export const TastingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 	const [labelPhoto, setLabelPhoto] = useState<LabelPhoto | null>(null);
 	const pathname = usePathname();
 
-	const updateTastingData = (updates: Partial<TastingData>) => {
-		setTastingData((prev) => ({ ...prev, ...updates }));
-	};
+	// Stable, so pages can list it as an effect dependency.
+	const updateTastingData = useCallback<TastingContextValue['updateTastingData']>((updates) => {
+		setTastingData((prev) => ({ ...prev, ...(typeof updates === 'function' ? updates(prev) : updates) }));
+	}, []);
 
 	const resetTastingData = () => {
 		setTastingData({});

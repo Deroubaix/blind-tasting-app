@@ -42,21 +42,27 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	// ── Center — timer block ────────────────────────────────────────────────────
 	&__center {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 6px;
+		gap: $spacing-md;
 		justify-self: center;
 	}
 
+	&__clock {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+	}
+
 	&__timer-label {
-		@include eyebrow-label($text-8, $color-text-muted);
-		letter-spacing: 0.18em;
+		@include eyebrow-label($text-10, $color-text-muted);
+		letter-spacing: 0.16em;
 	}
 
 	&__timer-display {
 		font-family: $font-mono-family;
-		font-size: $text-timer;
+		font-size: $text-timer-live;
 		font-weight: 600;
 		letter-spacing: 0.06em;
 		line-height: 1;
@@ -75,6 +81,28 @@ $tph-border: rgba(228, 228, 204, 0.06);
 			&.timer-display--expired {
 				color: $tasting-accent-light;
 			}
+		}
+	}
+
+	&__pause {
+		@include bare-button;
+
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		border: 1px solid $tasting-border-mid;
+		color: $color-text-secondary;
+		@include transition(color, 0.2s);
+
+		&:hover,
+		&:focus-visible {
+			border: 1px solid $tasting-accent-light;
+			color: $color-white;
+		}
+
+		&:disabled {
+			opacity: 0.4;
+			cursor: default;
 		}
 	}
 
@@ -159,8 +187,8 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__timer-label {
-			@include eyebrow-label($text-9, $color-text-muted);
-			letter-spacing: 0.16em;
+			@include eyebrow-label($text-10, $color-text-muted);
+			letter-spacing: 0.12em;
 			order: 2; // under the clock, not above it
 			margin-top: 3px;
 		}
@@ -174,7 +202,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__phase-label {
-			@include eyebrow-label($text-9-5, $color-text-muted);
+			@include eyebrow-label($text-11, $color-text-muted);
 			letter-spacing: 0.18em;
 		}
 
@@ -194,19 +222,29 @@ $tph-border: rgba(228, 228, 204, 0.06);
 
 		&__center {
 			flex: 0 0 auto;
-			flex-direction: column;
+			gap: $spacing-sm;
+		}
+
+		&__clock {
 			align-items: flex-end;
+			gap: 0;
+		}
+
+		// A 40px target: as large as the 56px strip allows beside the clock.
+		&__pause {
+			width: 40px;
+			height: 40px;
 		}
 
 		&__timer-display {
-			// Accent-light rather than white: the clock is a readout, not the loudest
-			// thing on the strip. The warning and expired states still override it.
-			color: $tasting-accent-light;
+			// White and the largest thing on the strip: it is glanced at from arm's length
+			// mid-tasting. The warning and expired states still override the colour.
+			color: $color-white;
 			text-align: right;
 		}
 
 		&__timer-display .timer-display {
-			font-size: $text-timer;
+			font-size: $text-timer-live;
 			font-weight: 700;
 			line-height: 1;
 			letter-spacing: 0.02em;
