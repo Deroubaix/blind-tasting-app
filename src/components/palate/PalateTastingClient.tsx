@@ -21,6 +21,12 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 		updateTastingData({ palate: { ...selectedOptions, [category]: value } });
 	};
 
+	// Tapping the chosen answer again clears it — a Texture tapped by mistake can be taken back.
+	const toggleAnswer = (category: string, option: string) => {
+		const { [category]: previous, ...rest } = selectedOptions;
+		updateTastingData({ palate: previous === option ? rest : { ...rest, [category]: option } });
+	};
+
 	const handleNextPhase = () => {
 		router.push(`/tastings/initial-conclusion?wineType=${wineType}`);
 	};
@@ -70,7 +76,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 										key={option}
 										className={`tasting-option${selected ? ' tasting-option--selected' : ''}`}
 										aria-pressed={selected}
-										onClick={() => setAnswer(category, option)}
+										onClick={() => toggleAnswer(category, option)}
 									>
 										{option}
 									</button>

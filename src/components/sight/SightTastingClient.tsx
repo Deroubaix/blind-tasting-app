@@ -18,14 +18,17 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 		return Array.isArray(value) ? value.includes(option) : value === option;
 	};
 
-	// Single answers replace; the multi-select field toggles its option in or out of a list.
+	// Single answers replace, and tapping the chosen one again clears it; the multi-select field
+	// toggles its option in or out of a list.
 	const choose = (field: string, option: string) => {
-		let value: string | string[] = option;
 		if (SIGHT_MULTI.has(field)) {
 			const current = Array.isArray(selected[field]) ? (selected[field] as string[]) : [];
-			value = current.includes(option) ? current.filter((o) => o !== option) : [...current, option];
+			const value = current.includes(option) ? current.filter((o) => o !== option) : [...current, option];
+			updateTastingData({ sight: { ...selected, [field]: value } });
+			return;
 		}
-		updateTastingData({ sight: { ...selected, [field]: value } });
+		const { [field]: previous, ...rest } = selected;
+		updateTastingData({ sight: previous === option ? rest : { ...rest, [field]: option } });
 	};
 
 	const handleNextPhase = () => router.push(`/tastings/nose?wineType=${wineType}`);

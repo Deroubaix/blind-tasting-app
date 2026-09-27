@@ -76,7 +76,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 									key={opt}
 									aria-pressed={ic.climate === opt}
 									className={`tasting-option${ic.climate === opt ? ' tasting-option--selected' : ''}`}
-									onClick={() => updateIC({ climate: opt })}
+									onClick={() => updateIC({ climate: ic.climate === opt ? null : opt })}
 								>
 									{opt}
 								</button>
@@ -96,7 +96,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 									key={opt}
 									aria-pressed={ic.ageRange === opt}
 									className={`tasting-option${ic.ageRange === opt ? ' tasting-option--selected' : ''}`}
-									onClick={() => updateIC({ ageRange: opt })}
+									onClick={() => updateIC({ ageRange: ic.ageRange === opt ? null : opt })}
 								>
 									{opt}
 								</button>
