@@ -1,11 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Fragment, useState } from 'react';
-import { IconSearch, IconMapPin, IconCalendar } from '@tabler/icons-react';
+import { Fragment } from 'react';
+import { IconSearch, IconMapPin } from '@tabler/icons-react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import TastingAutocomplete from './TastingAutocomplete';
+import { ChipSearchField, VintageInput } from './ConclusionInputs';
 import TastingCustomSelect from './TastingCustomSelect';
 import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from './autocompleteData';
 import { sightFields } from '../sight/sightFields';
@@ -53,8 +53,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const { tastingData, updateTastingData } = useTastingContext();
 
 	// The committed answers write straight through to the shared context. Local state would
-	// be lost when the phase timer expires — TimerWrapper navigates with a bare `router.push`,
-	// so nothing gets a chance to flush. Only the autocomplete text boxes stay local.
+	// be lost when the phase timer expires. Only the search boxes' typing stays local.
 	const fc = tastingData.conclusion?.final ?? {};
 	const grapeVariety = fc['grapeVariety'] ?? '';
 	const countryOfOrigin = fc['countryOfOrigin'] ?? '';
@@ -63,19 +62,11 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const styleCategory = fc['styleCategory'] ?? '';
 	const vintage = fc['vintage'] ?? '';
 
-	const [grapeInput, setGrapeInput] = useState('');
-	const [countryInput, setCountryInput] = useState('');
-	const [regionInput, setRegionInput] = useState('');
-
 	const updateFC = (patch: Record<string, string | null>) =>
 		updateTastingData({ conclusion: { ...tastingData.conclusion, final: { ...fc, ...patch } } });
 
-	const setGrapeVariety = (v: string) => updateFC({ grapeVariety: v });
-	const setCountryOfOrigin = (v: string) => updateFC({ countryOfOrigin: v });
-	const setRegionAppellation = (v: string) => updateFC({ regionAppellation: v });
 	const setQualityLevel = (v: string) => updateFC({ qualityLevel: v });
 	const setStyleCategory = (v: string) => updateFC({ styleCategory: v });
-	const setVintage = (v: string) => updateFC({ vintage: v });
 
 	// Summaries of prior phases. Each keeps its attribute name; only self-describing
 	// lists (aroma descriptors, countries) go flat.
@@ -103,7 +94,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const initial = tastingData.conclusion?.initial;
 	const initialPairs = (
 		[
-			['Possible Grapes', (initial?.grapeVarieties ?? []).join(' · ')],
+			['Possible Grape Varieties', (initial?.grapeVarieties ?? []).join(' · ')],
 			['Climate', initial?.climate],
 			['Age Range', initial?.ageRange],
 		] as [string, string | null | undefined][]
@@ -120,14 +111,6 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	// No flush needed before navigating — the answers are already in the context.
 	const handleNext = () => router.push(`/tastings/save?wineType=${wineType}`);
 	const handleBack = () => router.push(`/tastings/initial-conclusion?wineType=${wineType}`);
-
-	const confirm = (input: string, setter: (v: string) => void, inputSetter: (v: string) => void) => {
-		const v = input.trim();
-		if (v) {
-			setter(v);
-		}
-		inputSetter('');
-	};
 
 	return (
 		<TastingPhaseLayout
@@ -149,122 +132,39 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 				{/* ── Left: the declaration ── */}
 				<div className="fc-form">
 					<div className="fc-grid">
-						{/* Grape Variety/Blend */}
-						<div className="fc-field">
-							<label className="tasting-card__label" htmlFor="fc-grape">
-								Grape Variety or Blend
-							</label>
-							<div className="tasting-search-row">
-								<TastingAutocomplete
-									id="fc-grape"
-									suggestions={GRAPE_VARIETALS}
-									value={grapeInput}
-									onChange={setGrapeInput}
-									onConfirm={(v) => confirm(v, setGrapeVariety, setGrapeInput)}
-									placeholder="e.g., Pinot Noir"
-									icon={<IconSearch size={14} className="tasting-search-icon" />}
-								/>
-								<button
-									className="tasting-confirm-btn"
-									aria-label="Add grape variety"
-									onClick={() => confirm(grapeInput, setGrapeVariety, setGrapeInput)}
-								>
-									Add
-								</button>
-							</div>
-							{grapeVariety && (
-								<div className="tasting-chips">
-									<span className="tasting-chip">
-										{grapeVariety}
-										<button
-											className="tasting-chip__remove"
-											aria-label={`Remove ${grapeVariety}`}
-											onClick={() => setGrapeVariety('')}
-										>
-											×
-										</button>
-									</span>
-								</div>
-							)}
-						</div>
-
-						{/* Country of Origin */}
-						<div className="fc-field">
-							<label className="tasting-card__label" htmlFor="fc-country">
-								Country of Origin
-							</label>
-							<div className="tasting-search-row">
-								<TastingAutocomplete
-									id="fc-country"
-									suggestions={WINE_COUNTRIES}
-									value={countryInput}
-									onChange={setCountryInput}
-									onConfirm={(v) => confirm(v, setCountryOfOrigin, setCountryInput)}
-									placeholder="e.g., France"
-									icon={<IconMapPin size={14} className="tasting-search-icon" />}
-								/>
-								<button
-									className="tasting-confirm-btn"
-									aria-label="Add country of origin"
-									onClick={() => confirm(countryInput, setCountryOfOrigin, setCountryInput)}
-								>
-									Add
-								</button>
-							</div>
-							{countryOfOrigin && (
-								<div className="tasting-chips">
-									<span className="tasting-chip">
-										{countryOfOrigin}
-										<button
-											className="tasting-chip__remove"
-											aria-label={`Remove ${countryOfOrigin}`}
-											onClick={() => setCountryOfOrigin('')}
-										>
-											×
-										</button>
-									</span>
-								</div>
-							)}
-						</div>
-
-						{/* Region/Appellation */}
-						<div className="fc-field">
-							<label className="tasting-card__label" htmlFor="fc-region">
-								Region and Appellation
-							</label>
-							<div className="tasting-search-row">
-								<TastingAutocomplete
-									id="fc-region"
-									suggestions={WINE_REGIONS}
-									value={regionInput}
-									onChange={setRegionInput}
-									onConfirm={(v) => confirm(v, setRegionAppellation, setRegionInput)}
-									placeholder="e.g., Burgundy — Côte de Nuits"
-									icon={<IconMapPin size={14} className="tasting-search-icon" />}
-								/>
-								<button
-									className="tasting-confirm-btn"
-									aria-label="Add region or appellation"
-									onClick={() => confirm(regionInput, setRegionAppellation, setRegionInput)}
-								>
-									Add
-								</button>
-							</div>
-							{regionAppellation && (
-								<div className="tasting-chips">
-									<span className="tasting-chip">
-										{regionAppellation}
-										<button
-											className="tasting-chip__remove"
-											aria-label={`Remove ${regionAppellation}`}
-											onClick={() => setRegionAppellation('')}
-										>
-											×
-										</button>
-									</span>
-								</div>
-							)}
-						</div>
+						<ChipSearchField
+							id="fc-grape"
+							className="fc-field"
+							labelClassName="tasting-card__label"
+							label="Grape Variety or Blend"
+							value={grapeVariety}
+							onChange={(v) => updateFC({ grapeVariety: v })}
+							suggestions={GRAPE_VARIETALS}
+							placeholder="e.g. Pinot Noir"
+							icon={<IconSearch size={14} className="tasting-search-icon" aria-hidden="true" />}
+						/>
+						<ChipSearchField
+							id="fc-country"
+							className="fc-field"
+							labelClassName="tasting-card__label"
+							label="Country of Origin"
+							value={countryOfOrigin}
+							onChange={(v) => updateFC({ countryOfOrigin: v })}
+							suggestions={WINE_COUNTRIES}
+							placeholder="e.g. France"
+							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
+						/>
+						<ChipSearchField
+							id="fc-region"
+							className="fc-field"
+							labelClassName="tasting-card__label"
+							label="Region and Appellation"
+							value={regionAppellation}
+							onChange={(v) => updateFC({ regionAppellation: v })}
+							suggestions={WINE_REGIONS}
+							placeholder="e.g. Burgundy — Côte de Nuits"
+							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
+						/>
 
 						{/* Quality level and style category are "where appropriate" on the grid, so each
 						    can be left blank or cleared, and neither counts toward completion. */}
@@ -293,37 +193,11 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							/>
 						</div>
 
-						{/* Vintage */}
 						<div className="fc-field fc-field--half">
 							<label className="tasting-card__label" htmlFor="fc-vintage">
 								Vintage
 							</label>
-							<div className="tasting-search-row">
-								<div className="tasting-search-input-wrap">
-									<IconCalendar size={14} className="tasting-search-icon" />
-									<input
-										id="fc-vintage"
-										className="tasting-search-input"
-										placeholder="Enter the harvest year"
-										inputMode="numeric"
-										maxLength={4}
-										value={vintage}
-										onChange={(e) => setVintage(e.target.value.replace(/\D/g, ''))}
-										onBlur={() => {
-											if (!vintage) {
-												return;
-											}
-											const year = parseInt(vintage, 10);
-											const max = new Date().getFullYear();
-											if (year < 1900) {
-												setVintage('1900');
-											} else if (year > max) {
-												setVintage(String(max));
-											}
-										}}
-									/>
-								</div>
-							</div>
+							<VintageInput id="fc-vintage" value={vintage} onChange={(v) => updateFC({ vintage: v })} />
 						</div>
 					</div>
 				</div>
@@ -339,7 +213,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 					<AnalysisRow label="Aroma Descriptors" value={noseDescriptors} />
 					<AnalysisPairs label="Palate Structure" pairs={palatePairs} />
 					<AnalysisPairs label="Initial Call" pairs={initialPairs} />
-					<AnalysisRow label="Possible Origin" value={possibleOriginSummary} />
+					<AnalysisRow label="Possible Countries" value={possibleOriginSummary} />
 
 					{finalIdentity && (
 						<>
