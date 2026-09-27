@@ -20,7 +20,7 @@ export class SessionAuthService implements IAuthService {
 
 	async signOut(): Promise<void> {
 		try {
-			await FetchUtils.get('/api/auth/logout', { credentials: 'include' }).response;
+			await FetchUtils.post('/api/auth/logout', {}).response;
 		} catch (err) {
 			// A failed logout still clears client state, so swallow rather than block the user.
 			console.warn('Sign-out failed:', err);
@@ -37,11 +37,6 @@ export class SessionAuthService implements IAuthService {
 			// Not being logged in is the expected path here, not an error worth surfacing.
 			return null;
 		}
-	}
-
-	async updateUser(user: AuthenticatedUser): Promise<AuthenticatedUser> {
-		const request = FetchUtils.postJson<AuthenticatedUser>('/api/user/me', user);
-		return await request.response;
 	}
 
 	async requestPasswordReset(email: string): Promise<void> {

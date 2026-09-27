@@ -16,8 +16,6 @@ export interface IAuthService {
 
 	fetchMe(): Promise<AuthenticatedUser | null>;
 
-	updateUser(user: AuthenticatedUser): Promise<AuthenticatedUser>;
-
 	requestPasswordReset(email: string): Promise<void>;
 
 	completePasswordReset(email: string, token: string, password: string): Promise<void>;

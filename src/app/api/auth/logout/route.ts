@@ -1,9 +1,8 @@
-export async function GET() {
-	return new Response(JSON.stringify({ message: 'Logged out' }), {
-		status: 200,
-		headers: {
-			'Content-Type': 'application/json',
-			'Set-Cookie': `auth-token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict`,
-		},
-	});
+import { endSession } from '../../../../lib/auth';
+import { jsonResponse } from '../../../../utils/ApiUtils';
+
+/** POST, not GET: a GET that changes state can be fired by any link or image on another site. */
+export async function POST() {
+	await endSession();
+	return jsonResponse({ message: 'Logged out' });
 }

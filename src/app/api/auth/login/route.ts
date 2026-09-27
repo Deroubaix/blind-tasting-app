@@ -1,13 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import jwt from 'jsonwebtoken';
+import { prisma } from '../../../../lib/prisma';
 import { verifyPassword } from '../../../../utils/PasswordUtils';
 import { JsonApiError } from '../../../../utils/ErrorUtils';
-import { errorResponse, logServerError } from '../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
+import { startSession } from '../../../../lib/auth';
 import { loginSchema } from '../../../../schemas/auth';
 import { RATE_LIMITS, check, clientIp, consume, reset } from '../../../../lib/rateLimit';
-
-const prisma = new PrismaClient();
-const SECRET_KEY = process.env.JWT_SECRET!;
 
 export async function POST(request: Request) {
 	try {
@@ -28,24 +25,14 @@ export async function POST(request: Request) {
 
 		await reset(RATE_LIMITS.loginEmail, email);
 
-		const token = jwt.sign({ userId: user.id }, SECRET_KEY, {
-			expiresIn: '1h',
-		});
+		await startSession(user.id);
 
 		// Mirrors AuthenticatedUser — the password and reset-token columns never leave the server.
-		const safeUser = {
+		return jsonResponse({
 			id: user.id,
 			email: user.email,
 			displayName: user.displayName,
 			created_at: user.created_at,
-		};
-
-		return new Response(JSON.stringify(safeUser), {
-			status: 200,
-			headers: {
-				'Set-Cookie': `auth-token=${token}; HttpOnly; Path=/; Max-Age=3600; Secure; SameSite=Strict`,
-				'Content-Type': 'application/json',
-			},
 		});
 	} catch (error) {
 		logServerError('login', error);
