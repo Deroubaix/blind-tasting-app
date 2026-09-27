@@ -58,6 +58,56 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: $spacing-xxs;
+	}
+
+	&__badges {
+		display: flex;
+		align-items: center;
+		gap: $spacing-xxs;
+		flex-wrap: wrap;
+	}
+
+	// A quiet chip, no fill and no colour by grade; a perfect score earns one small green tick.
+	&__score {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		padding: 2px 8px;
+		border-radius: 4px;
+		border: 1px solid rgba(228, 228, 204, 0.22);
+		font-size: $text-11;
+		font-weight: $font-weight-bold;
+		font-variant-numeric: tabular-nums;
+
+		svg {
+			color: $color-status-ok;
+		}
+	}
+
+	// Dashed, so it reads as waiting rather than failed.
+	&__unrevealed {
+		padding: 3px 8px;
+		border-radius: 4px;
+		border: 1px dashed rgba(228, 228, 204, 0.25);
+		font-size: $text-9;
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: $color-text-secondary;
+	}
+
+	&__call {
+		margin: 0;
+		font-size: $text-12;
+		line-height: 1.4;
+		color: $color-text-muted;
+	}
+
+	&__call-label {
+		@include eyebrow-label($text-9, $color-text-muted);
+		letter-spacing: 0.1em;
+		margin-right: 6px;
 	}
 
 	&__id {
@@ -331,6 +381,24 @@
 	color: $color-text-secondary;
 	margin: 0 0 $spacing-xl;
 	line-height: 1.4;
+}
+
+// Once revealed, the actual wine is the subtitle and the call sits beneath it.
+.tasting-detail__subtitle:has(+ .tasting-detail__call) {
+	margin-bottom: $spacing-xxs;
+}
+
+.tasting-detail__call {
+	margin: 0 0 $spacing-xl;
+	font-size: $text-13;
+	line-height: 1.4;
+	color: $color-text-muted;
+}
+
+.tasting-detail__call-label {
+	@include eyebrow-label($text-9, $color-text-muted);
+	letter-spacing: 0.1em;
+	margin-right: $spacing-xxs;
 }
 
 .tasting-detail__divider {

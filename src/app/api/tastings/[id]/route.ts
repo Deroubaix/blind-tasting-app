@@ -1,7 +1,10 @@
 import { prisma } from '../../../../lib/prisma';
-import { errorResponse, logServerError } from '../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
 import { requireUserId } from '../../../../lib/auth';
 import { deletePhoto } from '../../../../lib/storage';
+import { revealUpdateSchema } from '../../../../schemas/tasting';
+import { revealFields } from '../../../../lib/reveal';
+import { JsonApiError } from '../../../../utils/ErrorUtils';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
@@ -54,6 +57,30 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
 		return new Response(null, { status: 204 });
 	} catch (error) {
 		logServerError('DELETE /api/tastings/[id]', error);
+		return errorResponse(error);
+	}
+}
+
+/**
+ * Sets, edits or clears (`{ reveal: null }`) the reveal on one of the signed-in user's tastings.
+ * The reveal usually comes after saving — when the bottle is unwrapped — so it has its own route
+ * rather than riding on the save. Scoped by user, so someone else's id is a plain 404.
+ */
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+	try {
+		const { id } = await params;
+		const userId = await requireUserId();
+		const { reveal } = revealUpdateSchema.parse(await request.json());
+
+		const { count } = await prisma.tasting.updateMany({ where: { id, userId }, data: revealFields(reveal) });
+		if (count === 0) {
+			throw new JsonApiError('NotFound', 'Not found', 404);
+		}
+
+		const tasting = await prisma.tasting.findFirst({ where: { id, userId } });
+		return jsonResponse({ tasting });
+	} catch (error) {
+		logServerError('PATCH /api/tastings/[id]', error);
 		return errorResponse(error);
 	}
 }

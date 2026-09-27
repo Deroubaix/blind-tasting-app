@@ -546,3 +546,20 @@
 		color: $color-text-muted;
 	}
 }
+
+// The reason the label is not the wine, under the field.
+.start-identity-hint {
+	display: flex;
+	align-items: flex-start;
+	gap: $spacing-xxs;
+	margin: $spacing-xs 0 0;
+	font-size: $text-13;
+	line-height: 1.5;
+	color: $color-text-secondary;
+
+	svg {
+		flex-shrink: 0;
+		margin-top: 2px;
+		color: $color-accent-light;
+	}
+}

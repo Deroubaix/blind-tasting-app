@@ -28,6 +28,21 @@ export default class ClientTastingService {
 		await FetchUtils.execute(`/api/tastings/${id}`, { method: 'DELETE', credentials: 'same-origin' }).response;
 	}
 
+	/** Sets, edits or clears (null) the reveal; returns the updated tasting. */
+	public async saveReveal(
+		id: string,
+		reveal: TastingData['reveal'],
+	): Promise<TastingData & { id: string; created_at: string }> {
+		const request = FetchUtils.execute(`/api/tastings/${id}`, {
+			method: 'PATCH',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ reveal }),
+		});
+		const response = await request.response;
+		return (await response.json()).tasting;
+	}
+
 	public async getTasting(id: string): Promise<TastingData & { id: string; created_at: string }> {
 		const request = FetchUtils.getJson<{ tasting: TastingData & { id: string; created_at: string } }>(
 			`/api/tastings/${id}`,

@@ -4,6 +4,7 @@ import { JsonApiError } from '../../../utils/ErrorUtils';
 import { errorResponse, logServerError } from '../../../utils/ApiUtils';
 import { requireUserId } from '../../../lib/auth';
 import { tastingCreateSchema } from '../../../schemas/tasting';
+import { revealFields } from '../../../lib/reveal';
 import { MAX_PHOTO_BYTES, ownsPhotoKey, photoSize } from '../../../lib/storage';
 
 /** Postgres unique-constraint violation. */
@@ -104,6 +105,7 @@ export async function POST(request: Request) {
 			conclusion: body.conclusion ?? Prisma.DbNull,
 			wineName: body.wineName || null,
 			photoKey: await verifiedPhotoKey(userId, body.photoKey),
+			...revealFields(body.reveal),
 		};
 
 		const tasting = await createWithNextNumber(userId, data);

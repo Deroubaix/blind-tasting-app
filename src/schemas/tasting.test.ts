@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { tastingCreateSchema } from './tasting';
+import { revealSchema, revealUpdateSchema, tastingCreateSchema } from './tasting';
 
 // A full red tasting shaped exactly as the save page sends it: the tasting context spread out,
 // including client-only fields the server should ignore.
@@ -73,5 +73,27 @@ describe('tastingCreateSchema', () => {
 		if (message) {
 			expect(firstMessage({ wineType: 'Red', ...fields })).toBe(message);
 		}
+	});
+});
+
+describe('revealSchema', () => {
+	it('stores blank answers as null and trims the rest', () => {
+		const result = revealSchema.parse({ grapeVariety: ' Pinot Noir ', qualityLevel: '', vintage: '' });
+		expect(result).toMatchObject({ grapeVariety: 'Pinot Noir', qualityLevel: null, vintage: null });
+	});
+
+	it('accepts a four-digit vintage and nothing else', () => {
+		expect(revealSchema.safeParse({ vintage: '2018' }).success).toBe(true);
+		expect(revealSchema.safeParse({ vintage: '18' }).success).toBe(false);
+		expect(revealSchema.safeParse({ vintage: 'NV' }).success).toBe(false);
+	});
+
+	it('lets a reveal be cleared', () => {
+		expect(revealUpdateSchema.parse({ reveal: null })).toEqual({ reveal: null });
+	});
+
+	it('rides along on a save', () => {
+		const result = tastingCreateSchema.parse({ wineType: 'Red', reveal: { grapeVariety: 'Gamay' } });
+		expect(result.reveal?.grapeVariety).toBe('Gamay');
 	});
 });

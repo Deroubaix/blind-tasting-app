@@ -43,6 +43,11 @@ model Tasting {
   /// Storage key of the label photograph, `labels/<userId>/<uuid>.jpg`. Served through
   /// /api/photos/<key>, which checks ownership, never by a URL stored here.
   photoKey      String?
+  /// The wine as it actually was, entered from the label after tasting: grapeVariety,
+  /// countryOfOrigin, regionAppellation, qualityLevel, vintage and an optional wineName.
+  /// Kept apart from `conclusion.final`, the call, so the two can be compared and scored.
+  reveal        Json?
+  revealedAt    DateTime?
   created_at    DateTime @default(now())
   user          User     @relation(fields: [userId], references: [id])
 

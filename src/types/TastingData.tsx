@@ -38,4 +38,14 @@ export type TastingData = {
 	notes?: string;
 	/** Storage key of the label photo, set by the server-issued upload. Absent until saved. */
 	photoKey?: string | null;
+	/** The wine as it actually was, entered after tasting. See revealScore.ts. */
+	reveal?: {
+		grapeVariety?: string | null;
+		countryOfOrigin?: string | null;
+		regionAppellation?: string | null;
+		qualityLevel?: string | null;
+		vintage?: string | null;
+		wineName?: string | null;
+	} | null;
+	revealedAt?: string | null;
 };

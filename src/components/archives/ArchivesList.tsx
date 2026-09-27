@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { IconTrash } from '@tabler/icons-react';
+import { IconCheck, IconTrash } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
+import { compareReveal, describeWine, isRevealed, revealTitle } from './revealScore';
 import { type TastingData } from '../../types/TastingData';
 
 const service = new ClientTastingService();
@@ -115,20 +116,17 @@ export default function ArchivesList() {
 			</Link>
 
 			{tastings.map((tasting) => {
-				// Bug fix: read camelCase keys as saved by FinalConclusionTastingClient
 				const final = (tasting.conclusion?.final as Record<string, string | null>) ?? {};
-				const grapeVariety = final.grapeVariety ?? null;
-				const countryOfOrigin = final.countryOfOrigin ?? null;
-				const regionAppellation = final.regionAppellation ?? null;
-				const vintage = final.vintage ?? null;
+				const callSummary = describeWine(final) || null;
 
-				const title = tasting.wineName || grapeVariety || 'Untitled Tasting';
-
-				const subtitleParts = [grapeVariety, regionAppellation, countryOfOrigin].filter(Boolean);
-				const subtitle =
-					subtitleParts.length > 0
-						? `${subtitleParts.join(', ')}${vintage ? ` — ${vintage}` : ''}`
-						: (vintage ?? null);
+				// Revealed: the wine is the title and the call a line beneath it, as on the detail page.
+				const revealed = isRevealed(tasting.reveal);
+				const comparison = revealed ? compareReveal(final, tasting.reveal!) : null;
+				const title = revealed
+					? revealTitle(tasting.reveal!)
+					: tasting.wineName || final.grapeVariety || 'Untitled Tasting';
+				const subtitle = revealed ? describeWine(tasting.reveal) : callSummary;
+				const perfect = comparison !== null && comparison.outOf > 0 && comparison.score === comparison.outOf;
 
 				const date = tasting.created_at
 					? new Date(tasting.created_at).toLocaleDateString('en-US', {
@@ -143,14 +141,34 @@ export default function ArchivesList() {
 					// the whole card instead (see .archive-card__link), with Delete raised above it.
 					<article key={tasting.id} className="archive-card">
 						<div className="archive-card__top">
-							<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
-								{tasting.wineType} Wine
-							</span>
+							<div className="archive-card__badges">
+								<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
+									{tasting.wineType} Wine
+								</span>
+								{comparison ? (
+									<span
+										className="archive-card__score"
+										title={`Score: ${comparison.score} of ${comparison.outOf}`}
+										aria-label={`Score: ${comparison.score} of ${comparison.outOf}`}
+									>
+										{perfect && <IconCheck size={11} stroke={2.5} aria-hidden="true" />}
+										{comparison.score} / {comparison.outOf}
+									</span>
+								) : (
+									<span className="archive-card__unrevealed">Not revealed</span>
+								)}
+							</div>
 							{tasting.number != null && <span className="archive-card__id">No. {tasting.number}</span>}
 						</div>
 
 						<h3 className="archive-card__title">{title}</h3>
 						{subtitle && <p className="archive-card__subtitle">{subtitle}</p>}
+						{revealed && callSummary && (
+							<p className="archive-card__call">
+								<span className="archive-card__call-label">Your call</span>
+								{callSummary}
+							</p>
+						)}
 
 						{tasting.notes && (
 							<div className="archive-card__conclusions">

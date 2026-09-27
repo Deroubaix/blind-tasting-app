@@ -2,7 +2,7 @@
 // region names are full of accents that nobody types under a timer: "carmenere" should find
 // Carménère and "gruner" should find Grüner Veltliner.
 
-function fold(text: string) {
+export function fold(text: string) {
 	return text
 		.normalize('NFD')
 		.replace(/\p{Diacritic}/gu, '')

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { type TastingData } from '../../types/TastingData';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
+import RevealPanel from './RevealPanel';
+import { describeWine, isRevealed, revealTitle } from './revealScore';
 
 const service = new ClientTastingService();
 
@@ -84,10 +86,12 @@ export default function TastingDetail({ id }: { id: string }) {
 	const styleCategory = final.styleCategory ?? null;
 	const vintage = final.vintage ?? null;
 
-	const title = tasting.wineName || grapeVariety || 'Untitled Tasting';
-	const subtitleParts = [grapeVariety, regionAppellation, countryOfOrigin].filter(Boolean);
-	const subtitle =
-		subtitleParts.length > 0 ? `${subtitleParts.join(', ')}${vintage ? ` — ${vintage}` : ''}` : (vintage ?? null);
+	// Before the reveal the title is the taster's own label ("Flight 3, wine 2"); after it, the wine
+	// itself, with the call kept underneath so the two read against each other.
+	const revealed = isRevealed(tasting.reveal);
+	const callSummary = describeWine(final) || null;
+	const title = revealed ? revealTitle(tasting.reveal!) : tasting.wineName || grapeVariety || 'Untitled Tasting';
+	const subtitle = revealed ? describeWine(tasting.reveal) : callSummary;
 
 	const date = new Date(tasting.created_at).toLocaleDateString('en-US', {
 		year: 'numeric',
@@ -145,7 +149,8 @@ export default function TastingDetail({ id }: { id: string }) {
 					{tasting.wineType} Wine
 				</span>
 				<div className="tasting-detail__hero-meta">
-					<span className="tasting-detail__id">ID #{tasting.id}</span>
+					{tasting.number != null && <span className="tasting-detail__id">No. {tasting.number}</span>}
+					{revealed && tasting.wineName && <span className="tasting-detail__id">{tasting.wineName}</span>}
 					<span className="tasting-detail__date">{date}</span>
 				</div>
 			</div>
@@ -154,6 +159,12 @@ export default function TastingDetail({ id }: { id: string }) {
 				<div className="tasting-detail__title-text">
 					<h1>{title}</h1>
 					{subtitle && <p className="tasting-detail__subtitle">{subtitle}</p>}
+					{revealed && callSummary && (
+						<p className="tasting-detail__call">
+							<span className="tasting-detail__call-label">Your call</span>
+							{callSummary}
+						</p>
+					)}
 				</div>
 
 				{tasting.photoKey && (
@@ -175,6 +186,8 @@ export default function TastingDetail({ id }: { id: string }) {
 					</a>
 				)}
 			</div>
+
+			<RevealPanel tasting={tasting} title={title} onRevealed={(updated) => setTasting(updated)} />
 
 			<PhaseSection label="Sight" data={tasting.sight as Record<string, string>} />
 			<PhaseSection label="Nose" data={tasting.nose as Record<string, string[]>} />

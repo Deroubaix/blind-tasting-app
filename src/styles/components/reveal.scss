@@ -1,0 +1,636 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+// Reveal & score — the invitation, the form, and the scorecard on a saved tasting.
+
+// ── Status palette ────────────────────────────────────────────────────────────
+// One colour per status, always paired with an icon and a word (see RevealScorecard).
+$reveal-statuses: (
+	correct: $color-status-ok,
+	close: $color-warning,
+	wrong: $color-error,
+	notcalled: $color-text-secondary,
+	na: $color-text-secondary,
+);
+
+@each $status, $colour in $reveal-statuses {
+	.reveal-status--#{$status},
+	.reveal-hit--#{$status},
+	.reveal-miss--#{$status},
+	.reveal-strip__item--#{$status} {
+		--status: #{$colour};
+	}
+}
+
+// ── Shared pieces ─────────────────────────────────────────────────────────────
+.reveal-card {
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	margin-bottom: $spacing-xl;
+}
+
+.reveal-eyebrow {
+	@include eyebrow-label($text-10, $tasting-accent-light);
+	letter-spacing: 0.12em;
+	display: block;
+}
+
+.reveal-muted-italic {
+	font-style: italic;
+	color: $color-text-secondary;
+}
+
+// The quiet outlined action beside a primary button, as on the start-over dialog.
+.reveal-btn-quiet {
+	@include bare-button;
+	padding: 9px 14px;
+	border: 1px solid rgba(228, 228, 204, 0.22);
+	border-radius: 6px;
+	color: $color-white;
+	font-size: $text-12;
+	font-weight: $font-weight-bold;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+
+	&:hover,
+	&:focus {
+		border: 1px solid $tasting-accent-light;
+	}
+}
+
+.reveal-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: $text-10;
+	font-weight: $font-weight-bold;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: var(--status);
+	border: 1px solid color-mix(in srgb, var(--status) 40%, transparent);
+	background-color: color-mix(in srgb, var(--status) 12%, transparent);
+}
+
+// ── 1. The invitation ─────────────────────────────────────────────────────────
+.reveal-invite {
+	display: flex;
+	align-items: center;
+	gap: $spacing-xl;
+	padding: $spacing-lg $spacing-xl;
+
+	&__text {
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__heading {
+		margin: $spacing-xs 0 4px;
+		font-size: 1.0625rem;
+		letter-spacing: -0.01em;
+	}
+
+	&__lede {
+		margin: 0;
+		font-size: $text-13-5;
+		line-height: 1.5;
+		color: $color-text-secondary;
+	}
+
+	&__btn {
+		@include icon-label(10px);
+		flex-shrink: 0;
+	}
+}
+
+// ── 2. The form ───────────────────────────────────────────────────────────────
+.reveal-form {
+	&__sheet-head {
+		display: none;
+	}
+
+	&__body {
+		padding: $spacing-xl;
+	}
+
+	&__heading {
+		margin: $spacing-xs 0 4px;
+		font-size: $font-size-lg;
+		letter-spacing: -0.015em;
+	}
+
+	&__lede {
+		margin: 0 0 $spacing-xl;
+		font-size: $text-13-5;
+		line-height: 1.5;
+		color: $color-text-secondary;
+	}
+
+	// Fields first in the source (for keyboards and screen readers), photo beside them on desktop.
+	&__layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 28px;
+		align-items: start;
+
+		&--photo {
+			grid-template-columns: minmax(0, 1fr) 200px;
+
+			.reveal-form__photo {
+				order: 2;
+			}
+		}
+	}
+
+	&__photo {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-xs;
+		color: $color-text-secondary;
+		font-size: $text-12;
+
+		&::after {
+			display: none;
+		}
+
+		img {
+			width: 200px;
+			height: 260px;
+			object-fit: cover;
+			border-radius: 8px;
+			border: 1px solid $tasting-border-mid;
+		}
+	}
+
+	&__photo-caption {
+		@include icon-label(6px);
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+		padding: $spacing-lg $spacing-xl;
+		border-top: 1px solid $tasting-border;
+	}
+
+	&__footnote {
+		margin-left: auto;
+		font-size: $text-12;
+		color: $color-text-muted;
+	}
+}
+
+// ── Reveal fields (also on the save page) ─────────────────────────────────────
+.reveal-fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 22px 20px;
+
+	&--wide {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	&--form &__wide {
+		grid-column: span 2;
+	}
+}
+
+.reveal-field {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-xxs;
+
+	&__label {
+		@include eyebrow-label($text-10, $tasting-accent-light);
+		letter-spacing: 0.12em;
+	}
+
+	&__hint {
+		margin-left: $spacing-xxs;
+		font-family: $font-body-normal-family;
+		font-style: italic;
+		font-weight: $font-weight-regular;
+		letter-spacing: 0;
+		text-transform: none;
+		font-size: $text-12;
+		color: $color-text-muted;
+	}
+
+	input.reveal-field__text {
+		width: 100%;
+		min-height: 40px;
+		box-sizing: border-box;
+	}
+}
+
+// ── 3. The scorecard ──────────────────────────────────────────────────────────
+.reveal-scorecard {
+	display: grid;
+	grid-template-columns: 250px minmax(0, 1fr);
+
+	&__summary {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-md;
+		padding: $spacing-xl;
+		border-right: 1px solid $tasting-border;
+	}
+
+	&__headline {
+		margin: 0 0 4px;
+		font-size: $text-15;
+		font-weight: $font-weight-bold;
+		line-height: 1.35;
+	}
+
+	&__detail {
+		margin: 0;
+		font-size: $text-13;
+		line-height: 1.45;
+		color: $color-text-secondary;
+	}
+
+	&__fields {
+		padding: 18px $spacing-xl $spacing-lg;
+	}
+
+	&__fields-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 6px;
+	}
+
+	&__fields-title {
+		@include eyebrow-label($text-9, $color-text-muted);
+		letter-spacing: 0.1em;
+	}
+}
+
+.reveal-score {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	margin: 0;
+	font-variant-numeric: tabular-nums;
+
+	&__value {
+		font-size: 6.5rem;
+		font-weight: $font-weight-bold;
+		letter-spacing: -0.06em;
+		line-height: 0.9;
+	}
+
+	&__of {
+		font-size: 2rem;
+		font-weight: $font-weight-semibold;
+		color: $color-text-muted;
+		letter-spacing: -0.02em;
+	}
+}
+
+.reveal-strip {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	&__item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+		color: var(--status);
+	}
+
+	&__bar {
+		width: 100%;
+		height: 6px;
+		border-radius: 2px;
+		background-color: var(--status);
+	}
+
+	// Nothing to fill: a dashed outline instead of a bar.
+	&__item--notcalled &__bar,
+	&__item--na &__bar {
+		background: none;
+		border: 1px dashed rgba(228, 228, 204, 0.35);
+		box-sizing: border-box;
+	}
+
+	&__abbr {
+		font-size: $text-8;
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: $color-text-muted;
+	}
+}
+
+.reveal-shortlist {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: auto;
+	padding-top: 14px;
+	border-top: 1px solid $tasting-border;
+	font-size: $text-12;
+	color: $color-text-secondary;
+
+	&__item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		color: $color-white;
+	}
+
+	&__answer {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-size: $text-10;
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+
+		&--yes {
+			color: $color-status-ok;
+		}
+
+		&--no {
+			color: $color-error;
+		}
+	}
+}
+
+.reveal-rows {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+// A correct or not-applicable field: one line.
+.reveal-hit {
+	display: grid;
+	grid-template-columns: 20px 170px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: $spacing-sm;
+	padding: $spacing-sm 0;
+	border-bottom: 1px solid $tasting-border;
+
+	&__icon {
+		color: var(--status);
+	}
+
+	&__label {
+		font-size: $text-13;
+		font-weight: $font-weight-semibold;
+		color: $color-text-secondary;
+	}
+
+	&__value {
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__word {
+		font-size: $text-10;
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--status);
+	}
+}
+
+// A miss: opened out, what differs struck through in the call and underlined in the actual.
+.reveal-miss {
+	margin: $spacing-xxs 0;
+	padding: 14px $spacing-md;
+	background-color: $color-surface-variant;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 8px;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $spacing-xs;
+		margin-bottom: $spacing-xxs;
+	}
+
+	&__label {
+		font-size: $text-13;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__pair {
+		display: grid;
+		grid-template-columns: 70px minmax(0, 1fr);
+		gap: 4px $spacing-xs;
+		margin: 0;
+		font-size: $text-14;
+		line-height: 1.4;
+
+		dt {
+			font-size: $text-12;
+			color: $color-text-muted;
+		}
+
+		dd {
+			margin: 0;
+		}
+	}
+
+	&__call {
+		color: $color-text-secondary;
+
+		s {
+			text-decoration-color: $color-text-muted;
+		}
+	}
+
+	&__actual span {
+		font-weight: $font-weight-bold;
+		text-decoration: underline;
+		text-decoration-thickness: 1.5px;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--status);
+	}
+
+	&__note {
+		margin: $spacing-xxs 0 0;
+		font-size: $text-12;
+		color: $color-text-secondary;
+	}
+}
+
+// ── Narrow main area (tablet beside the sidebar, and phone): stack ────────────
+@container tasting-main (max-width: 700px) {
+	.reveal-scorecard {
+		grid-template-columns: minmax(0, 1fr);
+
+		&__summary {
+			border-right: none;
+			border-bottom: 1px solid $tasting-border;
+		}
+	}
+
+	.reveal-score__value {
+		font-size: 4.5rem;
+	}
+
+	.reveal-hit {
+		grid-template-columns: 20px minmax(0, 1fr) auto;
+
+		&__label {
+			grid-column: 2;
+			font-size: $text-9;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: $color-text-muted;
+		}
+
+		&__value {
+			grid-column: 2;
+		}
+
+		&__word {
+			grid-row: 1 / span 2;
+			grid-column: 3;
+		}
+
+		&__icon {
+			grid-row: 1 / span 2;
+		}
+	}
+
+	.reveal-invite {
+		flex-direction: column;
+		align-items: stretch;
+
+		&__btn {
+			justify-content: center;
+		}
+	}
+
+	.reveal-form__layout--photo {
+		grid-template-columns: minmax(0, 1fr);
+
+		.reveal-form__photo {
+			order: 0;
+		}
+	}
+
+	.reveal-fields,
+	.reveal-fields--wide {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.reveal-fields--form .reveal-fields__wide {
+		grid-column: auto;
+	}
+}
+
+// ── Phone: the form is a full-screen sheet ────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	.reveal-form {
+		position: fixed;
+		inset: 0;
+		z-index: 50;
+		margin: 0;
+		border: none;
+		border-radius: 0;
+		display: flex;
+		flex-direction: column;
+		background-color: $color-black;
+
+		&__sheet-head {
+			display: grid;
+			grid-template-columns: 48px 1fr 48px;
+			align-items: center;
+			height: 56px;
+			padding: 0 8px;
+			border-bottom: 1px solid $tasting-border;
+			background-color: $tasting-m-chrome;
+		}
+
+		&__close {
+			@include bare-button;
+			width: 44px;
+			height: 44px;
+			color: $color-white;
+		}
+
+		&__sheet-title {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			font-size: $text-16;
+			font-weight: $font-weight-bold;
+		}
+
+		&__sheet-sub {
+			font-size: $text-11-5;
+			font-weight: $font-weight-regular;
+			color: $color-text-muted;
+		}
+
+		&__body {
+			flex: 1;
+			overflow-y: auto;
+			padding: 18px 20px;
+		}
+
+		// The sheet has its own title, so the in-card heading and eyebrow would repeat it.
+		&__body > .reveal-eyebrow,
+		&__heading {
+			display: none;
+		}
+
+		&__photo {
+			flex-direction: row;
+			align-items: center;
+			padding: 10px;
+			background-color: $color-darkGrey;
+			border: 1px solid $tasting-border-mid;
+			border-radius: 10px;
+
+			img {
+				width: 52px;
+				height: 52px;
+				border-radius: 6px;
+			}
+		}
+
+		&__actions {
+			padding: 12px 20px 30px;
+			background-color: $tasting-m-chrome;
+			// Both actions the same height: the primary button's padding otherwise stood it taller.
+			align-items: stretch;
+		}
+
+		&__save {
+			flex: 2;
+			min-height: 48px;
+		}
+
+		&__cancel {
+			flex: 1;
+			min-height: 48px;
+			justify-content: center;
+		}
+
+		&__footnote {
+			display: none;
+		}
+	}
+
+	.reveal-field .tasting-search-input-wrap {
+		height: 46px;
+	}
+}

@@ -2,7 +2,14 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { IconGlassFull, IconBottle, IconVolumeOff, IconStopwatch, IconArrowRight } from '@tabler/icons-react';
+import {
+	IconGlassFull,
+	IconBottle,
+	IconVolumeOff,
+	IconStopwatch,
+	IconArrowRight,
+	IconInfoCircle,
+} from '@tabler/icons-react';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { useTastingContext } from '../../components/tasting/TastingContext';
 import {
@@ -225,11 +232,13 @@ export default function TastingStartClient() {
 					</div>
 				</section>
 
-				{/* ── Step 3: Wine identity ── */}
+				{/* ── Step 3: Label ── A name for the taster's records, not the wine: typing the wine here
+				    gave the answer away before tasting. The wine itself is entered at the reveal. Still
+				    saved as `wineName`, so older tastings keep working. */}
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">03</span>
-						<span className="item-label">Wine identity</span>
+						<span className="item-label">Label</span>
 						<span className="start-step-hint">optional — for your records</span>
 					</header>
 
@@ -237,14 +246,19 @@ export default function TastingStartClient() {
 						<input
 							className="start-identity-input"
 							type="text"
-							placeholder="e.g. 2016 Barolo DOCG"
+							placeholder="Flight 3, wine 2"
 							maxLength={50}
 							value={wineName}
 							onChange={(e) => setWineName(e.target.value)}
-							aria-label="Wine name (optional)"
+							aria-label="Label (optional)"
+							aria-describedby="start-label-hint"
 						/>
 						<span className="start-identity-counter">{wineName.length} / 50</span>
 					</div>
+					<p className="start-identity-hint" id="start-label-hint">
+						<IconInfoCircle size={15} aria-hidden="true" />
+						Don&apos;t enter the wine; you&apos;ll reveal it after tasting.
+					</p>
 				</section>
 
 				{/* ── CTA ── */}

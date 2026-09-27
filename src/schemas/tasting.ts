@@ -24,6 +24,38 @@ function phaseAnswers<T extends z.ZodTypeAny>(value: T) {
 const optionalText = (max: number, label: string) =>
 	z.string().max(max, `${label} must be ${max} characters or fewer`).nullish();
 
+/**
+ * The wine as it actually was, typed from the label. Every field is optional: a label may carry
+ * no quality level, and a field left blank simply drops out of the score. Empty strings are
+ * stored as null so "blank" has one spelling.
+ */
+const revealText = (max: number) =>
+	z
+		.string()
+		.trim()
+		.max(max, `Keep each answer under ${max} characters`)
+		.nullish()
+		.transform((value) => value || null);
+
+export const revealSchema = z.object({
+	grapeVariety: revealText(200),
+	countryOfOrigin: revealText(200),
+	regionAppellation: revealText(200),
+	qualityLevel: revealText(200),
+	vintage: z
+		.string()
+		.trim()
+		.refine((value) => value === '' || /^\d{4}$/.test(value), 'Vintage must be a four-digit year')
+		.nullish()
+		.transform((value) => value || null),
+	wineName: revealText(100),
+});
+
+export type RevealInput = z.infer<typeof revealSchema>;
+
+/** Setting, editing or clearing (null) the reveal on a saved tasting. */
+export const revealUpdateSchema = z.object({ reveal: revealSchema.nullable() });
+
 export const tastingCreateSchema = z.object({
 	wineType: z.enum(['Red', 'White'], {
 		errorMap: () => ({ message: 'Wine type is required' }),
@@ -61,6 +93,8 @@ export const tastingCreateSchema = z.object({
 
 	// Only the shape is checked here; ownership and the upload itself are checked by the route.
 	photoKey: z.string().max(200).nullish(),
+	// The optional reveal on the save page, for a taster who already knows the wine.
+	reveal: revealSchema.nullish(),
 });
 
 export type TastingCreateInput = z.infer<typeof tastingCreateSchema>;

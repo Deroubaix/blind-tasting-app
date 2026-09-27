@@ -37,6 +37,16 @@ After the final conclusion comes **Save**: notes, an optional photo, and the she
 is written to your archive. Timing is entirely optional; leaving the timer off gives you the same
 grid with no clock.
 
+**Reveal and score.** Once the bottle is unwrapped, the taster enters the wine from the label on
+the saved tasting (or straight away on Save) and the call is scored against it, field by field:
+grape, country, region and appellation, quality level and vintage. An exact match scores a point;
+a near miss (vintage within two years, or the right region with a different appellation) shows as
+_close_ but scores nothing; a blank call is a miss; and a field the label doesn't have drops out of
+the total. The reveal is stored apart from the call (`Tasting.reveal`), and the rules live in
+`src/components/archives/revealScore.ts`, pinned by its tests. The start page's field is a
+_label_ for the taster's records ("Flight 3, wine 2"), not the wine, which would give the answer
+away.
+
 **Most attributes take one answer.** The nose is multi-select, because a wine genuinely does smell
 of several things at once, and so is secondary color on sight. That runs through the data model:
 `nose` is `Record<string, string[]>`, `sight` allows a list for Secondary Color(s), and palate is
