@@ -3,12 +3,14 @@ import { JsonApiError } from '../../../../utils/ErrorUtils';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
 import { hashPassword } from '../../../../utils/PasswordUtils';
 import { signupSchema } from '../../../../schemas/auth';
+import { RATE_LIMITS, clientIp, consume } from '../../../../lib/rateLimit';
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
 	try {
 		const { email, password, displayName } = signupSchema.parse(await request.json());
+		await consume(RATE_LIMITS.signupIp, clientIp(request));
 
 		const existingUser = await prisma.user.findUnique({ where: { email } });
 		if (existingUser) {

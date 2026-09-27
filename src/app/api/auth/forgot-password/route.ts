@@ -3,6 +3,7 @@ import { randomBytes, createHash } from 'crypto';
 import { Resend } from 'resend';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
 import { forgotPasswordSchema } from '../../../../schemas/auth';
+import { RATE_LIMITS, clientIp, consume } from '../../../../lib/rateLimit';
 
 const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -16,6 +17,9 @@ function hashToken(raw: string): string {
 export async function POST(request: Request) {
 	try {
 		const { email } = forgotPasswordSchema.parse(await request.json());
+		// Before the user lookup, so the limit behaves the same for addresses with no account.
+		await consume(RATE_LIMITS.forgotIp, clientIp(request));
+		await consume(RATE_LIMITS.forgotEmail, email);
 
 		const user = await prisma.user.findUnique({ where: { email } });
 

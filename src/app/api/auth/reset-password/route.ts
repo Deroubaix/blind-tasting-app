@@ -4,6 +4,7 @@ import { hashPassword } from '../../../../utils/PasswordUtils';
 import { JsonApiError } from '../../../../utils/ErrorUtils';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
 import { resetPasswordRequestSchema } from '../../../../schemas/auth';
+import { RATE_LIMITS, clientIp, consume } from '../../../../lib/rateLimit';
 
 const prisma = new PrismaClient();
 
@@ -19,6 +20,7 @@ function invalidLinkError() {
 export async function POST(request: Request) {
 	try {
 		const { email, token, password } = resetPasswordRequestSchema.parse(await request.json());
+		await consume(RATE_LIMITS.resetIp, clientIp(request));
 
 		const user = await prisma.user.findUnique({ where: { email } });
 
