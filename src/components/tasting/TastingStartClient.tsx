@@ -276,6 +276,13 @@ export default function TastingStartClient() {
 					);
 				})}
 			</div>
+
+			{/* The tasting pages have no footer, and every tasting starts here, so the credit and
+			    disclaimer the footer carries elsewhere live on this page too. */}
+			<p className="start-legal">
+				Grid based on the 2024 Deductive Tasting Format, © Court of Master Sommeliers, Americas. The
+				Sommelier&apos;s Ledger is not affiliated with or endorsed by the Court of Master Sommeliers.
+			</p>
 		</main>
 	);
 }

@@ -10,7 +10,7 @@ export default function Footer() {
 						The Sommelier&apos;s Ledger
 					</Link>
 					<p className="footer-tagline">
-						The personal practice ledger for candidates pursuing CMS, WSET, and IM certifications.
+						The personal practice ledger for Court of Master Sommeliers deductive tasting candidates.
 					</p>
 				</div>
 
@@ -25,6 +25,10 @@ export default function Footer() {
 
 			<div className="footer-bottom">
 				<span>© 2024 The Sommelier&apos;s Ledger.</span>
+				<span>
+					Grid based on the 2024 Deductive Tasting Format, © Court of Master Sommeliers, Americas. Not
+					affiliated with or endorsed by the Court of Master Sommeliers.
+				</span>
 			</div>
 		</footer>
 	);

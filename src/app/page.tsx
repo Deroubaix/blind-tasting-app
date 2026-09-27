@@ -4,47 +4,49 @@ import { IconArrowRight } from '@tabler/icons-react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { wineColors } from '../components/sight/sightData';
+import { formatTimerSeconds, phaseSeconds } from '../data/timerData';
 
+// Times are the guided 4:00 split, read from the timer settings so the page cannot drift from them.
 const PHASES = [
 	{
 		num: '01',
 		prefix: 'The',
 		name: 'Sight',
-		desc: 'Clarity, brightness, colour, concentration, viscosity. Selectable options.',
+		desc: 'Clarity, intensity of color, primary and secondary color, rim variation, staining, tearing, gas.',
 		input: 'Selectable',
-		time: '0:30',
+		time: formatTimerSeconds(phaseSeconds(240, 'sight')),
 	},
 	{
 		num: '02',
 		prefix: 'The',
 		name: 'Nose',
-		desc: 'Fruit, floral, herbs, earth, wood. Selectable options plus free-text custom notes. Varies by wine type.',
+		desc: 'Faults, intensity, age, fruit and fruit condition, non-fruit, earth, mineral, oak. Custom notes too.',
 		input: 'Mixed',
-		time: '2:00',
+		time: formatTimerSeconds(phaseSeconds(240, 'nose')),
 	},
 	{
 		num: '03',
 		prefix: 'The',
 		name: 'Palate',
-		desc: 'Sweetness, tannin, acid, alcohol, body, finish. Selectable scales.',
+		desc: 'Sweetness, acidity, alcohol, body, tannin or phenolic bitterness, texture, balance, finish, complexity.',
 		input: 'Selectable',
-		time: '0:30',
+		time: formatTimerSeconds(phaseSeconds(240, 'palate')),
 	},
 	{
 		num: '04',
 		prefix: 'Initial',
 		name: 'call',
-		desc: 'Old/New World, climate, age range, possible grape varieties and countries.',
+		desc: 'Possible grape varieties, climate, possible countries, age range.',
 		input: 'Mixed',
-		time: '0:30',
+		time: formatTimerSeconds(phaseSeconds(240, 'initialConclusion')),
 	},
 	{
 		num: '05',
 		prefix: 'Final',
 		name: 'conclusion',
-		desc: 'Grape, country, region, quality tier, vintage. Free text.',
-		input: 'Free text',
-		time: '0:30',
+		desc: 'Grape or blend, country, region and appellation, vintage — plus quality level and style where appropriate.',
+		input: 'Search & pick',
+		time: formatTimerSeconds(phaseSeconds(240, 'finalConclusion')),
 	},
 ];
 
@@ -170,7 +172,7 @@ export default function Homepage() {
 								<span className="hp-ledger__when">2 days ago</span>
 							</header>
 							<p className="hp-ledger__title">Sauvignon Blanc, Marlborough</p>
-							<p className="hp-ledger__sub">2022 · Cool climate · New World</p>
+							<p className="hp-ledger__sub">2022 · Cool climate · 1-3 years</p>
 							<div className="hp-ledger__result">
 								<span className="hp-ledger__result-label">Session length</span>
 								<span className="hp-ledger__result-value">04:00</span>
@@ -191,8 +193,8 @@ export default function Homepage() {
 							</h2>
 						</div>
 						<p className="hp-method__desc">
-							Each session walks the five phases of the deductive tasting method in order. Optional timer
-							for each. Reach the end, add notes, and save.
+							Each session walks the five phases of the deductive tasting method in order, under an
+							optional clock at exam pace. Reach the end, add notes, and save.
 						</p>
 					</header>
 

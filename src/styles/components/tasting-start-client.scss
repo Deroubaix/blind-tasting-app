@@ -471,6 +471,17 @@
 	color: $color-brand-1;
 }
 
+// ── Grid credit and disclaimer ────────────────────────────────────────────────
+.start-legal {
+	margin: 2.5rem auto 0;
+	max-width: 36rem;
+	font-size: 0.72rem;
+	line-height: 1.6;
+	color: $color-text-muted;
+	text-align: center;
+	font-family: $font-display-normal-family;
+}
+
 // ── Phase preview rail ────────────────────────────────────────────────────────
 .start-phase-rail {
 	margin-top: 3.5rem;
