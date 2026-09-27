@@ -10,7 +10,9 @@ import TastingCustomSelect from './TastingCustomSelect';
 import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from './autocompleteData';
 import { sightFields } from '../sight/sightFields';
 import { NOSE_ASSESSMENTS } from '../nose/noseFields';
-import { fcAnsweredCount, FC_REQUIRED, QUALITY_LEVELS, STYLE_CATEGORIES } from './conclusionFields';
+import { BALANCE_NOTE, CONFIRM_ROWS, PALATE_OPTIONS, confirmKey } from '../palate/palateFields';
+import { fcAnsweredCount, FC_REQUIRED, STYLE_CATEGORIES } from './conclusionFields';
+import QualityLevelSelect from './QualityLevelSelect';
 
 // Values like "Medium−" or "High" mean nothing alone, so the attribute they answer
 // travels with them — flattened, five "Medium−" in a row name neither acid nor tannin.
@@ -92,9 +94,11 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 		.flatMap(([, values]) => values)
 		.join(' · ');
 
-	const palatePairs = Object.entries(tastingData.palate ?? {})
-		.filter(([, value]) => Boolean(value))
-		.map(([key, value]) => [key, value] as [string, string]);
+	// Grid order, not tap order.
+	const palate = tastingData.palate ?? {};
+	const palatePairs = [...Object.keys(PALATE_OPTIONS[wineType]), BALANCE_NOTE, ...CONFIRM_ROWS.map(confirmKey)]
+		.filter((key) => Boolean(palate[key]))
+		.map((key) => [key, palate[key]] as [string, string]);
 
 	const initial = tastingData.conclusion?.initial;
 	const initialPairs = (
@@ -268,13 +272,10 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							<span className="tasting-card__label" id="fc-quality-label">
 								Official Quality Level
 							</span>
-							<TastingCustomSelect
-								options={QUALITY_LEVELS}
+							<QualityLevelSelect
 								labelId="fc-quality-label"
 								value={qualityLevel}
 								onChange={setQualityLevel}
-								placeholder="Where appropriate…"
-								clearLabel="Not applicable"
 							/>
 						</div>
 

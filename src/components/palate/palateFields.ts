@@ -15,14 +15,14 @@ const SWEETNESS = [
 	'Lusciously Sweet',
 ];
 
-/** Structure, in grid order. Tannin is red-only on the grid; phenolic bitterness white-only. */
+/** Structure, in grid order. Tannin volume is red-only on the grid; phenolic bitterness white-only. */
 export const PALATE_OPTIONS: Record<WineType, Record<string, string[]>> = {
 	red: {
 		Sweetness: SWEETNESS,
 		Acidity: FIVE_LEVEL,
 		Alcohol: FIVE_LEVEL,
 		Body: ['Light', 'Medium−', 'Medium', 'Medium+', 'Full'],
-		Tannin: FIVE_LEVEL,
+		'Tannin Volume': FIVE_LEVEL,
 		'Tannin Texture': ['Silky', 'Soft', 'Gritty', 'Coarse', 'Rough', 'Stalky', 'Hard'],
 		Texture: ['Lean', 'Linear', 'Crisp', 'Soft', 'Creamy', 'Round', 'Waxy', 'Oily', 'Viscous'],
 		Balance: ['Yes', 'No'],
@@ -48,9 +48,19 @@ export const BALANCE_NOTE = 'Dominant Element(s)';
 // The grid marks texture "note when apparent"; tannin texture, balance and complexity are
 // recorded but, like texture, not required to move on.
 const REQUIRED: Record<WineType, string[]> = {
-	red: ['Sweetness', 'Acidity', 'Alcohol', 'Body', 'Tannin', 'Length of Finish'],
+	red: ['Sweetness', 'Acidity', 'Alcohol', 'Body', 'Tannin Volume', 'Length of Finish'],
 	white: ['Sweetness', 'Acidity', 'Alcohol', 'Body', 'Phenolic Bitterness', 'Length of Finish'],
 };
+
+/** Confirm from the Nose: the grid's six rows, one tap each, stored in `palate` under `confirmKey`. */
+export const CONFIRM_ROWS = ['Fruit', 'Fruit Condition', 'Non-Fruit', 'Earth', 'Mineral', 'Oak'] as const;
+
+/** Fruit condition adds the grid's "turned tart?". */
+export function confirmOptions(row: (typeof CONFIRM_ROWS)[number]): string[] {
+	return row === 'Fruit Condition' ? ['Confirmed', 'Turned tart', 'Changed'] : ['Confirmed', 'Changed'];
+}
+
+export const confirmKey = (row: string) => `Confirm: ${row}`;
 
 /** The structural calls this wine type must answer before Next is enabled. */
 export function palateRequired(wineType: WineType): string[] {

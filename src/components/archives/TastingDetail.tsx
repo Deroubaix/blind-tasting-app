@@ -200,7 +200,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{tasting.confirmNose && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">Confirm the Nose</div>
+					<div className="tasting-detail__section-label">Confirm from the Nose</div>
 					<p className="tasting-detail__notes">&ldquo;{tasting.confirmNose}&rdquo;</p>
 				</div>
 			)}

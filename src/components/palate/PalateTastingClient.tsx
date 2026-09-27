@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import { BALANCE_NOTE, PALATE_OPTIONS, palateRequired } from './palateFields';
+import { BALANCE_NOTE, CONFIRM_ROWS, PALATE_OPTIONS, confirmKey, confirmOptions, palateRequired } from './palateFields';
 
 export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
@@ -99,20 +99,53 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 				))}
 			</div>
 
-			{/* Confirm from the nose: the grid's palate rows for fruit, condition, non-fruit, earth,
-			    mineral and oak all ask the same question — has anything changed? */}
+			{/* Confirm from the nose: six rows, one tap each, plus an optional note. */}
 			<div className="palate-notes tasting-card">
 				<div className="palate-notes__header">
-					<label className="tasting-card__label" htmlFor="palate-confirm-nose">
+					<span className="tasting-card__label" id="palate-confirm-label">
 						Confirm from the Nose
-					</label>
+					</span>
 					<span className="palate-notes__sublabel">Has anything changed?</span>
 				</div>
+				<div className="palate-confirm" role="group" aria-labelledby="palate-confirm-label">
+					{CONFIRM_ROWS.map((row) => {
+						const key = confirmKey(row);
+						return (
+							<div key={row} className="palate-confirm__row">
+								<span className="palate-confirm__label" id={`palate-confirm-${row}`}>
+									{row}
+								</span>
+								<div
+									className="tasting-options palate-confirm__options"
+									role="group"
+									aria-labelledby={`palate-confirm-${row}`}
+								>
+									{confirmOptions(row).map((option) => {
+										const selected = selectedOptions[key] === option;
+										return (
+											<button
+												key={option}
+												className={`tasting-option${selected ? ' tasting-option--selected' : ''}`}
+												aria-pressed={selected}
+												onClick={() => toggleAnswer(key, option)}
+											>
+												{option}
+											</button>
+										);
+									})}
+								</div>
+							</div>
+						);
+					})}
+				</div>
+				<label className="palate-confirm__note-label" htmlFor="palate-confirm-nose">
+					What changed? <span className="palate-confirm__optional">optional</span>
+				</label>
 				<textarea
 					id="palate-confirm-nose"
 					className="tasting-textarea"
-					rows={4}
-					placeholder="Fruit, fruit condition (turned tart?), non-fruit, earth, mineral, oak — note anything that differs from the nose…"
+					rows={2}
+					placeholder="e.g. more earth than on the nose; oak shows as vanilla…"
 					value={confirmNose}
 					onChange={(e) => updateTastingData({ confirmNose: e.target.value })}
 				/>

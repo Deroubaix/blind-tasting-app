@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { SIGHT_SCALES, sightFields } from '../sight/sightFields';
 import { wineColors } from '../sight/sightData';
-import { NOSE_ASSESSMENTS, NOSE_OPTIONS } from '../nose/noseFields';
-import { PALATE_OPTIONS, palateRequired } from '../palate/palateFields';
+import { FRUIT_FAMILIES, NOSE_ASSESSMENTS, NOSE_OPTIONS, NOSE_TOP } from '../nose/noseFields';
+import { CONFIRM_ROWS, PALATE_OPTIONS, palateRequired } from '../palate/palateFields';
 import { AGE_RANGES, QUALITY_LEVELS } from './conclusionFields';
-import { GRAPE_VARIETALS } from './autocompleteData';
+import { GRAPE_VARIETALS, WINE_REGION_GROUPS, WINE_REGIONS } from './autocompleteData';
 
 // Pins the app to the 2024 CMS Americas deductive tasting grid.
 
@@ -56,10 +56,10 @@ describe('nose', () => {
 
 describe('palate', () => {
 	it('requires tannin for reds and phenolic bitterness for whites', () => {
-		expect(palateRequired('red')).toContain('Tannin');
+		expect(palateRequired('red')).toContain('Tannin Volume');
 		expect(palateRequired('red')).not.toContain('Phenolic Bitterness');
 		expect(palateRequired('white')).toContain('Phenolic Bitterness');
-		expect(palateRequired('white')).not.toContain('Tannin');
+		expect(palateRequired('white')).not.toContain('Tannin Volume');
 	});
 
 	it('only requires attributes the page actually offers', () => {
@@ -84,6 +84,58 @@ describe('conclusions', () => {
 
 	it('offers every Advanced Sommelier core grape', () => {
 		expect(GRAPE_VARIETALS).toEqual(expect.arrayContaining(['Cabernet Franc', 'Carménère', 'Corvina']));
+	});
+});
+
+describe('grid order and completeness', () => {
+	it('lists sight in grid order', () => {
+		expect(sightFields('red')).toEqual([
+			'Clarity',
+			'Intensity of Color',
+			'Primary Color',
+			'Secondary Color(s)',
+			'Rim Variation',
+			'Staining',
+			'Tearing',
+			'Gas Evidence',
+		]);
+	});
+
+	it('asks faults first on the nose', () => {
+		expect(NOSE_TOP[0]).toBe('Minor Fault(s)');
+	});
+
+	it('has an Other fruit group for both colours', () => {
+		expect(FRUIT_FAMILIES.red).toContain('Other Fruit');
+		expect(FRUIT_FAMILIES.white).toContain('Other Fruit');
+		expect(NOSE_OPTIONS.white['Other Fruit']?.length).toBeGreaterThan(0);
+	});
+
+	it('names tannin volume as the grid does', () => {
+		expect(PALATE_OPTIONS.red).toHaveProperty('Tannin Volume');
+		expect(PALATE_OPTIONS.red).not.toHaveProperty('Tannin');
+	});
+
+	it('confirms the six nose rows on the palate', () => {
+		expect(CONFIRM_ROWS).toEqual(['Fruit', 'Fruit Condition', 'Non-Fruit', 'Earth', 'Mineral', 'Oak']);
+	});
+});
+
+describe('regions', () => {
+	it('lists no region twice', () => {
+		expect(new Set(WINE_REGIONS).size).toBe(WINE_REGIONS.length);
+	});
+
+	it('has no duplicate spellings or grapes posing as regions', () => {
+		for (const name of ['Maipo', 'Maule', 'Montlouis', 'Friuli', 'Sonoma', "Nero d'Avola", 'Negroamaro']) {
+			expect(WINE_REGIONS).not.toContain(name);
+		}
+	});
+
+	it('files Douro Superior under Portugal and has Chianti Rufina', () => {
+		const portugal = WINE_REGION_GROUPS.find((group) => group.name === 'Portugal');
+		expect(portugal?.regions).toContain('Douro Superior');
+		expect(WINE_REGIONS).toContain('Chianti Rufina');
 	});
 });
 

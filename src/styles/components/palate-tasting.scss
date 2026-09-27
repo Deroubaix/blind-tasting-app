@@ -46,6 +46,43 @@ input.palate-balance-note {
 	}
 }
 
+// ── Confirm from the Nose rows ─────────────────────────────────────────────────
+.palate-confirm {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-sm;
+	margin-bottom: $spacing-md;
+
+	&__row {
+		display: grid;
+		grid-template-columns: 9rem 1fr;
+		align-items: center;
+		gap: $spacing-sm $spacing-md;
+	}
+
+	&__label {
+		font-size: $text-13;
+		font-weight: $font-weight-medium;
+		color: $color-text-secondary;
+	}
+
+	&__note-label {
+		display: block;
+		margin-bottom: $spacing-xs;
+		font-size: $text-13;
+		font-weight: $font-weight-medium;
+		color: $color-text-secondary;
+	}
+
+	&__optional {
+		margin-left: 4px;
+		font-size: $text-12;
+		font-style: italic;
+		font-weight: $font-weight-regular;
+		color: $color-text-muted;
+	}
+}
+
 // ── Phone: one column ────────────────────────────────────────────────────────
 @include responsive($breakpoint-mobile) {
 	.palate-grid {
@@ -58,5 +95,10 @@ input.palate-balance-note {
 @container tasting-main (max-width: 520px) {
 	.palate-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.palate-confirm__row {
+		grid-template-columns: 1fr;
+		gap: $spacing-xs;
 	}
 }
