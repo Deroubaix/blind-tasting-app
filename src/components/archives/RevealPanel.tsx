@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { IconArrowRight, IconExternalLink, IconX } from '@tabler/icons-react';
 import { type TastingData } from '../../types/TastingData';
 import ClientTastingService from '../../services/client/ClientTastingService';
@@ -32,7 +33,8 @@ export default function RevealPanel({
 	onRevealed: (tasting: SavedTasting) => void;
 }) {
 	const revealed = isRevealed(tasting.reveal);
-	const [editing, setEditing] = useState(openForm && !revealed);
+	const flight = tasting.flight;
+	const [editing, setEditing] = useState(openForm && !revealed && !flight);
 	const [draft, setDraft] = useState<Reveal>(() => ({ ...(tasting.reveal ?? {}) }));
 	const [saving, setSaving] = useState(false);
 	const { showToast } = useToastProvider();
@@ -142,7 +144,36 @@ export default function RevealPanel({
 			tasting.reveal as Reveal,
 			tasting.conclusion?.initial,
 		);
-		return <RevealScorecard comparison={comparison} onEdit={startEditing} />;
+		return flight ? (
+			<RevealScorecard
+				comparison={comparison}
+				flightHref={`/flights/${flight.code}/wines/${flight.wineNumber}`}
+			/>
+		) : (
+			<RevealScorecard comparison={comparison} onEdit={startEditing} />
+		);
+	}
+
+	// A flight wine is revealed once, by the host, for everyone who tasted it.
+	if (flight) {
+		return (
+			<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
+				<div className="reveal-invite__text">
+					<span className="reveal-eyebrow">The reveal</span>
+					<h2 className="reveal-invite__heading" id="reveal-invite-heading">
+						Waiting for the host
+					</h2>
+					<p className="reveal-invite__lede">
+						This is wine {flight.wineNumber} of {flight.name}. The host reveals it for the whole flight, and
+						your score appears here when they do.
+					</p>
+				</div>
+				<Link href={`/flights/${flight.code}`} className="btn-primary reveal-invite__btn no-underline">
+					Open the flight
+					<IconArrowRight size={16} aria-hidden="true" />
+				</Link>
+			</section>
+		);
 	}
 
 	return (

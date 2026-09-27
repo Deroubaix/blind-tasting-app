@@ -50,6 +50,11 @@ export default function PrivacyPage() {
 							reveal and its score, and when you saved it.
 						</li>
 						<li>
+							<strong>Flights:</strong> anyone with a flight&apos;s code sees its name and the names of
+							the host and tasters. Those in it also see when you are tasting and, once a wine is
+							revealed, your answers and score for it.
+						</li>
+						<li>
 							<strong>Label photos</strong> you choose to add. They are private: only you can open them.
 						</li>
 						<li>
@@ -57,9 +62,9 @@ export default function PrivacyPage() {
 							hour.
 						</li>
 						<li>
-							<strong>Security counters:</strong> to stop password guessing, failed attempts are counted
-							against a hashed form of the email address and network address. They are cleared within a
-							day.
+							<strong>Security counters:</strong> to stop password and flight-code guessing, failed
+							attempts are counted against a hashed form of the email address, network address or account.
+							They are cleared within a day.
 						</li>
 					</ul>
 					<p>
@@ -106,7 +111,8 @@ export default function PrivacyPage() {
 					<h2>How long it is kept</h2>
 					<p>
 						Your account, tastings and photos are kept until you delete them. Deleting a tasting deletes its
-						photo; deleting your account deletes everything, straight away.
+						photo; deleting your account deletes everything, straight away, including any flight you host
+						(the tasters keep their own tastings from it).
 					</p>
 				</section>
 

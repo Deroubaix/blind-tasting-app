@@ -58,6 +58,12 @@ export default function ArchivesList() {
 						No. {tasting.number}, {title}, will be deleted for good
 						{tasting.photoKey ? ', along with its photo' : ''}.
 					</p>
+					{tasting.flight && (
+						<p className="confirm-dialog__note">
+							It was your call for wine {tasting.flight.wineNumber} of {tasting.flight.name}, so it also
+							leaves that flight&apos;s results.
+						</p>
+					)}
 					<p className="confirm-dialog__note">This cannot be undone.</p>
 					<div className="confirm-dialog__actions">
 						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(DELETE_MODAL)}>
@@ -154,6 +160,8 @@ export default function ArchivesList() {
 										{perfect && <IconCheck size={11} stroke={2.5} aria-hidden="true" />}
 										{comparison.score} / {comparison.outOf}
 									</span>
+								) : tasting.flight ? (
+									<span className="archive-card__waiting">Awaiting host</span>
 								) : (
 									<Link
 										href={`/archives/${tasting.id}?reveal=1`}

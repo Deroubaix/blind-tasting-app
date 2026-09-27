@@ -157,7 +157,14 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 				</span>
 				<div className="tasting-detail__hero-meta">
 					{tasting.number != null && <span className="tasting-detail__id">No. {tasting.number}</span>}
-					{revealed && tasting.wineName && <span className="tasting-detail__id">{tasting.wineName}</span>}
+					{tasting.flight && (
+						<Link href={`/flights/${tasting.flight.code}`} className="tasting-detail__flight no-underline">
+							Flight · {tasting.flight.name} · Wine {tasting.flight.wineNumber}
+						</Link>
+					)}
+					{revealed && tasting.wineName && !tasting.flight && (
+						<span className="tasting-detail__id">{tasting.wineName}</span>
+					)}
 					<span className="tasting-detail__date">{date}</span>
 				</div>
 			</div>

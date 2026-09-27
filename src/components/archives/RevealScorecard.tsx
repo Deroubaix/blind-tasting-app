@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { IconBan, IconCheck, IconMinus, IconTilde, IconX } from '@tabler/icons-react';
 import { type Comparison, type ComparedField, type FieldStatus } from './revealScore';
 
@@ -14,7 +15,7 @@ const STATUS: Record<FieldStatus, { word: string; Icon: typeof IconCheck }> = {
 
 const isHit = (field: ComparedField) => field.status === 'correct' || field.status === 'na';
 
-function StatusBadge({ status }: { status: FieldStatus }) {
+export function StatusBadge({ status }: { status: FieldStatus }) {
 	const { word, Icon } = STATUS[status];
 	return (
 		<span className={`reveal-status reveal-status--${status}`}>
@@ -63,7 +64,16 @@ function MissRow({ field }: { field: ComparedField }) {
 	);
 }
 
-export default function RevealScorecard({ comparison, onEdit }: { comparison: Comparison; onEdit: () => void }) {
+export default function RevealScorecard({
+	comparison,
+	onEdit,
+	flightHref,
+}: {
+	comparison: Comparison;
+	/** Absent for a flight wine: the host owns its reveal. */
+	onEdit?: () => void;
+	flightHref?: string;
+}) {
 	const { fields, score, outOf, headline, detail, shortlist } = comparison;
 	const shortlistItems = [
 		{ text: 'the grape', held: shortlist.grape },
@@ -122,9 +132,17 @@ export default function RevealScorecard({ comparison, onEdit }: { comparison: Co
 			<div className="reveal-scorecard__fields">
 				<div className="reveal-scorecard__fields-head">
 					<span className="reveal-scorecard__fields-title">Field by field</span>
-					<button type="button" className="reveal-btn-quiet" onClick={onEdit}>
-						Edit reveal
-					</button>
+					{onEdit ? (
+						<button type="button" className="reveal-btn-quiet" onClick={onEdit}>
+							Edit reveal
+						</button>
+					) : (
+						flightHref && (
+							<Link href={flightHref} className="reveal-btn-quiet no-underline">
+								Revealed by the host · Flight results →
+							</Link>
+						)
+					)}
 				</div>
 				<ul className="reveal-rows">
 					{fields.map((field) =>

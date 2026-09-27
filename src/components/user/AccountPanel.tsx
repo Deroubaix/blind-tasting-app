@@ -8,9 +8,11 @@ import { useAuthProvider } from '../auth/AuthProvider';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
+import ClientFlightService from '../../services/client/ClientFlightService';
 import { JsonApiError } from '../../utils/ErrorUtils';
 
 const service = new ClientTastingService();
+const flightService = new ClientFlightService();
 const DELETE_ACCOUNT_MODAL = 'delete-account';
 
 function deletionSummary(count: number | null) {
@@ -27,6 +29,7 @@ export default function AccountPanel() {
 	const { showToast } = useToastProvider();
 	const router = useRouter();
 	const [tastingCount, setTastingCount] = useState<number | null>(null);
+	const [hostedFlights, setHostedFlights] = useState(0);
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [deleting, setDeleting] = useState(false);
@@ -47,7 +50,16 @@ export default function AccountPanel() {
 			.getTastings()
 			.then((tastings) => setTastingCount(tastings.length))
 			.catch(() => setTastingCount(null));
+		flightService
+			.list()
+			.then((flights) => setHostedFlights(flights.filter((flight) => flight.role === 'host').length))
+			.catch(() => setHostedFlights(0));
 	}, [user, isInitialLoading, router]);
+
+	// Hosted flights go with the host's account, for everyone who tasted in them.
+	const flightsNote = hostedFlights
+		? `The ${hostedFlights === 1 ? 'flight' : `${hostedFlights} flights`} you host ${hostedFlights === 1 ? 'is' : 'are'} deleted too, for everyone in ${hostedFlights === 1 ? 'it' : 'them'}. Tasters keep their own tastings.`
+		: null;
 
 	if (isInitialLoading || !user) {
 		return <div className="archives-loading">Loading…</div>;
@@ -83,6 +95,7 @@ export default function AccountPanel() {
 			children: (
 				<div className="confirm-dialog">
 					<p className="confirm-dialog__lead">{deletionSummary(tastingCount)} will be deleted for good.</p>
+					{flightsNote && <p className="confirm-dialog__note">{flightsNote}</p>}
 					<p className="confirm-dialog__note">This cannot be undone.</p>
 					<div className="confirm-dialog__actions">
 						<button
@@ -138,6 +151,7 @@ export default function AccountPanel() {
 					Deletes your account, every tasting and every label photo, straight away and for good. Enter your
 					password to confirm.
 				</p>
+				{flightsNote && <p className="account-card__text">{flightsNote}</p>}
 				<div className="account-delete">
 					<label className="account-delete__label" htmlFor="account-delete-password">
 						Password
