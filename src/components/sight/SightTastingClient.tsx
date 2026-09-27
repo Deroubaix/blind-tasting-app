@@ -134,8 +134,13 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 					: 'Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary colors.'
 			}
 			footer={{
-				onBack: () => router.push(`/tastings/start?wineType=${wineType}`),
-				backLabel: 'Back to Setup',
+				onBack: () =>
+					router.push(
+						tastingData.flight
+							? `/flights/${tastingData.flight.code}`
+							: `/tastings/start?wineType=${wineType}`,
+					),
+				backLabel: tastingData.flight ? 'Back to Flight' : 'Back to Setup',
 				nextLabel: 'Next: The Nose',
 				onNext: handleNextPhase,
 			}}

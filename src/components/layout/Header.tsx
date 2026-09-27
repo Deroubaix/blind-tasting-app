@@ -94,6 +94,14 @@ export default function Header() {
 										Archive
 									</Link>
 									<Link
+										href="/flights"
+										className="nav-dropdown__item"
+										role="menuitem"
+										onClick={() => setDropdownOpen(false)}
+									>
+										Flights
+									</Link>
+									<Link
 										href="/account"
 										className="nav-dropdown__item"
 										role="menuitem"
@@ -171,6 +179,9 @@ export default function Header() {
 						<>
 							<Link href="/archives" onClick={closeMenu}>
 								Archive
+							</Link>
+							<Link href="/flights" onClick={closeMenu}>
+								Flights
 							</Link>
 							<Link href="/account" onClick={closeMenu}>
 								Account

@@ -1,0 +1,1336 @@
+@use '../abstracts' as *;
+// Flights: study groups tasting together
+
+$flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
+
+// ── Shell ─────────────────────────────────────────────────────────────────────
+.flight-page {
+	min-height: 100dvh;
+	background-color: $color-black;
+	color: $color-white;
+	display: flex;
+	flex-direction: column;
+	font-family: $font-display-normal-family;
+}
+
+.flight-main {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: $spacing-xxl $spacing-xxl 5rem;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-lg;
+
+	&--narrow {
+		max-width: 860px;
+	}
+
+	&--invite {
+		max-width: 560px;
+		padding-top: 4rem;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: $spacing-lg $spacing-md 4rem;
+	}
+}
+
+.flight-eyebrow {
+	@include eyebrow-label($text-11, $tasting-accent-light);
+	letter-spacing: 0.14em;
+	margin: 0;
+
+	&--muted {
+		color: $color-text-muted;
+	}
+}
+
+.flight-muted {
+	color: $color-text-muted;
+	font-size: $text-13;
+}
+
+.flight-note {
+	margin: 0;
+	font-size: $text-13;
+	line-height: 1.6;
+	color: $color-text-muted;
+}
+
+.flight-link {
+	color: $tasting-accent-light;
+	font-size: $text-13;
+	font-weight: $font-weight-semibold;
+	white-space: nowrap;
+
+	&:after {
+		display: none;
+	}
+
+	&:hover {
+		color: $color-white;
+	}
+}
+
+.flight-link-button {
+	@include bare-button;
+
+	color: $color-white;
+	font-weight: $font-weight-semibold;
+	text-align: left;
+
+	&:hover,
+	&:focus-visible {
+		color: $tasting-accent-light;
+	}
+}
+
+.flight-back {
+	font-size: $text-14;
+	color: $color-text-secondary;
+
+	&:after {
+		display: none;
+	}
+
+	&:hover {
+		color: $color-white;
+	}
+}
+
+// The shared .outline defaults to near-black on this ground; flights name their own, as the modal does.
+.flight-page .outline {
+	--color: #{$color-text-secondary};
+
+	@include action-label;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	background: transparent;
+	border: 1px solid var(--color);
+	border-radius: 6px;
+	color: var(--color);
+	padding: 0.9rem 1.4rem;
+	cursor: pointer;
+
+	&:after {
+		display: none;
+	}
+
+	&:hover,
+	&:focus-visible {
+		--color: #{$color-white};
+		background: transparent;
+	}
+}
+
+.flight-page .flight-btn-small {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 40px;
+	padding: 0 16px;
+	font-size: $text-12;
+
+	@include responsive($breakpoint-mobile) {
+		min-height: 44px;
+	}
+}
+
+.flight-message {
+	max-width: 560px;
+	margin: 4rem auto;
+	padding: 0 $spacing-md;
+	text-align: center;
+	color: $color-text-secondary;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+	align-items: center;
+}
+
+.flight-card {
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	padding: $spacing-lg;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+	min-width: 0;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $spacing-md;
+		flex-wrap: wrap;
+	}
+}
+
+.flight-empty {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: $spacing-lg;
+	border: 1px dashed $tasting-border-mid;
+	border-radius: 8px;
+	text-align: center;
+	font-size: $text-14;
+	color: $color-text-secondary;
+
+	strong {
+		color: $color-white;
+	}
+}
+
+// ── Page heading ──────────────────────────────────────────────────────────────
+.flight-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: $spacing-lg;
+	flex-wrap: wrap;
+
+	> div:first-child {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-sm;
+		min-width: 0;
+	}
+
+	&__title {
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+
+	&__sub {
+		margin: 0;
+		color: $color-text-secondary;
+		font-size: $text-15;
+		line-height: 1.5;
+	}
+
+	&__actions {
+		display: flex;
+		gap: $spacing-sm;
+		flex-wrap: wrap;
+
+		> * {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+	}
+
+	&__people {
+		display: flex;
+		gap: 4px;
+	}
+}
+
+// ── Avatars and statuses ──────────────────────────────────────────────────────
+.flight-avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border-radius: 50%;
+	font-weight: $font-weight-bold;
+	line-height: 1;
+	box-sizing: border-box;
+	--tint: #{$color-white};
+
+	@each $tint in $flight-tints {
+		$i: index($flight-tints, $tint) - 1;
+		&--t#{$i} {
+			--tint: #{$tint};
+		}
+	}
+
+	&--sm {
+		width: 24px;
+		height: 24px;
+		font-size: $text-11;
+	}
+
+	&--md {
+		width: 32px;
+		height: 32px;
+		font-size: $text-13;
+	}
+
+	&--lg {
+		width: 44px;
+		height: 44px;
+		font-size: $text-16;
+	}
+
+	&--filled {
+		background-color: var(--tint);
+		color: $color-black;
+	}
+
+	&--dashed {
+		border: 1.5px dashed var(--tint);
+		color: var(--tint);
+	}
+
+	&--faint {
+		border: 1px solid rgba(228, 228, 204, 0.18);
+		color: $color-text-muted;
+	}
+}
+
+.flight-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	border-radius: 4px;
+	border: 1px solid rgba(228, 228, 204, 0.2);
+	font-size: $text-11;
+	font-weight: $font-weight-bold;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: $color-text-secondary;
+	white-space: nowrap;
+	width: fit-content;
+
+	&--tasting {
+		color: $tasting-accent-light;
+		border-color: rgba($tasting-accent-light, 0.4);
+	}
+
+	&--submitted,
+	&--allsubmitted {
+		color: $color-white;
+		border-color: rgba(228, 228, 204, 0.3);
+	}
+
+	&--revealed {
+		color: $color-status-ok;
+		border-color: rgba($color-status-ok, 0.35);
+	}
+
+	&--notsubmitted {
+		border-style: dashed;
+	}
+}
+
+.flight-score {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: 4px;
+	border: 1px solid rgba(228, 228, 204, 0.22);
+	font-size: $text-12;
+	font-weight: $font-weight-bold;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	width: fit-content;
+}
+
+.flight-clock {
+	font-family: $font-mono-family;
+	font-size: $text-14;
+	font-variant-numeric: tabular-nums;
+	color: $color-white;
+}
+
+// ── Create ────────────────────────────────────────────────────────────────────
+.flight-stepper {
+	display: flex;
+	align-items: center;
+	gap: $spacing-lg;
+	flex-wrap: wrap;
+	padding: $spacing-md;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 8px;
+
+	&__btn {
+		@include bare-button;
+
+		width: 40px;
+		height: 40px;
+		border: 1px solid $tasting-border-mid;
+		border-radius: 8px;
+		color: $color-white;
+
+		&:disabled {
+			opacity: 0.35;
+			cursor: default;
+		}
+	}
+
+	&__value {
+		font-size: 2rem;
+		font-weight: $font-weight-bold;
+		min-width: 5.5rem;
+		text-align: center;
+
+		span {
+			font-size: $text-13;
+			font-weight: $font-weight-regular;
+			color: $color-text-muted;
+		}
+	}
+
+	&__note {
+		margin: 0;
+		font-size: $text-13;
+		color: $color-text-muted;
+	}
+}
+
+// ── Host dashboard ────────────────────────────────────────────────────────────
+.flight-dashboard {
+	display: grid;
+	grid-template-columns: minmax(260px, 340px) 1fr;
+	gap: $spacing-lg;
+	align-items: start;
+
+	&__side,
+	&__wines {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-lg;
+		min-width: 0;
+	}
+
+	@container tasting-main (max-width: 760px) {
+		grid-template-columns: 1fr;
+	}
+
+	@include responsive(56rem) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.flight-join {
+	&__code {
+		margin: 0;
+		font-family: $font-mono-family;
+		font-size: clamp(2.5rem, 6vw, 3.75rem);
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.08em;
+		line-height: 1;
+		color: $color-white;
+	}
+
+	&__share {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+	}
+
+	&__qr {
+		flex-shrink: 0;
+		width: 96px;
+		height: 96px;
+		border-radius: 6px;
+		overflow: hidden;
+
+		svg {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	&__link {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: $spacing-sm;
+		min-width: 0;
+		font-size: $text-13;
+		color: $color-text-secondary;
+		overflow-wrap: anywhere;
+	}
+}
+
+.flight-tasters {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+		padding: $spacing-sm 0;
+		border-top: 1px solid $tasting-border;
+
+		&:first-child {
+			border-top: none;
+		}
+	}
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__name {
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+	}
+}
+
+.flight-banner {
+	display: flex;
+	align-items: center;
+	gap: $spacing-sm;
+	flex-wrap: wrap;
+	padding: $spacing-md $spacing-lg;
+	border: 1px solid rgba($color-status-ok, 0.35);
+	border-radius: 10px;
+	font-size: $text-14;
+
+	svg {
+		color: $color-status-ok;
+	}
+}
+
+.flight-wines {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+	gap: $spacing-md;
+}
+
+.flight-wine {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-sm;
+	padding: $spacing-md;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+
+	&--ready {
+		border-color: rgba($tasting-accent-light, 0.35);
+	}
+
+	&__top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: $spacing-sm;
+	}
+
+	&__label {
+		@include eyebrow-label($text-11, $color-text-muted);
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+	}
+
+	&__number {
+		font-size: 1.75rem;
+		letter-spacing: 0;
+		color: $color-white;
+	}
+
+	&__title {
+		margin: 0;
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__people {
+		display: flex;
+		gap: 4px;
+		flex-wrap: wrap;
+	}
+
+	&__foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $spacing-sm;
+		margin-top: auto;
+	}
+
+	&__reveal {
+		margin-top: auto;
+		text-align: center;
+		justify-content: center;
+	}
+
+	&__locked {
+		margin-top: auto;
+		font-size: $text-12;
+		font-style: italic;
+		color: $color-text-muted;
+	}
+}
+
+.flight-legend {
+	display: flex;
+	gap: $spacing-lg;
+	flex-wrap: wrap;
+	margin: 0;
+	font-size: $text-12;
+	color: $color-text-muted;
+
+	&__item {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+
+		&::before {
+			content: '';
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			box-sizing: border-box;
+		}
+
+		&--filled::before {
+			background-color: $color-white;
+		}
+
+		&--dashed::before {
+			border: 1.5px dashed $color-white;
+		}
+
+		&--faint::before {
+			border: 1px solid rgba(228, 228, 204, 0.25);
+		}
+	}
+}
+
+// ── Joining ───────────────────────────────────────────────────────────────────
+.flight-invite {
+	padding: $spacing-xl;
+	gap: $spacing-md;
+
+	&__title {
+		margin: 0;
+		font-size: 2rem;
+	}
+
+	&__me {
+		margin: 0;
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	&__join {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		width: 100%;
+	}
+}
+
+.flight-facts {
+	display: grid;
+	grid-template-columns: repeat(3, auto);
+	justify-content: start;
+	gap: $spacing-lg;
+	margin: 0;
+
+	div {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	dt {
+		font-size: $text-12;
+		color: $color-text-muted;
+	}
+
+	dd {
+		margin: 0;
+		font-size: $text-16;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__people {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+		font-size: $text-13;
+	}
+}
+
+.flight-code-input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 14px 16px;
+	background-color: $color-black;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 8px;
+	font-family: $font-mono-family;
+	font-size: 2rem !important;
+	letter-spacing: 0.35em;
+	text-transform: uppercase;
+	text-align: center;
+	color: $color-white;
+
+	&:focus {
+		border-color: $tasting-accent-light;
+	}
+
+	&__label {
+		font-size: $text-13;
+		color: $color-text-secondary;
+	}
+
+	&__error {
+		margin: 0;
+		font-size: $text-13;
+		color: $color-error;
+	}
+}
+
+.flight-found {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: $spacing-md;
+	border: 1px solid rgba($color-status-ok, 0.35);
+	border-radius: 8px;
+
+	&__ok {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-size: $text-12;
+		font-weight: $font-weight-bold;
+		color: $color-status-ok;
+	}
+
+	&__people {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: 4px;
+	}
+}
+
+// ── Taster's wine list ────────────────────────────────────────────────────────
+.flight-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-sm;
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+		padding: $spacing-md;
+		background-color: $color-darkGrey;
+		border: 1px solid $tasting-border-mid;
+		border-radius: 10px;
+
+		&--active {
+			border-color: rgba($tasting-accent-light, 0.35);
+		}
+	}
+
+	&__number {
+		width: 2rem;
+		flex-shrink: 0;
+		font-size: 1.5rem;
+		font-weight: $font-weight-bold;
+		color: $color-text-secondary;
+		text-align: center;
+	}
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__title {
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+	}
+}
+
+.flight-colour {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: $spacing-md;
+
+	// Compounded with the element: the global button rules paint a solid burgundy pill.
+	button#{&}__btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-height: 56px;
+		padding: 0 $spacing-md;
+		background: $color-surface-variant;
+		border: 1px solid $tasting-border-mid;
+		border-radius: 8px;
+		color: $color-white;
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+		text-transform: none;
+		letter-spacing: normal;
+
+		&:hover,
+		&:focus-visible {
+			background: $color-surface-variant;
+			border-color: $tasting-accent-light;
+			color: $color-white;
+		}
+	}
+}
+
+.flight-actions {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: $spacing-md;
+
+	@include responsive($breakpoint-mobile) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.flight-action {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: $spacing-lg;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	color: $color-white;
+
+	&:after {
+		display: none;
+	}
+
+	svg {
+		color: $tasting-accent-light;
+	}
+
+	&:hover,
+	&:focus-visible {
+		border-color: rgba($tasting-accent-light, 0.45);
+	}
+}
+
+// ── Reveal ────────────────────────────────────────────────────────────────────
+.flight-warning {
+	display: flex;
+	gap: $spacing-sm;
+	padding: $spacing-md;
+	margin-bottom: $spacing-lg;
+	border: 1px solid rgba($color-warning, 0.4);
+	background-color: rgba($color-warning, 0.07);
+	border-radius: 8px;
+
+	> svg {
+		flex-shrink: 0;
+		margin-top: 2px;
+		color: $color-warning;
+	}
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: $spacing-sm;
+	}
+
+	&__lead {
+		margin: 0;
+		font-weight: $font-weight-semibold;
+	}
+
+	p {
+		margin: 0;
+	}
+}
+
+// ── Wine results ──────────────────────────────────────────────────────────────
+.flight-results {
+	&__nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $spacing-md;
+	}
+
+	&__pager {
+		display: flex;
+		gap: $spacing-sm;
+	}
+
+	&__head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: $spacing-lg;
+		flex-wrap: wrap;
+
+		> div:first-child {
+			display: flex;
+			flex-direction: column;
+			gap: $spacing-sm;
+			flex: 1 1 26rem;
+			min-width: 0;
+		}
+	}
+
+	&__eyebrow {
+		@include eyebrow-label($text-11, $tasting-accent-light);
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+		flex-wrap: wrap;
+	}
+
+	&__title {
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+
+	&__legend {
+		display: flex;
+		gap: $spacing-sm;
+		flex-wrap: wrap;
+	}
+}
+
+.flight-stats {
+	display: grid;
+	grid-template-columns: repeat(3, auto);
+	margin: 0;
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding: $spacing-md $spacing-lg;
+
+		& + div {
+			border-left: 1px solid $tasting-border-mid;
+		}
+	}
+
+	dt {
+		@include eyebrow-label($text-10, $color-text-muted);
+		letter-spacing: 0.12em;
+	}
+
+	dd {
+		margin: 0;
+		font-size: 2rem;
+		font-weight: $font-weight-bold;
+		line-height: 1.1;
+
+		span {
+			font-size: $text-15;
+			font-weight: $font-weight-regular;
+			color: $color-text-muted;
+		}
+
+		&.flight-muted {
+			font-size: $text-12;
+			font-weight: $font-weight-regular;
+		}
+	}
+
+	@include responsive($breakpoint-mobile) {
+		width: 100%;
+
+		> div {
+			padding: $spacing-sm $spacing-md;
+		}
+
+		dd {
+			font-size: 1.5rem;
+		}
+	}
+}
+
+.flight-table {
+	display: flex;
+	flex-direction: column;
+
+	&__row {
+		display: grid;
+		grid-template-columns: minmax(170px, 1.3fr) repeat(5, minmax(0, 1fr));
+		gap: $spacing-md;
+		align-items: start;
+		padding: $spacing-md $spacing-sm;
+		border-top: 1px solid $tasting-border;
+
+		&--head {
+			@include eyebrow-label($text-10, $color-text-muted);
+			letter-spacing: 0.12em;
+			border-top: none;
+			padding-top: 0;
+		}
+
+		&--label {
+			background-color: $color-surface-variant;
+			border-radius: 8px;
+			border-top: none;
+		}
+
+		&--group {
+			align-items: start;
+		}
+	}
+
+	&__who {
+		display: flex;
+		align-items: flex-start;
+		gap: $spacing-sm;
+		min-width: 0;
+	}
+
+	&__label-mark {
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		border: 1px solid $tasting-border-mid;
+		background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(228, 228, 204, 0.08) 4px 6px);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
+		font-size: $text-14;
+	}
+
+	&__cell {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+		min-width: 0;
+		font-size: $text-13;
+		overflow-wrap: anywhere;
+	}
+
+	&__note {
+		grid-column: 2 / -1;
+		font-size: $text-13;
+		font-style: italic;
+		color: $color-text-muted;
+	}
+
+	&__bar {
+		display: flex;
+		gap: 2px;
+		height: 4px;
+
+		span {
+			flex: 1;
+			border-radius: 2px;
+			background-color: var(--status, rgba(228, 228, 204, 0.2));
+		}
+	}
+
+	// One card per taster on a phone: each cell labels itself.
+	@include responsive($breakpoint-mobile) {
+		&__row {
+			grid-template-columns: 1fr 1fr;
+			gap: $spacing-sm $spacing-md;
+
+			&--head {
+				display: none;
+			}
+		}
+
+		&__who,
+		&__note {
+			grid-column: 1 / -1;
+		}
+
+		&__cell::before {
+			content: attr(data-col);
+			font-size: $text-11;
+			color: $color-text-muted;
+		}
+
+		&__row--group {
+			display: none;
+		}
+	}
+}
+
+.flight-split-count {
+	font-size: $text-13;
+	font-weight: $font-weight-semibold;
+	color: $color-warning;
+}
+
+.flight-scales {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.flight-scale {
+	display: grid;
+	grid-template-columns: 120px minmax(0, 1fr) 220px;
+	align-items: center;
+	gap: $spacing-lg;
+	padding: $spacing-md 0;
+	border-top: 1px solid $tasting-border;
+	--range: rgba(228, 228, 204, 0.12);
+	--verdict: #{$color-text-secondary};
+
+	&--split {
+		--range: rgba(255, 183, 77, 0.28);
+		--verdict: #{$color-warning};
+	}
+
+	&__name {
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__track {
+		position: relative;
+		height: 64px;
+		margin: 0 16px;
+	}
+
+	&__line {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 30px;
+		height: 2px;
+		background-color: rgba(228, 228, 204, 0.12);
+	}
+
+	&__range {
+		position: absolute;
+		top: 26px;
+		height: 10px;
+		border-radius: 5px;
+		background-color: var(--range);
+	}
+
+	&__stop {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__dots {
+		display: flex;
+		gap: 2px;
+		min-height: 24px;
+		margin-top: 19px;
+	}
+
+	&__tick {
+		font-size: $text-10;
+		color: $color-text-muted;
+		white-space: nowrap;
+
+		&--on {
+			color: $color-white;
+		}
+	}
+
+	&__verdict {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	&__word {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-size: $text-11;
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--verdict);
+	}
+
+	@include responsive(56rem) {
+		grid-template-columns: 1fr;
+		gap: $spacing-sm;
+	}
+}
+
+// ── A taster's sheet ──────────────────────────────────────────────────────────
+.flight-sheet {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-md;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	&__score {
+		display: flex;
+		align-items: center;
+		gap: $spacing-md;
+
+		> span:last-child {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	&__big {
+		font-size: 3rem;
+		font-weight: $font-weight-bold;
+		line-height: 1;
+
+		span {
+			font-size: $text-16;
+			font-weight: $font-weight-regular;
+			color: $color-text-muted;
+		}
+	}
+
+	&__palate dl {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+
+		div {
+			display: grid;
+			grid-template-columns: 1fr auto auto;
+			gap: $spacing-md;
+			padding: 6px 0;
+			border-top: 1px solid $tasting-border;
+			font-size: $text-13;
+		}
+
+		dt {
+			color: $color-text-secondary;
+		}
+
+		dd {
+			margin: 0;
+		}
+	}
+
+	&__nose {
+		margin: 0;
+		font-size: $text-14;
+		line-height: 1.6;
+	}
+}
+
+// ── Summary ───────────────────────────────────────────────────────────────────
+.flight-summary {
+	display: flex;
+	flex-direction: column;
+	overflow-x: auto;
+
+	&__row {
+		display: grid;
+		grid-template-columns: minmax(220px, 2fr) repeat(var(--cols), minmax(90px, 1fr)) minmax(90px, 1fr);
+		gap: $spacing-md;
+		align-items: center;
+		padding: $spacing-sm 0;
+		border-top: 1px solid $tasting-border;
+		min-width: max-content;
+
+		&--head {
+			border-top: none;
+			font-size: $text-12;
+			color: $color-text-muted;
+		}
+
+		&--total {
+			border-top: 1px solid $tasting-border-mid;
+			font-size: $text-14;
+		}
+	}
+
+	&__person {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	&__wine {
+		display: flex;
+		align-items: flex-start;
+		gap: $spacing-sm;
+
+		> span:last-child {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	&__n {
+		width: 1.5rem;
+		font-weight: $font-weight-bold;
+		color: $color-text-secondary;
+	}
+
+	&__cell {
+		display: flex;
+		flex-direction: column;
+		font-size: $text-14;
+		font-variant-numeric: tabular-nums;
+
+		svg {
+			color: $color-status-ok;
+			margin-right: 3px;
+		}
+	}
+
+	&__archive {
+		max-width: 22rem;
+	}
+}
+
+.flight-confused {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	font-size: $text-14;
+	color: $color-text-secondary;
+}

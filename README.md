@@ -172,6 +172,25 @@ that invalidates the whole point. It also re-syncs on `visibilitychange`, so for
 catches up instantly. The amber warning is proportional (`max(5s, 25%)`), because at the 4:00 pace four of
 the five guided phases run for 30 seconds and a flat 60-second threshold would be on from the first tick.
 
+## Flights (study groups)
+
+One person hosts a flight of numbered, bagged wines (1–12) and shares a six-character code, link or
+QR code. Everyone else joins on their own phone and tastes each wine through the normal five
+phases, in any order; with a timer, each taster's clock starts when they open a wine and is stamped
+on the server, so reopening it carries on the same clock. The host doesn't taste. Once at least one
+taster has submitted a wine, the host enters its label once: every submitted tasting is scored
+together and gets the reveal in its own archive. Anyone still tasting is closed out as _Not
+submitted_, never 0, and left out of the averages.
+
+Each revealed wine has a results page: everyone's call against the label, field by field, and a
+structure comparison (acidity, alcohol, tannin, body, finish) that isn't scored — the label can't
+say what the acidity is — but shows where the group agreed and where it split. The summary shows
+every wine by every taster, with totals and the wine that confused the group most.
+
+Tables: `Flight`, `FlightWine` (the reveal), `FlightMember`, `FlightEntry` (a taster's go at a
+wine, linked to their `Tasting` on submit). Rules live in `src/components/flights/flightLogic.ts`;
+loading and shaping in `src/lib/flights.ts`.
+
 ## Privacy and accounts
 
 `/privacy` is the GDPR notice: what is stored, why, who processes it and how to have it deleted.

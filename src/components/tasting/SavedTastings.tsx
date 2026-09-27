@@ -97,8 +97,22 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 		try {
 			const photoKey = await uploadPhoto();
 			stage = 'tasting';
-			const { tasting } = await tastingService.saveTasting({ ...tastingData, photoKey }).response;
+			const { tasting, flightLate } = await tastingService.saveTasting({ ...tastingData, photoKey }).response;
+			const flight = tastingData.flight;
 			resetTastingData();
+			if (flight) {
+				showToast({
+					title: flightLate
+						? `Wine ${flight.wineNumber} was already revealed`
+						: `Wine ${flight.wineNumber} submitted`,
+					children: flightLate
+						? 'Saved to your archive with its score, but it is not part of the flight results.'
+						: 'You will see the results once the host reveals it.',
+					color: flightLate ? undefined : 'success',
+				});
+				router.push(`/flights/${flight.code}`);
+				return;
+			}
 			// Straight to the tasting just saved, where the reveal is waiting, not to the list.
 			router.push(tasting.id ? `/archives/${tasting.id}` : '/archives');
 		} catch (error) {
@@ -203,44 +217,48 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 				</div>
 
 				{/* Optional reveal: most tasters reveal later from the archive, so it starts collapsed
-				    and is saved with the tasting by the footer's Save button. */}
-				<div className="tasting-card save-reveal">
-					<button
-						type="button"
-						className="save-reveal__toggle"
-						aria-expanded={revealOpen}
-						aria-controls="save-reveal-fields"
-						onClick={() => setRevealOpen((open) => !open)}
-					>
-						<span className="save-reveal__text">
-							<span className="save-reveal__eyebrow">
-								<span className="tasting-card__label">The reveal</span>
-								<span className="save-reveal__optional">optional</span>
+				    and is saved with the tasting by the footer's Save button. In a flight, the host reveals. */}
+				{!tastingData.flight && (
+					<div className="tasting-card save-reveal">
+						<button
+							type="button"
+							className="save-reveal__toggle"
+							aria-expanded={revealOpen}
+							aria-controls="save-reveal-fields"
+							onClick={() => setRevealOpen((open) => !open)}
+						>
+							<span className="save-reveal__text">
+								<span className="save-reveal__eyebrow">
+									<span className="tasting-card__label">The reveal</span>
+									<span className="save-reveal__optional">optional</span>
+								</span>
+								<span className="save-reveal__title">Know the wine already? Reveal it now</span>
+								<span className="save-reveal__sub">
+									Most students skip this and reveal the wine later, from the archive.
+								</span>
 							</span>
-							<span className="save-reveal__title">Know the wine already? Reveal it now</span>
-							<span className="save-reveal__sub">
-								Most students skip this and reveal the wine later, from the archive.
-							</span>
-						</span>
-						<IconChevronDown
-							size={16}
-							aria-hidden="true"
-							className={`save-reveal__chevron${revealOpen ? ' save-reveal__chevron--open' : ''}`}
-						/>
-					</button>
-					{revealOpen && (
-						<div id="save-reveal-fields" className="save-reveal__body">
-							<RevealFields
-								layout="wide"
-								value={tastingData.reveal ?? {}}
-								onChange={(patch) => updateTastingData({ reveal: { ...tastingData.reveal, ...patch } })}
+							<IconChevronDown
+								size={16}
+								aria-hidden="true"
+								className={`save-reveal__chevron${revealOpen ? ' save-reveal__chevron--open' : ''}`}
 							/>
-							<p className="save-reveal__note">
-								Saved with the tasting. Your score appears in the archive straight away.
-							</p>
-						</div>
-					)}
-				</div>
+						</button>
+						{revealOpen && (
+							<div id="save-reveal-fields" className="save-reveal__body">
+								<RevealFields
+									layout="wide"
+									value={tastingData.reveal ?? {}}
+									onChange={(patch) =>
+										updateTastingData({ reveal: { ...tastingData.reveal, ...patch } })
+									}
+								/>
+								<p className="save-reveal__note">
+									Saved with the tasting. Your score appears in the archive straight away.
+								</p>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		</TastingPhaseLayout>
 	);

@@ -85,8 +85,11 @@ export default function TastingPageHeader({
 		router.push('/');
 	};
 
+	const flight = tastingData.flight;
+	const flightLabel = flight && timerPage ? `Flight · Wine ${flight.wineNumber} of ${flight.wineCount}` : null;
 	const wineLabel =
-		wineType === 'red' ? 'Red Wine Assessment' : wineType === 'white' ? 'White Wine Assessment' : null;
+		flightLabel ??
+		(wineType === 'red' ? 'Red Wine Assessment' : wineType === 'white' ? 'White Wine Assessment' : null);
 
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
 
@@ -102,9 +105,13 @@ export default function TastingPageHeader({
 			{title && (
 				<div className="tasting-page-header__phase">
 					<span className="tasting-page-header__phase-label">
-						{wineWord && <>{wineWord} &middot; </>}
-						{phaseName}
-						{phaseNumber && <span className="tasting-page-header__phase-num"> {phaseNumber}</span>}
+						{flightLabel ?? (
+							<>
+								{wineWord && <>{wineWord} &middot; </>}
+								{phaseName}
+								{phaseNumber && <span className="tasting-page-header__phase-num"> {phaseNumber}</span>}
+							</>
+						)}
 					</span>
 					<span className="tasting-page-header__phase-title">{title}</span>
 				</div>
@@ -121,15 +128,18 @@ export default function TastingPageHeader({
 								<TimerConditional page={timerPage!} destination={timerDestination!} />
 							</div>
 						</div>
-						<button
-							type="button"
-							className="tasting-page-header__pause"
-							onClick={pause}
-							disabled={paused}
-							aria-label="Pause the timer"
-						>
-							<IconPlayerPauseFilled size={16} aria-hidden="true" />
-						</button>
+						{/* Not in a flight: its clock is the server's, shared with the host. */}
+						{!tastingData.flight && (
+							<button
+								type="button"
+								className="tasting-page-header__pause"
+								onClick={pause}
+								disabled={paused}
+								aria-label="Pause the timer"
+							>
+								<IconPlayerPauseFilled size={16} aria-hidden="true" />
+							</button>
+						)}
 					</>
 				)}
 			</div>
@@ -167,6 +177,14 @@ export default function TastingPageHeader({
 											onClick={() => setDropdownOpen(false)}
 										>
 											Archive
+										</Link>
+										<Link
+											href="/flights"
+											className="nav-dropdown__item"
+											role="menuitem"
+											onClick={() => setDropdownOpen(false)}
+										>
+											Flights
 										</Link>
 										<Link
 											href="/account"

@@ -26,7 +26,7 @@ export default function TastingFooter({
 	nextDisabled,
 }: TastingFooterProps) {
 	const router = useRouter();
-	const { resetTastingData } = useTastingContext();
+	const { tastingData, resetTastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
 
 	// Discarding a whole session is worth the interruption: nothing is persisted until the
@@ -42,7 +42,7 @@ export default function TastingFooter({
 				<div className="confirm-dialog">
 					<p className="confirm-dialog__lead">
 						This clears every answer in this tasting — sight, nose, palate and both conclusions — and takes
-						you back to setup.
+						you back to {tastingData.flight ? 'the flight. The wine’s clock keeps running' : 'setup'}.
 					</p>
 					<p className="confirm-dialog__note">
 						Nothing from this tasting has been saved to your archive yet, so there is nothing to come back
@@ -56,8 +56,9 @@ export default function TastingFooter({
 							className="btn-primary confirm-dialog__confirm"
 							onClick={() => {
 								closeModal(START_OVER_MODAL);
+								const flight = tastingData.flight;
 								resetTastingData();
-								router.push('/tastings/start');
+								router.push(flight ? `/flights/${flight.code}` : '/tastings/start');
 							}}
 						>
 							<IconRefresh size={16} />
