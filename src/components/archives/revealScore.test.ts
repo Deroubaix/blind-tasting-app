@@ -86,6 +86,64 @@ describe('compareReveal', () => {
 	});
 });
 
+describe('the CMS core list', () => {
+	const cab = { grapeVariety: 'Cabernet Sauvignon', countryOfOrigin: 'United States', vintage: '2019' };
+
+	it('gives full credit for a region the list makes interchangeable for that grape', () => {
+		const result = compareReveal(
+			{ ...cab, regionAppellation: 'Sonoma County' },
+			{ ...cab, regionAppellation: 'Napa Valley' },
+		);
+		expect(result.fields[2].status).toBe('correct');
+		expect(result.fields[2].note).toContain('interchangeable');
+		expect(result.score).toBe(4);
+	});
+
+	it('does not for a grape whose set does not hold both', () => {
+		// Carneros and Napa are interchangeable for Chardonnay, not for Cabernet.
+		const result = compareReveal(
+			{ ...cab, regionAppellation: 'Carneros' },
+			{ ...cab, regionAppellation: 'Napa Valley' },
+		);
+		expect(result.fields[2].status).toBe('close');
+	});
+
+	it('matches a region spelled either way', () => {
+		const result = compareReveal(
+			{ grapeVariety: 'Carménère', regionAppellation: 'Maipo' },
+			{ grapeVariety: 'Carmenere', regionAppellation: 'Rapel' },
+		);
+		expect(result.fields[2].status).toBe('correct');
+	});
+
+	it('treats interchangeable quality levels alike', () => {
+		const result = compareReveal(
+			{ grapeVariety: 'Tempranillo', qualityLevel: 'Reserva' },
+			{ grapeVariety: 'Tempranillo', qualityLevel: 'Gran Reserva' },
+		);
+		expect(result.fields[3].status).toBe('correct');
+	});
+});
+
+describe('an "Other" quality level', () => {
+	it('never scores when called', () => {
+		const result = compareReveal({ qualityLevel: 'Other' }, { qualityLevel: 'Other', grapeVariety: 'X' });
+		expect(result.fields[3].status).toBe('na');
+		const called = compareReveal({ qualityLevel: 'Other' }, { qualityLevel: 'Crianza' });
+		expect(called.fields[3].status).toBe('wrong');
+	});
+
+	it('drops out of the total when an older reveal saved it', () => {
+		const result = compareReveal(
+			{ qualityLevel: 'Reserva' },
+			{ qualityLevel: 'Other', grapeVariety: 'Tempranillo' },
+		);
+		expect(result.fields[3].status).toBe('na');
+		// Only the grape is left to score: the call left it blank.
+		expect(result.outOf).toBe(1);
+	});
+});
+
 describe('revealTitle and describeWine', () => {
 	it('titles by wine name, else appellation, quality and vintage', () => {
 		expect(revealTitle({ ...actual, wineName: 'Papafigos' })).toBe('Papafigos');

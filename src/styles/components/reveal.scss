@@ -398,6 +398,16 @@ $reveal-statuses: (
 		font-weight: $font-weight-semibold;
 	}
 
+	// Why an interchangeable call scored.
+	&__note {
+		display: block;
+		margin-top: 2px;
+		font-size: $text-12;
+		font-weight: $font-weight-regular;
+		font-style: italic;
+		color: $color-text-muted;
+	}
+
 	&__word {
 		font-size: $text-10;
 		font-weight: $font-weight-bold;

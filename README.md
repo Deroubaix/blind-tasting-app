@@ -52,7 +52,10 @@ the saved tasting (or straight away on Save) and the call is scored against it, 
 grape, country, region and appellation, quality level and vintage. An exact match scores a point;
 a near miss (vintage within two years, or the right region with a different appellation) shows as
 _close_ but scores nothing; a blank call is a miss; and a field the label doesn't have drops out of
-the total. The reveal is stored apart from the call (`Tasting.reveal`), and the rules live in
+the total. As in the exam, a region or quality level the CMS core list marks as interchangeable for
+that grape — Napa Valley / Sonoma County / Central Coast for Cabernet, Reserva / Gran Reserva for
+Tempranillo — scores the point too (`coreList.ts`). A quality level off the list is typed out under
+_Other_, so what is saved is the level itself; a bare "Other" never scores. The reveal is stored apart from the call (`Tasting.reveal`), and the rules live in
 `src/components/archives/revealScore.ts`, pinned by its tests. The start page's field is a
 _label_ for the taster's records ("Flight 3, wine 2"), not the wine, which would give the answer
 away.
@@ -60,7 +63,9 @@ away.
 **Most attributes take one answer.** The nose is multi-select, because a wine genuinely does smell
 of several things at once, and so is secondary color on sight. That runs through the data model:
 `nose` is `Record<string, string[]>`, `sight` allows a list for Secondary Color(s), and palate is
-`Record<string, string>`. The grid lives as plain data in `src/components/*/[phase]Fields.ts` and
+`Record<string, string>`. Confirm from the Nose is the grid's six palate rows (fruit, fruit
+condition, non-fruit, earth, mineral, oak), one tap each, stored in `palate` as `Confirm: <row>`,
+with an optional note for what changed. The grid lives as plain data in `src/components/*/[phase]Fields.ts` and
 `conclusionFields.ts`, pinned by `gridFields.test.ts`. On the nose, each grid heading lists the
 official terms first, then the app's more specific descriptors (Cherry, Violet, Graphite…).
 

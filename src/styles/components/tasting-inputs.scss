@@ -18,6 +18,14 @@
 	margin-bottom: $spacing-sm;
 }
 
+// ── Quality level: the level typed out under "Other" ─────────────────────────
+input.quality-level-other {
+	display: block;
+	width: 100%;
+	margin-top: $spacing-sm;
+	box-sizing: border-box;
+}
+
 // ── Notes textarea ────────────────────────────────────────────────────────────
 .tasting-textarea {
 	width: 100%;

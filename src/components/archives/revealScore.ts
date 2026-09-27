@@ -4,6 +4,8 @@
 // Rules (agreed with the design):
 // - One point per field for an exact match. Case, accents and extra spaces don't matter, and a
 //   listed synonym counts ("Syrah/Shiraz" matches either).
+// - Interchangeable on the CMS core list also scores (coreList.ts).
+// - "Other" never scores; on an older reveal it drops out of the total.
 // - "Close" is shown but scores nothing: the vintage within two years, or the right region with a
 //   different appellation.
 // - A field left blank in the call is "not called", and counts as a miss.
@@ -12,6 +14,7 @@
 
 import { fold } from '../tasting/autocompleteMatch';
 import { WINE_REGION_GROUPS } from '../tasting/autocompleteData';
+import { interchangeable } from './coreList';
 
 export type Reveal = {
 	grapeVariety?: string | null;
@@ -90,15 +93,34 @@ function regionsClose(call: string, actual: string): boolean {
 	return group !== undefined && group === regionGroup.get(b);
 }
 
-function compareField(key: RevealField, call: string | null, actual: string | null): [FieldStatus, string] {
+const isOther = (value: string) => fold(value) === 'other';
+
+function compareField(
+	key: RevealField,
+	call: string | null,
+	actual: string | null,
+	grape: string | null,
+): [FieldStatus, string] {
 	if (!actual) {
 		return ['na', key === 'qualityLevel' ? 'None on the label' : 'Not given in the reveal'];
+	}
+	if (key === 'qualityLevel' && isOther(actual)) {
+		return ['na', 'The level on the label was not named'];
 	}
 	if (!call) {
 		return ['notcalled', 'Left blank, so it counts as a miss'];
 	}
+	if (key === 'qualityLevel' && isOther(call)) {
+		return ['wrong', '“Other” does not name a level'];
+	}
 	if (sameName(call, actual)) {
 		return ['correct', ''];
+	}
+	if (key === 'regionAppellation' && interchangeable('regions', grape, call, actual)) {
+		return ['correct', `You called ${call} — interchangeable on the CMS core list`];
+	}
+	if (key === 'qualityLevel' && interchangeable('qualityLevels', grape, call, actual)) {
+		return ['correct', `You called ${call} — interchangeable on the CMS core list`];
 	}
 	if (key === 'vintage') {
 		const gap = Math.abs(Number(call) - Number(actual));
@@ -123,10 +145,11 @@ export function compareReveal(
 	reveal: Reveal,
 	shortlist?: { grapeVarieties?: string[]; possibleCountries?: string[] } | null,
 ): Comparison {
+	const grape = clean(reveal.grapeVariety);
 	const fields = REVEAL_FIELDS.map((field) => {
 		const called = clean(call?.[field.key]);
 		const actual = clean(reveal[field.key]);
-		const [status, note] = compareField(field.key, called, actual);
+		const [status, note] = compareField(field.key, called, actual, grape);
 		return { ...field, status, call: called, actual, note };
 	});
 

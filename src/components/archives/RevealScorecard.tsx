@@ -33,6 +33,7 @@ function HitRow({ field }: { field: ComparedField }) {
 			<span className="reveal-hit__label">{field.label}</span>
 			<span className="reveal-hit__value">
 				{field.actual ?? <span className="reveal-muted-italic">{field.note}</span>}
+				{field.actual && field.note && <span className="reveal-hit__note">{field.note}</span>}
 			</span>
 			<span className="reveal-hit__word">{word}</span>
 		</li>

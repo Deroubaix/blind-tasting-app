@@ -3,9 +3,8 @@
 import { useId, useState } from 'react';
 import { IconCalendar, IconMapPin, IconSearch } from '@tabler/icons-react';
 import TastingAutocomplete from '../tasting/TastingAutocomplete';
-import TastingCustomSelect from '../tasting/TastingCustomSelect';
 import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from '../tasting/autocompleteData';
-import { QUALITY_LEVELS } from '../tasting/conclusionFields';
+import QualityLevelSelect from '../tasting/QualityLevelSelect';
 import { type Reveal } from './revealScore';
 
 type Props = {
@@ -118,13 +117,11 @@ export default function RevealFields({ value, onChange, layout = 'form' }: Props
 				<span className="reveal-field__label" id={ids.quality}>
 					Official quality level
 				</span>
-				<TastingCustomSelect
-					options={QUALITY_LEVELS}
+				<QualityLevelSelect
 					value={value.qualityLevel ?? ''}
 					onChange={(qualityLevel) => onChange({ qualityLevel: qualityLevel || null })}
-					placeholder="Where appropriate…"
-					clearLabel="Not applicable"
 					labelId={ids.quality}
+					textClassName="tasting-input reveal-field__text"
 				/>
 			</div>
 			<div className="reveal-field">
