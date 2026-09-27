@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { mkdir, stat, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, rm, stat, unlink, writeFile } from 'node:fs/promises';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { Readable } from 'node:stream';
-import { r2Delete, r2Exists, r2Size, signDownload, signUpload } from './storage-r2';
+import { r2Delete, r2DeletePrefix, r2Exists, r2Size, signDownload, signUpload } from './storage-r2';
 
 /**
  * Where label photographs live.
@@ -79,6 +79,19 @@ export async function deletePhoto(key: string) {
 			throw error;
 		}
 	}
+}
+
+/** Removes every photo a user uploaded, including any never attached to a saved tasting. */
+export async function deleteUserPhotos(userId: string) {
+	if (!new RegExp(`^${UUID}$`).test(userId)) {
+		throw new Error(`Not a user id: ${userId}`);
+	}
+	const prefix = `labels/${userId}/`;
+	if (storageDriver() === 'r2') {
+		await r2DeletePrefix(prefix);
+		return;
+	}
+	await rm(localPath(prefix), { recursive: true, force: true });
 }
 
 /** Size in bytes of a stored photo, or null when there is nothing under that key. */

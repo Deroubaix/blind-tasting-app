@@ -1,0 +1,107 @@
+@use '../abstracts' as *;
+// Account page: details and account deletion
+
+.account {
+	display: flex;
+	flex-direction: column;
+	gap: $spacing-lg;
+	max-width: 720px;
+	padding: 0 $spacing-xxl $spacing-xxl;
+	margin: 0 auto;
+	box-sizing: content-box;
+
+	@include responsive($breakpoint-mobile) {
+		padding: 0 $spacing-md $spacing-xl;
+	}
+}
+
+.account-card {
+	background-color: $color-darkGrey;
+	border: 1px solid $tasting-border-mid;
+	border-radius: 10px;
+	padding: $spacing-lg $spacing-xl;
+
+	&--danger {
+		border-color: rgba($color-error, 0.35);
+	}
+
+	&__heading {
+		margin: 0 0 $spacing-md;
+		font-size: $text-16;
+		font-weight: $font-weight-bold;
+		color: $color-white;
+	}
+
+	&__text,
+	&__note {
+		margin: 0 0 $spacing-md;
+		font-size: $text-14;
+		line-height: 1.6;
+		color: $color-text-secondary;
+	}
+
+	&__note {
+		margin: $spacing-md 0 0;
+		font-size: $text-13;
+
+		a {
+			color: $tasting-accent-light;
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
+	}
+}
+
+.account-details {
+	display: grid;
+	grid-template-columns: 8rem 1fr;
+	gap: $spacing-sm $spacing-md;
+	margin: 0;
+	font-size: $text-14;
+
+	dt {
+		color: $color-text-muted;
+	}
+
+	dd {
+		margin: 0;
+		color: $color-white;
+		overflow-wrap: anywhere;
+	}
+}
+
+.account-delete {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $spacing-sm $spacing-md;
+
+	&__label {
+		flex-basis: 100%;
+		font-size: $text-13;
+		font-weight: $font-weight-medium;
+		color: $color-text-secondary;
+	}
+
+	input.account-delete__input {
+		flex: 1 1 14rem;
+		min-height: 40px;
+	}
+
+	&__error {
+		margin: $spacing-sm 0 0;
+		font-size: $text-13;
+		color: $color-error;
+	}
+}
+
+// Lines the heading up with the cards.
+.archives-hero.account-hero {
+	max-width: 720px;
+	box-sizing: content-box;
+
+	@include responsive($breakpoint-mobile) {
+		padding-left: $spacing-md;
+		padding-right: $spacing-md;
+	}
+}

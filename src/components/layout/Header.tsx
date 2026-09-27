@@ -93,6 +93,14 @@ export default function Header() {
 									>
 										Archive
 									</Link>
+									<Link
+										href="/account"
+										className="nav-dropdown__item"
+										role="menuitem"
+										onClick={() => setDropdownOpen(false)}
+									>
+										Account
+									</Link>
 									<button
 										className="nav-dropdown__item nav-dropdown__item--logout"
 										role="menuitem"
@@ -160,9 +168,14 @@ export default function Header() {
 						Home
 					</Link>
 					{isLoggedIn && (
-						<Link href="/archives" onClick={closeMenu}>
-							Archive
-						</Link>
+						<>
+							<Link href="/archives" onClick={closeMenu}>
+								Archive
+							</Link>
+							<Link href="/account" onClick={closeMenu}>
+								Account
+							</Link>
+						</>
 					)}
 					{isLoggedIn ? (
 						<button className="menu-logout-btn" onClick={handleLogout}>

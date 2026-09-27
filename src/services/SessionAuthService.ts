@@ -39,6 +39,15 @@ export class SessionAuthService implements IAuthService {
 		}
 	}
 
+	async deleteAccount(password: string): Promise<void> {
+		await FetchUtils.execute('/api/user/me', {
+			method: 'DELETE',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ password }),
+		}).response;
+	}
+
 	async requestPasswordReset(email: string): Promise<void> {
 		const request = FetchUtils.post('/api/auth/forgot-password', { email });
 		await request.response;

@@ -50,7 +50,13 @@ export const resetPasswordRequestSchema = z.object({
 	password: newPassword,
 });
 
+/** Deleting the account asks for the password again, so an unlocked laptop is not enough. */
+export const deleteAccountSchema = z.object({
+	password: z.string().min(1, 'Password is required'),
+});
+
 export type LoginFormType = z.infer<typeof loginSchema>;
 export type SignupFormType = z.infer<typeof signupSchema>;
 export type ForgotPasswordFormType = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormType = z.infer<typeof resetPasswordSchema>;
+export type DeleteAccountFormType = z.infer<typeof deleteAccountSchema>;

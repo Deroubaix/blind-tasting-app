@@ -9,6 +9,8 @@ export type AuthContextValue = {
 	signIn: (email: string, password: string) => Promise<void>;
 	signUp: (displayName: string, email: string, password: string) => Promise<void>;
 	signOut: () => Promise<void>;
+	/** Deletes the account and everything in it; the session ends with it. */
+	deleteAccount: (password: string) => Promise<void>;
 	requestPasswordReset: (email: string) => Promise<void>;
 	completePasswordReset: (email: string, token: string, password: string) => Promise<void>;
 	isLoading: boolean;
@@ -72,6 +74,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		}
 	}, [authService]);
 
+	const deleteAccount = useCallback(
+		async (password: string) => {
+			await authService.deleteAccount(password);
+			setUser(null);
+		},
+		[authService],
+	);
+
 	const requestPasswordReset = useCallback(
 		async (email: string) => {
 			await authService.requestPasswordReset(email);
@@ -92,12 +102,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			signIn,
 			signUp,
 			signOut,
+			deleteAccount,
 			requestPasswordReset,
 			completePasswordReset,
 			isLoading,
 			isInitialLoading,
 		}),
-		[user, signIn, signUp, signOut, requestPasswordReset, completePasswordReset, isLoading, isInitialLoading],
+		[
+			user,
+			signIn,
+			signUp,
+			signOut,
+			deleteAccount,
+			requestPasswordReset,
+			completePasswordReset,
+			isLoading,
+			isInitialLoading,
+		],
 	);
 
 	return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

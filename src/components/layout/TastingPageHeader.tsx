@@ -168,6 +168,14 @@ export default function TastingPageHeader({
 										>
 											Archive
 										</Link>
+										<Link
+											href="/account"
+											className="nav-dropdown__item"
+											role="menuitem"
+											onClick={() => setDropdownOpen(false)}
+										>
+											Account
+										</Link>
 										<button
 											className="nav-dropdown__item nav-dropdown__item--logout"
 											role="menuitem"

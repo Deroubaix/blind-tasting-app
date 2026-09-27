@@ -1,7 +1,9 @@
 import {
 	DeleteObjectCommand,
+	DeleteObjectsCommand,
 	GetObjectCommand,
 	HeadObjectCommand,
+	ListObjectsV2Command,
 	PutObjectCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
@@ -52,6 +54,20 @@ export function signDownload(key: string) {
 
 export async function r2Delete(key: string) {
 	await s3().send(new DeleteObjectCommand({ Bucket: env('R2_BUCKET'), Key: key }));
+}
+
+/** Deletes every object under a prefix, a page of up to 1,000 at a time. */
+export async function r2DeletePrefix(prefix: string) {
+	const Bucket = env('R2_BUCKET');
+	let ContinuationToken: string | undefined;
+	do {
+		const page = await s3().send(new ListObjectsV2Command({ Bucket, Prefix: prefix, ContinuationToken }));
+		const objects = (page.Contents ?? []).flatMap((object) => (object.Key ? [{ Key: object.Key }] : []));
+		if (objects.length) {
+			await s3().send(new DeleteObjectsCommand({ Bucket, Delete: { Objects: objects, Quiet: true } }));
+		}
+		ContinuationToken = page.IsTruncated ? page.NextContinuationToken : undefined;
+	} while (ContinuationToken);
 }
 
 export async function r2Exists(key: string) {
