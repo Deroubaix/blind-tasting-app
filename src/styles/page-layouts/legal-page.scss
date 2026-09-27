@@ -1,0 +1,68 @@
+@use '../abstracts' as *;
+// Privacy notice: a single readable column
+
+.legal-page {
+	max-width: 44rem;
+	margin: 0 auto;
+	padding: calc(var(--navbar-height_approx) + #{$spacing-xxl}) $spacing-xl $spacing-xxl;
+	color: $color-text-secondary;
+	font-size: $text-15;
+	line-height: 1.7;
+
+	@include responsive($breakpoint-mobile) {
+		padding-left: $spacing-md;
+		padding-right: $spacing-md;
+	}
+
+	&__head {
+		display: flex;
+		flex-direction: column;
+		gap: $spacing-sm;
+		margin-bottom: $spacing-xl;
+
+		h1 {
+			margin: 0;
+		}
+	}
+
+	&__updated {
+		margin: 0;
+		font-size: $text-13;
+		color: $color-text-muted;
+	}
+
+	section + section {
+		margin-top: $spacing-xl;
+	}
+
+	h2 {
+		margin: 0 0 $spacing-sm;
+		font-size: $text-16;
+		font-weight: $font-weight-bold;
+		color: $color-white;
+	}
+
+	p {
+		margin: 0 0 $spacing-sm;
+	}
+
+	ul {
+		margin: 0 0 $spacing-sm;
+		padding-left: 1.25rem;
+	}
+
+	li + li {
+		margin-top: $spacing-xs;
+	}
+
+	a {
+		color: $tasting-accent-light;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	strong {
+		color: $color-white;
+		font-weight: $font-weight-semibold;
+	}
+}

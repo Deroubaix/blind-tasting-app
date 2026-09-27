@@ -172,6 +172,12 @@ that invalidates the whole point. It also re-syncs on `visibilitychange`, so for
 catches up instantly. The amber warning is proportional (`max(5s, 25%)`), because at the 4:00 pace four of
 the five guided phases run for 30 seconds and a flat 60-second threshold would be on from the first tick.
 
+## Privacy and accounts
+
+`/privacy` is the GDPR notice: what is stored, why, who processes it and how to have it deleted.
+`/account` shows the account's details and deletes it, after the password is typed again: every
+tasting, the account row and every photo under `labels/<userId>/` (`DELETE /api/user/me`).
+
 ## Commands
 
 | Command                  | What it does                          |
@@ -187,8 +193,11 @@ the five guided phases run for 30 seconds and a flat 60-second threshold would b
 
 ## Still to do
 
-- **Orphaned label photos are never cleaned up.** A photo is uploaded before its tasting is saved,
-  so one whose save then fails for good stays in storage with no row pointing at it.
+- **Orphaned label photos are never cleaned up** while the account exists. A photo is uploaded
+  before its tasting is saved, so one whose save then fails for good stays in storage with no row
+  pointing at it. Deleting the account does remove them: it clears the user's whole photo folder.
+- **No data export yet.** The privacy notice offers it by email; a "Download my data" button on the
+  Account page would make it self-service.
 - **No `db:*` scripts.** Migrations are run through `pnpm exec prisma` directly.
 
 ## License

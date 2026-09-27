@@ -20,11 +20,16 @@ export default function Footer() {
 						<Link href="/archives">Archive</Link>
 						<Link href="/login">Log in</Link>
 					</div>
+					<div className="footer-col">
+						<h4>Your data</h4>
+						<Link href="/account">Account</Link>
+						<Link href="/privacy">Privacy</Link>
+					</div>
 				</div>
 			</div>
 
 			<div className="footer-bottom">
-				<span>© 2024 The Sommelier&apos;s Ledger.</span>
+				<span>© {new Date().getFullYear()} The Sommelier&apos;s Ledger.</span>
 				<span>
 					Grid based on the 2024 Deductive Tasting Format, © Court of Master Sommeliers, Americas. Not
 					affiliated with or endorsed by the Court of Master Sommeliers.
