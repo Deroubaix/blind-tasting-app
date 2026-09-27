@@ -16,40 +16,44 @@ model User {
   resetTokenExpiry DateTime?
   created_at       DateTime? @default(now()) @db.Timestamp(6)
 
-  tastings Tasting[]
+  tastings          Tasting[]
+  hostedFlights     Flight[]
+  flightMemberships FlightMember[]
+  flightEntries     FlightEntry[]
 }
 
 model Tasting {
-  id            String   @id @default(uuid()) @db.VarChar(36)
+  id           String       @id @default(uuid()) @db.VarChar(36)
   /// Per-user display number ("No. 1", "No. 2"). Starts at 1 for every account and is
   /// what the UI shows — the uuid id is never surfaced.
-  number        Int
-  userId        String   @db.VarChar(36)
-  wineType      String?
-  sight         Json?
-  nose          Json?
-  palate        Json?
-  conclusion    Json?
-  wineName      String?
-  timerEnabled  Boolean  @default(false)
+  number       Int
+  userId       String       @db.VarChar(36)
+  wineType     String?
+  sight        Json?
+  nose         Json?
+  palate       Json?
+  conclusion   Json?
+  wineName     String?
+  timerEnabled Boolean      @default(false)
   /// Seconds for the whole wine (240 = Advanced/Master pace, 675 = Certified). Seconds, not
   /// minutes: the old minutes column was an Int and silently stored 7:30 as 7.
-  timerSeconds  Int?
+  timerSeconds Int?
   /// "guided" (a clock per phase) or "exam" (one clock for the whole wine).
-  timerMode     String?
-  notes         String?
+  timerMode    String?
+  notes        String?
   /// Palate's "Confirm the Nose": aromas that only showed up once the wine was tasted.
-  confirmNose   String?
+  confirmNose  String?
   /// Storage key of the label photograph, `labels/<userId>/<uuid>.jpg`. Served through
   /// /api/photos/<key>, which checks ownership, never by a URL stored here.
-  photoKey      String?
+  photoKey     String?
   /// The wine as it actually was, entered from the label after tasting: grapeVariety,
   /// countryOfOrigin, regionAppellation, qualityLevel, vintage and an optional wineName.
   /// Kept apart from `conclusion.final`, the call, so the two can be compared and scored.
-  reveal        Json?
-  revealedAt    DateTime?
-  created_at    DateTime @default(now())
-  user          User     @relation(fields: [userId], references: [id])
+  reveal       Json?
+  revealedAt   DateTime?
+  created_at   DateTime     @default(now())
+  user         User         @relation(fields: [userId], references: [id])
+  flightEntry  FlightEntry?
 
   /// Makes the per-user numbering race-safe: a concurrent insert that picks the same
   /// number fails the constraint instead of silently duplicating.
@@ -63,4 +67,61 @@ model RateLimit {
   key         String   @id @db.VarChar(64)
   count       Int
   windowStart DateTime @db.Timestamptz(6)
+}
+
+/// A study-group flight: the host pours numbered wines and reveals them; members taste.
+model Flight {
+  id           String    @id @default(uuid()) @db.VarChar(36)
+  /// What tasters type to join: six characters with no look-alikes (0/O, 1/I/L).
+  code         String    @unique @db.VarChar(6)
+  name         String
+  hostId       String    @db.VarChar(36)
+  wineCount    Int
+  /// Seconds per wine, or null when untimed. Each taster's clock starts when they open the wine.
+  timerSeconds Int?
+  endedAt      DateTime?
+  created_at   DateTime  @default(now())
+
+  host    User           @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  wines   FlightWine[]
+  members FlightMember[]
+  entries FlightEntry[]
+}
+
+/// One numbered glass. The reveal is entered once by the host and copied to every submitted tasting.
+model FlightWine {
+  flightId   String    @db.VarChar(36)
+  number     Int
+  reveal     Json?
+  revealedAt DateTime?
+
+  flight Flight @relation(fields: [flightId], references: [id], onDelete: Cascade)
+
+  @@id([flightId, number])
+}
+
+model FlightMember {
+  flightId  String   @db.VarChar(36)
+  userId    String   @db.VarChar(36)
+  joined_at DateTime @default(now())
+
+  flight Flight @relation(fields: [flightId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([flightId, userId])
+}
+
+/// A taster's go at one wine, from the moment they open it: in progress until a tasting is linked.
+model FlightEntry {
+  flightId   String   @db.VarChar(36)
+  userId     String   @db.VarChar(36)
+  wineNumber Int
+  startedAt  DateTime @default(now())
+  tastingId  String?  @unique @db.VarChar(36)
+
+  flight  Flight   @relation(fields: [flightId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasting Tasting? @relation(fields: [tastingId], references: [id], onDelete: SetNull)
+
+  @@id([flightId, userId, wineNumber])
 }

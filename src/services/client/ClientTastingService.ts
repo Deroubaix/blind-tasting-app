@@ -6,6 +6,8 @@ import { type TastingData } from '../../types/TastingData';
 export type TastingResponse = {
 	message: string;
 	tasting: TastingData;
+	/** A flight wine the host revealed before this was saved: archived, but not in the results. */
+	flightLate?: boolean;
 };
 
 export default class ClientTastingService {

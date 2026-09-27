@@ -95,6 +95,8 @@ export const tastingCreateSchema = z.object({
 	photoKey: z.string().max(200).nullish(),
 	// The optional reveal on the save page, for a taster who already knows the wine.
 	reveal: revealSchema.nullish(),
+	// Tasted as part of a flight: links the tasting to the taster's entry for that wine.
+	flight: z.object({ code: z.string().max(12), wineNumber: z.number().int().min(1).max(12) }).nullish(),
 });
 
 export type TastingCreateInput = z.infer<typeof tastingCreateSchema>;

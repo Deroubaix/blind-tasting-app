@@ -20,6 +20,8 @@ export type TastingData = {
 	/** Never saved: when the clock was paused, or null/absent while it runs. See timerClock.ts. */
 	timerPausedAt?: number | null;
 	soundEnabled?: boolean;
+	/** Tasting a flight wine. Only `code` and `wineNumber` are saved, to link the tasting. */
+	flight?: { code: string; name: string; wineNumber: number; wineCount: number } | null;
 	wineName?: string;
 	/**
 	 * Index into PHASE_ORDER in phaseCompletion.ts. A high-water mark, not the current

@@ -5,6 +5,9 @@ import { errorResponse, jsonResponse, logServerError } from '../../../utils/ApiU
 import { requireUserId } from '../../../lib/auth';
 import { tastingCreateSchema } from '../../../schemas/tasting';
 import { revealFields } from '../../../lib/reveal';
+import { normaliseCode } from '../../../components/flights/flightLogic';
+import { RATE_LIMITS, check, consume } from '../../../lib/rateLimit';
+import { TASTING_FLIGHT_INCLUDE, withFlight } from '../../../lib/flights';
 import { MAX_PHOTO_BYTES, ownsPhotoKey, photoSize } from '../../../lib/storage';
 
 /** Postgres unique-constraint violation. */
@@ -72,13 +75,39 @@ export async function GET() {
 		const tastings = await prisma.tasting.findMany({
 			where: { userId },
 			orderBy: { number: 'desc' },
+			include: TASTING_FLIGHT_INCLUDE,
 		});
 
-		return jsonResponse({ tastings });
+		return jsonResponse({ tastings: tastings.map(withFlight) });
 	} catch (error) {
 		logServerError('GET /api/tastings', error);
 		return errorResponse(error);
 	}
+}
+
+/** The taster's entry for a flight wine, checked; `reveal` is set when the host got there first. */
+async function flightEntryFor(userId: string, { code, wineNumber }: { code: string; wineNumber: number }) {
+	await check(RATE_LIMITS.flightCode, userId);
+	const flight = await prisma.flight.findUnique({
+		where: { code: normaliseCode(code) },
+		include: { members: { where: { userId } }, wines: { where: { number: wineNumber } } },
+	});
+	if (!flight) {
+		await consume(RATE_LIMITS.flightCode, userId);
+	}
+	if (!flight || !flight.members.length || !flight.wines.length) {
+		throw new JsonApiError('BadRequest', 'That flight wine could not be found.', 400);
+	}
+	const where = { flightId_userId_wineNumber: { flightId: flight.id, userId, wineNumber } };
+	const entry = await prisma.flightEntry.findUnique({ where });
+	if (!entry) {
+		throw new JsonApiError('Conflict', `Open wine ${wineNumber} from the flight before submitting it.`, 409);
+	}
+	if (entry.tastingId) {
+		throw new JsonApiError('Conflict', `You have already submitted wine ${wineNumber}.`, 409);
+	}
+	const reveal = flight.wines[0].revealedAt ? (flight.wines[0].reveal as Prisma.InputJsonValue) : null;
+	return { where, reveal };
 }
 
 export async function POST(request: Request) {
@@ -105,9 +134,29 @@ export async function POST(request: Request) {
 			...revealFields(body.reveal),
 		};
 
-		const tasting = await createWithNextNumber(userId, data);
+		const flight = body.flight ? await flightEntryFor(userId, body.flight) : null;
+		// Revealed before this arrived: saved to the archive with the host's reveal, but not in the results.
+		const late = flight?.reveal ?? null;
+		const tasting = await createWithNextNumber(
+			userId,
+			late ? { ...data, reveal: late, revealedAt: new Date() } : data,
+		);
+		if (flight && !late) {
+			await prisma.flightEntry.update({ where: flight.where, data: { tastingId: tasting.id } });
+			// Revealed between the check and the link: copy the reveal on, as the reveal would have.
+			const { flightId, wineNumber } = flight.where.flightId_userId_wineNumber;
+			const wine = await prisma.flightWine.findUnique({
+				where: { flightId_number: { flightId, number: wineNumber } },
+			});
+			if (wine?.revealedAt) {
+				await prisma.tasting.update({
+					where: { id: tasting.id },
+					data: { reveal: wine.reveal as Prisma.InputJsonValue, revealedAt: wine.revealedAt },
+				});
+			}
+		}
 
-		return jsonResponse({ message: 'Tasting saved', tasting }, 201);
+		return jsonResponse({ message: 'Tasting saved', tasting, flightLate: Boolean(late) }, 201);
 	} catch (error) {
 		logServerError('POST /api/tastings', error);
 		return errorResponse(error);

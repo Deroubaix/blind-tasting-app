@@ -29,6 +29,8 @@ export const RATE_LIMITS = {
 	forgotEmail: { name: 'forgot-email', limit: 3, windowMs: 60 * MINUTE },
 	forgotIp: { name: 'forgot-ip', limit: 10, windowMs: 60 * MINUTE },
 	resetIp: { name: 'reset-ip', limit: 10, windowMs: 15 * MINUTE },
+	/** Looking up or joining flights by code, so codes can't be guessed in bulk. */
+	flightCode: { name: 'flight-code', limit: 30, windowMs: 15 * MINUTE },
 	/** Wrong passwords when deleting an account. */
 	deleteAccount: { name: 'delete-account', limit: 5, windowMs: 15 * MINUTE },
 } satisfies Record<string, RateLimitRule>;
