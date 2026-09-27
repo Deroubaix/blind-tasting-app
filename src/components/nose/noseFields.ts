@@ -133,6 +133,7 @@ export const NOSE_OPTIONS: Record<WineType, Record<string, string[]>> = {
 		'Stone Fruit': ['Apricot', 'Nectarine', 'Peach'],
 		Tropical: ['Pineapple', 'Passionfruit', 'Mango', 'Banana', 'Lychee'],
 		Melon: ['Honeydew', 'Cantaloupe'],
+		'Other Fruit': ['Fig', 'Raisin', 'Date'],
 		'From Grape(s)': [
 			...FROM_GRAPE,
 			'Acacia',
@@ -154,10 +155,11 @@ export const NOSE_OPTIONS: Record<WineType, Record<string, string[]>> = {
 /** The grid's fruit groups for each colour. */
 export const FRUIT_FAMILIES: Record<WineType, string[]> = {
 	red: ['Red Fruit', 'Blue Fruit', 'Black Fruit', 'Other Fruit'],
-	white: ['Tart Citrus', 'Sweet Citrus', 'Apple/Pear', 'Stone Fruit', 'Tropical', 'Melon'],
+	white: ['Tart Citrus', 'Sweet Citrus', 'Apple/Pear', 'Stone Fruit', 'Tropical', 'Melon', 'Other Fruit'],
 };
 
-export const NOSE_TOP = ['Aromatic Intensity', 'Age Assessment', 'Minor Fault(s)'];
+// Grid order: faults are checked first, before intensity and age.
+export const NOSE_TOP = ['Minor Fault(s)', 'Aromatic Intensity', 'Age Assessment'];
 export const NOSE_NON_FRUIT = ['From Grape(s)', 'From Winemaking', 'Earth', 'Mineral'];
 export const NOSE_OAK_ASSESSMENT = ['New Oak', 'Oak Intensity', 'Oak Type'];
 

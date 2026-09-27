@@ -101,7 +101,7 @@
 // Oak descriptors (wide, no bg) on the left; new oak, intensity and type stacked on the right
 .nose-wood-layout {
 	display: grid;
-	grid-template-columns: 3fr 2fr;
+	grid-template-columns: 2fr 3fr;
 	gap: $spacing-md;
 	align-items: start;
 

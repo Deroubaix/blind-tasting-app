@@ -141,16 +141,18 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 			}}
 		>
 			{/*
-              Three-column assessment grid (2024 CMS Americas grid)
+              Three-column grid, in 2024 CMS grid order.
               ┌──────────────┬─────────────────────────────┐
               │ Clarity      │ Intensity of Color (span 2) │
-              ├──────────────┼──────────────┬──────────────┤
-              │ Tearing      │ Staining*    │ Evidence     │   *red only; white: Tearing spans 2
-              ├──────────────┴──────────────┴──────────────┤
+              ├──────────────┴─────────────────────────────┤
               │ Primary Color (full width)                 │
               ├────────────────────────────────────────────┤
               │ Secondary Color(s) (full width)            │
-              └────────────────────────────────────────────┘
+              ├──────────────┬─────────────────────────────┤
+              │ Rim Var.*    │ Staining* (span 2)          │   *red only
+              ├──────────────┴──────────────┬──────────────┤
+              │ Tearing (span 2)            │ Gas Evidence │
+              └─────────────────────────────┴──────────────┘
             */}
 			<div className="sight-grid">
 				<div className="tasting-card">
@@ -161,34 +163,6 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				<div className="tasting-card sight-card--span-2">
 					<div className="tasting-card__label">Intensity of Color</div>
 					{renderOptions('Intensity of Color', SIGHT_SCALES['Intensity of Color'])}
-				</div>
-
-				<div className={`tasting-card${isRed ? '' : ' sight-card--span-2'}`}>
-					<div className="tasting-card__label">Tearing</div>
-					{renderOptions('Tearing', SIGHT_SCALES.Tearing)}
-				</div>
-
-				{isRed && (
-					<div className="tasting-card">
-						<div className="tasting-card__label">Staining</div>
-						{renderOptions('Staining', SIGHT_SCALES.Staining)}
-					</div>
-				)}
-
-				<div className="tasting-card">
-					<div className="tasting-card__label">Physical Evidence</div>
-					<div className="sight-evidence-fields">
-						{isRed && (
-							<div className="sight-evidence-field">
-								<span className="sight-evidence-field__label">Rim Variation</span>
-								{renderToggle('Rim Variation')}
-							</div>
-						)}
-						<div className="sight-evidence-field">
-							<span className="sight-evidence-field__label">Gas Evidence</span>
-							{renderToggle('Gas Evidence')}
-						</div>
-					</div>
 				</div>
 
 				<div className="tasting-card sight-card--span-full sight-card--light">
@@ -205,6 +179,30 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 						<span className="sight-card__sublabel">Select all that apply</span>
 					</div>
 					{renderSwatches('Secondary Color(s)', colors.secondary)}
+				</div>
+
+				{isRed && (
+					<>
+						<div className="tasting-card">
+							<div className="tasting-card__label">Rim Variation</div>
+							{renderToggle('Rim Variation')}
+						</div>
+
+						<div className="tasting-card sight-card--span-2">
+							<div className="tasting-card__label">Staining</div>
+							{renderOptions('Staining', SIGHT_SCALES.Staining)}
+						</div>
+					</>
+				)}
+
+				<div className="tasting-card sight-card--span-2">
+					<div className="tasting-card__label">Tearing</div>
+					{renderOptions('Tearing', SIGHT_SCALES.Tearing)}
+				</div>
+
+				<div className="tasting-card">
+					<div className="tasting-card__label">Gas Evidence</div>
+					{renderToggle('Gas Evidence')}
 				</div>
 			</div>
 			{/* end .sight-grid */}

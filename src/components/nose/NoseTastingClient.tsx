@@ -250,7 +250,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				onNext: handleNextPhase,
 			}}
 		>
-			{/* ── Intensity, age and faults (3 cols) ── */}
+			{/* ── Faults, intensity and age (3 cols), in grid order ── */}
 			<div className="nose-grid">
 				{NOSE_TOP.map((cat) => (
 					<div key={cat} className="tasting-card">
@@ -308,18 +308,18 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			<div className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`} inert={!woodOpen}>
 				<div className="nose-collapsible__inner">
 					<div className="nose-wood-layout">
-						{/* Descriptors — left, no background */}
-						<div className="nose-fruit-category nose-wood-layout__aromas">
-							{renderFruitCategory('Oak Descriptors')}
-						</div>
-
-						{/* New oak, intensity, type — right, stacked, individual cards */}
+						{/* New oak first, as on the grid */}
 						<div className="nose-wood-layout__assessment">
 							{NOSE_OAK_ASSESSMENT.map((cat) => (
 								<div key={cat} className="tasting-card">
 									{renderCategory(cat, true)}
 								</div>
 							))}
+						</div>
+
+						{/* Descriptors — right, no background */}
+						<div className="nose-fruit-category nose-wood-layout__aromas">
+							{renderFruitCategory('Oak Descriptors')}
 						</div>
 					</div>
 				</div>

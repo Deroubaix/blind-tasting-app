@@ -95,29 +95,6 @@
 	gap: $spacing-md;
 }
 
-// ── Physical evidence field stack ─────────────────────────────────────────────
-.sight-evidence-fields {
-	display: flex;
-	flex-direction: column;
-	gap: $spacing-md;
-	flex: 1;
-}
-
-.sight-evidence-field {
-	// Label and toggles share a line, so the card stays as short as the option cards beside it.
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: $spacing-md;
-
-	&__label {
-		font-size: $text-12;
-		font-weight: $font-weight-medium;
-		color: $color-text-secondary;
-		font-family: $font-display-normal-family;
-	}
-}
-
 // ── Color swatches ────────────────────────────────────────────────────────────
 .sight-swatches {
 	display: flex;
@@ -210,12 +187,6 @@
 		gap: 12px;
 	}
 
-	// Colour is the reading this phase turns on, and the swatches are the one thing
-	// here that has to be seen rather than read. They lead on a screen this size.
-	.sight-card--light {
-		order: -1;
-	}
-
 	// A description under every swatch in a 390px-wide row is most of a screen; the
 	// chosen ones alone say the same thing.
 	.sight-swatch-desc {
@@ -224,16 +195,6 @@
 
 	.sight-swatch-chosen {
 		display: block;
-	}
-
-	// One column, so the card is never stretched — the toggles go back to full width
-	// rather than sitting as a small pair beside the label.
-	.sight-evidence-field {
-		display: block;
-
-		&__label {
-			margin-bottom: $spacing-xs;
-		}
 	}
 
 	// Both spans are relative to the three-column desktop grid. Left in place they
