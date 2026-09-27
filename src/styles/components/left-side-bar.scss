@@ -30,7 +30,7 @@ $sidebar-done: $color-status-ok !default;
 	}
 
 	&__title {
-		@include eyebrow-label(0.72rem, $color-white);
+		@include eyebrow-label($text-11-5, $color-white);
 		letter-spacing: 0.2em;
 		margin-bottom: $spacing-xs;
 	}
@@ -44,7 +44,7 @@ $sidebar-done: $color-status-ok !default;
 	}
 
 	&__role {
-		@include eyebrow-label(0.56rem, $color-text-muted);
+		@include eyebrow-label($text-9, $color-text-muted);
 		letter-spacing: 0.15em;
 	}
 
@@ -61,7 +61,7 @@ $sidebar-done: $color-status-ok !default;
 	}
 
 	&__exam-label {
-		@include eyebrow-label(0.58rem, $color-text-muted);
+		@include eyebrow-label($text-9, $color-text-muted);
 		letter-spacing: 0.12em;
 		display: flex;
 		align-items: baseline;
@@ -71,7 +71,7 @@ $sidebar-done: $color-status-ok !default;
 
 	&__exam-count {
 		color: $sidebar-accent-light;
-		font-size: 0.65rem;
+		font-size: $text-10-5;
 	}
 
 	&__exam-segments {
@@ -102,7 +102,7 @@ $sidebar-done: $color-status-ok !default;
 	}
 
 	&__progress-label {
-		@include eyebrow-label(0.58rem, $color-text-muted);
+		@include eyebrow-label($text-9, $color-text-muted);
 		letter-spacing: 0.12em;
 		margin-bottom: $spacing-xs;
 		display: flex;
@@ -112,7 +112,7 @@ $sidebar-done: $color-status-ok !default;
 
 	&__progress-pct {
 		color: $sidebar-accent-light;
-		font-size: 0.65rem;
+		font-size: $text-10-5;
 	}
 
 	&__progress-track {
@@ -269,7 +269,7 @@ $sidebar-done: $color-status-ok !default;
 
 		&__short {
 			display: block;
-			font-size: 9px;
+			font-size: $text-9;
 			font-weight: 500;
 			letter-spacing: 0.08em;
 			text-transform: uppercase;

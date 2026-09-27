@@ -3,7 +3,7 @@ import ResetPasswordForm from '../../components/user/ResetPasswordForm';
 import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-	title: "Reset Password — The Sommelier's Ledger",
+	title: 'Reset Password',
 };
 
 export default function ResetPasswordPage() {

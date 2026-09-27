@@ -50,7 +50,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 						<div className="tasting-sidebar__role">Master Level Study</div>
 					</>
 				) : (
-					<div className="tasting-sidebar__app-name">Wine Tasting App</div>
+					<div className="tasting-sidebar__app-name">Deductive tasting practice</div>
 				)}
 			</div>
 

@@ -4,7 +4,7 @@ import LeftSidebar from '../../components/tasting/LeftSideBar';
 import ArchivesList from '../../components/archives/ArchivesList';
 
 export const metadata: Metadata = {
-	title: 'Tasting Archives | Blind Tasting App',
+	title: 'Tasting Archives',
 };
 
 export default function ArchivesPage() {

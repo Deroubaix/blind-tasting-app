@@ -77,7 +77,7 @@
 }
 
 .sight-card__sublabel {
-	@include eyebrow-label(0.625rem, $color-text-muted);
+	@include eyebrow-label($text-10, $color-text-muted);
 	letter-spacing: 0.1em;
 }
 
@@ -107,7 +107,7 @@
 	gap: $spacing-md;
 
 	&__label {
-		font-size: 12px;
+		font-size: $text-12;
 		font-weight: $font-weight-medium;
 		color: $color-text-secondary;
 		font-family: $font-display-normal-family;
@@ -154,7 +154,7 @@
 
 .sight-swatch-label {
 	margin-top: 9px;
-	font-size: 0.84rem; // 13.5px
+	font-size: $text-13-5; // 13.5px
 	text-align: center;
 	color: $color-text-secondary;
 	font-family: $font-display-normal-family;
@@ -168,7 +168,7 @@
 
 .sight-swatch-desc {
 	margin-top: 4px;
-	font-size: 0.72rem; // 11.5px
+	font-size: $text-11-5; // 11.5px
 	text-align: center;
 	color: $color-text-secondary;
 	font-family: $font-display-normal-family;
@@ -182,7 +182,7 @@
 	margin: $spacing-sm 0 0;
 	padding-top: $spacing-sm;
 	border-top: 1px solid rgba(20, 19, 19, 0.1);
-	font-size: 0.72rem;
+	font-size: $text-11-5;
 	line-height: 1.5;
 	color: $tasting-on-light-muted;
 	font-family: $font-display-normal-family;

@@ -159,7 +159,7 @@ export default function Homepage() {
 							<footer className="hp-preview__foot">
 								<div className="hp-progress">
 									<div className="hp-progress__bar" />
-									<span className="hp-progress__pct">3 / 6</span>
+									<span className="hp-progress__pct">3 / 8</span>
 								</div>
 								<span className="hp-next-cue">Next · Nose</span>
 							</footer>

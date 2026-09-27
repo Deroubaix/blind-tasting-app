@@ -14,7 +14,7 @@ $hp-radius-lg: 10px;
 	// Shared atoms
 
 	.hp-eyebrow {
-		@include eyebrow-label(0.68rem, $color-display-accent);
+		@include eyebrow-label($text-11, $color-display-accent);
 		display: inline-flex;
 		align-items: center;
 		gap: 0.55rem;
@@ -232,7 +232,7 @@ $hp-radius-lg: 10px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 0.65rem;
+		font-size: $text-10-5;
 		color: $color-accent-light;
 		font-weight: $font-weight-bold;
 		font-variant-numeric: tabular-nums;
@@ -249,12 +249,12 @@ $hp-radius-lg: 10px;
 		font-family: $font-body-normal-family;
 		font-style: italic;
 		color: $color-text-secondary;
-		font-size: 0.85rem;
+		font-size: $text-13-5;
 		margin-left: 0.5rem;
 	}
 
 	.hp-timer__label {
-		font-size: 0.55rem;
+		font-size: $text-9;
 		letter-spacing: 0.22em;
 		text-transform: uppercase;
 		color: $color-text-muted;
@@ -263,7 +263,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-timer__value {
-		font-size: 1.35rem;
+		font-size: $text-timer;
 		font-weight: $font-weight-medium;
 		letter-spacing: 0.04em;
 		color: $color-white;
@@ -273,7 +273,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-field-q {
-		font-size: 0.7rem;
+		font-size: $text-11;
 		font-weight: $font-weight-bold;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
@@ -284,7 +284,7 @@ $hp-radius-lg: 10px;
 		justify-content: space-between;
 
 		&__hint {
-			font-size: 0.62rem;
+			font-size: $text-10;
 			letter-spacing: 0.12em;
 			color: $color-text-muted;
 			font-weight: $font-weight-semibold;
@@ -330,12 +330,12 @@ $hp-radius-lg: 10px;
 			align-items: center;
 			justify-content: center;
 			color: $color-white;
-			font-size: 0.6rem;
+			font-size: $text-9-5;
 			font-weight: $font-weight-extrabold;
 		}
 
 		&__name {
-			font-size: 0.55rem;
+			font-size: $text-9;
 			font-weight: $font-weight-bold;
 			letter-spacing: 0.05em;
 			text-transform: uppercase;
@@ -353,7 +353,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-pill {
-		font-size: 0.7rem;
+		font-size: $text-11;
 		padding: 0.4rem 0.75rem;
 		border-radius: $hp-radius;
 		border: 1px solid $tasting-border-mid;
@@ -397,7 +397,7 @@ $hp-radius-lg: 10px;
 		}
 
 		&__pct {
-			font-size: 0.7rem;
+			font-size: $text-11;
 			color: $color-accent-light;
 			font-weight: $font-weight-semibold;
 			font-variant-numeric: tabular-nums;
@@ -406,7 +406,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-next-cue {
-		font-size: 0.65rem;
+		font-size: $text-10-5;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: $color-white;
@@ -432,7 +432,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-ledger__badge {
-		font-size: 0.55rem;
+		font-size: $text-9;
 		padding: 0.2rem 0.5rem;
 		border-radius: 3px;
 		background: rgba($color-status-ok, 0.16);
@@ -445,7 +445,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-ledger__when {
-		font-size: 0.6rem;
+		font-size: $text-9-5;
 		color: $color-text-muted;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
@@ -464,7 +464,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-ledger__sub {
-		font-size: 0.72rem;
+		font-size: $text-11-5;
 		color: $color-text-secondary;
 		margin: 0 0 0.85rem;
 	}
@@ -477,7 +477,7 @@ $hp-radius-lg: 10px;
 		border-top: 1px solid $tasting-border;
 
 		&-label {
-			font-size: 0.58rem;
+			font-size: $text-9;
 			color: $color-text-muted;
 			letter-spacing: 0.18em;
 			text-transform: uppercase;
@@ -486,7 +486,7 @@ $hp-radius-lg: 10px;
 		}
 
 		&-value {
-			font-size: 0.95rem;
+			font-size: $text-15;
 			color: $color-status-ok;
 			font-weight: $font-weight-semibold;
 			font-variant-numeric: tabular-nums;
@@ -532,7 +532,7 @@ $hp-radius-lg: 10px;
 	}
 
 	.hp-method__desc {
-		font-size: 0.92rem;
+		font-size: $text-15;
 		color: $color-text-secondary;
 		line-height: 1.75;
 		max-width: 38ch;
@@ -612,7 +612,7 @@ $hp-radius-lg: 10px;
 		}
 
 		&__num {
-			font-size: 0.75rem;
+			font-size: $text-12;
 			font-weight: $font-weight-semibold;
 			letter-spacing: 0.06em;
 			color: $color-display-accent;
@@ -621,7 +621,7 @@ $hp-radius-lg: 10px;
 		}
 
 		&__name {
-			font-size: 1.25rem;
+			font-size: $font-size-lg;
 			font-weight: $font-weight-bold;
 			font-family: $font-display-bold-family;
 			letter-spacing: -0.01em;
@@ -634,7 +634,7 @@ $hp-radius-lg: 10px;
 		}
 
 		&__desc {
-			font-size: 0.82rem;
+			font-size: $text-13;
 			color: $color-text-secondary;
 			line-height: 1.65;
 			flex: 1;
@@ -645,7 +645,7 @@ $hp-radius-lg: 10px;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			font-size: 0.6rem;
+			font-size: $text-9-5;
 			letter-spacing: 0.18em;
 			text-transform: uppercase;
 			color: $color-text-muted;

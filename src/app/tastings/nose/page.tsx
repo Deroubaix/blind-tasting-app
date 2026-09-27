@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import NoseTastingClient from '../../../components/nose/NoseTastingClient';
 
 export const metadata: Metadata = {
-	title: 'Nose | Wine Tasting',
+	title: 'Nose',
 };
 
 export default async function NosePage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {

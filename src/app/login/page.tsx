@@ -2,7 +2,7 @@ import LoginForm from '../../components/user/LoginForm';
 import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-	title: "Log in — The Sommelier's Ledger",
+	title: 'Log in',
 };
 
 export default function LoginPage() {

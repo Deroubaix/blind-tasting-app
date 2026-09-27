@@ -23,7 +23,7 @@
 	}
 
 	&__start-over {
-		@include icon-label(8px);
+		@include icon-label($text-8);
 
 		background: none;
 		border: 1px solid rgba(228, 228, 204, 0.2);

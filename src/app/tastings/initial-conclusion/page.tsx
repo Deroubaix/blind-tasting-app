@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import InitialConclusionTastingClient from '../../../components/tasting/InitialConclusionTastingClient';
 
 export const metadata: Metadata = {
-	title: 'Initial Conclusion | Wine Tasting',
+	title: 'Initial Conclusion',
 };
 
 export default async function InitialConclusionPage({

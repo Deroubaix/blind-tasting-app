@@ -61,20 +61,20 @@
 	}
 
 	&__id {
-		font-size: 0.68rem;
+		font-size: $text-11;
 		color: $color-text-muted;
 		letter-spacing: 0.05em;
 	}
 
 	&__title {
-		font-size: 1.5rem;
+		font-size: $font-size-xl; // 25px, the scale step next to its old 24px
 		font-weight: $font-weight-bold;
 		line-height: 1.2;
 		letter-spacing: -0.01em;
 	}
 
 	&__subtitle {
-		font-size: 0.82rem;
+		font-size: $text-13;
 		color: $color-text-secondary;
 		margin: 0;
 		line-height: 1.4;
@@ -89,12 +89,12 @@
 	}
 
 	&__conclusions-label {
-		@include eyebrow-label(0.58rem, $color-text-muted);
+		@include eyebrow-label($text-9, $color-text-muted);
 		letter-spacing: 0.1em;
 	}
 
 	&__conclusions-text {
-		font-size: 0.82rem;
+		font-size: $text-13;
 		font-style: italic;
 		color: $color-text-secondary;
 		line-height: 1.55;
@@ -115,12 +115,12 @@
 	}
 
 	&__date {
-		font-size: 0.72rem;
+		font-size: $text-11-5;
 		color: $color-text-muted;
 	}
 
 	&__details {
-		@include eyebrow-label(0.62rem, $tasting-accent-light);
+		@include eyebrow-label($text-10, $tasting-accent-light);
 		letter-spacing: 0.1em;
 	}
 
@@ -203,7 +203,7 @@
 	}
 
 	&__new-icon {
-		font-size: 1.6rem;
+		font-size: $font-size-xl;
 		color: $color-text-secondary;
 		line-height: 1;
 		width: 40px;
@@ -216,14 +216,14 @@
 	}
 
 	&__new-label {
-		@include eyebrow-label(0.62rem, $color-text-secondary);
+		@include eyebrow-label($text-10, $color-text-secondary);
 		letter-spacing: 0.15em;
 	}
 }
 
 // ── Wine type badge ───────────────────────────────────────────────────────────
 .wine-type-badge {
-	@include eyebrow-label(0.58rem);
+	@include eyebrow-label($text-9);
 	padding: 3px 8px;
 	border-radius: 4px;
 	letter-spacing: 0.1em;
@@ -305,7 +305,7 @@
 
 .tasting-detail__id,
 .tasting-detail__date {
-	font-size: 0.72rem;
+	font-size: $text-11-5;
 	color: $color-text-muted;
 }
 
@@ -348,7 +348,7 @@
 }
 
 .tasting-detail__section-label {
-	@include eyebrow-label(0.62rem, $tasting-accent-light);
+	@include eyebrow-label($text-10, $tasting-accent-light);
 	letter-spacing: 0.12em;
 	margin-bottom: $spacing-md;
 }
@@ -366,12 +366,12 @@
 }
 
 .tasting-detail__field-label {
-	@include eyebrow-label(0.56rem, $color-text-muted);
+	@include eyebrow-label($text-9, $color-text-muted);
 	letter-spacing: 0.1em;
 }
 
 .tasting-detail__field-value {
-	font-size: 0.85rem;
+	font-size: $text-13-5;
 	color: $color-white;
 	line-height: 1.4;
 }

@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import SavedTasting from '../../../components/tasting/SavedTastings';
 
 export const metadata: Metadata = {
-	title: 'Review & Save | Wine Tasting',
+	title: 'Review & Save',
 };
 
 export default async function SavedTastingPage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {

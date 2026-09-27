@@ -15,7 +15,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	font-family: $font-display-normal-family;
 
 	&__logo {
-		@include eyebrow-label(0.72rem, $color-white);
+		@include eyebrow-label($text-11-5, $color-white);
 		letter-spacing: 0.15em;
 		justify-self: start;
 		text-decoration: none;
@@ -50,13 +50,13 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	}
 
 	&__timer-label {
-		@include eyebrow-label(0.5rem, $color-text-muted);
+		@include eyebrow-label($text-8, $color-text-muted);
 		letter-spacing: 0.18em;
 	}
 
 	&__timer-display {
 		font-family: $font-mono-family;
-		font-size: 1.4rem;
+		font-size: $text-timer;
 		font-weight: 600;
 		letter-spacing: 0.06em;
 		line-height: 1;
@@ -88,12 +88,12 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	}
 
 	&__wine-label {
-		@include eyebrow-label(0.65rem, rgba(228, 228, 204, 0.55));
+		@include eyebrow-label($text-10-5, rgba(228, 228, 204, 0.55));
 		letter-spacing: 0.2em;
 	}
 
 	&__cancel {
-		font-size: 0.72rem;
+		font-size: $text-11-5;
 		font-weight: 600;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
@@ -120,7 +120,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		border: 1px solid rgba(228, 228, 204, 0.15) !important;
 		color: $color-accent-light;
 		font-family: $font-display-normal-family;
-		font-size: 0.68rem;
+		font-size: $text-11;
 		font-weight: 600;
 		letter-spacing: 0.04em;
 		cursor: pointer;
@@ -159,7 +159,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__timer-label {
-			@include eyebrow-label(0.56rem, $color-text-muted);
+			@include eyebrow-label($text-9, $color-text-muted);
 			letter-spacing: 0.16em;
 			order: 2; // under the clock, not above it
 			margin-top: 3px;
@@ -174,7 +174,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__phase-label {
-			@include eyebrow-label(0.59rem, $color-text-muted);
+			@include eyebrow-label($text-9-5, $color-text-muted);
 			letter-spacing: 0.18em;
 		}
 
@@ -183,7 +183,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__phase-title {
-			font-size: 1rem;
+			font-size: $text-16;
 			font-weight: $font-weight-bold;
 			letter-spacing: -0.01em;
 			color: $color-white;
@@ -206,7 +206,7 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__timer-display .timer-display {
-			font-size: 1.375rem;
+			font-size: $text-timer;
 			font-weight: 700;
 			line-height: 1;
 			letter-spacing: 0.02em;

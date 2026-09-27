@@ -17,7 +17,9 @@ html {
 	margin: 0;
 	height: 100%;
 	width: 100%;
-	font-size: 16px;
+	// 100%, not 16px: the same for most people, but it respects a larger default text size set in
+	// the browser, which every rem in the app then scales with.
+	font-size: 100%;
 	font-family: $font-display-bold-family;
 }
 

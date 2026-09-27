@@ -200,7 +200,7 @@ a.button {
 	border: 1px solid $tasting-border-mid;
 	background-color: $color-surface-variant;
 	color: $color-text-secondary;
-	font-size: 0.825rem; // 13.2px
+	font-size: $text-13; // 13.2px
 	font-weight: $font-weight-regular;
 	font-family: $font-display-normal-family;
 	cursor: pointer;
@@ -235,7 +235,7 @@ a.button {
 	&--pill {
 		@include set-rounded-corners($radius-pill);
 		padding: 7px 11px;
-		font-size: 0.72rem;
+		font-size: $text-11-5;
 	}
 
 	&--ghost {
@@ -264,7 +264,7 @@ a.button {
 	border: 1px solid $tasting-border-mid;
 	background-color: $color-surface-variant;
 	color: $color-text-secondary;
-	font-size: 0.825rem;
+	font-size: $text-13;
 	font-family: $font-display-normal-family;
 	font-weight: $font-weight-regular;
 	cursor: pointer;
@@ -296,7 +296,7 @@ a.button {
 	.tasting-toggle-btn {
 		min-height: 46px;
 		border-radius: 10px;
-		font-size: 0.875rem;
+		font-size: $text-14;
 	}
 
 	// Scoped to the page on purpose: `.tasting-phase-page button` resets min-width at
@@ -315,7 +315,7 @@ a.button {
 		padding: 8px 12px;
 		border-radius: 10px;
 		background-color: $tasting-m-control;
-		font-size: 0.875rem;
+		font-size: $text-14;
 		line-height: 1.25;
 
 		// Keep the pill a pill — this block would otherwise override it.

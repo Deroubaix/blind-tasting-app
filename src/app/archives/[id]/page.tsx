@@ -4,7 +4,7 @@ import LeftSidebar from '../../../components/tasting/LeftSideBar';
 import TastingDetail from '../../../components/archives/TastingDetail';
 
 export const metadata: Metadata = {
-	title: 'Tasting Detail | Blind Tasting App',
+	title: 'Tasting Detail',
 };
 
 export default async function TastingDetailPage({ params }: { params: Promise<{ id: string }> }) {

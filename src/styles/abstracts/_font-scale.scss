@@ -38,3 +38,27 @@ $font-body-normal-weight: $font-weight-regular;
 $font-body-bold-family: var(--font-lora), serif;
 $font-body-bold-spacing: 0.03em;
 $font-body-bold-weight: $font-weight-bold;
+
+// ── Small-text sizes ──────────────────────────────────────────────────────────
+// The interface's labels, chips and captions, named by their approximate pixel size. Before these,
+// 29 near-identical literals were scattered across the stylesheets (0.62rem beside 0.625rem, 0.55rem
+// beside 0.56rem); each was folded into the nearest of these, moving no text more than 0.4px.
+// Use these rather than a new literal; larger display sizes use the scale above.
+$text-8: 0.5rem;
+$text-9: 0.5625rem;
+$text-9-5: 0.6rem;
+$text-10: 0.625rem;
+$text-10-5: 0.65rem;
+$text-11: 0.6875rem;
+$text-11-5: 0.72rem;
+$text-12: 0.75rem;
+$text-13: 0.8rem;
+$text-13-5: 0.85rem;
+$text-14: 0.875rem;
+$text-15: 0.9375rem;
+$text-16: 1rem;
+
+// The countdown. A numeral display rather than text, so it sits off the text scale; one value
+// shared by the desktop header, the phone strip and the home-page preview, which had drifted to
+// 22.4px, 22px and 21.6px.
+$text-timer: 1.375rem;

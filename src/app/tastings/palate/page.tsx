@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import PalateTastingClient from '../../../components/palate/PalateTastingClient';
 
 export const metadata: Metadata = {
-	title: 'Palate | Wine Tasting',
+	title: 'Palate',
 };
 
 export default async function PalatePage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {

@@ -45,7 +45,7 @@
 // ── Shared page heading elements (used on every phase page) ───────────────────
 
 .phase-label {
-	@include eyebrow-label(0.65rem);
+	@include eyebrow-label($text-10-5);
 	margin-bottom: $spacing-xxxs;
 
 	// The number is the part worth reading; the word is just its frame.
@@ -105,7 +105,7 @@
 	}
 
 	.phase-description {
-		font-size: 0.78rem;
+		font-size: $text-13;
 		line-height: 1.55;
 		margin-bottom: 0;
 	}

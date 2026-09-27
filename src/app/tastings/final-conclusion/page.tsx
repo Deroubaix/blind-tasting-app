@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import FinalConclusionTastingClient from '../../../components/tasting/FinalConclusionTastingClient';
 
 export const metadata: Metadata = {
-	title: 'Final Conclusion | Wine Tasting',
+	title: 'Final Conclusion',
 };
 
 export default async function FinalConclusionPage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {

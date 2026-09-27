@@ -172,7 +172,7 @@ $modal-padding-horizontal: 2rem;
 
 	&__note {
 		color: $color-text-secondary;
-		font-size: 0.85rem;
+		font-size: $text-13-5;
 		line-height: 1.6;
 		margin: 0;
 	}
@@ -203,7 +203,7 @@ $modal-padding-horizontal: 2rem;
 
 	&__note {
 		color: $color-text-secondary;
-		font-size: 0.85rem;
+		font-size: $text-13-5;
 		line-height: 1.6;
 		margin: 0;
 	}
@@ -241,7 +241,7 @@ $modal-padding-horizontal: 2rem;
 		&.outline {
 			border-width: 1px;
 			padding: 1.2rem 1.6rem;
-			font-size: 13px;
+			font-size: $text-13;
 		}
 
 		&:hover {
@@ -250,7 +250,7 @@ $modal-padding-horizontal: 2rem;
 	}
 
 	&__confirm {
-		@include icon-label(8px);
+		@include icon-label($text-8);
 
 		// .btn-primary has no border; without a transparent one it stands 2px shorter
 		// than the outlined button beside it.

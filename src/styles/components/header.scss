@@ -50,7 +50,7 @@ $item-gap: $page-spacing * 1.5;
 	align-items: center;
 	justify-content: center;
 	font-family: $font-display-normal-family;
-	font-size: 0.68rem;
+	font-size: $text-11;
 	font-weight: 600;
 	letter-spacing: 0.04em;
 	color: $color-accent-light;
@@ -77,14 +77,14 @@ $item-gap: $page-spacing * 1.5;
 	}
 
 	&__name {
-		font-size: 0.85rem;
+		font-size: $text-13-5;
 		font-weight: 600;
 		color: $color-white;
 		font-family: $font-display-normal-family;
 	}
 
 	&__email {
-		font-size: 0.75rem;
+		font-size: $text-12;
 		color: $color-text-secondary;
 		font-family: $font-display-normal-family;
 	}
@@ -98,7 +98,7 @@ $item-gap: $page-spacing * 1.5;
 		display: block;
 		width: 100%;
 		padding: 0.7rem 1rem;
-		font-size: 0.8rem;
+		font-size: $text-13;
 		font-family: $font-display-normal-family;
 		color: $color-text-secondary;
 		text-align: left;
@@ -143,7 +143,7 @@ $item-gap: $page-spacing * 1.5;
 	font-family: $font-display-normal-family;
 
 	.header-logo {
-		@include eyebrow-label(0.75rem, $color-white);
+		@include eyebrow-label($text-12, $color-white);
 		letter-spacing: 0.18em;
 		white-space: nowrap;
 		flex-shrink: 0;
@@ -339,7 +339,7 @@ $item-gap: $page-spacing * 1.5;
 	}
 
 	.footer-logo {
-		@include eyebrow-label(0.75rem, $color-white);
+		@include eyebrow-label($text-12, $color-white);
 		letter-spacing: 0.18em;
 
 		&:after {
@@ -348,7 +348,7 @@ $item-gap: $page-spacing * 1.5;
 	}
 
 	.footer-tagline {
-		font-size: 0.8rem;
+		font-size: $text-13;
 		color: $color-text-secondary;
 		line-height: 1.6;
 		margin: 0;
@@ -369,13 +369,13 @@ $item-gap: $page-spacing * 1.5;
 		gap: $page-spacing * 0.6;
 
 		h4 {
-			font-size: 0.8rem;
+			font-size: $text-13;
 			margin-bottom: 0.4rem;
 			letter-spacing: 0.05em;
 		}
 
 		a {
-			font-size: 0.8rem;
+			font-size: $text-13;
 			color: $color-text-secondary;
 			transition: color 0.2s ease;
 
@@ -395,7 +395,7 @@ $item-gap: $page-spacing * 1.5;
 		align-items: center;
 		padding-top: $page-spacing;
 		border-top: 1px solid rgba(228, 228, 204, 0.06);
-		font-size: 0.75rem;
+		font-size: $text-12;
 		color: $color-text-secondary;
 
 		@include responsive($breakpoint-mobile) {

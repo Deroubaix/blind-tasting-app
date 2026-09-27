@@ -23,8 +23,14 @@ const lora = Lora({
 	display: 'swap',
 });
 
+// One name everywhere. Pages set only their own part of the title; the template adds the rest.
 export const metadata: Metadata = {
-	title: 'Blind Tasting App',
+	title: {
+		default: "The Sommelier's Ledger",
+		template: "%s — The Sommelier's Ledger",
+	},
+	description:
+		'Timed practice for the Court of Master Sommeliers deductive tasting grid, with an archive of every tasting you save.',
 };
 
 export type RootLayoutProps = {
@@ -38,8 +44,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<meta charSet="utf-8" />
 				<link rel="icon" href="/favicon.ico" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<meta name="theme-color" content="#000000" />
-				<meta name="description" content="A fun app for wine enthusiasts!" />
+				<meta name="theme-color" content="#141313" />
 			</head>
 			<body>
 				<AuthProvider>

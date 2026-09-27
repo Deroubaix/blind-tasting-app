@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import SightTastingClient from '../../../components/sight/SightTastingClient';
 
 export const metadata: Metadata = {
-	title: 'Sight | Wine Tasting',
+	title: 'Sight',
 };
 
 export default async function SightPage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {
