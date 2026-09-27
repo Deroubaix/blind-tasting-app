@@ -1,9 +1,7 @@
 import FetchUtilsError from '../utils/FetchErrorUtils';
 import { type ToastProviderValue } from '../toast/ToastProvider';
 import { type ToastProps } from '../toast/Toast';
-import { notifications } from '@mantine/notifications';
 import { JsonApiError } from './ErrorUtils';
-import type { MantineColor } from '@mantine/core';
 import { AbortType } from './AbortUtils';
 
 export default class NotificationUtils {
@@ -39,33 +37,10 @@ export default class NotificationUtils {
 		this.showToast(title, message, 'success', duration);
 	}
 
+	// The ToastProvider at the root of the layout registers itself on every render, so it is always
+	// there by the time anything can call this. The old Mantine fallback could never run — no
+	// MantineProvider or <Notifications /> was ever mounted for it to render into.
 	private static showToast(title: string, message: string, color: ToastProps['color'], duration?: number) {
-		if (this.toastProvider) {
-			this.toastProvider.showToast({
-				color,
-				title,
-				children: message,
-				autoCloseMs: duration ?? 8000,
-			});
-		} else {
-			notifications.show({
-				title,
-				message,
-				color: mantineColorMap[color ?? 'success'],
-				autoClose: duration ?? 8000,
-			});
-		}
+		this.toastProvider?.showToast({ color, title, children: message, autoCloseMs: duration });
 	}
 }
-
-const mantineColorMap: Record<NonNullable<ToastProps['color']>, MantineColor> = {
-	primary: 'green',
-	secondary: 'green',
-	error: 'red',
-	warning: 'red',
-	success: 'green',
-	'accent-1': 'green',
-	'accent-2': 'green',
-	'brand-1': 'green',
-	'brand-2': 'green',
-};
