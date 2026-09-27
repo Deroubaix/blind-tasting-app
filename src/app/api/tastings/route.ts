@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { JsonApiError } from '../../../utils/ErrorUtils';
 import { errorResponse, logServerError } from '../../../utils/ApiUtils';
 import { requireUserId } from '../../../lib/auth';
+import { tastingCreateSchema } from '../../../schemas/tasting';
 import { MAX_PHOTO_BYTES, ownsPhotoKey, photoSize } from '../../../lib/storage';
 
 const prisma = new PrismaClient();
@@ -48,11 +49,11 @@ async function createWithNextNumber(userId: string, data: Omit<Prisma.TastingUnc
  * at a size the upload would have allowed. The size is read back rather than believed, because on R2
  * the browser PUTs to the bucket directly and nothing of ours saw the bytes.
  */
-async function verifiedPhotoKey(userId: string, photoKey: unknown) {
-	if (photoKey === undefined || photoKey === null) {
+async function verifiedPhotoKey(userId: string, photoKey: string | null | undefined) {
+	if (!photoKey) {
 		return null;
 	}
-	if (typeof photoKey !== 'string' || !ownsPhotoKey(userId, photoKey)) {
+	if (!ownsPhotoKey(userId, photoKey)) {
 		throw new JsonApiError('BadRequest', 'That photo does not belong to this account.', 400);
 	}
 	const size = await photoSize(photoKey);
@@ -63,19 +64,6 @@ async function verifiedPhotoKey(userId: string, photoKey: unknown) {
 		throw new JsonApiError('PayloadTooLarge', 'That photo is too large.', 413);
 	}
 	return photoKey;
-}
-
-/**
- * The timer settings, or nulls. Checked rather than passed through: a non-integer reaching the
- * Int column makes Prisma throw, which turned into a 500 and lost the whole sheet.
- */
-function timerFields(body: { timerEnabled?: unknown; timerSeconds?: unknown; timerMode?: unknown }) {
-	const seconds = body.timerSeconds;
-	const valid = body.timerEnabled === true && Number.isInteger(seconds) && (seconds as number) > 0;
-	return {
-		timerSeconds: valid ? (seconds as number) : null,
-		timerMode: valid ? (body.timerMode === 'exam' ? 'exam' : 'guided') : null,
-	};
 }
 
 export async function GET() {
@@ -99,27 +87,23 @@ export async function GET() {
 export async function POST(request: Request) {
 	try {
 		const userId = await requireUserId();
-		const body = await request.json();
-
-		if (!body.wineType) {
-			return new Response(JSON.stringify({ error: 'Wine type is required' }), {
-				status: 400,
-				headers: { 'Content-Type': 'application/json' },
-			});
-		}
+		// A ZodError here becomes a 400 naming the first bad field (see errorResponse).
+		const body = tastingCreateSchema.parse(await request.json());
+		const timed = body.timerEnabled === true && body.timerSeconds != null;
 
 		const data = {
 			userId,
 			wineType: body.wineType,
-			timerEnabled: body.timerEnabled ?? false,
-			...timerFields(body),
-			notes: body.notes ?? null,
+			timerEnabled: timed,
+			timerSeconds: timed ? body.timerSeconds : null,
+			timerMode: timed ? (body.timerMode ?? 'guided') : null,
+			notes: body.notes || null,
 			confirmNose: body.confirmNose || null,
-			sight: body.sight ?? null,
-			nose: body.nose ?? null,
-			palate: body.palate ?? null,
-			conclusion: body.conclusion ?? null,
-			wineName: body.wineName ?? null,
+			sight: body.sight ?? Prisma.DbNull,
+			nose: body.nose ?? Prisma.DbNull,
+			palate: body.palate ?? Prisma.DbNull,
+			conclusion: body.conclusion ?? Prisma.DbNull,
+			wineName: body.wineName || null,
 			photoKey: await verifiedPhotoKey(userId, body.photoKey),
 		};
 

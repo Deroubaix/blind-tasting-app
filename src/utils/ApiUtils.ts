@@ -19,6 +19,15 @@ export function errorResponse(error: unknown, fallbackStatus = 500): Response {
 		return jsonResponse({ error: 'BadRequest', message, statusCode: 400 }, 400);
 	}
 
+	// `request.json()` throws a SyntaxError on a body that is not JSON. That is the client's
+	// mistake, so it is a 400 rather than falling through to the generic 500 below.
+	if (error instanceof SyntaxError) {
+		return jsonResponse(
+			{ error: 'BadRequest', message: 'The request body is not valid JSON.', statusCode: 400 },
+			400,
+		);
+	}
+
 	const apiError = JsonApiError.create(error);
 
 	// Only errors thrown deliberately carry a statusCode. Anything else is an unexpected failure,
