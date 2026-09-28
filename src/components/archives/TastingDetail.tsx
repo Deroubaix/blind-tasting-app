@@ -8,6 +8,7 @@ import ClientPhotoService from '../../services/client/ClientPhotoService';
 import RevealPanel from './RevealPanel';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { describeWine, isRevealed, revealTitle } from './revealScore';
+import { formatDate } from '../../utils/DateUtils';
 
 const service = new ClientTastingService();
 
@@ -100,11 +101,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	const title = revealed ? revealTitle(tasting.reveal!) : tasting.wineName || grapeVariety || 'Untitled Tasting';
 	const subtitle = revealed ? describeWine(tasting.reveal) : callSummary;
 
-	const date = new Date(tasting.created_at).toLocaleDateString('en-US', {
-		year: 'numeric',
-		month: 'long',
-		day: '2-digit',
-	});
+	const date = formatDate(tasting.created_at);
 
 	const initial = tasting.conclusion?.initial;
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { formatTimerSeconds } from '../../data/timerData';
 
 interface TimerProps {
 	/** The full length of this clock, in seconds. Also what the amber warning is a share of. */
@@ -75,9 +76,7 @@ export default function Timer({ initialTime, endsAt, pausedAt, onTimeUp }: Timer
 		};
 	}, []);
 
-	const minutes = Math.floor(timeLeft / 60);
-	const seconds = timeLeft % 60;
-	const formattedTime = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+	const formattedTime = formatTimerSeconds(timeLeft);
 
 	// Proportional, not a flat 60s — four of the five phases only run for 30s, so a fixed
 	// threshold would be on from the first tick. Marks "wrap up" in every phase.

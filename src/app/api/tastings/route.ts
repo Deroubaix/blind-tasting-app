@@ -5,7 +5,7 @@ import { errorResponse, jsonResponse, logServerError } from '../../../utils/ApiU
 import { requireUserId } from '../../../lib/auth';
 import { tastingCreateSchema } from '../../../schemas/tasting';
 import { revealFields } from '../../../lib/reveal';
-import { normaliseCode } from '../../../components/flights/flightLogic';
+import { normalizeCode } from '../../../components/flights/flightLogic';
 import { RATE_LIMITS, check, consume } from '../../../lib/rateLimit';
 import { TASTING_FLIGHT_INCLUDE, withFlight } from '../../../lib/flights';
 import { MAX_PHOTO_BYTES, ownsPhotoKey, photoSize } from '../../../lib/storage';
@@ -89,7 +89,7 @@ export async function GET() {
 async function flightEntryFor(userId: string, { code, wineNumber }: { code: string; wineNumber: number }) {
 	await check(RATE_LIMITS.flightCode, userId);
 	const flight = await prisma.flight.findUnique({
-		where: { code: normaliseCode(code) },
+		where: { code: normalizeCode(code) },
 		include: { members: { where: { userId } }, wines: { where: { number: wineNumber } } },
 	});
 	if (!flight) {

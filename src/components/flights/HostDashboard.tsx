@@ -8,7 +8,7 @@ import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightMemberView, type FlightView, type FlightWineView } from '../../types/Flight';
-import { formatCode } from './flightLogic';
+import { formatCode, plural } from './flightLogic';
 import { Avatar, StatusPill, avatarState, clockText, flightService, formatTimer, useNow } from './FlightBits';
 
 function progressText(flight: FlightView): string {
@@ -19,7 +19,7 @@ function progressText(flight: FlightView): string {
 	if (revealed) {
 		return `${revealed} of ${flight.wineCount} revealed`;
 	}
-	return flight.members.some((m) => m.tastingWine || m.submittedCount) ? 'In progress' : 'Not started';
+	return flight.members.some((m) => m.tastingWine || m.submittedCount) ? 'Under way' : 'Not started';
 }
 
 function tasterLine(member: FlightMemberView, flight: FlightView, now: number): string {
@@ -60,7 +60,7 @@ function JoinCard({ code }: { code: string }) {
 
 	return (
 		<section className="flight-card flight-join" aria-labelledby="flight-join-heading">
-			<span className="flight-eyebrow" id="flight-join-heading">
+			<span className="tasting-card__label" id="flight-join-heading">
 				Join code
 			</span>
 			<p className="flight-join__code" aria-label={`Join code ${code.split('').join(' ')}`}>
@@ -93,7 +93,7 @@ function TastersCard({ flight }: { flight: FlightView }) {
 	return (
 		<section className="flight-card" aria-labelledby="flight-tasters-heading">
 			<div className="flight-card__head">
-				<span className="flight-eyebrow" id="flight-tasters-heading">
+				<span className="tasting-card__label" id="flight-tasters-heading">
 					Tasters
 				</span>
 				<span className="flight-muted">{flight.members.length} joined</span>
@@ -143,7 +143,7 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 				) : allSubmitted ? (
 					<StatusPill status="allsubmitted" />
 				) : started ? (
-					<StatusPill status="tasting" word="Tasting" />
+					<StatusPill status="tasting" />
 				) : (
 					<StatusPill status="notstarted" />
 				)}
@@ -248,10 +248,10 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 		<main className="flight-main">
 			<header className="flight-head">
 				<div>
-					<span className="flight-eyebrow">Flight · You&apos;re hosting{flight.ended ? ' · Ended' : ''}</span>
+					<span className="page-eyebrow">Flight · You&apos;re hosting{flight.ended ? ' · Ended' : ''}</span>
 					<h1 className="flight-head__title">{flight.name}</h1>
 					<p className="flight-head__sub">
-						{flight.wineCount} wines · {formatTimer(flight.timerSeconds)} · {progressText(flight)}
+						{plural(flight.wineCount, 'wine')} · {formatTimer(flight.timerSeconds)} · {progressText(flight)}
 					</p>
 				</div>
 				<div className="flight-head__actions">
@@ -278,7 +278,11 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 					{allRevealed && (
 						<div className="flight-banner">
 							<IconChecks size={18} aria-hidden="true" />
-							<strong>All {flight.wineCount} wines revealed.</strong>
+							<strong>
+								{flight.wineCount === 1
+									? 'The wine is revealed.'
+									: `All ${flight.wineCount} wines revealed.`}
+							</strong>
 							<span className="flight-muted">
 								Every taster&apos;s tastings are already in their archive.
 							</span>

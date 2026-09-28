@@ -7,8 +7,9 @@ import { useAuthProvider } from '../auth/AuthProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightView } from '../../types/Flight';
-import { CODE_LENGTH, normaliseCode } from './flightLogic';
+import { CODE_LENGTH, normalizeCode, plural } from './flightLogic';
 import { Avatar, flightService, formatTimer, useRequireLogin } from './FlightBits';
+import { formatTimerSeconds } from '../../data/timerData';
 
 /** Someone who has the link but hasn't joined: who's hosting, what's poured, and Join. */
 export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined: () => Promise<void> }) {
@@ -36,7 +37,7 @@ export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined:
 	return (
 		<main className="flight-main flight-main--invite">
 			<section className="flight-card flight-invite" aria-labelledby="flight-invite-heading">
-				<span className="flight-eyebrow">You&apos;re invited to a flight</span>
+				<span className="page-eyebrow">You&apos;re invited to a flight</span>
 				<h1 className="flight-invite__title" id="flight-invite-heading">
 					{flight.name}
 				</h1>
@@ -49,11 +50,7 @@ export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined:
 					</div>
 					<div>
 						<dt>Per wine</dt>
-						<dd>
-							{flight.timerSeconds
-								? formatTimer(flight.timerSeconds).replace(' per wine', '')
-								: 'Untimed'}
-						</dd>
+						<dd>{flight.timerSeconds ? formatTimerSeconds(flight.timerSeconds) : 'Untimed'}</dd>
 					</div>
 					<div>
 						<dt>Already in</dt>
@@ -105,7 +102,7 @@ export function JoinCodeClient() {
 	// Only the latest lookup counts: a slow answer for an earlier code must not win.
 	const latest = useRef('');
 	const change = async (value: string) => {
-		const next = normaliseCode(value).slice(0, CODE_LENGTH);
+		const next = normalizeCode(value).slice(0, CODE_LENGTH);
 		latest.current = next;
 		setCode(next);
 		setFound(null);
@@ -159,7 +156,7 @@ export function JoinCodeClient() {
 	return (
 		<main className="flight-main flight-main--invite">
 			<section className="flight-card flight-invite">
-				<span className="flight-eyebrow">Join a flight</span>
+				<span className="page-eyebrow">Join a flight</span>
 				<h1 className="flight-invite__title">Enter the code</h1>
 				<p className="flight-muted">
 					It&apos;s on the host&apos;s screen. Or scan their QR code with your camera.
@@ -189,7 +186,7 @@ export function JoinCodeClient() {
 							</span>
 							<strong>{found.name}</strong>
 							<span className="flight-muted">
-								Hosted by {found.host.name} · {found.wineCount} wines ·{' '}
+								Hosted by {found.host.name} · {plural(found.wineCount, 'wine')} ·{' '}
 								{formatTimer(found.timerSeconds)}
 							</span>
 							{found.members.length > 0 && (

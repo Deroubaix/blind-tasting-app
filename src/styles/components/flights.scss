@@ -1,3 +1,4 @@
+@use 'sass:list';
 @use '../abstracts' as *;
 // Flights: study groups tasting together
 
@@ -37,16 +38,6 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 }
 
-.flight-eyebrow {
-	@include eyebrow-label($text-11, $tasting-accent-light);
-	letter-spacing: 0.14em;
-	margin: 0;
-
-	&--muted {
-		color: $color-text-muted;
-	}
-}
-
 .flight-muted {
 	color: $color-text-muted;
 	font-size: $text-13;
@@ -71,6 +62,16 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 
 	&:hover {
 		color: $color-white;
+	}
+}
+
+// Inline actions ("Results →", a taster's name) still need a thumb-sized target on phone.
+@include responsive($breakpoint-mobile) {
+	.flight-link,
+	.flight-link-button {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
 	}
 }
 
@@ -171,6 +172,11 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 }
 
+// Cards use the shared card label; the card's gap does the spacing, and h2s drop their margin.
+.flight-card .tasting-card__label {
+	margin: 0;
+}
+
 .flight-empty {
 	display: flex;
 	flex-direction: column;
@@ -244,10 +250,9 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	box-sizing: border-box;
 	--tint: #{$color-white};
 
-	@each $tint in $flight-tints {
-		$i: index($flight-tints, $tint) - 1;
-		&--t#{$i} {
-			--tint: #{$tint};
+	@for $i from 1 through list.length($flight-tints) {
+		&--t#{$i - 1} {
+			--tint: #{list.nth($flight-tints, $i)};
 		}
 	}
 
@@ -355,8 +360,8 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	&__btn {
 		@include bare-button;
 
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		border: 1px solid $tasting-border-mid;
 		border-radius: 8px;
 		color: $color-white;
@@ -767,7 +772,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 }
 
-.flight-colour {
+.flight-color {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: $spacing-md;
@@ -895,8 +900,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		}
 	}
 
-	&__eyebrow {
-		@include eyebrow-label($text-11, $tasting-accent-light);
+	&__kicker {
 		display: flex;
 		align-items: center;
 		gap: $spacing-sm;
@@ -935,7 +939,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	dt {
-		@include eyebrow-label($text-10, $color-text-muted);
+		@include eyebrow-label($text-11, $color-text-muted);
 		letter-spacing: 0.12em;
 	}
 
@@ -983,7 +987,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		border-top: 1px solid $tasting-border;
 
 		&--head {
-			@include eyebrow-label($text-10, $color-text-muted);
+			@include eyebrow-label($text-11, $color-text-muted);
 			letter-spacing: 0.12em;
 			border-top: none;
 			padding-top: 0;
@@ -1157,7 +1161,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&__tick {
-		font-size: $text-10;
+		font-size: $text-11;
 		color: $color-text-muted;
 		white-space: nowrap;
 

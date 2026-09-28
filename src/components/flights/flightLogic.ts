@@ -14,12 +14,17 @@ export function newFlightCode(random: () => number = Math.random): string {
 }
 
 /** Uppercased, with spaces, dashes and the dot dropped: " b7k-q4m " → "B7KQ4M". */
-export function normaliseCode(input: string): string {
+export function normalizeCode(input: string): string {
 	return input
 		.toUpperCase()
 		.split('')
 		.filter((ch) => CODE_ALPHABET.includes(ch))
 		.join('');
+}
+
+/** "1 wine", "6 wines". */
+export function plural(count: number, word: string): string {
+	return `${count} ${count === 1 ? word : `${word}s`}`;
 }
 
 /** "B7KQ4M" → "B7K·Q4M", as shown large on the host's screen. */

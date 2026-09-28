@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { IconPlus, IconUsersGroup } from '@tabler/icons-react';
 import { type FlightListItem } from '../../types/Flight';
 import { flightService, useRequireLogin } from './FlightBits';
+import { formatDate } from '../../utils/DateUtils';
+import { plural } from './flightLogic';
 
 export default function FlightsListClient() {
 	const ready = useRequireLogin('/flights');
@@ -24,7 +26,7 @@ export default function FlightsListClient() {
 		<main className="flight-main">
 			<header className="flight-head">
 				<div>
-					<span className="flight-eyebrow">Study groups</span>
+					<span className="page-eyebrow">Study groups</span>
 					<h1 className="flight-head__title">Flights</h1>
 					<p className="flight-head__sub">
 						One person pours numbered wines; everyone else tastes on their own phone. The host reveals each
@@ -49,7 +51,7 @@ export default function FlightsListClient() {
 			{error && <p className="archives-error">Your flights could not be loaded.</p>}
 			{flights && flights.length > 0 && (
 				<section aria-labelledby="your-flights">
-					<h2 className="flight-eyebrow" id="your-flights">
+					<h2 className="tasting-card__label" id="your-flights">
 						Your flights
 					</h2>
 					<ul className="flight-list">
@@ -58,13 +60,9 @@ export default function FlightsListClient() {
 								<div className="flight-list__text">
 									<span className="flight-list__title">{flight.name}</span>
 									<span className="flight-muted">
-										{flight.role === 'host' ? 'Hosted by you' : 'Tasting'} ·{' '}
-										{new Date(flight.createdAt).toLocaleDateString('en-US', {
-											month: 'long',
-											day: 'numeric',
-										})}{' '}
-										· {flight.memberCount} tasters · {flight.revealed} of {flight.wineCount}{' '}
-										revealed
+										{flight.role === 'host' ? 'Hosted by you' : 'Joined'} ·{' '}
+										{formatDate(flight.createdAt)} · {plural(flight.memberCount, 'taster')} ·{' '}
+										{flight.revealed} of {flight.wineCount} revealed
 										{flight.ended ? ' · Ended' : ''}
 									</span>
 								</div>

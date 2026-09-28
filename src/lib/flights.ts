@@ -1,15 +1,23 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from './prisma';
+import { formatTimerSeconds } from '../data/timerData';
 import { RATE_LIMITS, check, consume } from './rateLimit';
 import { JsonApiError } from '../utils/ErrorUtils';
 import {
 	average,
 	entryStatus,
 	newFlightCode,
-	normaliseCode,
+	normalizeCode,
 	type EntryStatus,
 } from '../components/flights/flightLogic';
-import { REVEAL_FIELDS, compareReveal, isRevealed, revealTitle, type Reveal } from '../components/archives/revealScore';
+import {
+	REVEAL_FIELDS,
+	compareReveal,
+	describeWine,
+	isRevealed,
+	revealTitle,
+	type Reveal,
+} from '../components/archives/revealScore';
 import {
 	type FlightListItem,
 	type FlightMemberView,
@@ -45,7 +53,7 @@ const NOT_FOUND = new JsonApiError('NotFound', 'No flight has that code.', 404);
  */
 export async function loadFlight(code: string, userId: string): Promise<LoadedFlight> {
 	await check(RATE_LIMITS.flightCode, userId);
-	const flight = await prisma.flight.findUnique({ where: { code: normaliseCode(code) }, include: FLIGHT_INCLUDE });
+	const flight = await prisma.flight.findUnique({ where: { code: normalizeCode(code) }, include: FLIGHT_INCLUDE });
 	if (!flight) {
 		await consume(RATE_LIMITS.flightCode, userId);
 		throw NOT_FOUND;
@@ -135,11 +143,6 @@ const endsAt = (flight: LoadedFlight, entry: LoadedEntry) =>
 /** How many scored fields the label gave: what every score for this wine is out of. */
 const outOfFor = (reveal: Reveal) => REVEAL_FIELDS.filter((field) => reveal[field.key]?.trim()).length;
 
-/** "Grape · Region · Country". */
-function wineDetail(reveal: Reveal): string {
-	return [reveal.grapeVariety, reveal.regionAppellation, reveal.countryOfOrigin].filter(Boolean).join(' · ');
-}
-
 export function flightView(flight: LoadedFlight, userId: string): FlightView {
 	const role = roleOf(flight, userId);
 	const members = people(flight);
@@ -188,7 +191,7 @@ export function flightView(flight: LoadedFlight, userId: string): FlightView {
 			number: wine.number,
 			revealed: reveal !== null,
 			title: reveal ? revealTitle(reveal) : null,
-			detail: reveal ? wineDetail(reveal) : null,
+			detail: reveal ? describeWine(reveal) : null,
 			statuses,
 			submitted: Object.values(statuses).filter((status) => status === 'submitted').length,
 			average: reveal ? average(scores) : null,
@@ -252,7 +255,7 @@ function clockLeft(flight: LoadedFlight, entry: LoadedEntry): string | null {
 	}
 	const used = (entry.tasting.created_at.getTime() - entry.startedAt.getTime()) / 1000;
 	const left = Math.max(0, Math.round(flight.timerSeconds - used));
-	return `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} left`;
+	return `${formatTimerSeconds(left)} left`;
 }
 
 export function wineResults(flight: LoadedFlight, number: number, userId: string): WineResults {
@@ -294,7 +297,7 @@ export function wineResults(flight: LoadedFlight, number: number, userId: string
 		number,
 		reveal,
 		title: revealTitle(reveal),
-		detail: wineDetail(reveal),
+		detail: describeWine(reveal),
 		wineType: types.length ? (reds * 2 >= types.length ? 'red' : 'white') : null,
 		rows,
 		average: average(rows.map((row) => row.score)),

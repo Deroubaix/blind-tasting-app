@@ -11,6 +11,8 @@ import { unlockAudio } from '../../utils/beep';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightView, type MyWineView } from '../../types/Flight';
 import { Avatar, StatusPill, clockText, flightService, formatTimer, useNow } from './FlightBits';
+import { formatTime } from '../../utils/DateUtils';
+import { plural } from './flightLogic';
 
 const CHOOSE_MODAL = 'flight-wine-type';
 
@@ -75,16 +77,12 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 								? 'The clock starts now.'
 								: 'This flight is untimed.'}
 					</p>
-					<div className="flight-colour">
-						<button type="button" className="flight-colour__btn" onClick={() => begin(wine.number, 'Red')}>
+					<div className="flight-color">
+						<button type="button" className="flight-color__btn" onClick={() => begin(wine.number, 'Red')}>
 							<IconGlassFull size={20} aria-hidden="true" />
 							Red
 						</button>
-						<button
-							type="button"
-							className="flight-colour__btn"
-							onClick={() => begin(wine.number, 'White')}
-						>
+						<button type="button" className="flight-color__btn" onClick={() => begin(wine.number, 'White')}>
 							<IconBottle size={20} aria-hidden="true" />
 							White
 						</button>
@@ -103,11 +101,11 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 		<main className="flight-main flight-main--narrow">
 			<header className="flight-head">
 				<div>
-					<span className="flight-eyebrow">Flight{flight.ended ? ' · Ended' : ''}</span>
+					<span className="page-eyebrow">Flight{flight.ended ? ' · Ended' : ''}</span>
 					<h1 className="flight-head__title">{flight.name}</h1>
 					<p className="flight-head__sub">
-						Hosted by {flight.host.name} · {flight.wineCount} wines · {formatTimer(flight.timerSeconds)} ·{' '}
-						{revealed} of {flight.wineCount} revealed
+						Hosted by {flight.host.name} · {plural(flight.wineCount, 'wine')} ·{' '}
+						{formatTimer(flight.timerSeconds)} · {revealed} of {flight.wineCount} revealed
 					</p>
 				</div>
 				<div className="flight-head__people" aria-label="Tasters">
@@ -124,16 +122,16 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 					let detail: string;
 					if (info?.revealed) {
 						title = info.title ?? `Wine ${wine.number}`;
-						detail = wine.status === 'submitted' ? (info.detail ?? '') : 'Not submitted';
+						detail = wine.status === 'submitted' ? (info.detail ?? '') : 'Revealed before you submitted';
 					} else if (wine.status === 'submitted') {
 						const left = stillTasting(wine.number);
 						title = `Waiting for ${hostFirst} to reveal`;
-						detail = `Submitted${wine.submittedAt ? ` at ${new Date(wine.submittedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : ''}${left ? ` · ${left} still tasting` : ''}`;
+						detail = `Submitted${wine.submittedAt ? ` at ${formatTime(wine.submittedAt)}` : ''}${left ? ` · ${left} still tasting` : ''}`;
 					} else if (wine.status === 'tasting') {
-						title = 'In progress';
-						detail = wine.endsAt ? `${clockText(wine.endsAt, now)} left on the clock` : 'Untimed';
+						title = wine.endsAt ? `${clockText(wine.endsAt, now)} left` : 'Untimed';
+						detail = 'Carry on where you left off';
 					} else {
-						title = 'Not started';
+						title = 'Ready when you are';
 						detail = flight.timerSeconds ? 'The clock starts when you open it' : 'Untimed';
 					}
 

@@ -10,6 +10,7 @@ import { useToastProvider } from '../../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import { compareReveal, describeWine, isRevealed, revealTitle } from './revealScore';
 import { type TastingData } from '../../types/TastingData';
+import { formatDate } from '../../utils/DateUtils';
 
 const service = new ClientTastingService();
 
@@ -134,13 +135,7 @@ export default function ArchivesList() {
 				const subtitle = revealed ? describeWine(tasting.reveal) : callSummary;
 				const perfect = comparison !== null && comparison.outOf > 0 && comparison.score === comparison.outOf;
 
-				const date = tasting.created_at
-					? new Date(tasting.created_at).toLocaleDateString('en-US', {
-							year: 'numeric',
-							month: 'long',
-							day: '2-digit',
-						})
-					: null;
+				const date = tasting.created_at ? formatDate(tasting.created_at) : null;
 
 				return (
 					// Not a link itself: a button cannot sit inside one. The Details link stretches over

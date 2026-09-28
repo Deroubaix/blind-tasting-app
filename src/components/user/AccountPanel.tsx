@@ -10,6 +10,7 @@ import { useToastProvider } from '../../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientFlightService from '../../services/client/ClientFlightService';
 import { JsonApiError } from '../../utils/ErrorUtils';
+import { formatDate } from '../../utils/DateUtils';
 
 const service = new ClientTastingService();
 const flightService = new ClientFlightService();
@@ -114,9 +115,7 @@ export default function AccountPanel() {
 		});
 	};
 
-	const memberSince = user.created_at
-		? new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-		: null;
+	const memberSince = user.created_at ? formatDate(user.created_at) : null;
 
 	return (
 		<div className="account">

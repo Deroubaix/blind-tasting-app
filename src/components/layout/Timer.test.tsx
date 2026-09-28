@@ -19,7 +19,7 @@ describe('Timer', () => {
 	it('shows the starting time as mm:ss', () => {
 		const { container } = render(<Timer initialTime={120} />);
 
-		expect(display(container).textContent).toBe('02:00');
+		expect(display(container).textContent).toBe('2:00');
 	});
 
 	it('counts down', () => {
@@ -27,7 +27,7 @@ describe('Timer', () => {
 
 		act(() => vi.advanceTimersByTime(10_000));
 
-		expect(display(container).textContent).toBe('00:20');
+		expect(display(container).textContent).toBe('0:20');
 	});
 
 	it('fires onTimeUp exactly once, and stops at zero', () => {
@@ -38,7 +38,7 @@ describe('Timer', () => {
 		act(() => vi.advanceTimersByTime(10_000));
 
 		expect(onTimeUp).toHaveBeenCalledTimes(1);
-		expect(display(container).textContent).toBe('00:00');
+		expect(display(container).textContent).toBe('0:00');
 		expect(display(container).classList.contains('timer-display--expired')).toBe(true);
 	});
 
@@ -54,7 +54,7 @@ describe('Timer', () => {
 			document.dispatchEvent(new Event('visibilitychange'));
 		});
 
-		expect(display(container).textContent).toBe('00:30');
+		expect(display(container).textContent).toBe('0:30');
 		expect(onTimeUp).not.toHaveBeenCalled();
 	});
 
@@ -81,7 +81,7 @@ describe('Timer', () => {
 
 			const { container } = render(<Timer initialTime={240} endsAt={endsAt} />);
 
-			expect(display(container).textContent).toBe('02:20');
+			expect(display(container).textContent).toBe('2:20');
 		});
 
 		it('fires once when the whole-wine time runs out', () => {
@@ -101,7 +101,7 @@ describe('Timer', () => {
 
 			act(() => vi.advanceTimersByTime(2_000));
 
-			expect(display(container).textContent).toBe('00:00');
+			expect(display(container).textContent).toBe('0:00');
 			expect(onTimeUp).not.toHaveBeenCalled();
 		});
 	});
@@ -116,7 +116,7 @@ describe('Timer', () => {
 			rerender(<Timer initialTime={30} endsAt={endsAt} pausedAt={Date.now()} onTimeUp={onTimeUp} />);
 			act(() => vi.advanceTimersByTime(60_000));
 
-			expect(display(container).textContent).toBe('00:20');
+			expect(display(container).textContent).toBe('0:20');
 			expect(onTimeUp).not.toHaveBeenCalled();
 		});
 	});

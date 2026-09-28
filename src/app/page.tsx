@@ -103,7 +103,7 @@ export default function Homepage() {
 								</div>
 								<div className="hp-preview__timer">
 									<span className="hp-timer__label">Time</span>
-									<span className="hp-timer__value">00:24</span>
+									<span className="hp-timer__value">0:24</span>
 								</div>
 							</header>
 

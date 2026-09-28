@@ -141,7 +141,7 @@ function TasterSheet({
 			</div>
 			{palateRows.length > 0 && (
 				<div className="flight-card flight-sheet__palate">
-					<span className="flight-eyebrow">Palate, against the group</span>
+					<span className="tasting-card__label">Palate, against the group</span>
 					<dl>
 						{palateRows.map((item) => (
 							<div key={item.name}>
@@ -155,7 +155,7 @@ function TasterSheet({
 			)}
 			{row.nose.length > 0 && (
 				<div className="flight-card">
-					<span className="flight-eyebrow">Nose</span>
+					<span className="tasting-card__label">Nose</span>
 					<p className="flight-sheet__nose">{row.nose.join(' · ')}</p>
 				</div>
 			)}
@@ -250,13 +250,15 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 
 			<header className="flight-results__head">
 				<div>
-					<span className="flight-results__eyebrow">
+					<span className="flight-results__kicker">
 						{results.wineType && (
 							<span className={`wine-type-badge wine-type-badge--${results.wineType}`}>
 								{results.wineType === 'red' ? 'Red' : 'White'} wine
 							</span>
 						)}
-						Wine {results.number} of {results.wineCount} · Revealed
+						<span className="page-eyebrow">
+							Wine {results.number} of {results.wineCount} · Revealed
+						</span>
 					</span>
 					<h1 className="flight-results__title">{results.title}</h1>
 					<p className="flight-head__sub">{results.detail}</p>
@@ -297,7 +299,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 
 			<section className="flight-card flight-results__card" aria-labelledby="conclusions-heading">
 				<div className="flight-card__head">
-					<h2 className="flight-eyebrow" id="conclusions-heading">
+					<h2 className="tasting-card__label" id="conclusions-heading">
 						Conclusions
 					</h2>
 					<Legend />
@@ -383,7 +385,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 						</div>
 					))}
 					<div className="flight-table__row flight-table__row--group" role="row">
-						<span role="rowheader" className="flight-eyebrow flight-eyebrow--muted">
+						<span role="rowheader" className="flight-muted">
 							Group · {submittedRows.length} submitted
 						</span>
 						{group.map((g) => (
@@ -403,7 +405,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 			{attrs.length > 0 && (
 				<section className="flight-card flight-results__card" aria-labelledby="structure-heading">
 					<div className="flight-card__head">
-						<h2 className="flight-eyebrow" id="structure-heading">
+						<h2 className="tasting-card__label" id="structure-heading">
 							Structure
 						</h2>
 						<span className={splits ? 'flight-split-count' : 'flight-muted'}>

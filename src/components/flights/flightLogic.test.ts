@@ -6,7 +6,7 @@ import {
 	entryStatus,
 	formatCode,
 	newFlightCode,
-	normaliseCode,
+	normalizeCode,
 	structureAttributes,
 } from './flightLogic';
 
@@ -19,7 +19,7 @@ describe('flight codes', () => {
 	});
 
 	it('read back whatever the taster typed', () => {
-		expect(normaliseCode(' b7k-q4m ')).toBe('B7KQ4M');
+		expect(normalizeCode(' b7k-q4m ')).toBe('B7KQ4M');
 		expect(formatCode('B7KQ4M')).toBe('B7K·Q4M');
 	});
 });

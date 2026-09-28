@@ -8,6 +8,7 @@ import ClientFlightService from '../../services/client/ClientFlightService';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightPerson, type FlightView } from '../../types/Flight';
 import { type EntryStatus } from './flightLogic';
+import { formatTimerSeconds } from '../../data/timerData';
 
 export const flightService = new ClientFlightService();
 
@@ -78,12 +79,11 @@ export function clockText(endsAt: string | number | null, now: number): string |
 	if (endsAt === null) {
 		return null;
 	}
-	const left = Math.max(0, Math.round((new Date(endsAt).getTime() - now) / 1000));
-	return `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+	return formatTimerSeconds(Math.max(0, Math.round((new Date(endsAt).getTime() - now) / 1000)));
 }
 
 export function formatTimer(seconds: number | null): string {
-	return seconds ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')} per wine` : 'Untimed';
+	return seconds ? `${formatTimerSeconds(seconds)} per wine` : 'Untimed';
 }
 
 /** A taster's initial. Filled once submitted, dashed while tasting, faint before they start. */
@@ -115,14 +115,14 @@ export const avatarState = (status: EntryStatus): 'filled' | 'dashed' | 'faint' 
 
 const STATUS_WORDS: Record<EntryStatus | 'revealed' | 'allsubmitted', { word: string; Icon: typeof IconCheck }> = {
 	notstarted: { word: 'Not started', Icon: IconMinus },
-	tasting: { word: 'In progress', Icon: IconPointFilled },
+	tasting: { word: 'Tasting', Icon: IconPointFilled },
 	submitted: { word: 'Submitted', Icon: IconCheck },
 	notsubmitted: { word: 'Not submitted', Icon: IconMinus },
 	revealed: { word: 'Revealed', Icon: IconChecks },
 	allsubmitted: { word: 'All submitted', Icon: IconCheck },
 };
 
-/** A status as an icon and a word, never colour alone. */
+/** A status as an icon and a word, never color alone. */
 export function StatusPill({ status, word }: { status: keyof typeof STATUS_WORDS; word?: string }) {
 	const { word: fallback, Icon } = STATUS_WORDS[status];
 	return (

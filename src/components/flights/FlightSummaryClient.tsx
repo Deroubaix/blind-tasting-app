@@ -6,6 +6,8 @@ import { IconCheck } from '@tabler/icons-react';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightSummary } from '../../types/Flight';
 import { Avatar, FlightMessage, flightService, formatTimer, useRequireLogin } from './FlightBits';
+import { formatDate } from '../../utils/DateUtils';
+import { plural } from './flightLogic';
 
 export default function FlightSummaryClient({ code }: { code: string }) {
 	const ready = useRequireLogin(`/flights/${code}/summary`);
@@ -30,11 +32,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 	}
 
 	const revealed = summary.wines.filter((wine) => wine.revealed).length;
-	const date = new Date(summary.createdAt).toLocaleDateString('en-US', {
-		month: 'long',
-		day: 'numeric',
-		year: 'numeric',
-	});
+	const date = formatDate(summary.createdAt);
 
 	return (
 		<main className="flight-main">
@@ -43,7 +41,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 			</Link>
 			<header className="flight-head">
 				<div>
-					<span className="flight-eyebrow">
+					<span className="page-eyebrow">
 						Flight summary ·{' '}
 						{revealed === summary.wines.length
 							? `All ${revealed} revealed`
@@ -51,7 +49,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 					</span>
 					<h1 className="flight-head__title">{summary.name}</h1>
 					<p className="flight-head__sub">
-						{date} · Hosted by {summary.hostName} · {summary.members.length} tasters ·{' '}
+						{date} · Hosted by {summary.hostName} · {plural(summary.members.length, 'taster')} ·{' '}
 						{formatTimer(summary.timerSeconds)}
 					</p>
 				</div>
@@ -162,7 +160,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 
 			{summary.mostConfused && (
 				<p className="flight-confused">
-					<span className="flight-eyebrow">Most confused</span>
+					<span className="tasting-card__label">Most confused</span>
 					<span>
 						<Link href={`/flights/${code}/wines/${summary.mostConfused.number}`} className="flight-link">
 							Wine {summary.mostConfused.number}, {summary.mostConfused.title}
