@@ -14,9 +14,14 @@
 
 import { fold } from '../tasting/autocompleteMatch';
 import { WINE_REGION_GROUPS } from '../tasting/autocompleteData';
+import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
+import { type Grid } from '../../data/grids';
 import { interchangeable } from './coreList';
 
 export type Reveal = {
+	/** The WSET answer key: the tutor's quality level and readiness. Absent on a CMS reveal. */
+	qualityAssessment?: string | null;
+	readiness?: string | null;
 	grapeVariety?: string | null;
 	countryOfOrigin?: string | null;
 	regionAppellation?: string | null;
@@ -26,7 +31,14 @@ export type Reveal = {
 	wineName?: string | null;
 };
 
-export type RevealField = 'grapeVariety' | 'countryOfOrigin' | 'regionAppellation' | 'qualityLevel' | 'vintage';
+export type RevealField =
+	| 'qualityAssessment'
+	| 'readiness'
+	| 'grapeVariety'
+	| 'countryOfOrigin'
+	| 'regionAppellation'
+	| 'qualityLevel'
+	| 'vintage';
 export type FieldStatus = 'correct' | 'close' | 'wrong' | 'notcalled' | 'na';
 
 export type ComparedField = {
@@ -54,13 +66,41 @@ export type Comparison = {
 	shortlist: { grape: boolean | null; country: boolean | null };
 };
 
-export const REVEAL_FIELDS: { key: RevealField; label: string; short: string; abbr: string }[] = [
+type FieldDef = { key: RevealField; label: string; short: string; abbr: string };
+
+export const REVEAL_FIELDS: FieldDef[] = [
 	{ key: 'grapeVariety', label: 'Grape variety or blend', short: 'grape', abbr: 'Grape' },
 	{ key: 'countryOfOrigin', label: 'Country of origin', short: 'country', abbr: 'Ctry' },
 	{ key: 'regionAppellation', label: 'Region and appellation', short: 'region', abbr: 'Region' },
 	{ key: 'qualityLevel', label: 'Official quality level', short: 'quality level', abbr: 'Qual' },
 	{ key: 'vintage', label: 'Vintage', short: 'vintage', abbr: 'Vint' },
 ];
+
+/**
+ * The WSET Level 3 paper marks quality and readiness; naming the wine is not asked. The identity
+ * fields are scored only when the answer key gives them, so a tutor who enters just the two
+ * assessments scores the wine out of two.
+ */
+export const WSET_REVEAL_FIELDS: FieldDef[] = [
+	{ key: 'qualityAssessment', label: 'Quality level', short: 'quality', abbr: 'Qual' },
+	{ key: 'readiness', label: 'Readiness for drinking', short: 'readiness', abbr: 'Ready' },
+	{ key: 'grapeVariety', label: 'Grape variety or blend', short: 'grape', abbr: 'Grape' },
+	{ key: 'countryOfOrigin', label: 'Country of origin', short: 'country', abbr: 'Ctry' },
+	{ key: 'regionAppellation', label: 'Region and appellation', short: 'region', abbr: 'Region' },
+	{ key: 'vintage', label: 'Vintage', short: 'vintage', abbr: 'Vint' },
+];
+
+export function scoredFields(grid: Grid = 'cms'): FieldDef[] {
+	return grid === 'wset' ? WSET_REVEAL_FIELDS : REVEAL_FIELDS;
+}
+
+/** Every field either grid scores: what "has a reveal" means regardless of grid. */
+const ANY_SCORED_KEYS = [...new Set([...REVEAL_FIELDS, ...WSET_REVEAL_FIELDS].map((field) => field.key))];
+
+const WSET_SCALES: Partial<Record<RevealField, string[]>> = {
+	qualityAssessment: WSET_QUALITY,
+	readiness: WSET_READINESS,
+};
 
 const clean = (value: string | null | undefined) => (value ?? '').trim() || null;
 
@@ -95,6 +135,20 @@ function regionsClose(call: string, actual: string): boolean {
 
 const isOther = (value: string) => fold(value) === 'other';
 
+/** On the SAT's scales, one step off (Good for Very good, say) is close. */
+function compareScale(key: RevealField, call: string, actual: string): [FieldStatus, string] | null {
+	const scale = WSET_SCALES[key];
+	if (!scale) {
+		return null;
+	}
+	const index = (value: string) => scale.findIndex((step) => fold(step) === fold(value));
+	const [a, b] = [index(call), index(actual)];
+	if (a >= 0 && b >= 0 && Math.abs(a - b) === 1) {
+		return ['close', a < b ? 'One step under' : 'One step over'];
+	}
+	return ['wrong', ''];
+}
+
 function compareField(
 	key: RevealField,
 	call: string | null,
@@ -115,6 +169,10 @@ function compareField(
 	}
 	if (sameName(call, actual)) {
 		return ['correct', ''];
+	}
+	const scaled = compareScale(key, call, actual);
+	if (scaled) {
+		return scaled;
 	}
 	if (key === 'regionAppellation' && interchangeable('regions', grape, call, actual)) {
 		return ['correct', `You called ${call} — interchangeable on the CMS core list`];
@@ -144,9 +202,10 @@ export function compareReveal(
 	call: Record<string, string | null | undefined> | undefined | null,
 	reveal: Reveal,
 	shortlist?: { grapeVarieties?: string[]; possibleCountries?: string[] } | null,
+	grid: Grid = 'cms',
 ): Comparison {
 	const grape = clean(reveal.grapeVariety);
-	const fields = REVEAL_FIELDS.map((field) => {
+	const fields = scoredFields(grid).map((field) => {
 		const called = clean(call?.[field.key]);
 		const actual = clean(reveal[field.key]);
 		const [status, note] = compareField(field.key, called, actual, grape);
@@ -170,7 +229,7 @@ export function compareReveal(
 		shorts('close').length ? `${sentence(shorts('close'))} close` : '',
 		shorts('wrong').length ? `${sentence(shorts('wrong'))} wrong` : '',
 		shorts('notcalled').length ? `${sentence(shorts('notcalled'))} not called` : '',
-		shorts('na').length ? `${sentence(shorts('na'))} not on the label` : '',
+		shorts('na').length ? `${sentence(shorts('na'))} ${grid === 'wset' ? 'not given' : 'not on the label'}` : '',
 	].filter(Boolean);
 
 	const onList = (list: string[] | undefined, actual: string | null) =>
@@ -189,7 +248,10 @@ export function compareReveal(
 	};
 }
 
-/** The tasting's title once revealed: the wine name if given, else appellation, quality and vintage. */
+/**
+ * The tasting's title once revealed: the wine name if given, else appellation, quality and vintage,
+ * else the grape. A WSET answer key with no identity falls back to its quality call.
+ */
 export function revealTitle(reveal: Reveal): string {
 	return (
 		clean(reveal.wineName) ??
@@ -197,8 +259,21 @@ export function revealTitle(reveal: Reveal): string {
 			.filter(Boolean)
 			.join(' ') ||
 			clean(reveal.grapeVariety) ||
-			'Revealed wine')
+			(clean(reveal.qualityAssessment) ? `${clean(reveal.qualityAssessment)} wine` : 'Revealed wine'))
 	);
+}
+
+/**
+ * The call in one line. On the CMS grid that is the wine named; on the WSET grid the quality and
+ * readiness, with the identity after them when the taster ventured one.
+ */
+export function describeCall(call: Record<string, string | null | undefined> | null | undefined, grid: Grid): string {
+	if (grid !== 'wset') {
+		return describeWine(call);
+	}
+	const assessment = [clean(call?.qualityAssessment), clean(call?.readiness)].filter(Boolean).join(' · ');
+	const identity = describeWine(call);
+	return [assessment, identity].filter(Boolean).join(' — ');
 }
 
 /** "Pinot Noir, Chambolle-Musigny, France — 2018" — the same shape as the call's subtitle. */
@@ -211,7 +286,7 @@ export function describeWine(wine: Reveal | Record<string, string | null | undef
 	return parts.length ? `${parts.join(', ')}${vintage ? ` — ${vintage}` : ''}` : (vintage ?? '');
 }
 
-/** True when the reveal has at least one field to score against. */
+/** True when the reveal has at least one field to score against, on either grid. */
 export function isRevealed(reveal: Reveal | null | undefined): reveal is Reveal {
-	return !!reveal && REVEAL_FIELDS.some((field) => clean(reveal[field.key]));
+	return !!reveal && ANY_SCORED_KEYS.some((key) => clean(reveal[key]));
 }

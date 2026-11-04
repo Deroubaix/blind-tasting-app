@@ -1,6 +1,8 @@
 // Flight rules as plain data, shared by the API and the pages, and pinned by flightLogic.test.ts.
 
 import { PALATE_OPTIONS } from '../palate/palateFields';
+import { WSET_PALATE } from '../wset/wsetFields';
+import { type Grid } from '../../data/grids';
 
 /** No 0/O or 1/I/L, so a code read across a table can't be misread. */
 export const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -57,8 +59,11 @@ export function average(scores: (number | null)[]): number | null {
 // ── Structure comparison ─────────────────────────────────────────────────────
 
 /** The palate attributes compared, in grid order. Tannin only where a taster called the wine red. */
-export function structureAttributes(wineTypes: ('red' | 'white')[]): string[] {
+export function structureAttributes(wineTypes: ('red' | 'white')[], grid: Grid = 'cms'): string[] {
 	const hasRed = wineTypes.includes('red');
+	if (grid === 'wset') {
+		return ['Acidity', ...(hasRed ? ['Tannin'] : []), 'Alcohol', 'Body', 'Flavour Intensity', 'Finish'];
+	}
 	return ['Acidity', 'Alcohol', ...(hasRed ? ['Tannin Volume'] : []), 'Body', 'Length of Finish'];
 }
 
@@ -80,14 +85,19 @@ const count = (n: number) => NUMBER_WORDS[n] ?? String(n);
 /** Where each taster placed one attribute, and how far apart they were. Unscored: the label can't say. */
 export function compareStructure(
 	name: string,
-	answers: { personId: string; wineType: 'red' | 'white'; palate: Record<string, string> | null }[],
+	answers: { personId: string; wineType: 'red' | 'white'; palate: Record<string, string | string[]> | null }[],
+	grid: Grid = 'cms',
 ): StructureAttribute | null {
-	const levels = PALATE_OPTIONS.red[name] ?? PALATE_OPTIONS.white[name];
+	const options = grid === 'wset' ? WSET_PALATE : PALATE_OPTIONS;
+	const levels = options.red[name] ?? options.white[name];
 	if (!levels) {
 		return null;
 	}
 	const calls = answers
-		.map(({ personId, palate }) => ({ personId, level: levels.indexOf(palate?.[name] ?? '') }))
+		.map(({ personId, palate }) => {
+			const answer = palate?.[name];
+			return { personId, level: levels.indexOf(typeof answer === 'string' ? answer : '') };
+		})
 		.filter((call) => call.level >= 0);
 	if (!calls.length) {
 		return null;

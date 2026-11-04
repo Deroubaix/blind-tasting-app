@@ -3,8 +3,9 @@
 import { useLayoutEffect } from 'react';
 import TimerWrapper from '../layout/TimerWrapper';
 import { useTastingContext } from '../../components/tasting/TastingContext';
-import { DEFAULT_TIMER_SECONDS, NEXT_PHASE_LABEL, type TimerPhase, phaseSeconds } from '../../data/timerData';
+import { DEFAULT_TIMER_SECONDS, type TimerPhase, nextPhaseLabel, phaseSeconds } from '../../data/timerData';
 import { stampPhase } from '../../data/timerClock';
+import { gridOf } from '../../data/grids';
 
 interface TimerConditionalProps {
 	page: TimerPhase;
@@ -17,7 +18,8 @@ export default function TimerConditional({ page, destination }: TimerConditional
 	const totalSeconds = tastingData.timerSeconds ?? DEFAULT_TIMER_SECONDS;
 	const isExam = tastingData.timerMode === 'exam' && !!tastingData.timerEndsAt;
 	const guided = tastingData.timerEnabled && !isExam;
-	const seconds = phaseSeconds(totalSeconds, page);
+	const grid = gridOf(tastingData.grid);
+	const seconds = phaseSeconds(totalSeconds, page, grid);
 	const phaseEndsAt = tastingData.phaseEndsAt?.[page];
 
 	// A guided phase's deadline is stamped once, the first time the phase is opened, and kept in
@@ -59,7 +61,7 @@ export default function TimerConditional({ page, destination }: TimerConditional
 			endsAt={phaseEndsAt}
 			pausedAt={tastingData.timerPausedAt}
 			destination={destination}
-			nextLabel={NEXT_PHASE_LABEL[page]}
+			nextLabel={nextPhaseLabel(page, grid)}
 			isFinalPhase={page === 'finalConclusion'}
 		/>
 	);

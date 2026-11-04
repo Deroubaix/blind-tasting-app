@@ -105,13 +105,14 @@ export default function HomeHero() {
 	return (
 		<section className={`home-hero${showRecent ? ' home-hero--recent' : ''}`}>
 			<div className="home-hero__text">
-				<span className="home-eyebrow">For the 2024 CMS deductive tasting grid</span>
+				<span className="home-eyebrow">For the CMS deductive grid and the WSET Level 3 SAT</span>
 				<h1 className="home-hero__title">
 					Taste blind. Call it. <em>See how close you got.</em>
 				</h1>
 				<p className="home-hero__lede">
-					Work each wine through Sight, Nose, Palate and both conclusions at exam pace. Then reveal the label
-					and see your call scored field by field, alone or with a study group on their own phones. Free.
+					Work each wine through its grid at exam pace: the CMS deduction to a final call, or the WSET
+					Systematic Approach to a quality and readiness assessment. Then reveal the answer and see your call
+					scored field by field, alone or with a study group on their own phones. Free.
 				</p>
 				<div className="home-ctas">
 					<Link href="/tastings/start" className="btn-primary home-btn no-underline">
@@ -137,7 +138,9 @@ export default function HomeHero() {
 						No account needed to taste solo. Saving and flights need a free account.
 					</p>
 				)}
-				<p className="home-note home-note--quiet">Not affiliated with the Court of Master Sommeliers.</p>
+				<p className="home-note home-note--quiet">
+					Not affiliated with the Court of Master Sommeliers or WSET.
+				</p>
 			</div>
 
 			{showRecent ? (

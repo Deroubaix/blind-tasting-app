@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 		template: `%s — ${BRAND.name}`,
 	},
 	description:
-		'Timed practice for the Court of Master Sommeliers deductive tasting grid, with an archive of every tasting you save.',
+		'Timed blind-tasting practice on the Court of Master Sommeliers deductive grid or the WSET Level 3 Systematic Approach, with an archive of every tasting you save.',
 };
 
 export type RootLayoutProps = {

@@ -11,6 +11,7 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import RevealFields from './RevealFields';
 import RevealScorecard from './RevealScorecard';
 import { type Reveal, compareReveal, isRevealed } from './revealScore';
+import { gridOf } from '../../data/grids';
 
 const service = new ClientTastingService();
 
@@ -34,6 +35,7 @@ export default function RevealPanel({
 }) {
 	const revealed = isRevealed(tasting.reveal);
 	const flight = tasting.flight;
+	const grid = gridOf(tasting.grid);
 	const [editing, setEditing] = useState(openForm && !revealed && !flight);
 	const [draft, setDraft] = useState<Reveal>(() => ({ ...(tasting.reveal ?? {}) }));
 	const [saving, setSaving] = useState(false);
@@ -117,7 +119,11 @@ export default function RevealPanel({
 								</span>
 							</a>
 						)}
-						<RevealFields value={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
+						<RevealFields
+							grid={grid}
+							value={draft}
+							onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
+						/>
 					</div>
 				</div>
 
@@ -143,6 +149,7 @@ export default function RevealPanel({
 			tasting.conclusion?.final,
 			tasting.reveal as Reveal,
 			tasting.conclusion?.initial,
+			grid,
 		);
 		return flight ? (
 			<RevealScorecard
@@ -184,7 +191,9 @@ export default function RevealPanel({
 					Bottle unwrapped?
 				</h2>
 				<p className="reveal-invite__lede">
-					Enter what&apos;s on the label. Your call is compared with it, field by field, and scored.
+					{grid === 'wset'
+						? 'Enter the quality and readiness from the answer key, and the wine if you know it. Your call is scored against them.'
+						: 'Enter what\u2019s on the label. Your call is compared with it, field by field, and scored.'}
 				</p>
 			</div>
 			<button type="button" className="btn-primary reveal-invite__btn" onClick={startEditing}>

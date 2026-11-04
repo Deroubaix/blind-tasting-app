@@ -3,15 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconArrowRight, IconMinus, IconPlus } from '@tabler/icons-react';
-import { TIMER_PRESETS, formatTimerSeconds } from '../../data/timerData';
+import { defaultTimerSeconds, formatTimerSeconds, timerPresets } from '../../data/timerData';
+import { GRIDS, type Grid } from '../../data/grids';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { MAX_WINES } from './flightLogic';
 import { flightService, useRequireLogin } from './FlightBits';
 
-const TIMERS: { seconds: number | null; time: string; label: string }[] = [
+const timers = (grid: Grid): { seconds: number | null; time: string; label: string }[] => [
 	{ seconds: null, time: 'Off', label: 'Untimed' },
-	...TIMER_PRESETS.map((preset) => ({
+	...timerPresets(grid).map((preset) => ({
 		seconds: preset.seconds,
 		time: formatTimerSeconds(preset.seconds),
 		label: preset.label,
@@ -24,14 +25,23 @@ export default function FlightCreateClient() {
 	const { showToast } = useToastProvider();
 	const [name, setName] = useState('');
 	const [wineCount, setWineCount] = useState(6);
-	const [timerSeconds, setTimerSeconds] = useState<number | null>(TIMER_PRESETS[0].seconds);
+	const [grid, setGrid] = useState<Grid>('cms');
+	const [timerSeconds, setTimerSeconds] = useState<number | null>(defaultTimerSeconds('cms'));
 	const [saving, setSaving] = useState(false);
+
+	// Each grid has its own exam paces; switching keeps "untimed" and otherwise takes the new default.
+	const chooseGrid = (next: Grid) => {
+		setGrid(next);
+		if (timerSeconds !== null) {
+			setTimerSeconds(defaultTimerSeconds(next));
+		}
+	};
 
 	const create = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setSaving(true);
 		try {
-			const code = await flightService.create({ name: name.trim(), wineCount, timerSeconds });
+			const code = await flightService.create({ name: name.trim(), wineCount, grid, timerSeconds });
 			router.push(`/flights/${code}`);
 		} catch (error) {
 			showToast({
@@ -85,6 +95,31 @@ export default function FlightCreateClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">02</span>
+						<span className="item-label">Grid</span>
+						<span className="start-step-hint">everyone tastes on the same one</span>
+					</header>
+					<div className="start-setting-row start-setting-row--duration">
+						<div className="start-duration" role="radiogroup" aria-label="Tasting grid">
+							{(Object.keys(GRIDS) as Grid[]).map((option) => (
+								<button
+									key={option}
+									type="button"
+									role="radio"
+									aria-checked={grid === option}
+									className={`start-duration-pill${grid === option ? ' start-duration-pill--on' : ''}`}
+									onClick={() => chooseGrid(option)}
+								>
+									<span className="start-duration-pill__time">{GRIDS[option].short}</span>
+									<span className="start-duration-pill__label">{GRIDS[option].name}</span>
+								</button>
+							))}
+						</div>
+					</div>
+				</section>
+
+				<section className="start-step">
+					<header className="start-step-label">
+						<span className="start-step-num">03</span>
 						<span className="item-label" id="flight-wines-label">
 							Number of wines
 						</span>
@@ -118,13 +153,13 @@ export default function FlightCreateClient() {
 
 				<section className="start-step">
 					<header className="start-step-label">
-						<span className="start-step-num">03</span>
+						<span className="start-step-num">04</span>
 						<span className="item-label">Timer</span>
 						<span className="start-step-hint">one clock per wine</span>
 					</header>
 					<div className="start-setting-row start-setting-row--duration">
 						<div className="start-duration" role="radiogroup" aria-label="Time per wine">
-							{TIMERS.map((option) => (
+							{timers(grid).map((option) => (
 								<button
 									key={option.time}
 									type="button"

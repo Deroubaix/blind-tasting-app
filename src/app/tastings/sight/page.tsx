@@ -1,5 +1,5 @@
 import { type Metadata } from 'next';
-import SightTastingClient from '../../../components/sight/SightTastingClient';
+import { SightRoute } from '../../../components/tasting/GridRoutes';
 
 export const metadata: Metadata = {
 	title: 'Sight',
@@ -9,5 +9,5 @@ export default async function SightPage({ searchParams }: { searchParams: Promis
 	const { wineType: wineTypeParam } = await searchParams;
 	const wineType = (wineTypeParam as 'red' | 'white') || 'red';
 
-	return <SightTastingClient wineType={wineType} />;
+	return <SightRoute wineType={wineType} />;
 }

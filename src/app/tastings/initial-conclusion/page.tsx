@@ -1,5 +1,5 @@
 import { type Metadata } from 'next';
-import InitialConclusionTastingClient from '../../../components/tasting/InitialConclusionTastingClient';
+import { InitialConclusionRoute } from '../../../components/tasting/GridRoutes';
 
 export const metadata: Metadata = {
 	title: 'Initial Conclusion',
@@ -12,5 +12,5 @@ export default async function InitialConclusionPage({
 }) {
 	const { wineType: wineTypeParam } = await searchParams;
 	const wineType = (wineTypeParam as 'red' | 'white') || 'red';
-	return <InitialConclusionTastingClient wineType={wineType} />;
+	return <InitialConclusionRoute wineType={wineType} />;
 }

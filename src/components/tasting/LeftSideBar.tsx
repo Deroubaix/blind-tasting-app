@@ -7,23 +7,30 @@ import { IconEye, IconWind, IconGlass, IconBrain, IconSquareCheck, IconCheck } f
 import useAuthenticatedUser from '../../hooks/UseAuthenticatedUser';
 import { useTastingContext } from './TastingContext';
 import { phaseComplete } from './phaseCompletion';
+import { GRIDS, type Grid, gridOf } from '../../data/grids';
 
 // shortLabel is what the phone stepper shows — five segments across 390px cannot
 // carry "Initial Conclusion". Both render; CSS picks one per breakpoint.
-const navItems = [
-	{ href: '/tastings/sight', Icon: IconEye, label: 'Sight', shortLabel: 'Sight' },
-	{ href: '/tastings/nose', Icon: IconWind, label: 'Nose', shortLabel: 'Nose' },
-	{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate', shortLabel: 'Palate' },
-	{ href: '/tastings/initial-conclusion', Icon: IconBrain, label: 'Initial Conclusion', shortLabel: 'Initial' },
-	{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Final Conclusion', shortLabel: 'Final' },
-];
+const NAV_ITEMS = {
+	cms: [
+		{ href: '/tastings/sight', Icon: IconEye, label: 'Sight', shortLabel: 'Sight' },
+		{ href: '/tastings/nose', Icon: IconWind, label: 'Nose', shortLabel: 'Nose' },
+		{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate', shortLabel: 'Palate' },
+		{ href: '/tastings/initial-conclusion', Icon: IconBrain, label: 'Initial Conclusion', shortLabel: 'Initial' },
+		{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Final Conclusion', shortLabel: 'Final' },
+	],
+	// The SAT has four steps; its conclusions live on the final-conclusion route.
+	wset: [
+		{ href: '/tastings/sight', Icon: IconEye, label: 'Appearance', shortLabel: 'Look' },
+		{ href: '/tastings/nose', Icon: IconWind, label: 'Nose', shortLabel: 'Nose' },
+		{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate', shortLabel: 'Palate' },
+		{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Conclusions', shortLabel: 'Conclude' },
+	],
+} satisfies Record<Grid, unknown[]>;
 
-const phaseNames: Record<string, string> = {
-	'/tastings/sight': 'Sight',
-	'/tastings/nose': 'Nose',
-	'/tastings/palate': 'Palate',
-	'/tastings/initial-conclusion': 'Initial Conclusion',
-	'/tastings/final-conclusion': 'Final Conclusion',
+const STUDY_LABEL: Record<Grid, { role: string; appName: string }> = {
+	cms: { role: 'Master Level Study', appName: 'Deductive tasting practice' },
+	wset: { role: `${GRIDS.wset.short} Study`, appName: 'Systematic tasting practice' },
 };
 
 type LeftSidebarProps = {
@@ -36,7 +43,9 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 	const { user, isInitialLoading } = useAuthenticatedUser();
 	const { tastingData } = useTastingContext();
 	const isLoggedIn = !isInitialLoading && !!user;
-	const currentPhaseName = phaseNames[pathname] ?? '';
+	const grid = gridOf(tastingData.grid);
+	const navItems = NAV_ITEMS[grid];
+	const currentPhaseName = navItems.find((item) => item.href === pathname)?.label ?? '';
 
 	const completedCount = navItems.filter(({ href }) => phaseComplete(href, tastingData)).length;
 
@@ -47,10 +56,10 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 				{isLoggedIn ? (
 					<>
 						<div className="tasting-sidebar__username">{user?.displayName || user?.email}</div>
-						<div className="tasting-sidebar__role">Master Level Study</div>
+						<div className="tasting-sidebar__role">{STUDY_LABEL[grid].role}</div>
 					</>
 				) : (
-					<div className="tasting-sidebar__app-name">Deductive tasting practice</div>
+					<div className="tasting-sidebar__app-name">{STUDY_LABEL[grid].appName}</div>
 				)}
 			</div>
 

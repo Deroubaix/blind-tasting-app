@@ -980,7 +980,8 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 
 	&__row {
 		display: grid;
-		grid-template-columns: minmax(170px, 1.3fr) repeat(5, minmax(0, 1fr));
+		// One column per scored field: five on the CMS grid, six on the WSET grid (set by the table).
+		grid-template-columns: minmax(170px, 1.3fr) repeat(var(--fields, 5), minmax(0, 1fr));
 		gap: $spacing-md;
 		align-items: start;
 		padding: $spacing-md $spacing-sm;

@@ -9,7 +9,8 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 
-	const selectedOptions: Record<string, string> = tastingData.palate || {};
+	// The CMS palate stores one answer per attribute; only the WSET grid keeps a list there.
+	const selectedOptions = (tastingData.palate as Record<string, string> | undefined) || {};
 	// Written straight through to the context, not held locally and flushed on Next/Back: the phase
 	// timer navigates with a bare `router.push`, so a local copy was lost whenever time ran out.
 	const confirmNose = tastingData.confirmNose ?? '';

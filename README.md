@@ -69,6 +69,33 @@ with an optional note for what changed. The grid lives as plain data in `src/com
 `conclusionFields.ts`, pinned by `gridFields.test.ts`. On the nose, each grid heading lists the
 official terms first, then the app's more specific descriptors (Cherry, Violet, Graphite…).
 
+## WSET Level 3 mode
+
+The same app runs a second grid: the **WSET Level 3 Systematic Approach to Tasting Wine (SAT)**.
+It is chosen on Start (or by the host, for a flight) and stored as `Tasting.grid` / `Flight.grid`,
+`"cms"` or `"wset"`; everything downstream reads it (`src/data/grids.ts`). The SAT has four phases
+on the same routes — Appearance, Nose, Palate, Conclusions — with no initial conclusion, so the
+`initial-conclusion` route forwards to Conclusions on a WSET tasting. The grid itself is plain data
+in `src/components/wset/wsetFields.ts`, pinned by its tests, and the screens are in the same folder.
+
+| Phase           | What you record (Level 3 SAT)                                                                                        | 15:00 |
+| --------------- | -------------------------------------------------------------------------------------------------------------------- | ----: |
+| **Appearance**  | Clarity, intensity, colour; other observations where apparent                                                        |  1:53 |
+| **Nose**        | Condition, intensity, aroma clusters (primary, secondary, tertiary) with the SAT's descriptors, development          |  5:36 |
+| **Palate**      | Sweetness, acidity, tannin (reds), alcohol, body, flavour intensity, flavour characteristics, finish                 |  5:38 |
+| **Conclusions** | Quality level (faulty to outstanding) and readiness for drinking, with reasons; naming the wine is optional practice |  1:53 |
+
+The one preset is the Level 3 pace, 15:00 a wine (two wines in 30 minutes). The guided split gives
+the nose and palate three-eighths each.
+
+**Scoring** follows the paper: the reveal is the tutor's answer key — quality level and readiness —
+and each scores a point for an exact match, with one step along the scale shown as _close_. The
+identity fields (grape, country, region, vintage) are scored only when the answer key gives them, so
+an answer key of the two assessments alone scores the wine out of two. Flights on the WSET grid
+compare the SAT's structure scales instead of the CMS ones.
+
+The app is not affiliated with or endorsed by the Wine & Spirit Education Trust.
+
 ## Stack
 
 Deliberately small. No state library, no component library driving the look, no API layer beyond
@@ -215,8 +242,6 @@ tasting, the account row and every photo under `labels/<userId>/` (`DELETE /api/
 - **Orphaned label photos are never cleaned up** while the account exists. A photo is uploaded
   before its tasting is saved, so one whose save then fails for good stays in storage with no row
   pointing at it. Deleting the account does remove them: it clears the user's whole photo folder.
-- **No data export yet.** The privacy notice offers it by email; a "Download my data" button on the
-  Account page would make it self-service.
 - **No `db:*` scripts.** Migrations are run through `pnpm exec prisma` directly.
 
 ## License

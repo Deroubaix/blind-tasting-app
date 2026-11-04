@@ -7,8 +7,10 @@ import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
 import RevealPanel from './RevealPanel';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { describeWine, isRevealed, revealTitle } from './revealScore';
+import { describeCall, describeWine, isRevealed, revealTitle } from './revealScore';
 import { formatDate } from '../../utils/DateUtils';
+import { GRIDS, gridOf } from '../../data/grids';
+import { WSET_CONCLUSION_KEYS } from '../wset/wsetFields';
 
 const service = new ClientTastingService();
 
@@ -87,42 +89,46 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	}
 
 	const final = (tasting.conclusion?.final as Record<string, string | null>) ?? {};
-	const grapeVariety = final.grapeVariety ?? null;
-	const countryOfOrigin = final.countryOfOrigin ?? null;
-	const regionAppellation = final.regionAppellation ?? null;
-	const qualityLevel = final.qualityLevel ?? null;
-	const styleCategory = final.styleCategory ?? null;
-	const vintage = final.vintage ?? null;
+	const grid = gridOf(tasting.grid);
+	const wset = grid === 'wset';
 
 	// Before the reveal the title is the taster's own label ("Flight 3, wine 2"); after it, the wine
 	// itself, with the call kept underneath so the two read against each other.
 	const revealed = isRevealed(tasting.reveal);
-	const callSummary = describeWine(final) || null;
-	const title = revealed ? revealTitle(tasting.reveal!) : tasting.wineName || grapeVariety || 'Untitled Tasting';
-	const subtitle = revealed ? describeWine(tasting.reveal) : callSummary;
+	const callSummary = describeCall(final, grid) || null;
+	const title = revealed
+		? revealTitle(tasting.reveal!)
+		: tasting.wineName || final.grapeVariety || 'Untitled Tasting';
+	const subtitle = revealed ? describeWine(tasting.reveal) || null : callSummary;
 
 	const date = formatDate(tasting.created_at);
 
 	const initial = tasting.conclusion?.initial;
 
+	// The call's fields in grid order, labelled as the grid names them.
+	const FINAL_LABELS: [string, string][] = wset
+		? [
+				[WSET_CONCLUSION_KEYS.quality, 'Quality Level'],
+				[WSET_CONCLUSION_KEYS.readiness, 'Readiness for Drinking'],
+				[WSET_CONCLUSION_KEYS.reasons, 'Reasons'],
+				['grapeVariety', 'Grape Variety or Blend'],
+				['countryOfOrigin', 'Country of Origin'],
+				['regionAppellation', 'Region and Appellation'],
+				['vintage', 'Vintage'],
+			]
+		: [
+				['grapeVariety', 'Grape Variety or Blend'],
+				['countryOfOrigin', 'Country of Origin'],
+				['regionAppellation', 'Region and Appellation'],
+				['qualityLevel', 'Official Quality Level'],
+				['styleCategory', 'Official Style Category'],
+				['vintage', 'Vintage'],
+			];
 	const finalConclusionFields: Record<string, string> = {};
-	if (grapeVariety) {
-		finalConclusionFields['Grape Variety or Blend'] = grapeVariety;
-	}
-	if (countryOfOrigin) {
-		finalConclusionFields['Country of Origin'] = countryOfOrigin;
-	}
-	if (regionAppellation) {
-		finalConclusionFields['Region and Appellation'] = regionAppellation;
-	}
-	if (qualityLevel) {
-		finalConclusionFields['Official Quality Level'] = qualityLevel;
-	}
-	if (styleCategory) {
-		finalConclusionFields['Official Style Category'] = styleCategory;
-	}
-	if (vintage) {
-		finalConclusionFields['Vintage'] = vintage;
+	for (const [key, label] of FINAL_LABELS) {
+		if (final[key]) {
+			finalConclusionFields[label] = final[key]!;
+		}
 	}
 
 	const initialFields: Record<string, string> = {};
@@ -152,6 +158,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 				<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
 					{tasting.wineType} Wine
 				</span>
+				{wset && <span className="grid-badge">{GRIDS.wset.short}</span>}
 				<div className="tasting-detail__hero-meta">
 					{tasting.number != null && <span className="tasting-detail__id">No. {tasting.number}</span>}
 					{tasting.flight && (
@@ -205,9 +212,9 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 				onRevealed={(updated) => setTasting(updated)}
 			/>
 
-			<PhaseSection label="Sight" data={tasting.sight as Record<string, string>} />
+			<PhaseSection label={wset ? 'Appearance' : 'Sight'} data={tasting.sight as Record<string, string>} />
 			<PhaseSection label="Nose" data={tasting.nose as Record<string, string[]>} />
-			<PhaseSection label="Palate" data={tasting.palate as Record<string, string>} />
+			<PhaseSection label="Palate" data={tasting.palate as Record<string, string | string[]>} />
 
 			{tasting.confirmNose && (
 				<div className="tasting-detail__section">
@@ -232,7 +239,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{Object.keys(finalConclusionFields).length > 0 && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">Final Conclusion</div>
+					<div className="tasting-detail__section-label">{wset ? 'Conclusions' : 'Final Conclusion'}</div>
 					<div className="tasting-detail__grid">
 						{Object.entries(finalConclusionFields).map(([label, value]) => (
 							<div key={label} className="tasting-detail__field">

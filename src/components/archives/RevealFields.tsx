@@ -5,6 +5,9 @@ import { IconMapPin, IconSearch } from '@tabler/icons-react';
 import { ChipSearchField, VintageInput } from '../tasting/ConclusionInputs';
 import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from '../tasting/autocompleteData';
 import QualityLevelSelect from '../tasting/QualityLevelSelect';
+import TastingCustomSelect from '../tasting/TastingCustomSelect';
+import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
+import { type Grid } from '../../data/grids';
 import { type Reveal } from './revealScore';
 
 type Props = {
@@ -12,10 +15,12 @@ type Props = {
 	onChange: (patch: Partial<Reveal>) => void;
 	/** Three columns, for the save page's full-width card. */
 	layout?: 'form' | 'wide';
+	/** The WSET grid asks for the answer key's quality and readiness first; the wine itself is optional. */
+	grid?: Grid;
 };
 
 /** The reveal's fields: the final conclusion's controls, plus an optional wine name. */
-export default function RevealFields({ value, onChange, layout = 'form' }: Props) {
+export default function RevealFields({ value, onChange, layout = 'form', grid = 'cms' }: Props) {
 	const ids = {
 		grape: useId(),
 		country: useId(),
@@ -23,10 +28,46 @@ export default function RevealFields({ value, onChange, layout = 'form' }: Props
 		quality: useId(),
 		vintage: useId(),
 		name: useId(),
+		assessment: useId(),
+		readiness: useId(),
 	};
+	const wset = grid === 'wset';
 
 	return (
 		<div className={`reveal-fields reveal-fields--${layout}`}>
+			{wset && (
+				<>
+					<div className="reveal-field">
+						<span className="reveal-field__label" id={ids.assessment}>
+							Quality level
+						</span>
+						<TastingCustomSelect
+							options={WSET_QUALITY}
+							labelId={ids.assessment}
+							value={value.qualityAssessment ?? ''}
+							onChange={(qualityAssessment) => onChange({ qualityAssessment: qualityAssessment || null })}
+							placeholder="The tutor's call…"
+							clearLabel="Not given"
+						/>
+					</div>
+					<div className="reveal-field">
+						<span className="reveal-field__label" id={ids.readiness}>
+							Readiness for drinking
+						</span>
+						<TastingCustomSelect
+							options={WSET_READINESS}
+							labelId={ids.readiness}
+							value={value.readiness ?? ''}
+							onChange={(readiness) => onChange({ readiness: readiness || null })}
+							placeholder="The tutor's call…"
+							clearLabel="Not given"
+						/>
+					</div>
+					<p className="reveal-fields__wide reveal-fields__note">
+						The wine itself is optional: fill in what the label gives and the call is scored on it too.
+					</p>
+				</>
+			)}
 			<ChipSearchField
 				id={ids.grape}
 				className="reveal-field"
@@ -62,17 +103,19 @@ export default function RevealFields({ value, onChange, layout = 'form' }: Props
 					icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 				/>
 			</div>
-			<div className="reveal-field">
-				<span className="reveal-field__label" id={ids.quality}>
-					Official quality level
-				</span>
-				<QualityLevelSelect
-					value={value.qualityLevel ?? ''}
-					onChange={(qualityLevel) => onChange({ qualityLevel: qualityLevel || null })}
-					labelId={ids.quality}
-					textClassName="tasting-input reveal-field__text"
-				/>
-			</div>
+			{!wset && (
+				<div className="reveal-field">
+					<span className="reveal-field__label" id={ids.quality}>
+						Official quality level
+					</span>
+					<QualityLevelSelect
+						value={value.qualityLevel ?? ''}
+						onChange={(qualityLevel) => onChange({ qualityLevel: qualityLevel || null })}
+						labelId={ids.quality}
+						textClassName="tasting-input reveal-field__text"
+					/>
+				</div>
+			)}
 			<div className="reveal-field">
 				<label className="reveal-field__label" htmlFor={ids.vintage}>
 					Vintage

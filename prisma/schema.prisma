@@ -29,6 +29,8 @@ model Tasting {
   number       Int
   userId       String       @db.VarChar(36)
   wineType     String?
+  /// Which grid the sheet follows: "cms" (2024 CMS Americas) or "wset" (WSET Level 3 SAT).
+  grid         String       @default("cms")
   sight        Json?
   nose         Json?
   palate       Json?
@@ -77,6 +79,8 @@ model Flight {
   name         String
   hostId       String    @db.VarChar(36)
   wineCount    Int
+  /// The grid every wine in the flight is tasted on; see Tasting.grid.
+  grid         String    @default("cms")
   /// Seconds per wine, or null when untimed. Each taster's clock starts when they open the wine.
   timerSeconds Int?
   endedAt      DateTime?

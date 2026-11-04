@@ -14,6 +14,7 @@ import { useToastProvider } from '../../toast/ToastProvider';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
+import { gridOf } from '../../data/grids';
 
 export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }) {
 	const { tastingData, updateTastingData, resetTastingData, labelPhoto, setLabelPhoto } = useTastingContext();
@@ -35,6 +36,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 	const photoService = new ClientPhotoService();
 	const { user, isInitialLoading, signOut } = useAuthProvider();
 	const { showToast } = useToastProvider();
+	const grid = gridOf(tastingData.grid);
 
 	const clearPhotoInput = () => {
 		if (fileInputRef.current) {
@@ -157,7 +159,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 			description="Add any final notes and a photo before saving your tasting record."
 			footer={{
 				onBack: () => router.push(`/tastings/final-conclusion?wineType=${wineType}`),
-				backLabel: 'Back to Final Conclusion',
+				backLabel: grid === 'wset' ? 'Back to Conclusions' : 'Back to Final Conclusion',
 				nextLabel: 'Save Tasting',
 				onNext: handleSave,
 				nextLoading: isLoading,
@@ -247,6 +249,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 							<div id="save-reveal-fields" className="save-reveal__body">
 								<RevealFields
 									layout="wide"
+									grid={grid}
 									value={tastingData.reveal ?? {}}
 									onChange={(patch) =>
 										updateTastingData({ reveal: { ...tastingData.reveal, ...patch } })

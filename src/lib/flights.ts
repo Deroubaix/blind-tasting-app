@@ -11,13 +11,14 @@ import {
 	type EntryStatus,
 } from '../components/flights/flightLogic';
 import {
-	REVEAL_FIELDS,
 	compareReveal,
 	describeWine,
 	isRevealed,
 	revealTitle,
+	scoredFields,
 	type Reveal,
 } from '../components/archives/revealScore';
+import { gridOf, type Grid } from '../data/grids';
 import {
 	type FlightListItem,
 	type FlightMemberView,
@@ -86,7 +87,7 @@ export function requireHost(flight: LoadedFlight, userId: string) {
 /** A new flight, with its numbered wines. Retries on the rare code collision. */
 export async function createFlight(
 	hostId: string,
-	data: { name: string; wineCount: number; timerSeconds: number | null },
+	data: { name: string; wineCount: number; grid: Grid; timerSeconds: number | null },
 ) {
 	for (let attempt = 0; attempt < 5; attempt++) {
 		try {
@@ -126,7 +127,7 @@ const wineReveal = (flight: LoadedFlight, number: number) => {
 const entryFor = (flight: LoadedFlight, userId: string, number: number) =>
 	flight.entries.find((entry) => entry.userId === userId && entry.wineNumber === number);
 
-function score(entry: LoadedEntry | undefined, reveal: Reveal | null) {
+function score(flight: LoadedFlight, entry: LoadedEntry | undefined, reveal: Reveal | null) {
 	if (!entry?.tasting || !reveal) {
 		return null;
 	}
@@ -134,14 +135,15 @@ function score(entry: LoadedEntry | undefined, reveal: Reveal | null) {
 		final?: Record<string, string | null>;
 		initial?: { grapeVarieties?: string[]; possibleCountries?: string[] };
 	} | null;
-	return compareReveal(conclusion?.final, reveal, conclusion?.initial);
+	return compareReveal(conclusion?.final, reveal, conclusion?.initial, gridOf(flight.grid));
 }
 
 const endsAt = (flight: LoadedFlight, entry: LoadedEntry) =>
 	flight.timerSeconds ? new Date(entry.startedAt.getTime() + flight.timerSeconds * 1000).toISOString() : null;
 
 /** How many scored fields the label gave: what every score for this wine is out of. */
-const outOfFor = (reveal: Reveal) => REVEAL_FIELDS.filter((field) => reveal[field.key]?.trim()).length;
+const outOfFor = (flight: LoadedFlight, reveal: Reveal) =>
+	scoredFields(gridOf(flight.grid)).filter((field) => reveal[field.key]?.trim()).length;
 
 export function flightView(flight: LoadedFlight, userId: string): FlightView {
 	const role = roleOf(flight, userId);
@@ -150,6 +152,7 @@ export function flightView(flight: LoadedFlight, userId: string): FlightView {
 		code: flight.code,
 		name: flight.name,
 		wineCount: flight.wineCount,
+		grid: gridOf(flight.grid),
 		timerSeconds: flight.timerSeconds,
 		ended: flight.endedAt !== null,
 		createdAt: flight.created_at.toISOString(),
@@ -182,7 +185,7 @@ export function flightView(flight: LoadedFlight, userId: string): FlightView {
 		for (const person of members) {
 			const entry = entryFor(flight, person.id, wine.number);
 			statuses[person.id] = entryStatus(entry, reveal !== null);
-			const result = score(entry, reveal);
+			const result = score(flight, entry, reveal);
 			if (result) {
 				scores.push(result.score);
 			}
@@ -196,7 +199,7 @@ export function flightView(flight: LoadedFlight, userId: string): FlightView {
 			submitted: Object.values(statuses).filter((status) => status === 'submitted').length,
 			average: reveal ? average(scores) : null,
 			best: scores.length ? Math.max(...scores) : null,
-			outOf: reveal ? outOfFor(reveal) : null,
+			outOf: reveal ? outOfFor(flight, reveal) : null,
 		};
 	});
 
@@ -211,7 +214,7 @@ export function flightView(flight: LoadedFlight, userId: string): FlightView {
 		let total = 0;
 		let outOf = 0;
 		for (const entry of entries) {
-			const result = score(entry, wineReveal(flight, entry.wineNumber));
+			const result = score(flight, entry, wineReveal(flight, entry.wineNumber));
 			if (result) {
 				total += result.score;
 				outOf += result.outOf;
@@ -233,7 +236,7 @@ export function flightView(flight: LoadedFlight, userId: string): FlightView {
 			? flight.wines.map((wine) => {
 					const reveal = wineReveal(flight, wine.number);
 					const entry = entryFor(flight, userId, wine.number);
-					const result = score(entry, reveal);
+					const result = score(flight, entry, reveal);
 					return {
 						number: wine.number,
 						status: entryStatus(entry, reveal !== null),
@@ -266,7 +269,7 @@ export function wineResults(flight: LoadedFlight, number: number, userId: string
 
 	const rows: WineResultRow[] = people(flight).map((person) => {
 		const entry = entryFor(flight, person.id, number);
-		const result = score(entry, reveal);
+		const result = score(flight, entry, reveal);
 		const tasting = entry?.tasting;
 		const wineType = tasting?.wineType === 'Red' ? 'red' : tasting?.wineType === 'White' ? 'white' : null;
 		return {
@@ -278,7 +281,7 @@ export function wineResults(flight: LoadedFlight, number: number, userId: string
 			headline: result?.headline ?? null,
 			detail: result?.detail ?? null,
 			wineType,
-			palate: (tasting?.palate as Record<string, string> | null) ?? null,
+			palate: (tasting?.palate as Record<string, string | string[]> | null) ?? null,
 			nose: Object.values((tasting?.nose as Record<string, string[]> | null) ?? {}).flat(),
 			submittedLeft: entry ? clockLeft(flight, entry) : null,
 			tastingId: person.id === userId ? (tasting?.id ?? null) : null,
@@ -294,6 +297,7 @@ export function wineResults(flight: LoadedFlight, number: number, userId: string
 		code: flight.code,
 		flightName: flight.name,
 		wineCount: flight.wineCount,
+		grid: gridOf(flight.grid),
 		number,
 		reveal,
 		title: revealTitle(reveal),
@@ -301,7 +305,7 @@ export function wineResults(flight: LoadedFlight, number: number, userId: string
 		wineType: types.length ? (reds * 2 >= types.length ? 'red' : 'white') : null,
 		rows,
 		average: average(rows.map((row) => row.score)),
-		outOf: outOfFor(reveal),
+		outOf: outOfFor(flight, reveal),
 		best: top ? { score: top.score!, outOf: top.outOf!, name: top.person.name } : null,
 		submitted: scored.length,
 		memberCount: rows.length,
@@ -318,7 +322,7 @@ export function flightSummary(flight: LoadedFlight): FlightSummary {
 		const reveal = wineReveal(flight, wine.number);
 		const scores: FlightSummary['wines'][number]['scores'] = {};
 		for (const person of members) {
-			const result = score(entryFor(flight, person.id, wine.number), reveal);
+			const result = score(flight, entryFor(flight, person.id, wine.number), reveal);
 			scores[person.id] = result ? { score: result.score, outOf: result.outOf } : null;
 			if (result) {
 				totals[person.id].score += result.score;
@@ -332,7 +336,7 @@ export function flightSummary(flight: LoadedFlight): FlightSummary {
 			title: reveal ? revealTitle(reveal) : null,
 			grape: reveal?.grapeVariety ?? null,
 			average: reveal ? average(Object.values(scores).map((s) => s?.score ?? null)) : null,
-			outOf: reveal ? outOfFor(reveal) : null,
+			outOf: reveal ? outOfFor(flight, reveal) : null,
 			scores,
 		};
 	});
@@ -353,6 +357,7 @@ export function flightSummary(flight: LoadedFlight): FlightSummary {
 	return {
 		code: flight.code,
 		name: flight.name,
+		grid: gridOf(flight.grid),
 		createdAt: flight.created_at.toISOString(),
 		hostName: flight.host.displayName,
 		timerSeconds: flight.timerSeconds,
@@ -370,7 +375,7 @@ function confusionNote(flight: LoadedFlight, number: number): string | null {
 	const reveal = wineReveal(flight, number);
 	const calls = flight.entries
 		.filter((entry) => entry.wineNumber === number && entry.tasting)
-		.map((entry) => score(entry, reveal)?.fields.find((field) => field.key === 'grapeVariety'))
+		.map((entry) => score(flight, entry, reveal)?.fields.find((field) => field.key === 'grapeVariety'))
 		.filter((field) => field?.status === 'wrong' && field.call)
 		.map((field) => field!.call!);
 	const counts = new Map<string, number>();
@@ -393,6 +398,7 @@ export async function listFlights(userId: string): Promise<FlightListItem[]> {
 	return flights.map((flight) => ({
 		code: flight.code,
 		name: flight.name,
+		grid: gridOf(flight.grid),
 		role: flight.hostId === userId ? 'host' : 'taster',
 		wineCount: flight.wineCount,
 		revealed: flight.wines.filter((wine) => wine.revealedAt).length,

@@ -2,6 +2,7 @@ import { Zip, ZipDeflate, ZipPassThrough } from 'fflate';
 import { prisma } from './prisma';
 import { readPhoto } from './storage';
 import { compareReveal, isRevealed, type Reveal } from '../components/archives/revealScore';
+import { gridOf } from '../data/grids';
 
 /**
  * Everything the app holds about one person, as a ZIP of JSON files and the label photos. Only
@@ -14,6 +15,7 @@ type ExportTasting = {
 	id: string;
 	number: number;
 	wineType: string | null;
+	grid: string;
 	wineName: string | null;
 	sight: unknown;
 	nose: unknown;
@@ -62,7 +64,11 @@ export function shapeExport(user: ExportUser, tastings: ExportTasting[], flights
 		return {
 			...tasting,
 			reveal: revealed ? reveal : null,
-			score: revealed ? (({ score, outOf }) => ({ score, outOf }))(compareReveal(call, reveal as Reveal)) : null,
+			score: revealed
+				? (({ score, outOf }) => ({ score, outOf }))(
+						compareReveal(call, reveal as Reveal, null, gridOf(tasting.grid)),
+					)
+				: null,
 			photo: photoKey ? photoFileName(tasting.number) : null,
 			flight: flightEntry
 				? { code: flightEntry.flight.code, name: flightEntry.flight.name, wineNumber: flightEntry.wineNumber }
@@ -117,6 +123,7 @@ export async function exportArchive(userId: string): Promise<ReadableStream<Uint
 				id: true,
 				number: true,
 				wineType: true,
+				grid: true,
 				wineName: true,
 				sight: true,
 				nose: true,

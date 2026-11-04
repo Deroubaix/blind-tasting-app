@@ -13,6 +13,7 @@ import { type FlightView, type MyWineView } from '../../types/Flight';
 import { Avatar, StatusPill, clockText, flightService, formatTimer, useNow } from './FlightBits';
 import { formatTime } from '../../utils/DateUtils';
 import { plural } from './flightLogic';
+import { GRIDS } from '../../data/grids';
 
 const CHOOSE_MODAL = 'flight-wine-type';
 
@@ -34,6 +35,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 			resetTastingData();
 			updateTastingData({
 				wineType,
+				grid: flight.grid,
 				timerEnabled: endsAt !== null,
 				timerSeconds: flight.timerSeconds,
 				timerMode: endsAt !== null ? 'exam' : undefined,
@@ -104,7 +106,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 					<span className="page-eyebrow">Flight{flight.ended ? ' · Ended' : ''}</span>
 					<h1 className="flight-head__title">{flight.name}</h1>
 					<p className="flight-head__sub">
-						Hosted by {flight.host.name} · {plural(flight.wineCount, 'wine')} ·{' '}
+						Hosted by {flight.host.name} · {GRIDS[flight.grid].short} · {plural(flight.wineCount, 'wine')} ·{' '}
 						{formatTimer(flight.timerSeconds)} · {revealed} of {flight.wineCount} revealed
 					</p>
 				</div>

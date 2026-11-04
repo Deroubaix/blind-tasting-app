@@ -8,9 +8,10 @@ import { useAuthProvider } from '../auth/AuthProvider';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
-import { compareReveal, describeWine, isRevealed, revealTitle } from './revealScore';
+import { compareReveal, describeCall, describeWine, isRevealed, revealTitle } from './revealScore';
 import { type TastingData } from '../../types/TastingData';
 import { formatDate } from '../../utils/DateUtils';
+import { GRIDS, gridOf } from '../../data/grids';
 
 const service = new ClientTastingService();
 
@@ -124,15 +125,16 @@ export default function ArchivesList() {
 
 			{tastings.map((tasting) => {
 				const final = (tasting.conclusion?.final as Record<string, string | null>) ?? {};
-				const callSummary = describeWine(final) || null;
+				const grid = gridOf(tasting.grid);
+				const callSummary = describeCall(final, grid) || null;
 
 				// Revealed: the wine is the title and the call a line beneath it, as on the detail page.
 				const revealed = isRevealed(tasting.reveal);
-				const comparison = revealed ? compareReveal(final, tasting.reveal!) : null;
+				const comparison = revealed ? compareReveal(final, tasting.reveal!, null, grid) : null;
 				const title = revealed
 					? revealTitle(tasting.reveal!)
 					: tasting.wineName || final.grapeVariety || 'Untitled Tasting';
-				const subtitle = revealed ? describeWine(tasting.reveal) : callSummary;
+				const subtitle = revealed ? describeWine(tasting.reveal) || null : callSummary;
 				const perfect = comparison !== null && comparison.outOf > 0 && comparison.score === comparison.outOf;
 
 				const date = tasting.created_at ? formatDate(tasting.created_at) : null;
@@ -146,6 +148,7 @@ export default function ArchivesList() {
 								<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
 									{tasting.wineType} Wine
 								</span>
+								{grid === 'wset' && <span className="grid-badge">{GRIDS.wset.short}</span>}
 								{comparison ? (
 									<span
 										className="archive-card__score"

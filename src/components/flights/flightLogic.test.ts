@@ -79,4 +79,29 @@ describe('compareStructure', () => {
 		expect(structureAttributes(['white', 'white'])).not.toContain('Tannin Volume');
 		expect(structureAttributes(['white', 'red'])).toContain('Tannin Volume');
 	});
+
+	it('compares the SAT scales on a WSET flight', () => {
+		expect(structureAttributes(['red'], 'wset')).toEqual([
+			'Acidity',
+			'Tannin',
+			'Alcohol',
+			'Body',
+			'Flavour Intensity',
+			'Finish',
+		]);
+		const result = compareStructure(
+			'Tannin',
+			[
+				{
+					personId: 'm',
+					wineType: 'red',
+					palate: { Tannin: 'Medium(+)', 'Flavour Characteristics': ['Plum'] },
+				},
+				{ personId: 'j', wineType: 'red', palate: { Tannin: 'High' } },
+			],
+			'wset',
+		);
+		expect(result?.levels).toEqual(['Low', 'Medium(-)', 'Medium', 'Medium(+)', 'High']);
+		expect(result?.agreement).toBe('near');
+	});
 });

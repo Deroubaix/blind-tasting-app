@@ -9,6 +9,7 @@ import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightMemberView, type FlightView, type FlightWineView } from '../../types/Flight';
 import { formatCode, plural } from './flightLogic';
+import { GRIDS } from '../../data/grids';
 import { Avatar, StatusPill, avatarState, clockText, flightService, formatTimer, useNow } from './FlightBits';
 
 function progressText(flight: FlightView): string {
@@ -251,7 +252,8 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 					<span className="page-eyebrow">Flight · You&apos;re hosting{flight.ended ? ' · Ended' : ''}</span>
 					<h1 className="flight-head__title">{flight.name}</h1>
 					<p className="flight-head__sub">
-						{plural(flight.wineCount, 'wine')} · {formatTimer(flight.timerSeconds)} · {progressText(flight)}
+						{GRIDS[flight.grid].short} · {plural(flight.wineCount, 'wine')} ·{' '}
+						{formatTimer(flight.timerSeconds)} · {progressText(flight)}
 					</p>
 				</div>
 				<div className="flight-head__actions">

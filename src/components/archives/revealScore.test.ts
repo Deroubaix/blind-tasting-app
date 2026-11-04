@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compareReveal, describeWine, isRevealed, revealTitle, sameName } from './revealScore';
+import { compareReveal, describeCall, describeWine, isRevealed, revealTitle, sameName } from './revealScore';
 
 // The design's "near miss" sample: grape, country and quality right; village and vintage close.
 const call = {
@@ -160,5 +160,57 @@ describe('isRevealed', () => {
 		expect(isRevealed(null)).toBe(false);
 		expect(isRevealed({ wineName: 'Just a name' })).toBe(false);
 		expect(isRevealed({ vintage: '2018' })).toBe(true);
+	});
+});
+
+describe('the WSET grid', () => {
+	const key = { qualityAssessment: 'Very good', readiness: 'Can drink now, but has potential for ageing' };
+
+	it('scores quality and readiness, out of two when the key names nothing else', () => {
+		const result = compareReveal({ ...key }, key, null, 'wset');
+		expect(result.fields.map((f) => f.key)).toEqual([
+			'qualityAssessment',
+			'readiness',
+			'grapeVariety',
+			'countryOfOrigin',
+			'regionAppellation',
+			'vintage',
+		]);
+		expect(result.score).toBe(2);
+		expect(result.outOf).toBe(2);
+		expect(result.headline).toBe('Every field right');
+		expect(result.detail).toBe('Grape, country, region and vintage not given');
+	});
+
+	it('calls one step along the scale close, and two steps wrong', () => {
+		const one = compareReveal({ ...key, qualityAssessment: 'Good' }, key, null, 'wset');
+		expect(one.fields[0]).toMatchObject({ status: 'close', note: 'One step under' });
+		expect(one.score).toBe(1);
+		const two = compareReveal({ ...key, qualityAssessment: 'Acceptable' }, key, null, 'wset');
+		expect(two.fields[0].status).toBe('wrong');
+		const over = compareReveal({ ...key, readiness: 'Too old' }, key, null, 'wset');
+		expect(over.fields[1].status).toBe('wrong');
+	});
+
+	it('scores the identity too when the key gives it', () => {
+		const full = { ...key, grapeVariety: 'Riesling', countryOfOrigin: 'Germany', vintage: '2019' };
+		const result = compareReveal({ ...key, grapeVariety: 'Riesling', vintage: '2018' }, full, null, 'wset');
+		expect(result.outOf).toBe(5);
+		expect(result.score).toBe(3);
+		expect(result.detail).toBe('Vintage close · Country not called · Region not given');
+	});
+
+	it('counts an answer key of just the assessments as a reveal', () => {
+		expect(isRevealed(key)).toBe(true);
+		expect(revealTitle(key)).toBe('Very good wine');
+		expect(revealTitle({ ...key, grapeVariety: 'Riesling' })).toBe('Riesling');
+	});
+
+	it('describes a call by its assessments, then any identity', () => {
+		expect(describeCall(key, 'wset')).toBe('Very good · Can drink now, but has potential for ageing');
+		expect(describeCall({ ...key, grapeVariety: 'Riesling', vintage: '2019' }, 'wset')).toBe(
+			'Very good · Can drink now, but has potential for ageing — Riesling — 2019',
+		);
+		expect(describeCall({ grapeVariety: 'Riesling' }, 'cms')).toBe('Riesling');
 	});
 });

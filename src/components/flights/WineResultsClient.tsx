@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { IconArrowsSplit2, IconCheck, IconChevronLeft, IconChevronRight, IconTilde } from '@tabler/icons-react';
 import { useModalProvider } from '../modal/ModalProvider';
 import { StatusBadge } from '../archives/RevealScorecard';
-import { REVEAL_FIELDS, type FieldStatus } from '../archives/revealScore';
+import { type FieldStatus, scoredFields } from '../archives/revealScore';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type WineResultRow, type WineResults } from '../../types/Flight';
 import { compareStructure, structureAttributes, type Agreement, type StructureAttribute } from './flightLogic';
@@ -20,12 +20,18 @@ const AGREEMENT: Record<Agreement, { word: string; Icon: typeof IconCheck }> = {
 /** Short scale labels, so five levels fit a phone: "Medium+" → "Med+". */
 const shortLevel = (level: string) => level.replace('Medium', 'Med');
 
+/** Column headings where the strip's abbreviation is too terse for a table. */
+const COLUMN: Record<string, string> = { Ctry: 'Country', Qual: 'Quality', Vint: 'Vintage', Ready: 'Readiness' };
+
 function structure(results: WineResults): StructureAttribute[] {
 	const answers = results.rows
 		.filter((row) => row.status === 'submitted' && row.wineType)
 		.map((row) => ({ personId: row.person.id, wineType: row.wineType!, palate: row.palate }));
-	return structureAttributes(answers.map((a) => a.wineType))
-		.map((name) => compareStructure(name, answers))
+	return structureAttributes(
+		answers.map((a) => a.wineType),
+		results.grid,
+	)
+		.map((name) => compareStructure(name, answers, results.grid))
 		.filter((attr): attr is StructureAttribute => attr !== null);
 }
 
@@ -217,7 +223,8 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 			children: <TasterSheet row={row} results={results} attrs={attrs} />,
 		});
 
-	const group = REVEAL_FIELDS.map((field) => {
+	const fields = scoredFields(results.grid);
+	const group = fields.map((field) => {
 		const statuses = submittedRows.map((row) => row.fields?.find((f) => f.key === field.key)?.status ?? 'na');
 		const right = statuses.filter((s) => s === 'correct').length;
 		const close = statuses.filter((s) => s === 'close').length;
@@ -305,18 +312,18 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 					<Legend />
 				</div>
 
-				<div className="flight-table" role="table" aria-label="Each taster's call against the label">
+				<div
+					className="flight-table"
+					role="table"
+					aria-label="Each taster's call against the label"
+					// The column count is data, so this is the one inline style.
+					style={{ '--fields': fields.length } as React.CSSProperties}
+				>
 					<div className="flight-table__row flight-table__row--head" role="row">
 						<span role="columnheader">Taster</span>
-						{REVEAL_FIELDS.map((field) => (
+						{fields.map((field) => (
 							<span key={field.key} role="columnheader">
-								{field.abbr === 'Ctry'
-									? 'Country'
-									: field.abbr === 'Qual'
-										? 'Quality'
-										: field.abbr === 'Vint'
-											? 'Vintage'
-											: field.abbr}
+								{COLUMN[field.abbr] ?? field.abbr}
 							</span>
 						))}
 					</div>
@@ -325,7 +332,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 							<span className="flight-table__label-mark" aria-hidden="true" />
 							<strong>The label</strong>
 						</span>
-						{REVEAL_FIELDS.map((field) => (
+						{fields.map((field) => (
 							<span key={field.key} role="cell" className="flight-table__cell" data-col={field.label}>
 								<strong>{results.reveal[field.key] || '—'}</strong>
 							</span>
@@ -361,7 +368,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 								</span>
 							</span>
 							{row.status === 'submitted' ? (
-								REVEAL_FIELDS.map((field) => {
+								fields.map((field) => {
 									const cell = row.fields?.find((f) => f.key === field.key);
 									return (
 										<span

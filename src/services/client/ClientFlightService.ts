@@ -2,6 +2,7 @@
 
 import FetchUtils from '../../utils/FetchUtils';
 import { type Reveal } from '../../components/archives/revealScore';
+import { type Grid } from '../../data/grids';
 import { type FlightListItem, type FlightSummary, type FlightView, type WineResults } from '../../types/Flight';
 
 export default class ClientFlightService {
@@ -9,7 +10,12 @@ export default class ClientFlightService {
 		return (await FetchUtils.getJson<{ flights: FlightListItem[] }>('/api/flights').response).flights;
 	}
 
-	public async create(input: { name: string; wineCount: number; timerSeconds: number | null }): Promise<string> {
+	public async create(input: {
+		name: string;
+		wineCount: number;
+		grid: Grid;
+		timerSeconds: number | null;
+	}): Promise<string> {
 		return (await FetchUtils.postJson<{ code: string }>('/api/flights', input).response).code;
 	}
 

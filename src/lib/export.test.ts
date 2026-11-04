@@ -8,6 +8,7 @@ const tasting = (number: number, extra: Partial<Parameters<typeof shapeExport>[1
 	id: `t${number}`,
 	number,
 	wineType: 'Red',
+	grid: 'cms',
 	wineName: null,
 	sight: null,
 	nose: null,

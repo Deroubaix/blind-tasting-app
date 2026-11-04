@@ -1,5 +1,6 @@
 import { type EntryStatus } from '../components/flights/flightLogic';
 import { type ComparedField, type Reveal } from '../components/archives/revealScore';
+import { type Grid } from '../data/grids';
 
 export type FlightRole = 'host' | 'taster' | 'visitor';
 
@@ -46,6 +47,7 @@ export type FlightView = {
 	code: string;
 	name: string;
 	wineCount: number;
+	grid: Grid;
 	timerSeconds: number | null;
 	ended: boolean;
 	createdAt: string;
@@ -65,7 +67,7 @@ export type WineResultRow = {
 	headline: string | null;
 	detail: string | null;
 	wineType: 'red' | 'white' | null;
-	palate: Record<string, string> | null;
+	palate: Record<string, string | string[]> | null;
 	nose: string[];
 	/** Clock left at submission, "0:48 left"; null when untimed. */
 	submittedLeft: string | null;
@@ -77,6 +79,7 @@ export type WineResults = {
 	code: string;
 	flightName: string;
 	wineCount: number;
+	grid: Grid;
 	number: number;
 	reveal: Reveal;
 	title: string;
@@ -93,6 +96,7 @@ export type WineResults = {
 export type FlightSummary = {
 	code: string;
 	name: string;
+	grid: Grid;
 	createdAt: string;
 	hostName: string;
 	timerSeconds: number | null;
@@ -117,6 +121,7 @@ export type FlightSummary = {
 export type FlightListItem = {
 	code: string;
 	name: string;
+	grid: Grid;
 	role: 'host' | 'taster';
 	wineCount: number;
 	revealed: number;

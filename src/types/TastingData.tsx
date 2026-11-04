@@ -1,8 +1,12 @@
+import { type Grid } from '../data/grids';
+
 export type TastingData = {
 	id?: string;
 	/** Per-user display number shown as "No. N". Assigned by the server on create. */
 	number?: number;
 	wineType: 'White' | 'Red';
+	/** Which grid the sheet follows. Absent on older tastings, which are all CMS. */
+	grid?: Grid;
 	timerEnabled: boolean;
 	/** Seconds for the whole wine; null with the timer off. See TIMER_PRESETS. */
 	timerSeconds: number | null;
@@ -32,7 +36,8 @@ export type TastingData = {
 	sight?: Record<string, string | string[]>;
 	nose?: Record<string, string[]>;
 	confirmNose?: string;
-	palate?: Record<string, string>;
+	/** Single answers, except the WSET grid's Flavour Characteristics, which is a list. */
+	palate?: Record<string, string | string[]>;
 	conclusion?: {
 		initial?: {
 			/** 2016 grid only; still read so older saved tastings display it. */
@@ -49,6 +54,9 @@ export type TastingData = {
 	photoKey?: string | null;
 	/** The wine as it actually was, entered after tasting. See revealScore.ts. */
 	reveal?: {
+		/** The WSET answer key; absent on a CMS tasting. */
+		qualityAssessment?: string | null;
+		readiness?: string | null;
 		grapeVariety?: string | null;
 		countryOfOrigin?: string | null;
 		regionAppellation?: string | null;

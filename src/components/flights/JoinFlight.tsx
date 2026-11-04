@@ -10,6 +10,7 @@ import { type FlightView } from '../../types/Flight';
 import { CODE_LENGTH, normalizeCode, plural } from './flightLogic';
 import { Avatar, flightService, formatTimer, useRequireLogin } from './FlightBits';
 import { formatTimerSeconds } from '../../data/timerData';
+import { GRIDS } from '../../data/grids';
 
 /** Someone who has the link but hasn't joined: who's hosting, what's poured, and Join. */
 export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined: () => Promise<void> }) {
@@ -186,8 +187,8 @@ export function JoinCodeClient() {
 							</span>
 							<strong>{found.name}</strong>
 							<span className="flight-muted">
-								Hosted by {found.host.name} · {plural(found.wineCount, 'wine')} ·{' '}
-								{formatTimer(found.timerSeconds)}
+								Hosted by {found.host.name} · {GRIDS[found.grid].short} ·{' '}
+								{plural(found.wineCount, 'wine')} · {formatTimer(found.timerSeconds)}
 							</span>
 							{found.members.length > 0 && (
 								<span className="flight-found__people">

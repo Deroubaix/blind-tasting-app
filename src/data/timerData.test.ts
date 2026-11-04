@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { TIMER_PRESETS, type TimerPhase, formatTimerSeconds, phaseSeconds } from './timerData';
+import {
+	TIMER_PRESETS,
+	WSET_TIMER_PRESETS,
+	type TimerPhase,
+	formatTimerSeconds,
+	nextPhaseLabel,
+	phaseSeconds,
+	timerPresets,
+} from './timerData';
 
 const PHASES: TimerPhase[] = ['sight', 'nose', 'palate', 'initialConclusion', 'finalConclusion'];
 
@@ -21,5 +29,25 @@ describe('phaseSeconds', () => {
 	it('gives the nose half of the Certified time', () => {
 		expect(phaseSeconds(675, 'nose')).toBe(339);
 		expect(phaseSeconds(675, 'sight')).toBe(84);
+	});
+});
+
+describe('the WSET grid', () => {
+	it('has the Level 3 pace, 15:00 a wine, and only that', () => {
+		expect(WSET_TIMER_PRESETS.map((p) => formatTimerSeconds(p.seconds))).toEqual(['15:00']);
+		expect(timerPresets('wset')).toBe(WSET_TIMER_PRESETS);
+		expect(timerPresets('cms')).toBe(TIMER_PRESETS);
+	});
+
+	it('gives the initial conclusion nothing and still adds up', () => {
+		const split = PHASES.map((phase) => phaseSeconds(900, phase, 'wset'));
+		expect(split).toEqual([113, 336, 338, 0, 113]);
+		expect(split.reduce((sum, s) => sum + s, 0)).toBe(900);
+	});
+
+	it('hands the palate over to Conclusions, not an initial conclusion', () => {
+		expect(nextPhaseLabel('palate', 'wset')).toBe('Conclusions');
+		expect(nextPhaseLabel('palate')).toBe('Initial Conclusion');
+		expect(nextPhaseLabel('finalConclusion', 'wset')).toBeNull();
 	});
 });

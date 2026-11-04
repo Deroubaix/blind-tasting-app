@@ -1,13 +1,14 @@
 import { z } from 'zod';
 import { MAX_WINES } from '../components/flights/flightLogic';
-import { TIMER_PRESETS } from '../data/timerData';
+import { ALL_TIMER_PRESETS } from '../data/timerData';
 import { revealSchema } from './tasting';
 
-const presetSeconds = TIMER_PRESETS.map((preset) => preset.seconds) as number[];
+const presetSeconds = ALL_TIMER_PRESETS.map((preset) => preset.seconds) as number[];
 
 export const flightCreateSchema = z.object({
 	name: z.string().trim().min(1, 'Give the flight a name').max(40, 'Keep the name under 40 characters'),
 	wineCount: z.number().int().min(1, 'At least one wine').max(MAX_WINES, `At most ${MAX_WINES} wines`),
+	grid: z.enum(['cms', 'wset']).default('cms'),
 	timerSeconds: z
 		.number()
 		.int()

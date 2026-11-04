@@ -38,6 +38,9 @@ const revealText = (max: number) =>
 		.transform((value) => value || null);
 
 export const revealSchema = z.object({
+	// The WSET answer key: the tutor's (or the group's) quality level and readiness call.
+	qualityAssessment: revealText(60),
+	readiness: revealText(80),
 	grapeVariety: revealText(200),
 	countryOfOrigin: revealText(200),
 	regionAppellation: revealText(200),
@@ -60,6 +63,7 @@ export const tastingCreateSchema = z.object({
 	wineType: z.enum(['Red', 'White'], {
 		errorMap: () => ({ message: 'Wine type is required' }),
 	}),
+	grid: z.enum(['cms', 'wset']).optional(),
 	wineName: optionalText(100, 'Wine name'),
 	notes: optionalText(5000, 'Notes'),
 	confirmNose: optionalText(2000, 'Confirm from the Nose'),
@@ -75,7 +79,8 @@ export const tastingCreateSchema = z.object({
 
 	sight: phaseAnswers(z.union([answer, answerList])).nullish(),
 	nose: phaseAnswers(answerList).nullish(),
-	palate: phaseAnswers(answer).nullish(),
+	// Flavour characteristics on the WSET palate are a list; everything else is one answer.
+	palate: phaseAnswers(z.union([answer, answerList])).nullish(),
 	conclusion: z
 		.object({
 			initial: z

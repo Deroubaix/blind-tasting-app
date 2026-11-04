@@ -120,6 +120,7 @@ export async function POST(request: Request) {
 		const data = {
 			userId,
 			wineType: body.wineType,
+			grid: body.grid ?? 'cms',
 			timerEnabled: timed,
 			timerSeconds: timed ? body.timerSeconds : null,
 			timerMode: timed ? (body.timerMode ?? 'guided') : null,

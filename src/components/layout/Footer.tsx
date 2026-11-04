@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Wordmark from './Wordmark';
+import { GRIDS } from '../../data/grids';
 
 export default function Footer() {
 	return (
@@ -17,8 +18,8 @@ export default function Footer() {
 					<Link href="/privacy">Privacy</Link>
 				</nav>
 				<p className="site-footer__legal">
-					Grid based on the 2024 Deductive Tasting Format, © Court of Master Sommeliers, Americas. Not
-					affiliated with or endorsed by the Court of Master Sommeliers.
+					{GRIDS.cms.credit} {GRIDS.wset.credit} Not affiliated with or endorsed by the Court of Master
+					Sommeliers or the Wine &amp; Spirit Education Trust.
 				</p>
 			</div>
 		</footer>

@@ -17,26 +17,40 @@ import { useTastingContext } from '../../components/tasting/TastingContext';
 import { unlockAudio } from '../../utils/beep';
 import {
 	DEFAULT_TIMER_MODE,
-	DEFAULT_TIMER_SECONDS,
-	TIMER_PRESETS,
 	type TimerMode,
 	type TimerPhase,
+	defaultTimerSeconds,
 	formatTimerSeconds,
 	phaseSeconds,
+	timerPresets,
 } from '../../data/timerData';
+import { DEFAULT_GRID, GRIDS, type Grid, gridOf } from '../../data/grids';
 
 const TIMER_MODES: { mode: TimerMode; name: string; label: string }[] = [
 	{ mode: 'guided', name: 'Guided', label: 'A clock per phase' },
 	{ mode: 'exam', name: 'Exam', label: 'One clock per wine' },
 ];
 
-const PHASE_KEYS: { num: string; name: string; key: TimerPhase }[] = [
-	{ num: '01', name: 'Sight', key: 'sight' },
-	{ num: '02', name: 'Nose', key: 'nose' },
-	{ num: '03', name: 'Palate', key: 'palate' },
-	{ num: '04', name: 'Initial', key: 'initialConclusion' },
-	{ num: '05', name: 'Final', key: 'finalConclusion' },
-];
+const PHASE_KEYS: Record<Grid, { num: string; name: string; key: TimerPhase }[]> = {
+	cms: [
+		{ num: '01', name: 'Sight', key: 'sight' },
+		{ num: '02', name: 'Nose', key: 'nose' },
+		{ num: '03', name: 'Palate', key: 'palate' },
+		{ num: '04', name: 'Initial', key: 'initialConclusion' },
+		{ num: '05', name: 'Final', key: 'finalConclusion' },
+	],
+	wset: [
+		{ num: '01', name: 'Appearance', key: 'sight' },
+		{ num: '02', name: 'Nose', key: 'nose' },
+		{ num: '03', name: 'Palate', key: 'palate' },
+		{ num: '04', name: 'Conclusions', key: 'finalConclusion' },
+	],
+};
+
+const GRID_TAGS: Record<Grid, string> = {
+	cms: 'Deduce · Identify · Call it',
+	wset: 'Describe · Assess quality · Readiness',
+};
 
 /**
  * The last settings a taster started with, so a flight of six wines is set up once, not six
@@ -46,6 +60,7 @@ const PHASE_KEYS: { num: string; name: string; key: TimerPhase }[] = [
 const SETTINGS_KEY = 'ledger:start-settings';
 
 type StartSettings = {
+	grid: Grid;
 	soundEnabled: boolean;
 	timerEnabled: boolean;
 	timerSeconds: number;
@@ -75,6 +90,9 @@ function parseSettings(raw: string | null | undefined): Partial<StartSettings> |
 // Nothing else writes the settings while this page is open, so there is nothing to subscribe to.
 const noSubscription = () => () => {};
 
+/** When a whole-wine clock started now runs out. */
+const examDeadline = (seconds: number) => Date.now() + seconds * 1000;
+
 function writeSettings(settings: StartSettings) {
 	try {
 		window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
@@ -89,6 +107,7 @@ export default function TastingStartClient() {
 	const { updateTastingData } = useTastingContext();
 
 	const [wineType, setWineType] = useState<'White' | 'Red' | null>(null);
+	const [gridChoice, setGrid] = useState<Grid | null>(null);
 	// `undefined` while server-rendering, where there is no storage; `null` on a first visit.
 	const rawSettings = useSyncExternalStore(noSubscription, readRawSettings, () => undefined);
 	const saved = useMemo(() => parseSettings(rawSettings), [rawSettings]);
@@ -104,12 +123,17 @@ export default function TastingStartClient() {
 	const [wineName, setWineName] = useState('');
 	const [introHidden, setIntroHidden] = useState(false);
 
-	const savedSeconds = TIMER_PRESETS.find((preset) => preset.seconds === saved?.timerSeconds)?.seconds;
+	const grid = gridChoice ?? (saved ? gridOf(saved.grid) : DEFAULT_GRID);
+	const presets = timerPresets(grid);
+	// A pace belongs to one grid, so a remembered 4:00 means nothing once the taster switches to WSET.
+	const savedSeconds = presets.find((preset) => preset.seconds === saved?.timerSeconds)?.seconds;
+	const chosenSeconds = presets.find((preset) => preset.seconds === secondsChoice)?.seconds;
 	const savedMode = saved?.timerMode === 'guided' || saved?.timerMode === 'exam' ? saved.timerMode : undefined;
 	const soundEnabled = soundChoice ?? saved?.soundEnabled ?? true;
 	const timerEnabled = timerChoice ?? saved?.timerEnabled ?? !firstVisit;
-	const timerSeconds = secondsChoice ?? savedSeconds ?? DEFAULT_TIMER_SECONDS;
+	const timerSeconds = chosenSeconds ?? savedSeconds ?? defaultTimerSeconds(grid);
 	const timerMode = modeChoice ?? savedMode ?? DEFAULT_TIMER_MODE;
+	const firstPhase = PHASE_KEYS[grid][0].name;
 
 	const handleStart = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -123,19 +147,19 @@ export default function TastingStartClient() {
 			return;
 		}
 
-		writeSettings({ soundEnabled, timerEnabled, timerSeconds, timerMode });
+		writeSettings({ grid, soundEnabled, timerEnabled, timerSeconds, timerMode });
 		if (soundEnabled && timerEnabled) {
 			// This tap is what lets the time-up beep sound on iOS later. See beep.ts.
 			unlockAudio();
 		}
-
 		updateTastingData({
 			wineType,
+			grid,
 			timerEnabled,
 			timerSeconds: timerEnabled ? timerSeconds : null,
 			timerMode: timerEnabled ? timerMode : undefined,
 			// Sight starts the moment this is pressed, so the whole-wine clock starts here too.
-			timerEndsAt: timerEnabled && timerMode === 'exam' ? Date.now() + timerSeconds * 1000 : undefined,
+			timerEndsAt: timerEnabled && timerMode === 'exam' ? examDeadline(timerSeconds) : undefined,
 			soundEnabled,
 			wineName: wineName.trim() || '',
 			conclusion: { initial: {}, final: {} },
@@ -172,9 +196,10 @@ export default function TastingStartClient() {
 					</h2>
 					<ol className="start-intro__steps">
 						<li>
-							<strong>Five phases, in the order of the grid:</strong> Sight, Nose, Palate, then an initial
-							and a final conclusion. Tap the terms that describe the wine; tap a chosen term again to
-							clear it.
+							<strong>Pick a grid, then work it in order.</strong> The CMS grid runs Sight, Nose, Palate,
+							then an initial and a final conclusion; the WSET Level 3 SAT runs Appearance, Nose, Palate,
+							then your conclusions on quality and readiness. Tap the terms that describe the wine; tap a
+							chosen term again to clear it.
 						</li>
 						<li>
 							<strong>The clock is optional.</strong> Your first tasting is untimed so you can learn the
@@ -183,17 +208,45 @@ export default function TastingStartClient() {
 						</li>
 						<li>
 							<strong>Then the reveal.</strong> Save the tasting, unwrap the bottle and enter what&apos;s
-							on the label. Your call is scored against it, field by field.
+							on the label, or the tutor&apos;s answer key. Your call is scored against it, field by
+							field.
 						</li>
 					</ol>
 				</section>
 			)}
 
 			<form onSubmit={handleStart}>
-				{/* ── Step 1: Wine type ── */}
+				{/* ── Step 1: Grid ── Remembered like the other settings, so a WSET student picks it once. */}
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">01</span>
+						<span className="item-label">Grid</span>
+						<span className="start-step-hint">{GRIDS[grid].title}</span>
+					</header>
+
+					<div className="start-wine-grid" role="radiogroup" aria-label="Tasting grid">
+						{(Object.keys(GRIDS) as Grid[]).map((option) => (
+							<button
+								key={option}
+								type="button"
+								role="radio"
+								aria-checked={grid === option}
+								className={`start-wine-card start-grid-card${grid === option ? ' start-wine-card--selected' : ''}`}
+								onClick={() => setGrid(option)}
+							>
+								<div>
+									<h3 className="start-wine-name">{GRIDS[option].name}</h3>
+									<p className="start-wine-tags">{GRID_TAGS[option]}</p>
+								</div>
+							</button>
+						))}
+					</div>
+				</section>
+
+				{/* ── Step 2: Wine type ── */}
+				<section className="start-step">
+					<header className="start-step-label">
+						<span className="start-step-num">02</span>
 						<span className="item-label">Wine type</span>
 						<span className="start-step-hint">required</span>
 					</header>
@@ -237,10 +290,10 @@ export default function TastingStartClient() {
 					</div>
 				</section>
 
-				{/* ── Step 2: Session settings ── */}
+				{/* ── Step 3: Session settings ── */}
 				<section className="start-step">
 					<header className="start-step-label">
-						<span className="start-step-num">02</span>
+						<span className="start-step-num">03</span>
 						<span className="item-label">Session settings</span>
 						<span className="start-step-hint">optional</span>
 					</header>
@@ -293,7 +346,7 @@ export default function TastingStartClient() {
 							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
 						>
 							<div className="start-duration" role="radiogroup" aria-label="Time per wine">
-								{TIMER_PRESETS.map((preset) => (
+								{presets.map((preset) => (
 									<button
 										key={preset.seconds}
 										type="button"
@@ -336,12 +389,12 @@ export default function TastingStartClient() {
 					</div>
 				</section>
 
-				{/* ── Step 3: Label ── A name for the taster's records, not the wine: typing the wine here
+				{/* ── Step 4: Label ── A name for the taster's records, not the wine: typing the wine here
 				    gave the answer away before tasting. The wine itself is entered at the reveal. Still
 				    saved as `wineName`, so older tastings keep working. */}
 				<section className="start-step">
 					<header className="start-step-label">
-						<span className="start-step-num">03</span>
+						<span className="start-step-num">04</span>
 						<span className="item-label">Label</span>
 						<span className="start-step-hint">optional — for your records</span>
 					</header>
@@ -372,15 +425,15 @@ export default function TastingStartClient() {
 						<IconArrowRight size={16} />
 					</button>
 					<p className="start-hint">
-						<span className="start-hint__accent">Sight</span> begins immediately
+						<span className="start-hint__accent">{firstPhase}</span> begins immediately
 					</p>
 				</div>
 			</form>
 
 			{/* ── Phase preview rail ── */}
 			<div className="start-phase-rail" aria-hidden="true">
-				{PHASE_KEYS.map((p) => {
-					const seconds = phaseSeconds(timerSeconds, p.key);
+				{PHASE_KEYS[grid].map((p) => {
+					const seconds = phaseSeconds(timerSeconds, p.key, grid);
 					// In exam mode the split is only a pacing guide, so it is shown muted.
 					const muted = !timerEnabled || timerMode === 'exam';
 					return (
@@ -398,8 +451,8 @@ export default function TastingStartClient() {
 			{/* The tasting pages have no footer, and every tasting starts here, so the credit and
 			    disclaimer the footer carries elsewhere live on this page too. */}
 			<p className="start-legal">
-				Grid based on the 2024 Deductive Tasting Format, © Court of Master Sommeliers, Americas. The
-				Sommelier&apos;s Ledger is not affiliated with or endorsed by the Court of Master Sommeliers.
+				{GRIDS.cms.credit} {GRIDS.wset.credit} The Sommelier&apos;s Ledger is not affiliated with or endorsed by
+				the Court of Master Sommeliers or the Wine &amp; Spirit Education Trust.
 			</p>
 		</main>
 	);

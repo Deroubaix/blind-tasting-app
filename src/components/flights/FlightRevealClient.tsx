@@ -86,7 +86,9 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 						What was wine {number}?
 					</h1>
 					<p className="reveal-form__lede">
-						Copy it from the label once. Everyone who submitted is scored at the same moment.
+						{flight.grid === 'wset'
+							? 'Enter the quality and readiness from the answer key, and the wine if you want it scored too. Everyone who submitted is scored at the same moment.'
+							: 'Copy it from the label once. Everyone who submitted is scored at the same moment.'}
 					</p>
 
 					{!revealed && tasting.length > 0 && (
@@ -111,7 +113,11 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 						</div>
 					)}
 
-					<RevealFields value={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))} />
+					<RevealFields
+						grid={flight.grid}
+						value={draft}
+						onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
+					/>
 				</div>
 
 				<div className="reveal-form__actions">
