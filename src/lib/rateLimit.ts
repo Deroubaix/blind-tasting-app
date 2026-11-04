@@ -33,6 +33,8 @@ export const RATE_LIMITS = {
 	flightCode: { name: 'flight-code', limit: 30, windowMs: 15 * MINUTE },
 	/** Wrong passwords when deleting an account. */
 	deleteAccount: { name: 'delete-account', limit: 5, windowMs: 15 * MINUTE },
+	// Building the archive reads every photo, so repeated downloads are the costliest request there is.
+	exportAccount: { name: 'export-account', limit: 10, windowMs: 60 * MINUTE },
 } satisfies Record<string, RateLimitRule>;
 
 /**

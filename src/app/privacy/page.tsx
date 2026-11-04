@@ -121,6 +121,10 @@ export default function PrivacyPage() {
 					<p>You can ask to see, correct, export or delete your data, or object to how it is used.</p>
 					<ul>
 						<li>
+							<strong>Download everything yourself</strong> from your <Link href="/account">Account</Link>{' '}
+							page, as a ZIP of JSON files and your label photos.
+						</li>
+						<li>
 							<strong>Delete everything yourself</strong> from your <Link href="/account">Account</Link>{' '}
 							page.
 						</li>

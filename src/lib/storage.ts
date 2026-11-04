@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { mkdir, rm, stat, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, stat, unlink, writeFile } from 'node:fs/promises';
 import { dirname, join, normalize, resolve, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { r2Delete, r2DeletePrefix, r2Exists, r2Size, signDownload, signUpload } from './storage-r2';
@@ -92,6 +92,22 @@ export async function deleteUserPhotos(userId: string) {
 		return;
 	}
 	await rm(localPath(prefix), { recursive: true, force: true });
+}
+
+/** The whole photo, for the data export. Null when nothing is stored under that key. */
+export async function readPhoto(key: string): Promise<Uint8Array | null> {
+	if (storageDriver() === 'r2') {
+		const response = await fetch(await signDownload(key));
+		return response.ok ? new Uint8Array(await response.arrayBuffer()) : null;
+	}
+	try {
+		return new Uint8Array(await readFile(localPath(key)));
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+			return null;
+		}
+		throw error;
+	}
 }
 
 /** Size in bytes of a stored photo, or null when there is nothing under that key. */

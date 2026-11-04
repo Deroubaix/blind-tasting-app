@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { IconTrash } from '@tabler/icons-react';
+import { IconDownload, IconTrash } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
@@ -34,6 +34,8 @@ export default function AccountPanel() {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [deleting, setDeleting] = useState(false);
+	const [exporting, setExporting] = useState(false);
+	const [exportError, setExportError] = useState<string | null>(null);
 	// Set once the account is gone, so signing out doesn't also send the page to log in.
 	const deletedRef = useRef(false);
 
@@ -115,6 +117,29 @@ export default function AccountPanel() {
 		});
 	};
 
+	// Fetched rather than linked, so a refusal (rate limit, expired session) reads as a message
+	// instead of a downloaded error file.
+	const download = async () => {
+		setExporting(true);
+		setExportError(null);
+		try {
+			const response = await fetch('/api/user/export');
+			if (!response.ok) {
+				const body = await response.json().catch(() => null);
+				throw new Error(body?.message || 'The export could not be built. Please try again.');
+			}
+			const name = response.headers.get('Content-Disposition')?.match(/filename="([^"]+)"/)?.[1];
+			const url = URL.createObjectURL(await response.blob());
+			const link = Object.assign(document.createElement('a'), { href: url, download: name ?? 'export.zip' });
+			link.click();
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			setExportError(err instanceof Error ? err.message : 'The export could not be built. Please try again.');
+		} finally {
+			setExporting(false);
+		}
+	};
+
 	const memberSince = user.created_at ? formatDate(user.created_at) : null;
 
 	return (
@@ -140,6 +165,30 @@ export default function AccountPanel() {
 				<p className="account-card__note">
 					What is stored and why is set out in the <Link href="/privacy">privacy notice</Link>.
 				</p>
+			</section>
+
+			<section className="account-card" aria-labelledby="account-export-heading">
+				<h2 className="account-card__heading" id="account-export-heading">
+					Download your data
+				</h2>
+				<p className="account-card__text">
+					A ZIP with your account details, every tasting with its reveal and score, your flights and every
+					label photo. JSON files and JPEGs, nothing you need the app to read.
+				</p>
+				<button
+					type="button"
+					className="btn-primary account-export__btn"
+					onClick={download}
+					disabled={exporting}
+				>
+					<IconDownload size={16} aria-hidden="true" />
+					{exporting ? 'Building the archive…' : 'Download my data'}
+				</button>
+				{exportError && (
+					<p className="account-delete__error" role="alert">
+						{exportError}
+					</p>
+				)}
 			</section>
 
 			<section className="account-card account-card--danger" aria-labelledby="account-delete-heading">
