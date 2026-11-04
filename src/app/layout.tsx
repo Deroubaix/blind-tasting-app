@@ -2,6 +2,7 @@ import '../styles/main.scss';
 import React, { type ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { Manrope, Lora } from 'next/font/google';
+import { BRAND } from '../data/brand';
 import { AuthProvider } from '../components/auth/AuthProvider';
 import ToastProvider from '../toast/ToastProvider';
 import ModalProvider from '../components/modal/ModalProvider';
@@ -26,8 +27,8 @@ const lora = Lora({
 // One name everywhere. Pages set only their own part of the title; the template adds the rest.
 export const metadata: Metadata = {
 	title: {
-		default: "The Sommelier's Ledger",
-		template: "%s — The Sommelier's Ledger",
+		default: BRAND.name,
+		template: `%s — ${BRAND.name}`,
 	},
 	description:
 		'Timed practice for the Court of Master Sommeliers deductive tasting grid, with an archive of every tasting you save.',

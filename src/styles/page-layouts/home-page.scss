@@ -1,662 +1,1217 @@
+@use 'sass:list';
 @use '../abstracts' as *;
-@use 'sass:color';
+// Home page: the ledger look. Hairline rules, double rules above totals, serif figures, square corners.
 
-// Landing page. Uses the shared design tokens.
+$rule-soft: rgba($color-white, 0.08);
+$rule: rgba($color-white, 0.12);
+$rule-folio: rgba($color-white, 0.14);
+$rule-double: 3px double rgba($color-white, 0.24);
+$taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 
-$hp-gutter: clamp(20px, 4vw, 56px);
-$hp-max: 1320px;
-$hp-radius: 6px;
-$hp-radius-lg: 10px;
+@mixin figures {
+	font-family: $font-body-normal-family;
+	font-variant-numeric: lining-nums tabular-nums;
+}
 
-.home-page {
+@mixin ledger-label {
+	font-size: $text-11;
+	font-weight: $font-weight-bold;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: $color-text-muted;
+}
+
+.home {
 	padding-top: var(--navbar-height_approx);
+	background-color: $color-black;
+	color: $color-white;
+	font-family: $font-display-normal-family;
 
-	// Shared atoms
-
-	.hp-eyebrow {
-		@include eyebrow-label($text-11, $color-display-accent);
-		display: inline-flex;
-		align-items: center;
-		gap: 0.55rem;
-		line-height: 1;
-
-		&::before {
-			content: '';
-			width: 6px;
-			height: 6px;
-			border-radius: 50%;
-			background: $color-display-accent;
-			box-shadow: 0 0 12px rgba($color-display-accent, 0.55);
-			flex-shrink: 0;
-		}
-	}
-
-	.hp-link-quiet {
-		@include quiet-link;
-
-		display: inline-flex;
-		align-items: center;
-	}
-
-	// Hero
-
-	.hp-hero {
-		position: relative;
-		padding: 5rem $hp-gutter 6rem;
-		max-width: $hp-max;
-		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 1.05fr 0.95fr;
-		gap: 6rem;
-		align-items: center;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			pointer-events: none;
-			background:
-				radial-gradient(900px 600px at 5% 30%, rgba(74, 14, 14, 0.45), transparent 65%),
-				radial-gradient(700px 500px at 95% 85%, rgba(255, 179, 173, 0.08), transparent 70%);
-			z-index: 0;
-		}
-
-		> * {
-			position: relative;
-			z-index: 1;
-		}
-
-		@include responsive($breakpoint-tablet) {
-			grid-template-columns: 1fr;
-			gap: 4rem;
-			padding-top: 3rem;
-			padding-bottom: 4rem;
-			min-height: auto;
-		}
-	}
-
-	.hp-hero__left {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-		max-width: 620px;
-	}
-
-	// The one h1 in the app that outgrows the shared screen title, and the only one that
-	// goes extrabold — this is the marketing hero, and it is the only h1 on the page.
-	h1 {
-		font-size: clamp(2.8rem, 5.8vw, 5.2rem);
-		font-weight: $font-weight-extrabold;
-		line-height: 0.98;
-		letter-spacing: -0.045em;
-	}
-
-	.hp-hero__italic {
-		@include serif-italic-accent;
-
-		font-size: 1.02em;
-		display: inline-block;
-		transform: translateY(0.04em);
-
-		&::after {
-			content: '.';
-			color: $color-display-accent;
-		}
-	}
-
-	.hp-hero__lede {
-		font-size: 1.05rem;
-		line-height: 1.7;
-		color: $color-text-secondary;
-		max-width: 48ch;
-		margin: 0;
-	}
-
-	.hp-hero__ctas {
-		display: flex;
-		align-items: center;
-		gap: 1.5rem;
-		flex-wrap: wrap;
-		margin-top: 0.5rem;
-	}
-
-	// Hero right: stacked preview cards
-
-	.hp-hero__right {
-		position: relative;
-		height: 480px;
-
-		@include responsive($breakpoint-tablet) {
-			height: 460px;
-			max-width: 520px;
-			margin: 0 auto;
-			width: 100%;
-		}
-
-		// The two cards overlap by absolute positioning, which needs a fixed-height box
-		// to overlap inside. There is no room for that at this width, so they stack and
-		// the box sizes to them.
-		@include responsive($breakpoint-mobile) {
-			height: auto;
-			display: flex;
-			flex-direction: column;
-			gap: $spacing-lg;
-		}
-	}
-
-	.hp-preview {
-		position: absolute;
-
-		@include responsive($breakpoint-mobile) {
-			position: static;
-		}
-
-		background: linear-gradient(180deg, $color-darkGrey 0%, rgba(28, 27, 27, 0.96) 100%);
-		border: 1px solid $tasting-border;
-		border-radius: $hp-radius-lg;
-		box-shadow:
-			0 30px 80px rgba(0, 0, 0, 0.55),
-			0 0 0 1px rgba(255, 179, 173, 0.04);
-
-		&--main {
-			// Hangs 10% past the hero column on desktop, where there is gutter to spare.
-			inset: 0 -10% 0 0;
-			padding: 1.6rem;
-			display: flex;
-			flex-direction: column;
-			gap: 1.1rem;
-			z-index: 2;
-
-			// Once the hero is one column that overhang is 10% of the viewport, which
-			// scrolls the whole page sideways.
-			@include responsive($breakpoint-tablet) {
-				inset: 0;
-			}
-		}
-
-		&--ledger {
-			// Hangs off the main card's bottom-right corner where there is gutter for it.
-			width: 62%;
-			top: auto;
-			bottom: -2.5rem;
-			right: -2rem;
-			padding: 1.1rem 1.25rem;
-			z-index: 3;
-			background: linear-gradient(180deg, $color-surface-variant 0%, $color-darkGrey 100%);
-
-			// Full width under the main card rather than hidden: "your sessions are kept"
-			// is half of what the hero is saying, and a phone should still hear it.
-			@include responsive($breakpoint-mobile) {
-				width: 100%;
-				bottom: auto;
-				right: auto;
-			}
-		}
-
-		&__head {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding-bottom: 1rem;
-			border-bottom: 1px solid $tasting-border;
-		}
-
-		&__phase {
-			display: flex;
-			align-items: center;
-			gap: 0.7rem;
-		}
-
-		&__timer {
-			display: flex;
-			flex-direction: column;
-			align-items: flex-end;
-			gap: 0.25rem;
-		}
-
-		&__foot {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding-top: 1rem;
-			border-top: 1px solid $tasting-border;
-			margin-top: auto;
-		}
-	}
-
-	.hp-phase-pip {
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		border: 1.5px solid $color-accent;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		font-size: $text-10-5;
-		color: $color-accent-light;
-		font-weight: $font-weight-bold;
-		font-variant-numeric: tabular-nums;
-		font-family: $font-display-normal-family;
-		flex-shrink: 0;
-	}
-
-	// Type is .item-label; the block is what drops .hp-phase-sub onto its own line.
-	.hp-phase-title {
-		display: block;
-	}
-
-	.hp-phase-sub {
+	em {
 		font-family: $font-body-normal-family;
 		font-style: italic;
-		color: $color-text-secondary;
-		font-size: $text-13-5;
-		margin-left: 0.5rem;
+		font-weight: 500;
+		letter-spacing: -0.02em;
+	}
+}
+
+// ── Shared pieces ─────────────────────────────────────────────────────────────
+.home-muted {
+	color: $color-text-secondary;
+	font-size: $text-13;
+}
+
+.home-label {
+	@include ledger-label;
+}
+
+.home-kicker {
+	@include ledger-label;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: $color-text-secondary;
+
+	&::before {
+		content: '';
+		width: 5px;
+		height: 5px;
+		background: $color-text-muted;
+	}
+}
+
+.home-eyebrow {
+	@include ledger-label;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	letter-spacing: 0.16em;
+	color: $color-text-secondary;
+	margin-bottom: 20px;
+
+	&::before {
+		content: '';
+		width: 6px;
+		height: 6px;
+		background: $color-text-muted;
 	}
 
-	.hp-timer__label {
-		font-size: $text-9;
-		letter-spacing: 0.22em;
-		text-transform: uppercase;
+	&--plain::before {
+		display: none;
+	}
+}
+
+.home-no {
+	@include figures;
+	font-size: $text-14;
+	color: $color-text-muted;
+}
+
+.home-figure {
+	@include figures;
+	font-weight: 500;
+	color: $color-white;
+	line-height: 1;
+	white-space: nowrap;
+
+	span {
 		color: $color-text-muted;
-		font-weight: $font-weight-bold;
-		font-family: $font-display-normal-family;
 	}
 
-	.hp-timer__value {
-		font-size: $text-timer;
-		font-weight: $font-weight-medium;
-		letter-spacing: 0.04em;
+	&--sm {
+		font-size: 1.05rem;
+	}
+
+	&--md {
+		font-size: 1.25rem;
+	}
+
+	&--lg {
+		font-size: 2.25rem;
+	}
+
+	&--xl {
+		font-size: 2.1rem;
+	}
+
+	&--warn {
+		color: $color-warning;
+	}
+
+	&--pending {
+		font-style: italic;
+		color: $color-text-secondary;
+		font-size: 1.05rem;
+	}
+}
+
+.home-link {
+	font-size: $text-15;
+	font-weight: $font-weight-semibold;
+	color: $tasting-accent-light;
+	border-bottom: 1px solid rgba($color-white, 0.14);
+	padding-bottom: 2px;
+
+	&:after {
+		display: none;
+	}
+
+	&:hover {
 		color: $color-white;
-		font-variant-numeric: tabular-nums;
-		line-height: 1;
-		font-family: $font-display-normal-family;
+	}
+}
+
+.home-ctas {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 16px 24px;
+
+	&--tight {
+		gap: 12px;
+	}
+}
+
+.home .home-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 48px;
+	padding: 0 24px;
+	border-radius: 3px;
+
+	&--outline {
+		@include action-label;
+		background: transparent;
+		border: 1px solid rgba($color-white, 0.22);
+		color: $color-white;
+
+		&:after {
+			display: none;
+		}
+
+		&:hover {
+			border-color: $color-white;
+		}
+	}
+}
+
+.home-note {
+	margin: 18px 0 0;
+	font-size: $text-13;
+	color: $color-text-secondary;
+
+	&--quiet {
+		margin-top: 36px;
+		font-size: $text-12;
+		color: $color-text-muted;
+	}
+}
+
+.home-card {
+	background: $color-darkGrey;
+	border: 1px solid $rule;
+	border-radius: 4px;
+	padding: 20px 22px 16px;
+
+	&__top {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 6px;
 	}
 
-	.hp-field-q {
-		font-size: $text-11;
+	&__title {
+		margin: 0 0 12px;
+		font-size: $text-16;
 		font-weight: $font-weight-bold;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: rgba(228, 228, 204, 0.78);
-		margin-bottom: 0.65rem;
+		letter-spacing: -0.01em;
+		line-height: 1.3;
+	}
+}
+
+// Numbered rows with a folio rule between the number and the text.
+.home-rows {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.home-row {
+	display: grid;
+	grid-template-columns: 34px minmax(0, 1fr) auto;
+	column-gap: 12px;
+	align-items: center;
+	padding: 8px 0;
+	border-top: 1px solid $rule-soft;
+
+	&__n {
+		@include figures;
+		align-self: stretch;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 10px;
+		border-right: 1px solid $rule-folio;
+		font-size: $text-13;
+		color: $color-text-muted;
+	}
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		font-size: $text-14;
+		color: $color-white;
+
+		&:after {
+			display: none;
+		}
+	}
+}
+
+// A total under a double rule, as in an account book.
+.home-total {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 2px;
+	padding-top: 12px;
+	border-top: $rule-double;
+	font-size: $text-13;
+	color: $color-text-secondary;
+
+	&--card {
+		margin-top: auto;
+	}
+
+	&--quiet {
+		border-top-color: rgba($color-white, 0.12);
+	}
+}
+
+.home-dot {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: $text-11;
+	font-weight: 800;
+	color: $color-black;
+
+	@for $i from 1 through list.length($taster-tints) {
+		&--t#{$i - 1} {
+			background: list.nth($taster-tints, $i);
+		}
+	}
+}
+
+// ── Hero ──────────────────────────────────────────────────────────────────────
+.home-hero {
+	max-width: 1300px;
+	margin: 0 auto;
+	padding: 88px 56px 96px;
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 600px);
+	gap: 48px;
+	align-items: center;
+
+	&__title {
+		margin: 0 0 26px;
+		font-size: clamp(2.5rem, 5vw, 4.1rem);
+		font-weight: $font-weight-bold;
+		letter-spacing: -0.045em;
+		line-height: 1;
+		text-wrap: balance;
+	}
+
+	&__lede {
+		margin: 0 0 36px;
+		max-width: 50ch;
+		font-size: 1.0625rem;
+		line-height: 1.65;
+		color: $color-text-secondary;
+	}
+
+	&__visual {
+		display: grid;
+		grid-template-columns: 250px minmax(0, 1fr);
+		gap: 24px;
+		align-items: end;
+
+		&--recent {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__moment {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	// Logged in: the recent tastings list is narrower than the two sample moments.
+	&--recent {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+		gap: 56px;
+	}
+
+	@include responsive(64rem) {
+		grid-template-columns: 1fr;
+		padding: 56px 40px 72px;
+
+		&__visual {
+			max-width: 640px;
+		}
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: 40px 20px 56px;
+
+		// The phone shows the scorecard alone.
+		&__visual {
+			grid-template-columns: 1fr;
+		}
+
+		&__moment--taste {
+			display: none;
+		}
+
+		// Logged in on the phone: the title, the two buttons and the list. Nothing else.
+		&--recent &__lede,
+		&--recent .home-link,
+		&--recent .home-note {
+			display: none;
+		}
+	}
+}
+
+.home-reveal {
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+}
+
+.home-phone {
+	height: 460px;
+	border-radius: 32px;
+	border: 1px solid $rule;
+	background: $color-black;
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+	overflow: hidden;
+	padding-top: 24px;
+
+	&__bar {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		padding: 8px 14px 12px;
+		background: $color-darkGrey;
+		border-bottom: 1px solid $rule-soft;
 
-		&__hint {
-			font-size: $text-10;
-			letter-spacing: 0.12em;
-			color: $color-text-muted;
-			font-weight: $font-weight-semibold;
+		> span:first-child {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			font-size: $text-15;
 		}
 	}
 
-	.hp-swatch-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.5rem;
-		margin-bottom: 1.2rem;
+	&__clock {
+		font-family: $font-mono-family;
+		font-size: $text-15;
+		font-weight: 600;
+		padding: 6px 9px;
+		border: 1px solid $rule;
+		border-radius: 3px;
 	}
 
-	.hp-swatch {
-		aspect-ratio: 3 / 1;
-		border-radius: 5px;
+	&__steps {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 3px;
+		padding: 10px 14px;
+
+		span {
+			height: 3px;
+			background: $rule;
+
+			&.is-done {
+				background: $color-text-muted;
+			}
+
+			&.is-on {
+				background: $tasting-accent-light;
+			}
+		}
+	}
+
+	&__card {
+		margin: 0 12px 10px;
+		padding: 11px 10px;
+		background: $color-darkGrey;
+		border: 1px solid $rule-soft;
+		border-radius: 4px;
 		display: flex;
 		flex-direction: column;
-		justify-content: flex-end;
-		padding: 0.3rem 0.4rem;
-		border: 1.5px solid transparent;
-		position: relative;
-		transition: transform 0.25s ease;
+		gap: 9px;
+	}
 
-		&:hover {
-			transform: translateY(-2px);
-		}
+	&__opts {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		gap: 3px;
 
-		&--selected {
-			border-color: $color-accent-light;
-			box-shadow: 0 0 0 3px rgba(139, 69, 87, 0.18);
-		}
-
-		&__check {
-			position: absolute;
-			top: 0.35rem;
-			right: 0.35rem;
-			width: 14px;
-			height: 14px;
-			border-radius: 50%;
-			background: $color-accent;
+		span {
+			height: 30px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			color: $color-white;
-			font-size: $text-9-5;
-			font-weight: $font-weight-extrabold;
-		}
+			border-radius: 3px;
+			font-size: $text-11;
+			background: #211f1f;
+			border: 1px solid $rule-soft;
+			color: $color-text-secondary;
 
-		&__name {
-			font-size: $text-9;
-			font-weight: $font-weight-bold;
-			letter-spacing: 0.05em;
-			text-transform: uppercase;
-			color: rgba(228, 228, 204, 0.92);
-			text-align: center;
-			font-family: $font-display-normal-family;
-		}
-	}
-
-	.hp-pill-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-		margin-bottom: 1.1rem;
-	}
-
-	.hp-pill {
-		font-size: $text-11;
-		padding: 0.4rem 0.75rem;
-		border-radius: $hp-radius;
-		border: 1px solid $tasting-border-mid;
-		color: $color-text-secondary;
-		font-weight: $font-weight-medium;
-		letter-spacing: 0.02em;
-		font-family: $font-display-normal-family;
-		transition:
-			border-color 0.2s ease,
-			color 0.2s ease,
-			background 0.2s ease;
-
-		&--on {
-			border-color: $color-accent;
-			color: $color-accent-light;
-			background: rgba(139, 69, 87, 0.15);
-			font-weight: $font-weight-semibold;
-		}
-	}
-
-	.hp-progress {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-
-		&__bar {
-			width: 120px;
-			height: 3px;
-			background: $tasting-border;
-			border-radius: 2px;
-			overflow: hidden;
-			position: relative;
-
-			&::after {
-				content: '';
-				position: absolute;
-				inset: 0 50% 0 0;
-				background: $color-accent;
-				border-radius: 2px;
+			&.is-on {
+				background: rgba($color-accent, 0.22);
+				border-color: $color-accent;
+				color: $color-white;
 			}
 		}
-
-		&__pct {
-			font-size: $text-11;
-			color: $color-accent-light;
-			font-weight: $font-weight-semibold;
-			font-variant-numeric: tabular-nums;
-			font-family: $font-display-normal-family;
-		}
 	}
+}
 
-	.hp-next-cue {
-		font-size: $text-10-5;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: $color-white;
-		font-weight: $font-weight-bold;
-		font-family: $font-display-normal-family;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
+.home-recent .home-row {
+	padding: 12px 0;
 
-		&::after {
-			content: '→';
-			color: $color-accent-light;
-		}
-	}
-
-	// Ledger card internals
-
-	.hp-ledger__head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 0.85rem;
-	}
-
-	.hp-ledger__badge {
-		font-size: $text-9;
-		padding: 0.2rem 0.5rem;
-		border-radius: 3px;
-		background: rgba($color-status-ok, 0.16);
-		color: $color-status-ok;
-		border: 1px solid rgba($color-status-ok, 0.3);
-		font-weight: $font-weight-bold;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		font-family: $font-display-normal-family;
-	}
-
-	.hp-ledger__when {
-		font-size: $text-9-5;
-		color: $color-text-muted;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
+	&__text strong {
+		font-size: $text-14;
 		font-weight: $font-weight-semibold;
-		font-family: $font-display-normal-family;
 	}
+}
 
-	.hp-ledger__title {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-size: 1.05rem;
-		color: $color-white;
-		margin: 0 0 0.15rem;
-		line-height: 1.2;
-		font-weight: $font-weight-regular;
-	}
+// ── Sections with a folio margin ──────────────────────────────────────────────
+.home-section {
+	border-top: 1px solid $rule-soft;
 
-	.hp-ledger__sub {
-		font-size: $text-11-5;
-		color: $color-text-secondary;
-		margin: 0 0 0.85rem;
-	}
+	&--tint {
+		background: $color-darkGrey;
 
-	.hp-ledger__result {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding-top: 0.7rem;
-		border-top: 1px solid $tasting-border;
-
-		&-label {
-			font-size: $text-9;
-			color: $color-text-muted;
-			letter-spacing: 0.18em;
-			text-transform: uppercase;
-			font-weight: $font-weight-bold;
-			font-family: $font-display-normal-family;
-		}
-
-		&-value {
-			font-size: $text-15;
-			color: $color-status-ok;
-			font-weight: $font-weight-semibold;
-			font-variant-numeric: tabular-nums;
-			font-family: $font-display-normal-family;
+		.home-card {
+			background: #211f1f;
 		}
 	}
 
-	// Method section
-
-	.hp-method {
-		padding: 6rem $hp-gutter;
-		max-width: $hp-max;
+	&__inner {
+		max-width: 1300px;
 		margin: 0 auto;
-		border-top: 1px solid $tasting-border;
-	}
-
-	.hp-method__head {
-		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: 3rem;
-		margin-bottom: 3.5rem;
-		flex-wrap: wrap;
-
-		&-left {
-			max-width: 480px;
-			display: flex;
-			flex-direction: column;
-			gap: 1.2rem;
-		}
-	}
-
-	.hp-method__h2 {
-		font-size: clamp(2rem, 3.5vw, 3rem);
-	}
-
-	.hp-method__italic {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-weight: $font-weight-regular;
-		color: $color-display-accent;
-		font-size: 1.05em;
-	}
-
-	.hp-method__desc {
-		font-size: $text-15;
-		color: $color-text-secondary;
-		line-height: 1.75;
-		max-width: 38ch;
-		margin: 0;
-	}
-
-	// Phase grid
-
-	.hp-phase-grid {
-		position: relative;
+		padding: 104px 56px;
+		box-sizing: border-box;
 		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		border-top: 1px solid $tasting-border-mid;
+		grid-template-columns: 72px minmax(0, 1fr);
+		column-gap: 36px;
+	}
 
-		&::before {
-			content: '';
-			position: absolute;
-			top: -3px;
-			left: 0;
-			width: 20%;
-			height: 5px;
-			background: $color-display-accent;
+	&__body {
+		min-width: 0;
+	}
+
+	@include responsive(64rem) {
+		&__inner {
+			padding: 72px 40px;
+			grid-template-columns: 48px minmax(0, 1fr);
+			column-gap: 24px;
 		}
+	}
 
-		@include responsive($breakpoint-tablet) {
-			grid-template-columns: repeat(2, 1fr);
+	// On phone the folio sits above the section, not in a margin.
+	@include responsive($breakpoint-mobile) {
+		&__inner {
+			padding: 56px 20px;
+			grid-template-columns: 1fr;
+			row-gap: 12px;
+		}
+	}
+}
 
-			&::before {
+.home-folio {
+	@include figures;
+	align-self: start;
+	text-align: right;
+	padding-right: 20px;
+	border-right: 1px solid $rule-folio;
+	font-size: $text-16;
+	color: $color-text-muted;
+
+	@include responsive($breakpoint-mobile) {
+		text-align: left;
+		border-right: none;
+		padding-right: 0;
+	}
+}
+
+.home-h2 {
+	margin: 0 0 20px;
+	font-size: clamp(2rem, 3.5vw, 2.75rem);
+	font-weight: $font-weight-bold;
+	letter-spacing: -0.035em;
+	line-height: 1.05;
+
+	&--lg {
+		margin: 0;
+		font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+		letter-spacing: -0.04em;
+		line-height: 1;
+	}
+
+	&--xl {
+		font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+		letter-spacing: -0.045em;
+		line-height: 1;
+	}
+}
+
+.home-lede {
+	margin: 0 0 18px;
+	font-size: $text-16;
+	line-height: 1.65;
+	color: $color-text-secondary;
+}
+
+.home-p {
+	margin: 0 0 18px;
+	font-size: $text-15;
+	line-height: 1.65;
+	color: $color-text-secondary;
+
+	&--wide {
+		margin: 18px 0 0;
+		max-width: 70ch;
+	}
+}
+
+.home-split {
+	display: grid;
+	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+	gap: 56px;
+	align-items: start;
+
+	&--even {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: center;
+	}
+
+	&--end {
+		align-items: end;
+		margin-bottom: 36px;
+	}
+
+	@include responsive(64rem) {
+		grid-template-columns: 1fr;
+		gap: 32px;
+	}
+}
+
+// § 1 table
+.home-table {
+	padding: 22px 24px 18px;
+
+	&__row {
+		display: grid;
+		// Fixed result column: every row is its own grid, so auto widths would misalign them.
+		grid-template-columns: 34px 90px minmax(0, 1fr) minmax(0, 1fr) 124px;
+		column-gap: 14px;
+		align-items: start;
+		padding: 12px 0;
+		border-top: 1px solid $rule-soft;
+		font-size: $text-14;
+
+		&--head {
+			@include ledger-label;
+			border-top: none;
+			padding-top: 0;
+		}
+	}
+
+	&__field {
+		font-size: $text-13;
+		font-weight: $font-weight-semibold;
+		color: $color-text-secondary;
+	}
+
+	&__label {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+
+	&__result {
+		justify-self: end;
+	}
+
+	.home-total {
+		margin-top: 0;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: 16px;
+
+		&__row {
+			grid-template-columns: 30px minmax(0, 1fr) auto;
+			row-gap: 4px;
+
+			&--head {
 				display: none;
 			}
 		}
 
-		@include responsive($breakpoint-mobile) {
-			grid-template-columns: 1fr;
+		&__field {
+			grid-column: 2;
+		}
+
+		.home-muted:not(.home-table__label .home-muted) {
+			grid-column: 2;
+		}
+
+		&__label {
+			grid-column: 2;
+		}
+
+		&__result {
+			grid-column: 3;
+			grid-row: 1;
+		}
+	}
+}
+
+.home-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 12px;
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid $rule-soft;
+}
+
+// ── § 2 Flights ───────────────────────────────────────────────────────────────
+.home-flights__head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 24px 40px;
+	flex-wrap: wrap;
+	margin-bottom: 40px;
+}
+
+.home-steps {
+	list-style: none;
+	margin: 0 0 40px;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	border-top: 1px solid $rule;
+	border-bottom: 1px solid $rule;
+
+	&__item {
+		display: grid;
+		grid-template-columns: 52px minmax(0, 1fr);
+		gap: 16px;
+		padding: 24px 24px 24px 0;
+
+		& + & {
+			border-left: 1px solid $rule-soft;
+			padding-left: 24px;
+		}
+
+		> .home-figure {
+			text-align: right;
+		}
+
+		> span:last-child {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+
+			strong {
+				font-size: $text-16;
+				letter-spacing: -0.01em;
+			}
 		}
 	}
 
-	.hp-phase-cell {
-		padding: 2rem 1.5rem 1.75rem;
-		border-right: 1px solid $tasting-border;
+	@include responsive(64rem) {
+		grid-template-columns: 1fr;
+
+		&__item + &__item {
+			border-left: none;
+			border-top: 1px solid $rule-soft;
+			padding-left: 0;
+		}
+	}
+}
+
+.home-flight {
+	padding: 0;
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+
+	&__head {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 6px 14px;
+		padding: 18px 24px;
+		border-bottom: 1px solid $rule-soft;
+
+		strong {
+			font-size: $text-16;
+		}
+	}
+
+	&__stat {
+		font-size: $text-13;
+		color: $color-text-secondary;
+
+		.home-figure {
+			margin-left: 6px;
+			font-size: 1.2rem;
+			color: $color-white;
+		}
+
+		&:first-of-type {
+			margin-left: auto;
+		}
+	}
+}
+
+.home-ftable {
+	padding: 18px 24px 16px;
+
+	&__row {
+		display: grid;
+		grid-template-columns: 140px repeat(5, minmax(0, 1fr)) 64px;
+		column-gap: 16px;
+		align-items: start;
+		padding: 12px 0;
+		border-top: 1px solid $rule-soft;
+		font-size: $text-14;
+
+		&--head {
+			@include ledger-label;
+			border-top: none;
+			padding-top: 0;
+		}
+
+		&--label {
+			border-top-color: $rule;
+		}
+
+		&--group {
+			align-items: baseline;
+			border-top: $rule-double;
+			padding-bottom: 2px;
+		}
+	}
+
+	&__who {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__cell {
 		display: flex;
 		flex-direction: column;
-		gap: 1.1rem;
-		min-height: 240px;
-		transition: background 0.25s ease;
+		align-items: flex-start;
+		gap: 4px;
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
 
-		&:last-child {
-			border-right: none;
-		}
+	&__score,
+	&__score-col {
+		text-align: right;
+	}
 
-		&:hover {
-			background: rgba(255, 179, 173, 0.025);
-		}
+	// Tablet: one card per taster; the cells label themselves.
+	@include responsive(62.5rem) {
+		&__row {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 10px 16px;
 
-		@include responsive($breakpoint-tablet) {
-			border-bottom: 1px solid $tasting-border;
-			min-height: auto;
-
-			&:nth-child(even) {
-				border-right: none;
-			}
-			&:nth-last-child(-n + 2) {
-				border-bottom: none;
+			&--head {
+				display: none;
 			}
 		}
 
-		@include responsive($breakpoint-mobile) {
-			border-right: none;
-			min-height: auto;
-
-			&:last-child {
-				border-bottom: none;
-			}
-			&:nth-last-child(-n + 2) {
-				border-bottom: 1px solid $tasting-border;
-			}
+		&__who {
+			grid-column: 1 / -1;
 		}
 
-		&__num {
-			font-size: $text-12;
-			font-weight: $font-weight-semibold;
-			letter-spacing: 0.06em;
-			color: $color-display-accent;
-			font-variant-numeric: tabular-nums;
-			font-family: $font-display-normal-family;
+		&__cell::before {
+			content: attr(data-col);
+			@include ledger-label;
 		}
 
-		&__name {
-			font-size: $font-size-lg;
-			font-weight: $font-weight-bold;
-			font-family: $font-display-bold-family;
-			letter-spacing: -0.01em;
-			line-height: 1.2;
-
-			em {
-				color: $color-display-accent;
-				font-size: 1.1em;
-			}
+		&__score {
+			grid-column: 1 / -1;
+			text-align: left;
+			order: -1;
 		}
 
-		&__desc {
+		&__row--group {
+			display: none;
+		}
+	}
+
+	@include responsive($breakpoint-mobile) {
+		display: none;
+	}
+}
+
+// Phone: one line per taster.
+.home-fcompact {
+	display: none;
+	list-style: none;
+	margin: 0;
+	padding: 8px 16px;
+
+	&__row {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 0;
+		border-top: 1px solid $rule-soft;
+
+		&:first-child {
+			border-top: none;
+		}
+	}
+
+	&__text {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		min-width: 0;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		display: block;
+	}
+}
+
+.home-structure {
+	padding: 18px 24px 14px;
+	border-top: 1px solid $rule-soft;
+
+	&__head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 6px;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: 16px;
+	}
+}
+
+.home-scales {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	&--one {
+		display: none;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		&--all {
+			display: none;
+		}
+
+		&--one {
+			display: block;
+		}
+	}
+}
+
+.home-scale {
+	display: grid;
+	grid-template-columns: 110px minmax(0, 1fr) 260px;
+	gap: 28px;
+	align-items: center;
+	padding: 10px 0 6px;
+	border-top: 1px solid $rule-soft;
+	--range: #{rgba($color-white, 0.1)};
+
+	&--split {
+		--range: #{rgba($color-warning, 0.3)};
+	}
+
+	&__name {
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__track {
+		position: relative;
+		height: 54px;
+		margin: 0 20px;
+	}
+
+	&__line {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 14px;
+		height: 1px;
+		background: $rule;
+	}
+
+	&__range {
+		position: absolute;
+		top: 10px;
+		height: 9px;
+		background: var(--range);
+	}
+
+	&__stop {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__dots {
+		display: flex;
+		gap: 2px;
+		min-height: 24px;
+		margin-top: 3px;
+
+		.home-dot {
+			box-shadow: 0 0 0 2px #211f1f;
+		}
+	}
+
+	&__tick {
+		font-size: $text-11;
+		color: $color-text-muted;
+		white-space: nowrap;
+
+		&--on {
+			color: $color-white;
+		}
+	}
+
+	&__verdict {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: $text-13;
+	}
+
+	@include responsive(62.5rem) {
+		grid-template-columns: 1fr;
+		gap: 8px;
+	}
+}
+
+.home-agreement {
+	@include ledger-label;
+	flex-shrink: 0;
+	padding: 3px 7px;
+	border-radius: 2px;
+	border: 1px solid rgba($color-white, 0.22);
+	color: $color-text-secondary;
+
+	&--split {
+		color: $color-warning;
+		border-color: rgba($color-warning, 0.4);
+	}
+}
+
+// ── § 3 Exam pace ─────────────────────────────────────────────────────────────
+.home-pace {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	border: 1px solid $rule;
+	border-radius: 4px;
+
+	&__cell {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 28px 28px 24px;
+
+		& + & {
+			border-left: 1px solid $rule;
+		}
+
+		.home-figure {
+			font-size: clamp(3rem, 5vw, 4.5rem);
+			letter-spacing: -0.02em;
+		}
+	}
+
+	&__label {
+		@include ledger-label;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding-top: 12px;
+		border-top: $rule-double;
+		color: $color-text-secondary;
+
+		span {
+			font-weight: $font-weight-regular;
+			letter-spacing: normal;
+			text-transform: none;
 			font-size: $text-13;
-			color: $color-text-secondary;
-			line-height: 1.65;
-			flex: 1;
+			color: $color-text-muted;
+		}
+	}
+
+	@include responsive($breakpoint-mobile) {
+		&__cell {
+			padding: 20px 16px;
+		}
+	}
+}
+
+// ── § 4 The grid ──────────────────────────────────────────────────────────────
+.home-phases {
+	list-style: none;
+	margin: 16px 0 0;
+	padding: 0;
+	border-top: 1px solid $rule;
+
+	&__row {
+		display: grid;
+		grid-template-columns: 48px 240px minmax(0, 1fr);
+		column-gap: 24px;
+		align-items: baseline;
+		padding: 20px 0;
+		border-bottom: 1px solid $rule-soft;
+
+		.home-muted {
+			font-size: $text-15;
+			line-height: 1.55;
+		}
+	}
+
+	&__n {
+		font-size: 1.375rem;
+		text-align: right;
+		color: $color-text-muted;
+	}
+
+	&__name {
+		font-size: 1.125rem;
+		font-weight: $font-weight-bold;
+		letter-spacing: -0.015em;
+	}
+
+	@include responsive(64rem) {
+		&__row {
+			grid-template-columns: 40px minmax(0, 1fr);
+			row-gap: 6px;
+
+			.home-muted {
+				grid-column: 2;
+			}
+		}
+	}
+}
+
+// ── § 5 Archive ───────────────────────────────────────────────────────────────
+.home-archive {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 22px;
+
+		p {
 			margin: 0;
 		}
+	}
 
-		&__foot {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			font-size: $text-9-5;
-			letter-spacing: 0.18em;
-			text-transform: uppercase;
-			color: $color-text-muted;
-			font-weight: $font-weight-bold;
-			font-family: $font-display-normal-family;
-			padding-top: 0.85rem;
-			border-top: 1px solid $tasting-border;
-		}
+	&__title {
+		margin: 6px 0 0;
+		font-size: 1.375rem;
+		font-weight: $font-weight-bold;
+		letter-spacing: -0.015em;
+		line-height: 1.2;
+	}
 
-		&__time {
-			color: $color-display-accent;
-		}
+	@include responsive(64rem) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.home-type {
+	@include ledger-label;
+	padding: 3px 7px;
+	border-radius: 2px;
+	border: 1px solid rgba($color-accent, 0.7);
+	color: $color-white;
+
+	&--white {
+		border-color: rgba($color-status-ok, 0.4);
+		color: $color-status-ok;
+	}
+}
+
+// ── § 6 Who it's for ──────────────────────────────────────────────────────────
+.home-who {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	border-top: 1px solid $rule;
+
+	li {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 20px 24px 4px 0;
+	}
+
+	strong {
+		font-size: 1.1875rem;
+		letter-spacing: -0.015em;
+	}
+
+	.home-muted {
+		font-size: $text-14;
+		line-height: 1.6;
+	}
+
+	@include responsive(64rem) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// ── Closing ───────────────────────────────────────────────────────────────────
+.home-closing-wrap {
+	border-top: 1px solid $rule-soft;
+}
+
+.home-closing {
+	max-width: 1300px;
+	margin: 0 auto;
+	padding: 112px 56px 104px;
+	box-sizing: border-box;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+
+	.home-ctas {
+		justify-content: center;
+		margin-top: 10px;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: 72px 20px;
 	}
 }

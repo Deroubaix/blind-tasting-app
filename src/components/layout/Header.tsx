@@ -2,12 +2,56 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { IconX, IconArrowRight } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronRight, IconMenu2, IconX } from '@tabler/icons-react';
 import useAuthenticatedUser from '../../hooks/UseAuthenticatedUser';
 import { useAuthProvider } from '../auth/AuthProvider';
+import { CODE_LENGTH, normalizeCode } from '../flights/flightLogic';
+import Wordmark from './Wordmark';
+
+/** Typing a code straight into the menu: the flight page handles joining, or logging in first. */
+function JoinCodeField({ loggedIn, onGo }: { loggedIn: boolean; onGo: (code: string) => void }) {
+	const [code, setCode] = useState('');
+	return (
+		<form
+			className="site-menu__join"
+			onSubmit={(e) => {
+				e.preventDefault();
+				if (code.length === CODE_LENGTH) {
+					onGo(code);
+				}
+			}}
+		>
+			<label className="site-menu__join-label" htmlFor="menu-flight-code">
+				Join a flight
+			</label>
+			<div className="site-menu__join-row">
+				<input
+					id="menu-flight-code"
+					className="site-menu__join-input"
+					placeholder="Flight code"
+					autoComplete="off"
+					autoCapitalize="characters"
+					spellCheck={false}
+					value={code}
+					onChange={(e) => setCode(normalizeCode(e.target.value).slice(0, CODE_LENGTH))}
+				/>
+				<button
+					type="submit"
+					className="btn-primary site-menu__join-btn"
+					disabled={code.length !== CODE_LENGTH}
+				>
+					Join
+				</button>
+			</div>
+			<span className="site-menu__join-hint">
+				It&apos;s on the host&apos;s screen.{loggedIn ? '' : " You'll be asked to log in or sign up."}
+			</span>
+		</form>
+	);
+}
 
 export default function Header() {
-	const [showNavbar, setShowNavbar] = useState(false);
+	const [showMenu, setShowMenu] = useState(false);
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const pathname = usePathname();
@@ -16,27 +60,22 @@ export default function Header() {
 	const { signOut } = useAuthProvider();
 	const router = useRouter();
 	const isLoggedIn = !isInitialLoading && !!user;
-
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
+	const firstName = user?.displayName?.split(' ')[0] ?? '';
 
-	const toggleMenu = () => setShowNavbar((open) => !open);
+	const closeMenu = () => setShowMenu(false);
 
-	const closeMenu = () => setShowNavbar(false);
-
-	// Close both menus on navigation. Adjusting state during render rather than in an effect
-	// avoids the extra render pass React warns about for cascading setState.
+	// Close both menus on navigation, during render rather than in an effect.
 	if (pathname !== lastPathname) {
 		setLastPathname(pathname);
-		setShowNavbar(false);
+		setShowMenu(false);
 		setDropdownOpen(false);
 	}
 
-	// The body class mirrors showNavbar, so it can't drift out of sync with the state the way
-	// toggling it at each call site could.
 	useEffect(() => {
-		document.body.classList.toggle('menu-open', showNavbar);
+		document.body.classList.toggle('menu-open', showMenu);
 		return () => document.body.classList.remove('menu-open');
-	}, [showNavbar]);
+	}, [showMenu]);
 
 	useEffect(() => {
 		if (!dropdownOpen) {
@@ -58,149 +97,181 @@ export default function Header() {
 		router.push('/');
 	};
 
+	const menuLinks = isLoggedIn
+		? [
+				{ href: '/flights/new', label: 'Host a flight' },
+				{ href: '/archives', label: 'Archive' },
+				{ href: '/flights', label: 'Flights' },
+				{ href: '/account', label: 'Account' },
+			]
+		: [
+				{ href: '/#flights', label: 'Flights' },
+				{ href: '/#grid', label: 'How it works' },
+			];
+
 	return (
-		<header className="navbar">
-			<Link href="/" className="header-logo no-underline">
-				The Sommelier<em className="logo-serif">&apos;s</em> Ledger
+		<header className="site-header">
+			<Link href="/" className="site-header__logo no-underline" aria-label="Home">
+				<Wordmark />
 			</Link>
 
-			<nav className="nav">
-				{/* Right side: auth-aware */}
-				{!isInitialLoading &&
-					(isLoggedIn ? (
-						<div className="nav-user" ref={dropdownRef}>
-							<button
-								className="nav-icon-btn"
-								onClick={() => setDropdownOpen((o) => !o)}
-								aria-label="Account menu"
-								aria-expanded={dropdownOpen}
-								aria-haspopup="true"
-							>
-								<span className="nav-avatar">{initials}</span>
-							</button>
-							{dropdownOpen && (
-								<div className="nav-dropdown" role="menu">
-									<div className="nav-dropdown__profile">
-										<span className="nav-dropdown__name">{user.displayName}</span>
-										<span className="nav-dropdown__email">{user.email}</span>
-									</div>
-									<div className="nav-dropdown__divider" />
-									<Link
-										href="/archives"
-										className="nav-dropdown__item"
-										role="menuitem"
-										onClick={() => setDropdownOpen(false)}
-									>
-										Archive
-									</Link>
-									<Link
-										href="/flights"
-										className="nav-dropdown__item"
-										role="menuitem"
-										onClick={() => setDropdownOpen(false)}
-									>
-										Flights
-									</Link>
-									<Link
-										href="/account"
-										className="nav-dropdown__item"
-										role="menuitem"
-										onClick={() => setDropdownOpen(false)}
-									>
-										Account
-									</Link>
-									<button
-										className="nav-dropdown__item nav-dropdown__item--logout"
-										role="menuitem"
-										onClick={handleLogout}
-									>
-										Log Out
-									</button>
-								</div>
-							)}
-						</div>
-					) : (
-						<div className="nav-auth">
-							<Link href="/login" className="nav-link">
-								Log in
-							</Link>
-							<Link href="/tastings/start" className="nav-signup-btn btn-primary no-underline">
-								Start a Tasting <IconArrowRight size={16} />
-							</Link>
-						</div>
-					))}
-
-				{/* Hamburger for mobile */}
-				<button
-					className={`hamburger-menu ${showNavbar ? 'hidden' : ''}`}
-					onClick={toggleMenu}
-					aria-label="Open menu"
-				>
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<line
-							x1="3"
-							y1="6"
-							x2="21"
-							y2="6"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-						/>
-						<line
-							x1="3"
-							y1="12"
-							x2="21"
-							y2="12"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-						/>
-						<line
-							x1="3"
-							y1="18"
-							x2="21"
-							y2="18"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-						/>
-					</svg>
-				</button>
-
-				{/* Mobile menu overlay */}
-				<div className={`menu-links ${showNavbar ? 'show' : ''}`}>
-					<button className="close-menu" onClick={closeMenu} aria-label="Close menu">
-						<IconX size={28} aria-hidden="true" />
-					</button>
-					<Link href="/" onClick={closeMenu}>
-						Home
+			<nav className="site-header__nav" aria-label="Main">
+				{!isLoggedIn && (
+					<>
+						<Link href="/#flights" className="site-header__link">
+							Flights
+						</Link>
+						<Link href="/#grid" className="site-header__link">
+							How it works
+						</Link>
+					</>
+				)}
+				<Link href="/flights/join" className="site-header__link site-header__link--accent">
+					Join a flight
+				</Link>
+				{!isInitialLoading && !isLoggedIn && (
+					<Link href="/login" className="site-header__link">
+						Log in
 					</Link>
-					{isLoggedIn && (
-						<>
-							<Link href="/archives" onClick={closeMenu}>
-								Archive
-							</Link>
-							<Link href="/flights" onClick={closeMenu}>
-								Flights
-							</Link>
-							<Link href="/account" onClick={closeMenu}>
-								Account
-							</Link>
-						</>
-					)}
-					{isLoggedIn ? (
-						<button className="menu-logout-btn" onClick={handleLogout}>
-							Log Out
-						</button>
-					) : (
-						<>
-							<Link href="/login" onClick={closeMenu}>
-								Log in
-							</Link>
-						</>
+				)}
+			</nav>
+
+			{/* Logged in, the Start button only shows on the phone; desktop has the account menu instead. */}
+			{!isInitialLoading && (
+				<Link
+					href="/tastings/start"
+					className={`btn-primary site-header__cta no-underline${isLoggedIn ? ' site-header__cta--phone' : ''}`}
+				>
+					<span className="site-header__cta-long">Start a tasting</span>
+					<span className="site-header__cta-short">Start</span>
+				</Link>
+			)}
+
+			{isLoggedIn && (
+				<div className="nav-user site-header__user" ref={dropdownRef}>
+					<button
+						className="site-header__account"
+						onClick={() => setDropdownOpen((o) => !o)}
+						aria-label="Account menu"
+						aria-expanded={dropdownOpen}
+						aria-haspopup="true"
+					>
+						<span className="nav-avatar" aria-hidden="true">
+							{initials}
+						</span>
+						{firstName}
+						<IconChevronDown size={14} aria-hidden="true" />
+					</button>
+					{dropdownOpen && (
+						<div className="nav-dropdown" role="menu">
+							<div className="nav-dropdown__profile">
+								<span className="nav-dropdown__name">{user.displayName}</span>
+								<span className="nav-dropdown__email">{user.email}</span>
+							</div>
+							<div className="nav-dropdown__divider" />
+							{[
+								['/archives', 'Archive'],
+								['/flights', 'Flights'],
+								['/account', 'Account'],
+							].map(([href, label]) => (
+								<Link
+									key={href}
+									href={href}
+									className="nav-dropdown__item"
+									role="menuitem"
+									onClick={() => setDropdownOpen(false)}
+								>
+									{label}
+								</Link>
+							))}
+							<div className="nav-dropdown__divider nav-dropdown__divider--double" />
+							<button
+								className="nav-dropdown__item nav-dropdown__item--logout"
+								role="menuitem"
+								onClick={handleLogout}
+							>
+								Log out
+							</button>
+						</div>
 					)}
 				</div>
-			</nav>
+			)}
+
+			<button
+				type="button"
+				className="site-header__menu-btn"
+				onClick={() => setShowMenu(true)}
+				aria-label="Open menu"
+				aria-expanded={showMenu}
+			>
+				{isLoggedIn ? (
+					<span className="nav-avatar" aria-hidden="true">
+						{initials}
+					</span>
+				) : (
+					<IconMenu2 size={24} aria-hidden="true" />
+				)}
+			</button>
+
+			{showMenu && (
+				<div className="site-menu" role="dialog" aria-modal="true" aria-label="Menu">
+					<div className="site-menu__head">
+						<Wordmark size="sm" />
+						<button type="button" className="site-menu__close" onClick={closeMenu} aria-label="Close menu">
+							<IconX size={26} aria-hidden="true" />
+						</button>
+					</div>
+					<div className="site-menu__body">
+						{isLoggedIn && (
+							<div className="site-menu__profile">
+								<span className="site-menu__initial">{initials}</span>
+								<span>
+									<strong>{user.displayName}</strong>
+									<span>{user.email}</span>
+								</span>
+							</div>
+						)}
+						<JoinCodeField
+							loggedIn={isLoggedIn}
+							onGo={(code) => {
+								closeMenu();
+								router.push(`/flights/${code}`);
+							}}
+						/>
+						<Link
+							href="/tastings/start"
+							className="btn-primary site-menu__start no-underline"
+							onClick={closeMenu}
+						>
+							Start a tasting →
+						</Link>
+						<nav className="site-menu__links" aria-label="Menu">
+							{menuLinks.map((link) => (
+								<Link key={link.href} href={link.href} className="site-menu__link" onClick={closeMenu}>
+									{link.label}
+									<IconChevronRight size={18} aria-hidden="true" />
+								</Link>
+							))}
+						</nav>
+						<div className="site-menu__foot">
+							{isLoggedIn ? (
+								<button type="button" className="site-menu__foot-link" onClick={handleLogout}>
+									Log out
+								</button>
+							) : (
+								<>
+									<Link href="/login" className="site-menu__foot-link" onClick={closeMenu}>
+										Log in
+									</Link>
+									<Link href="/signup" className="site-menu__foot-link" onClick={closeMenu}>
+										Sign up
+									</Link>
+								</>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
 		</header>
 	);
 }
