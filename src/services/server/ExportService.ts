@@ -1,8 +1,10 @@
 import { Zip, ZipDeflate, ZipPassThrough } from 'fflate';
 import { type PrismaClient } from '@prisma/client';
-import { readPhoto } from '../../lib/storage';
-import { compareReveal, isRevealed, type Reveal } from '../../components/archives/revealScore';
+import { compareReveal, isRevealed, type Reveal } from '../../utils/revealScore';
 import { gridOf } from '../../data/grids';
+import { RATE_LIMITS } from '../../utils/RateLimitUtils';
+import type PhotoService from './PhotoService';
+import type RateLimitService from './RateLimitService';
 
 /**
  * Everything the app holds about one person, as a ZIP of JSON files and the label photos. Only
@@ -110,10 +112,17 @@ Dates are UTC, in ISO 8601. Other people's names are not included.
 `;
 
 export default class ExportService {
-	constructor(private readonly _prisma: PrismaClient) {}
+	constructor(
+		private readonly _prisma: PrismaClient,
+		private readonly _rateLimits: RateLimitService,
+		private readonly _photos: PhotoService,
+	) {}
 
 	/** The archive as a stream, so a photo-heavy account never has to fit in memory at once. */
 	public async archive(userId: string): Promise<ReadableStream<Uint8Array>> {
+		await this._rateLimits.check(RATE_LIMITS.exportAccount, userId);
+		await this._rateLimits.consume(RATE_LIMITS.exportAccount, userId);
+
 		const [user, tastings, flights] = await Promise.all([
 			this._prisma.user.findUniqueOrThrow({
 				where: { id: userId },
@@ -160,6 +169,7 @@ export default class ExportService {
 			.filter((t) => t.photoKey)
 			.map((t) => ({ key: t.photoKey!, name: photoFileName(t.number) }));
 		const encoder = new TextEncoder();
+		const readPhoto = (key: string) => this._photos.read(key);
 
 		return new ReadableStream<Uint8Array>({
 			async start(controller) {

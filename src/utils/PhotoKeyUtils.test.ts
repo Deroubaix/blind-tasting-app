@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { newPhotoKey, ownsPhotoKey } from './storage';
+import { newPhotoKey, ownsPhotoKey, userPhotoFolder } from './PhotoKeyUtils';
 
 const ALICE = '6bd80ad6-6fc6-4e85-89cc-9a1f177d51b5';
 const BOB = '2ccafcaf-6490-4bb5-8f0d-08ade9dbfc92';
@@ -35,5 +35,13 @@ describe('ownsPhotoKey', () => {
 describe('newPhotoKey', () => {
 	it('names a fresh file every time', () => {
 		expect(newPhotoKey(ALICE)).not.toBe(newPhotoKey(ALICE));
+	});
+});
+
+describe('userPhotoFolder', () => {
+	it("is the user's own folder, and refuses anything but a user id", () => {
+		expect(userPhotoFolder(ALICE)).toBe(`labels/${ALICE}/`);
+		expect(() => userPhotoFolder('')).toThrow();
+		expect(() => userPhotoFolder('../')).toThrow();
 	});
 });

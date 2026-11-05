@@ -2,9 +2,9 @@ import { redirect } from 'next/navigation';
 import TastingPageHeader from '../../components/layout/TastingPageHeader';
 import LeftSidebar from '../../components/tasting/LeftSideBar';
 import ProgressClient from '../../components/progress/ProgressClient';
-import { toProgressTasting } from '../../components/progress/progressStats';
-import { currentUserId } from '../../lib/auth';
+import { toProgressTasting } from '../../utils/progressStats';
 import ServerServices from '../../services/server/ServerServices';
+import SessionService from '../../services/server/SessionService';
 import ProgressService from '../../services/server/ProgressService';
 import TastingService from '../../services/server/TastingService';
 import UserService from '../../services/server/UserService';
@@ -18,7 +18,7 @@ export const generateMetadata = pageTitle({ en: progressText.en.title, pt: progr
 
 // The same shell as the Archive it sits beside.
 export default async function ProgressPage() {
-	const userId = await currentUserId();
+	const userId = await ServerServices.getClass(SessionService).currentUserId();
 	if (!userId) {
 		redirect('/login?r=/progress');
 	}

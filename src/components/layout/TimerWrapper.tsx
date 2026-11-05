@@ -6,7 +6,7 @@ import Timer from '../layout/Timer';
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import { useModalProvider } from '../modal/ModalProvider';
-import { useToastProvider } from '../../toast/ToastProvider';
+import { useToastProvider } from '../toast/ToastProvider';
 import { playBeep, unlockAudio } from '../../utils/beep';
 import { type TimerPhase } from '../../data/timerData';
 import { gridOf } from '../../data/grids';

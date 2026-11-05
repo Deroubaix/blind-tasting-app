@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useId } from 'react';
 import useDropPlacement from './useDropPlacement';
-import { matchSuggestions, resolveEnter } from './autocompleteMatch';
+import { matchSuggestions, resolveEnter } from '../../utils/autocompleteMatch';
 import { useText } from '../../i18n/LanguageProvider';
 import { tastingText } from '../../i18n/tasting';
 

@@ -7,7 +7,7 @@ import { useAuthProvider } from '../auth/AuthProvider';
 import ClientFlightService from '../../services/client/ClientFlightService';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightPerson, type FlightView } from '../../types/Flight';
-import { type EntryStatus } from './flightLogic';
+import { type EntryStatus } from '../../utils/flightLogic';
 import { formatTimerSeconds } from '../../data/timerData';
 import { type Lang } from '../../i18n';
 import { flightsText } from '../../i18n/flights';

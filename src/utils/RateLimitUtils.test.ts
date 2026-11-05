@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RATE_LIMITS, clientIp, minutesUntil } from './rateLimit';
+import { RATE_LIMITS, clientIp, minutesUntil } from './RateLimitUtils';
 
 const request = (headers: Record<string, string>) => new Request('http://app.test/api', { headers });
 

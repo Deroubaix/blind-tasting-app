@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MAX_WINES } from '../components/flights/flightLogic';
+import { MAX_WINES } from '../utils/flightLogic';
 import { ALL_TIMER_PRESETS } from '../data/timerData';
 import { revealSchema } from './tasting';
 

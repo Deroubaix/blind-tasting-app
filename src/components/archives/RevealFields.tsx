@@ -8,7 +8,7 @@ import QualityLevelSelect from '../tasting/QualityLevelSelect';
 import TastingCustomSelect from '../tasting/TastingCustomSelect';
 import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
 import { type Grid } from '../../data/grids';
-import { type Reveal } from './revealScore';
+import { type Reveal } from '../../utils/revealScore';
 import { useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
 

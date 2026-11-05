@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { IconBan, IconCheck, IconMinus, IconTilde, IconX } from '@tabler/icons-react';
-import { type Comparison, type ComparedField, type FieldStatus } from './revealScore';
+import { type Comparison, type ComparedField, type FieldStatus } from '../../utils/revealScore';
 import { useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
 

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import useAuthenticatedUser from './UseAuthenticatedUser';
+import useAuthenticatedUser from './useAuthenticatedUser';
 
 /**
  * Bounces an already-signed-in user away from the auth pages.

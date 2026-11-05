@@ -1,5 +1,5 @@
-import { type EntryStatus } from '../components/flights/flightLogic';
-import { type ComparedField, type Reveal } from '../components/archives/revealScore';
+import { type EntryStatus } from '../utils/flightLogic';
+import { type ComparedField, type Reveal } from '../utils/revealScore';
 import { type Grid } from '../data/grids';
 
 export type FlightRole = 'host' | 'taster' | 'visitor';

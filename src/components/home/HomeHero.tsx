@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuthProvider } from '../auth/AuthProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
-import { compareReveal, isRevealed, revealTitle } from '../archives/revealScore';
+import { compareReveal, isRevealed, revealTitle } from '../../utils/revealScore';
 import { type TastingData } from '../../types/TastingData';
 import { formatDate } from '../../utils/DateUtils';
 import { gridOf } from '../../data/grids';

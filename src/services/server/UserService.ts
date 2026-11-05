@@ -1,12 +1,14 @@
 import { type PrismaClient } from '@prisma/client';
-import { RATE_LIMITS, check, consume } from '../../lib/rateLimit';
+import { RATE_LIMITS } from '../../utils/RateLimitUtils';
 import { apiError } from '../../utils/ApiUtils';
 import { verifyPassword } from '../../utils/PasswordUtils';
 import type PhotoService from './PhotoService';
+import type RateLimitService from './RateLimitService';
 
 export default class UserService {
 	constructor(
 		private readonly _prisma: PrismaClient,
+		private readonly _rateLimits: RateLimitService,
 		private readonly _photos: PhotoService,
 	) {}
 
@@ -19,10 +21,10 @@ export default class UserService {
 
 	/** Deletes the account, every tasting and every photo, after checking the password. */
 	public async deleteAccount(userId: string, password: string) {
-		await check(RATE_LIMITS.deleteAccount, userId);
+		await this._rateLimits.check(RATE_LIMITS.deleteAccount, userId);
 		const user = await this._prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { password: true } });
 		if (!(await verifyPassword(password, user.password))) {
-			await consume(RATE_LIMITS.deleteAccount, userId).catch(() => undefined);
+			await this._rateLimits.consume(RATE_LIMITS.deleteAccount, userId).catch(() => undefined);
 			throw apiError(403, 'wrongPassword');
 		}
 

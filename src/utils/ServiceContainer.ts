@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Constructor = new (...args: any) => any;
+/** What a service is registered under: a class, or an abstract one standing for its implementations. */
+export type ServiceKey = abstract new (...args: any) => any;
 
 /** dr-pam's ServiceContainer API, but lazy: a class is built on its first `getClass`, so order doesn't matter. */
 export default class ServiceContainer {
-	private readonly builders = new Map<Constructor, () => unknown>();
-	private readonly constructed = new Map<Constructor, unknown>();
-	private readonly building = new Set<Constructor>();
+	private readonly builders = new Map<ServiceKey, () => unknown>();
+	private readonly constructed = new Map<ServiceKey, unknown>();
+	private readonly building = new Set<ServiceKey>();
 
 	public withClass<T extends new () => unknown>(type: T) {
 		this.builders.set(type, () => new type());
@@ -20,12 +22,12 @@ export default class ServiceContainer {
 		return this;
 	}
 
-	public withFactory<T extends Constructor>(type: T, factory: () => InstanceType<T>) {
+	public withFactory<T extends ServiceKey>(type: T, factory: () => InstanceType<T>) {
 		this.builders.set(type, factory);
 		return this;
 	}
 
-	public getClass<T extends Constructor>(type: T): InstanceType<T> {
+	public getClass<T extends ServiceKey>(type: T): InstanceType<T> {
 		if (!this.constructed.has(type)) {
 			const build = this.builders.get(type);
 			if (!build) {

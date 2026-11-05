@@ -12,13 +12,13 @@
 // - A field the reveal leaves blank (no quality level on the label, say) is "not applicable" and
 //   drops out of the total, so that wine is scored out of four.
 
-import { fold } from '../tasting/autocompleteMatch';
-import { WINE_REGION_GROUPS } from '../tasting/autocompleteData';
-import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
-import { type Grid } from '../../data/grids';
-import { interchangeable } from './coreList';
-import { archivesText } from '../../i18n/archives';
-import { DEFAULT_LANG, type Lang } from '../../i18n';
+import { fold } from './autocompleteMatch';
+import { WINE_REGION_GROUPS } from '../components/tasting/autocompleteData';
+import { WSET_QUALITY, WSET_READINESS } from '../components/wset/wsetFields';
+import { type Grid } from '../data/grids';
+import { interchangeable } from '../components/archives/coreList';
+import { archivesText } from '../i18n/archives';
+import { DEFAULT_LANG, type Lang } from '../i18n';
 
 export type Reveal = {
 	/** The WSET answer key: the tutor's quality level and readiness. Absent on a CMS reveal. */

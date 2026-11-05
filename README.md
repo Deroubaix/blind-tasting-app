@@ -56,7 +56,7 @@ the total. As in the exam, a region or quality level the CMS core list marks as 
 that grape — Napa Valley / Sonoma County / Central Coast for Cabernet, Reserva / Gran Reserva for
 Tempranillo — scores the point too (`coreList.ts`). A quality level off the list is typed out under
 _Other_, so what is saved is the level itself; a bare "Other" never scores. The reveal is stored apart from the call (`Tasting.reveal`), and the rules live in
-`src/components/archives/revealScore.ts`, pinned by its tests. The start page's field is a
+`src/utils/revealScore.ts`, pinned by its tests. The start page's field is a
 _label_ for the taster's records ("Flight 3, wine 2"), not the wine, which would give the answer
 away.
 
@@ -153,13 +153,19 @@ pnpm start                     # http://localhost:3002
   sidebar disagrees
 - `src/app/api/` — route handlers, kept thin as in dr-pam's possums-sleep-program: each one checks
   the session, parses the body with its zod schema and calls a server service
-- `src/services/server/` — the server services (`AuthService`, `UserService`, `TastingService`,
-  `FlightService`, `PhotoService`, `ProgressService`, `ExportService`), wired in `ServerServices.ts`
-  and taken with `ServerServices.getClass(...)`. Server pages such as `/progress` call them directly
-  instead of fetching their own API
+- `src/services/server/` — the server services (`SessionService`, `AuthService`, `UserService`,
+  `TastingService`, `FlightService`, `PhotoService`, `ProgressService`, `ExportService`,
+  `RateLimitService` and the photo storage), wired in `ServerServices.ts` and taken with
+  `ServerServices.getClass(...)`. Server pages such as `/progress` call them directly instead of
+  fetching their own API
+- `src/config/ServerConfig.ts` — every environment variable the server reads, and the error when a
+  required one is missing
+- `src/utils/` — pure, tested logic shared by the server and the browser: scoring a reveal
+  (`revealScore`), flight rules (`flightLogic`), the Progress figures (`progressStats`), photo keys
+  and rate-limit rules
 - `src/services/client/` — the browser's side of the same calls, through `FetchUtils`
 - `src/styles/abstracts/` — tokens, mixins and the type scale, forwarded through `_index.scss`
-- `src/lib/storage.ts` — label photo storage. The browser resizes the photo to a 1200px JPEG, asks
+- `PhotoStorageService` — label photo storage, on local disk or R2 (`STORAGE_DRIVER`). The browser resizes the photo to a 1200px JPEG, asks
   `/api/photos/sign` for a key, PUTs it (to `/api/photos/upload` on local disk, straight to a
   private R2 bucket on `r2`), then saves the tasting with the key; the save route checks the file
   arrived. Keys embed the owner's id, so `/api/photos/<key>` serves a photo to its owner only. On
@@ -221,7 +227,7 @@ say what the acidity is — but shows where the group agreed and where it split.
 every wine by every taster, with totals and the wine that confused the group most.
 
 Tables: `Flight`, `FlightWine` (the reveal), `FlightMember`, `FlightEntry` (a taster's go at a
-wine, linked to their `Tasting` on submit). Rules live in `src/components/flights/flightLogic.ts`;
+wine, linked to their `Tasting` on submit). Rules live in `src/utils/flightLogic.ts`;
 loading and shaping in `src/services/server/FlightService.ts`.
 
 ## Privacy and accounts

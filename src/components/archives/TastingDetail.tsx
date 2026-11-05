@@ -7,7 +7,7 @@ import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
 import RevealPanel from './RevealPanel';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { describeCall, describeWine, isRevealed, revealTitle } from './revealScore';
+import { describeCall, describeWine, isRevealed, revealTitle } from '../../utils/revealScore';
 import { formatDate } from '../../utils/DateUtils';
 import { gridOf } from '../../data/grids';
 import { WSET_CONCLUSION_KEYS } from '../wset/wsetFields';

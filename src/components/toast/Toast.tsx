@@ -1,8 +1,8 @@
 import { IconX } from '@tabler/icons-react';
 import React, { type MouseEventHandler, type ReactNode, useCallback, useEffect, useRef } from 'react';
-import { type ThemeColorName } from '../styles/Colors';
-import { useText } from '../i18n/LanguageProvider';
-import { userText } from '../i18n/user';
+import { type ThemeColorName } from '../../styles/Colors';
+import { useText } from '../../i18n/LanguageProvider';
+import { userText } from '../../i18n/user';
 
 export type ToastProps = {
 	className?: string;

@@ -1,10 +1,10 @@
 // The Progress page's figures, as pure functions of the saved tastings, pinned by progressStats.test.ts.
 
-import { compareReveal, isRevealed, revealTitle, sameName } from '../archives/revealScore';
-import { type Grid, gridOf } from '../../data/grids';
-import { DEFAULT_LANG, type Lang } from '../../i18n';
-import { type TastingData } from '../../types/TastingData';
-import { compareStructure, structureAttributes, wineTypeOf } from '../flights/flightLogic';
+import { compareReveal, isRevealed, revealTitle, sameName } from './revealScore';
+import { type Grid, gridOf } from '../data/grids';
+import { DEFAULT_LANG, type Lang } from '../i18n';
+import { type TastingData } from '../types/TastingData';
+import { compareStructure, structureAttributes, wineTypeOf } from './flightLogic';
 
 export type WineType = 'red' | 'white';
 export type TypeFilter = 'all' | WineType;

@@ -2,11 +2,11 @@ import { errorResponse, jsonResponse, logServerError } from '../../../../utils/A
 import { getLang } from '../../../../i18n/server';
 import ServerServices from '../../../../services/server/ServerServices';
 import PhotoService from '../../../../services/server/PhotoService';
-import { requireUserId } from '../../../../lib/auth';
+import SessionService from '../../../../services/server/SessionService';
 
 export async function PUT(request: Request) {
 	try {
-		const userId = await requireUserId();
+		const userId = await ServerServices.getClass(SessionService).requireUserId();
 		const key = new URL(request.url).searchParams.get('key') ?? '';
 		await ServerServices.getClass(PhotoService).upload(userId, key, async () =>
 			Buffer.from(await request.arrayBuffer()),

@@ -1,7 +1,7 @@
 'use client';
 
 import FetchUtils from '../../utils/FetchUtils';
-import { type Reveal } from '../../components/archives/revealScore';
+import { type Reveal } from '../../utils/revealScore';
 import { type Grid } from '../../data/grids';
 import { type FlightListItem, type FlightSummary, type FlightView, type WineResults } from '../../types/Flight';
 

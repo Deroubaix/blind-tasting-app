@@ -2,11 +2,11 @@ import { errorResponse, jsonResponse, logServerError } from '../../../../../util
 import { getLang } from '../../../../../i18n/server';
 import ServerServices from '../../../../../services/server/ServerServices';
 import FlightService from '../../../../../services/server/FlightService';
-import { requireUserId } from '../../../../../lib/auth';
+import SessionService from '../../../../../services/server/SessionService';
 
 export async function POST(_request: Request, { params }: { params: Promise<{ code: string }> }) {
 	try {
-		const userId = await requireUserId();
+		const userId = await ServerServices.getClass(SessionService).requireUserId();
 		return jsonResponse({ code: await ServerServices.getClass(FlightService).end((await params).code, userId) });
 	} catch (error) {
 		logServerError('POST /api/flights/[code]/end', error);

@@ -1,7 +1,7 @@
 import { Prisma, type PrismaClient } from '@prisma/client';
 import { formatTimerSeconds } from '../../data/timerData';
 import { DEFAULT_LANG, type Lang } from '../../i18n';
-import { RATE_LIMITS, check, consume } from '../../lib/rateLimit';
+import { RATE_LIMITS } from '../../utils/RateLimitUtils';
 import { apiError } from '../../utils/ApiUtils';
 import {
 	average,
@@ -10,7 +10,7 @@ import {
 	normalizeCode,
 	wineTypeOf,
 	type EntryStatus,
-} from '../../components/flights/flightLogic';
+} from '../../utils/flightLogic';
 import {
 	compareReveal,
 	describeWine,
@@ -18,9 +18,9 @@ import {
 	revealTitle,
 	scoredFields,
 	type Reveal,
-} from '../../components/archives/revealScore';
+} from '../../utils/revealScore';
 import { gridOf } from '../../data/grids';
-import { revealFields } from '../../lib/reveal';
+import { revealFields } from '../../utils/revealFields';
 import { type FlightCreateInput } from '../../schemas/flight';
 import { type RevealInput } from '../../schemas/tasting';
 import {
@@ -33,6 +33,7 @@ import {
 	type WineResultRow,
 	type WineResults,
 } from '../../types/Flight';
+import type RateLimitService from './RateLimitService';
 
 const FLIGHT_INCLUDE = {
 	host: { select: { id: true, displayName: true } },
@@ -383,17 +384,20 @@ export function withFlight({ flightEntry, ...tasting }: TastingWithEntry) {
 export type FlightEntryWhere = { flightId_userId_wineNumber: { flightId: string; userId: string; wineNumber: number } };
 
 export default class FlightService {
-	constructor(private readonly _prisma: PrismaClient) {}
+	constructor(
+		private readonly _prisma: PrismaClient,
+		private readonly _rateLimits: RateLimitService,
+	) {}
 
 	/** Only misses count against the limit, since guessing is what it stops. */
 	private async load(code: string, userId: string): Promise<LoadedFlight> {
-		await check(RATE_LIMITS.flightCode, userId);
+		await this._rateLimits.check(RATE_LIMITS.flightCode, userId);
 		const flight = await this._prisma.flight.findUnique({
 			where: { code: normalizeCode(code) },
 			include: FLIGHT_INCLUDE,
 		});
 		if (!flight) {
-			await consume(RATE_LIMITS.flightCode, userId);
+			await this._rateLimits.consume(RATE_LIMITS.flightCode, userId);
 			throw apiError(404, 'flightNotFound');
 		}
 		return flight;
@@ -543,13 +547,13 @@ export default class FlightService {
 
 	/** The taster's entry for a flight wine, checked; `reveal` is set when the host got there first. */
 	public async entryToSubmit(userId: string, { code, wineNumber }: { code: string; wineNumber: number }) {
-		await check(RATE_LIMITS.flightCode, userId);
+		await this._rateLimits.check(RATE_LIMITS.flightCode, userId);
 		const flight = await this._prisma.flight.findUnique({
 			where: { code: normalizeCode(code) },
 			include: { members: { where: { userId } }, wines: { where: { number: wineNumber } } },
 		});
 		if (!flight) {
-			await consume(RATE_LIMITS.flightCode, userId);
+			await this._rateLimits.consume(RATE_LIMITS.flightCode, userId);
 		}
 		if (!flight || !flight.members.length || !flight.wines.length) {
 			throw apiError(400, 'flightWineNotFound');

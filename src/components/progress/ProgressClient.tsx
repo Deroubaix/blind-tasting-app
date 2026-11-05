@@ -23,7 +23,7 @@ import {
 	revealedFor,
 	share,
 	trendOf,
-} from './progressStats';
+} from '../../utils/progressStats';
 
 type T = (typeof progressText)['en'];
 

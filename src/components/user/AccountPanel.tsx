@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { IconDownload, IconTrash } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useModalProvider } from '../modal/ModalProvider';
-import { useToastProvider } from '../../toast/ToastProvider';
+import { useToastProvider } from '../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientFlightService from '../../services/client/ClientFlightService';
 import { JsonApiError } from '../../utils/ErrorUtils';

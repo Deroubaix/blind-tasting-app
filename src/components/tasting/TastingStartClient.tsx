@@ -12,7 +12,7 @@ import {
 	IconArrowRight,
 	IconInfoCircle,
 } from '@tabler/icons-react';
-import { useToastProvider } from '../../toast/ToastProvider';
+import { useToastProvider } from '../toast/ToastProvider';
 import { useTastingContext } from '../../components/tasting/TastingContext';
 import { unlockAudio } from '../../utils/beep';
 import {

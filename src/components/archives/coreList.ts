@@ -1,7 +1,7 @@
 // Interchangeable calls from the CMS Americas Advanced core list (03.2025): names split by " / "
 // there are graded equally. Sets are per grape; some include spelling variants.
 
-import { fold } from '../tasting/autocompleteMatch';
+import { fold } from '../../utils/autocompleteMatch';
 
 type CoreEntry = {
 	/** Slash-separated alternatives match either name: "Syrah/Shiraz". */

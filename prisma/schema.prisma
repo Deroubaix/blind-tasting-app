@@ -62,7 +62,7 @@ model Tasting {
   @@unique([userId, number])
 }
 
-/// Fixed-window attempt counters for the auth routes (see src/lib/rateLimit.ts). `key` is a
+/// Fixed-window attempt counters for the auth routes (see src/services/server/RateLimitService.ts). `key` is a
 /// SHA-256 of the rule name and the identifier (an email or a network address), so neither is
 /// stored in the clear. Rows past their window are reused on the next attempt, and swept daily.
 model RateLimit {

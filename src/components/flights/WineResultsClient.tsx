@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { IconArrowsSplit2, IconCheck, IconChevronLeft, IconChevronRight, IconTilde } from '@tabler/icons-react';
 import { useModalProvider } from '../modal/ModalProvider';
 import { StatusBadge } from '../archives/RevealScorecard';
-import { type FieldStatus, scoredFields } from '../archives/revealScore';
+import { type FieldStatus, scoredFields } from '../../utils/revealScore';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type WineResultRow, type WineResults } from '../../types/Flight';
 import {
@@ -14,7 +14,7 @@ import {
 	structurePhrase,
 	type Agreement,
 	type StructureAttribute,
-} from './flightLogic';
+} from '../../utils/flightLogic';
 import { Avatar, FlightMessage, flightService, useFlight, useRequireLogin } from './FlightBits';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';

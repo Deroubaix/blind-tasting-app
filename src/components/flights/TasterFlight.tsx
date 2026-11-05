@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IconBottle, IconGlassFull } from '@tabler/icons-react';
 import { useModalProvider } from '../modal/ModalProvider';
-import { useToastProvider } from '../../toast/ToastProvider';
+import { useToastProvider } from '../toast/ToastProvider';
 import { useTastingContext } from '../tasting/TastingContext';
 import { PHASE_ORDER } from '../tasting/phaseCompletion';
 import { unlockAudio } from '../../utils/beep';

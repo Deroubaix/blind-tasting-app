@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { IconEye, IconWind, IconGlass, IconBrain, IconSquareCheck, IconCheck } from '@tabler/icons-react';
-import useAuthenticatedUser from '../../hooks/UseAuthenticatedUser';
+import useAuthenticatedUser from '../../hooks/useAuthenticatedUser';
 import { useTastingContext } from './TastingContext';
 import { phaseComplete } from './phaseCompletion';
 import { type Grid, gridOf } from '../../data/grids';

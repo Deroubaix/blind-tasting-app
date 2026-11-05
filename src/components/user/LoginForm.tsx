@@ -9,7 +9,7 @@ import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
 import TextInput from '../form/TextInput';
-import { useToastProvider } from '../../toast/ToastProvider';
+import { useToastProvider } from '../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { loginSchema, type LoginFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';

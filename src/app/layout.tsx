@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { Manrope, Lora } from 'next/font/google';
 import { BRAND } from '../data/brand';
 import { AuthProvider } from '../components/auth/AuthProvider';
-import ToastProvider from '../toast/ToastProvider';
+import ToastProvider from '../components/toast/ToastProvider';
 import ModalProvider from '../components/modal/ModalProvider';
 import { TastingProvider } from '../components/tasting/TastingContext';
 import { LanguageProvider } from '../i18n/LanguageProvider';

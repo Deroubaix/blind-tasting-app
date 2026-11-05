@@ -3,7 +3,7 @@ import React from 'react';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import RevealScorecard from './RevealScorecard';
-import { compareReveal } from './revealScore';
+import { compareReveal } from '../../utils/revealScore';
 
 afterEach(cleanup);
 

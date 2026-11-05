@@ -1,5 +1,5 @@
 import { Prisma, type PrismaClient } from '@prisma/client';
-import { revealFields } from '../../lib/reveal';
+import { revealFields } from '../../utils/revealFields';
 import { type RevealInput, type TastingCreateInput } from '../../schemas/tasting';
 import { apiError } from '../../utils/ApiUtils';
 import type FlightService from './FlightService';

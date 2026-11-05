@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { StatusBadge } from '../archives/RevealScorecard';
-import { REVEAL_FIELDS } from '../archives/revealScore';
+import { REVEAL_FIELDS } from '../../utils/revealScore';
 import { TIMER_PRESETS, formatTimerSeconds } from '../../data/timerData';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { formatAverage } from '../../utils/NumberUtils';
 import { homeText } from '../../i18n/home';
 import { flightsText } from '../../i18n/flights';
 import { tastingText } from '../../i18n/tasting';
-import { structurePhrase } from '../flights/flightLogic';
+import { structurePhrase } from '../../utils/flightLogic';
 import {
 	SAMPLE_ARCHIVE,
 	SAMPLE_FLIGHT,

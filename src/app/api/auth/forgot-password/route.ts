@@ -2,7 +2,7 @@ import { errorResponse, jsonResponse, logServerError } from '../../../../utils/A
 import { getLang } from '../../../../i18n/server';
 import ServerServices from '../../../../services/server/ServerServices';
 import AuthService from '../../../../services/server/AuthService';
-import { clientIp } from '../../../../lib/rateLimit';
+import { clientIp } from '../../../../utils/RateLimitUtils';
 import { forgotPasswordSchema } from '../../../../schemas/auth';
 
 /** Always OK, whether or not the address has an account. */

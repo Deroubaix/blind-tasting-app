@@ -1,26 +1,20 @@
-import {
-	MAX_PHOTO_BYTES,
-	deletePhoto,
-	deleteUserPhotos,
-	newPhotoKey,
-	ownsPhotoKey,
-	photoDownloadUrl,
-	photoSize,
-	photoUploadUrl,
-	readLocalPhoto,
-	storageDriver,
-	writeLocalPhoto,
-} from '../../lib/storage';
 import { apiError, logServerError } from '../../utils/ApiUtils';
+import { MAX_PHOTO_BYTES, newPhotoKey, ownsPhotoKey, userPhotoFolder } from '../../utils/PhotoKeyUtils';
+import type PhotoStorageService from './PhotoStorageService';
 
 const notFound = () => apiError(404, 'notFound');
 
-/** Label photos: who may read and write which key. Where the bytes live is lib/storage's business. */
+/** Label photos: who may read and write which key. Where the bytes live is the storage's business. */
 export default class PhotoService {
+	constructor(
+		// Built on first use: R2 needs its settings, which shouldn't stop anything but photos.
+		private readonly _storage: () => PhotoStorageService,
+	) {}
+
 	/** Records nothing: the key only joins a tasting when one is saved with it, and the save checks the file. */
 	public async sign(userId: string) {
 		const key = newPhotoKey(userId);
-		return { key, uploadUrl: await photoUploadUrl(key) };
+		return { key, uploadUrl: await this._storage().uploadUrl(key) };
 	}
 
 	/** The owner's photo: a signed URL on R2, the file itself on the local driver. */
@@ -31,19 +25,16 @@ export default class PhotoService {
 		if (!ownsPhotoKey(userId, key)) {
 			throw notFound();
 		}
-		if (storageDriver() === 'r2') {
-			return { redirect: await photoDownloadUrl(key) };
-		}
-		const size = await photoSize(key);
-		if (size === null) {
+		const photo = await this._storage().open(key);
+		if (!photo) {
 			throw notFound();
 		}
-		return { body: readLocalPhoto(key), size };
+		return photo;
 	}
 
-	/** The local driver's stand-in for a signed bucket URL. On R2 the browser PUTs to the bucket. */
+	/** Local disk's stand-in for a signed bucket URL. On R2 the browser PUTs to the bucket. */
 	public async upload(userId: string, key: string, readBody: () => Promise<Buffer>) {
-		if (storageDriver() !== 'local') {
+		if (!this._storage().receivesUploads) {
 			throw notFound();
 		}
 		if (!ownsPhotoKey(userId, key)) {
@@ -57,7 +48,7 @@ export default class PhotoService {
 		if (data.length > MAX_PHOTO_BYTES) {
 			throw apiError(413, 'photoTooLarge');
 		}
-		await writeLocalPhoto(key, data);
+		await this._storage().write(key, data);
 	}
 
 	/** The key comes from the browser, so ownership and the stored size are checked, never believed. */
@@ -68,7 +59,7 @@ export default class PhotoService {
 		if (!ownsPhotoKey(userId, photoKey)) {
 			throw apiError(400, 'photoNotYours');
 		}
-		const size = await photoSize(photoKey);
+		const size = await this._storage().size(photoKey);
 		if (size === null) {
 			throw apiError(400, 'photoUnfinished');
 		}
@@ -78,12 +69,21 @@ export default class PhotoService {
 		return photoKey;
 	}
 
+	/** For the data export: null when the file is missing, which the export notes rather than fails on. */
+	public read(key: string) {
+		return this._storage().read(key);
+	}
+
 	/** Called after the rows are gone, so a failure leaves an unused file, never a broken tasting. */
 	public async remove(key: string) {
-		await deletePhoto(key).catch((error) => logServerError('PhotoService.remove', error));
+		await this._storage()
+			.remove(key)
+			.catch((error) => logServerError('PhotoService.remove', error));
 	}
 
 	public async removeAll(userId: string) {
-		await deleteUserPhotos(userId).catch((error) => logServerError('PhotoService.removeAll', error));
+		await this._storage()
+			.removeFolder(userPhotoFolder(userId))
+			.catch((error) => logServerError('PhotoService.removeAll', error));
 	}
 }

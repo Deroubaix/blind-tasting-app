@@ -1,9 +1,9 @@
 // Flight rules as plain data, shared by the API and the pages, and pinned by flightLogic.test.ts.
 
-import { PALATE_OPTIONS } from '../palate/palateFields';
-import { WSET_PALATE } from '../wset/wsetFields';
-import { type Grid } from '../../data/grids';
-import { flightsText } from '../../i18n/flights';
+import { PALATE_OPTIONS } from '../components/palate/palateFields';
+import { WSET_PALATE } from '../components/wset/wsetFields';
+import { type Grid } from '../data/grids';
+import { flightsText } from '../i18n/flights';
 
 /** No 0/O or 1/I/L, so a code read across a table can't be misread. */
 export const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';

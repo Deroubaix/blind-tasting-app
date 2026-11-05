@@ -1,7 +1,7 @@
 import { type PrismaClient } from '@prisma/client';
 import { gridOf } from '../../data/grids';
-import { wineTypeOf } from '../../components/flights/flightLogic';
-import { type FlightWineCalls, type PalateSample, palateSamplesFor } from '../../components/progress/progressStats';
+import { wineTypeOf } from '../../utils/flightLogic';
+import { type FlightWineCalls, type PalateSample, palateSamplesFor } from '../../utils/progressStats';
 
 /** What the Progress page can't work out from the user's own tastings: how their palate calls sit in flights. */
 export default class ProgressService {

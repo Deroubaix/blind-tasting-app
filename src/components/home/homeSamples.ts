@@ -1,7 +1,7 @@
 // The home page's sample tastings, scored by the app's own rules so the page can't drift from them.
 
-import { compareReveal, type Reveal } from '../archives/revealScore';
-import { compareStructure, structureAttributes } from '../flights/flightLogic';
+import { compareReveal, type Reveal } from '../../utils/revealScore';
+import { compareStructure, structureAttributes } from '../../utils/flightLogic';
 
 export const SAMPLE_LABEL: Reveal = {
 	grapeVariety: 'Pinot Noir',
