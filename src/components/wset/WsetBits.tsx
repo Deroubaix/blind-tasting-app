@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
+import { wsetText } from '../../i18n/wset';
 import { type AromaCluster, AROMA_GROUPS, aromaClusters } from './wsetFields';
 
 type WineType = 'red' | 'white';
@@ -24,12 +27,13 @@ export function OptionCard({
 	/** Tint per option, shown as a dot before the term. */
 	swatches?: Record<string, string>;
 }) {
+	const t = useText(wsetText).bits;
 	return (
 		<div className="tasting-card">
 			<div className="tasting-card__label">
 				{label}
 				{required && (
-					<span className="palate-card__required" aria-label="required">
+					<span className="palate-card__required" aria-label={t.required}>
 						*
 					</span>
 				)}
@@ -81,6 +85,8 @@ type ClusterProps = {
  * (which stores a list per cluster) and the palate (one flat list of flavour characteristics).
  */
 export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd, onRemove }: ClusterProps) {
+	const t = useText(wsetText).bits;
+	const tc = useText(commonText);
 	const [drafts, setDrafts] = useState<Record<string, string>>({});
 	const [open, setOpen] = useState<Record<string, boolean>>({});
 	const clusters = aromaClusters(wineType);
@@ -99,7 +105,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 			{AROMA_GROUPS.map((group) => (
 				<div key={group} className="wset-group">
 					<div className="nose-section-divider">
-						<span className="section-label">{group}</span>
+						<span className="section-label">{t.groups[group]}</span>
 					</div>
 					<div className="nose-grid nose-grid--two-col">
 						{clusters
@@ -128,7 +134,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 												<button
 													key={term}
 													className="tasting-option tasting-option--pill tasting-option--selected tasting-option--custom"
-													title="Click to remove"
+													title={t.clickToRemove}
 													onClick={() => onRemove(cluster, term)}
 												>
 													{term} ×
@@ -143,7 +149,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 														onChange={(e) =>
 															setDrafts((d) => ({ ...d, [cluster.name]: e.target.value }))
 														}
-														placeholder="Your own term…"
+														placeholder={t.ownTermPlaceholder}
 														onKeyDown={(e) => {
 															if (e.key === 'Enter') {
 																add(cluster);
@@ -158,11 +164,11 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 														className="tasting-confirm-btn"
 														onClick={() => add(cluster)}
 													>
-														Add
+														{t.add}
 													</button>
 													<button
 														className="tasting-dismiss-btn"
-														aria-label="Cancel"
+														aria-label={tc.cancel}
 														onClick={() =>
 															setOpen((o) => ({ ...o, [cluster.name]: false }))
 														}
@@ -175,7 +181,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 													className="tasting-option tasting-option--pill tasting-option--ghost"
 													onClick={() => setOpen((o) => ({ ...o, [cluster.name]: true }))}
 												>
-													+ Other
+													{t.other}
 												</button>
 											)}
 										</div>
@@ -190,9 +196,13 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 }
 
 /** Back to where the tasting began: the flight, or Start. */
-export function backToSetup(flight: { code: string } | null | undefined, wineType: WineType) {
+export function backToSetup(
+	flight: { code: string } | null | undefined,
+	wineType: WineType,
+	t: { backToFlight: string; backToSetup: string },
+) {
 	return {
 		href: flight ? `/flights/${flight.code}` : `/tastings/start?wineType=${wineType}`,
-		label: flight ? 'Back to Flight' : 'Back to Setup',
+		label: flight ? t.backToFlight : t.backToSetup,
 	};
 }

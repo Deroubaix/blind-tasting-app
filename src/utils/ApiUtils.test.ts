@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { errorResponse } from './ApiUtils';
+import { apiError, errorResponse } from './ApiUtils';
 import { JsonApiError } from './ErrorUtils';
 
 // The client's FetchUtils and JsonApiError only understand the `{ error, message, statusCode }`
@@ -34,5 +34,26 @@ describe('errorResponse', () => {
 		const { status, body } = await respond(new Error('connection string with a password in it'));
 		expect(status).toBe(500);
 		expect(body.message).toBe('Internal Server Error');
+	});
+});
+
+describe('apiError', () => {
+	it('words the message in the request language', async () => {
+		const response = errorResponse(apiError(409, 'alreadySubmitted', 2), 'pt');
+		expect(response.status).toBe(409);
+		expect(await response.json()).toEqual({
+			error: 'Conflict',
+			message: 'Já submeteu o vinho 2.',
+			statusCode: 409,
+		});
+	});
+
+	it('keeps English as the thrown message, for logs', () => {
+		expect(apiError(429, 'tooManyAttempts', 1).message).toBe('Too many attempts. Try again in 1 minute.');
+	});
+
+	it('words the generic 500 in the request language too', async () => {
+		const response = errorResponse(new Error('secret'), 'pt');
+		expect((await response.json()).message).toBe('Erro interno do servidor.');
 	});
 });

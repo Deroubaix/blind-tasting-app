@@ -12,12 +12,17 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightView, type MyWineView } from '../../types/Flight';
 import { Avatar, StatusPill, clockText, flightService, formatTimer, useNow } from './FlightBits';
 import { formatTime } from '../../utils/DateUtils';
-import { plural } from './flightLogic';
-import { GRIDS } from '../../data/grids';
+import { flightsText } from '../../i18n/flights';
+import { commonText } from '../../i18n/common';
+import { useLang, useText } from '../../i18n/LanguageProvider';
 
 const CHOOSE_MODAL = 'flight-wine-type';
 
 export default function TasterFlight({ flight, reload }: { flight: FlightView; reload: () => Promise<void> }) {
+	const { lang } = useLang();
+	const text = useText(flightsText);
+	const t = text.taster;
+	const common = useText(commonText);
 	const router = useRouter();
 	const now = useNow();
 	const { tastingData, resetTastingData, updateTastingData } = useTastingContext();
@@ -41,14 +46,14 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 				timerMode: endsAt !== null ? 'exam' : undefined,
 				timerEndsAt: endsAt ?? undefined,
 				soundEnabled: true,
-				wineName: `${flight.name} · Wine ${number}`,
+				wineName: `${flight.name} · ${text.bits.wineN(number)}`,
 				conclusion: { initial: {}, final: {} },
 				flight: { code: flight.code, name: flight.name, wineNumber: number, wineCount: flight.wineCount },
 			});
 			router.push(`/tastings/sight?wineType=${wineType.toLowerCase()}`);
 		} catch (error) {
 			showToast({
-				title: 'Could not open the wine',
+				title: t.couldNotOpen,
 				children: JsonApiError.create(error).message,
 				color: 'error',
 			});
@@ -66,27 +71,23 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 		}
 		openModal({
 			modalId: CHOOSE_MODAL,
-			title: `Wine ${wine.number}`,
+			title: text.bits.wineN(wine.number),
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
 				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">What color is it?</p>
+					<p className="confirm-dialog__lead">{t.whatColor}</p>
 					<p className="confirm-dialog__note">
-						{wine.status === 'tasting'
-							? 'Your answers for this wine were not kept on this device, so the sheet starts empty. The clock carries on from when you first opened it.'
-							: flight.timerSeconds
-								? 'The clock starts now.'
-								: 'This flight is untimed.'}
+						{wine.status === 'tasting' ? t.notKept : flight.timerSeconds ? t.clockNow : t.untimedFlight}
 					</p>
 					<div className="flight-color">
 						<button type="button" className="flight-color__btn" onClick={() => begin(wine.number, 'Red')}>
 							<IconGlassFull size={20} aria-hidden="true" />
-							Red
+							{common.red}
 						</button>
 						<button type="button" className="flight-color__btn" onClick={() => begin(wine.number, 'White')}>
 							<IconBottle size={20} aria-hidden="true" />
-							White
+							{common.white}
 						</button>
 					</div>
 				</div>
@@ -103,14 +104,15 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 		<main className="flight-main flight-main--narrow">
 			<header className="flight-head">
 				<div>
-					<span className="page-eyebrow">Flight{flight.ended ? ' · Ended' : ''}</span>
+					<span className="page-eyebrow">{`${text.bits.flight}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
 					<h1 className="flight-head__title">{flight.name}</h1>
 					<p className="flight-head__sub">
-						Hosted by {flight.host.name} · {GRIDS[flight.grid].short} · {plural(flight.wineCount, 'wine')} ·{' '}
-						{formatTimer(flight.timerSeconds)} · {revealed} of {flight.wineCount} revealed
+						{text.bits.hostedBy(flight.host.name)} · {common.grid[flight.grid].short} ·{' '}
+						{common.wines(flight.wineCount)} · {formatTimer(flight.timerSeconds, lang)} ·{' '}
+						{text.bits.revealedOf(revealed, flight.wineCount)}
 					</p>
 				</div>
-				<div className="flight-head__people" aria-label="Tasters">
+				<div className="flight-head__people" aria-label={text.bits.tastersHeading}>
 					{flight.members.map((member) => (
 						<Avatar key={member.id} person={member} size="sm" />
 					))}
@@ -123,18 +125,18 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 					let title: string;
 					let detail: string;
 					if (info?.revealed) {
-						title = info.title ?? `Wine ${wine.number}`;
-						detail = wine.status === 'submitted' ? (info.detail ?? '') : 'Revealed before you submitted';
+						title = info.title ?? text.bits.wineN(wine.number);
+						detail = wine.status === 'submitted' ? (info.detail ?? '') : t.revealedBefore;
 					} else if (wine.status === 'submitted') {
 						const left = stillTasting(wine.number);
-						title = `Waiting for ${hostFirst} to reveal`;
-						detail = `Submitted${wine.submittedAt ? ` at ${formatTime(wine.submittedAt)}` : ''}${left ? ` · ${left} still tasting` : ''}`;
+						title = t.waitingFor(hostFirst);
+						detail = `${t.submitted}${wine.submittedAt ? t.at(formatTime(wine.submittedAt, lang)) : ''}${left ? t.stillTasting(left) : ''}`;
 					} else if (wine.status === 'tasting') {
-						title = wine.endsAt ? `${clockText(wine.endsAt, now)} left` : 'Untimed';
-						detail = 'Carry on where you left off';
+						title = wine.endsAt ? t.timeLeft(clockText(wine.endsAt, now) ?? '') : text.bits.untimed;
+						detail = t.carryOn;
 					} else {
-						title = 'Ready when you are';
-						detail = flight.timerSeconds ? 'The clock starts when you open it' : 'Untimed';
+						title = t.ready;
+						detail = flight.timerSeconds ? t.clockOnOpen : text.bits.untimed;
 					}
 
 					return (
@@ -166,7 +168,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 									href={`/flights/${flight.code}/wines/${wine.number}`}
 									className="flight-link no-underline"
 								>
-									Results →
+									{text.bits.results}
 								</Link>
 							) : wine.status === 'tasting' ? (
 								<button
@@ -174,11 +176,11 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 									className="btn-primary flight-btn-small"
 									onClick={() => open(wine)}
 								>
-									Continue
+									{t.continue}
 								</button>
 							) : wine.status === 'notstarted' && !flight.ended ? (
 								<button type="button" className="outline flight-btn-small" onClick={() => open(wine)}>
-									Start
+									{t.start}
 								</button>
 							) : null}
 						</li>
@@ -187,12 +189,12 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 			</ol>
 
 			<p className="flight-note">
-				Taste in any order. You&apos;ll see the results for each wine once {hostFirst} reveals it.
+				{t.note(hostFirst)}
 				{revealed > 0 && (
 					<>
 						{' '}
 						<Link href={`/flights/${flight.code}/summary`} className="flight-link">
-							Flight summary
+							{text.bits.summary}
 						</Link>
 					</>
 				)}

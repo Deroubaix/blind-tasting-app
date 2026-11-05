@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { photoFileName, shapeExport } from './export';
+import { photoFileName, shapeExport } from './ExportService';
 
 const me = { id: 'me', email: 'me@example.test', displayName: 'Me', created_at: new Date('2026-01-01T00:00:00Z') };
 const when = new Date('2026-11-04T10:00:00Z');

@@ -10,13 +10,15 @@ import FormControl from '../form/FormControl';
 import Label from '../form/Label';
 import TextInput from '../form/TextInput';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { zodResolver } from '../../utils/FormUtils';
 import { resetPasswordSchema, PASSWORD_MIN_LENGTH, type ResetPasswordFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
 import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { translatedResolver } from '../../utils/FormUtils';
+import { userText } from '../../i18n/user';
 
 export default function ResetPasswordForm() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +28,8 @@ export default function ResetPasswordForm() {
 	const searchParams = useSearchParams();
 	const { completePasswordReset, signIn } = useAuthProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
+	const { lang } = useLang();
+	const { reset: t, shared } = useText(userText);
 
 	const token = searchParams.get('token') ?? '';
 	const email = searchParams.get('email') ?? '';
@@ -35,7 +39,7 @@ export default function ResetPasswordForm() {
 
 	const form = useForm<ResetPasswordFormType>({
 		initialValues: { password: '', confirmPassword: '' },
-		validate: zodResolver(resetPasswordSchema),
+		validate: translatedResolver<ResetPasswordFormType>(resetPasswordSchema, lang),
 	});
 
 	const handleSubmit = async (values: ResetPasswordFormType) => {
@@ -52,12 +56,13 @@ export default function ResetPasswordForm() {
 			if (apiError.statusCode === 401) {
 				setError(
 					<>
-						This reset link is invalid or has expired. Please request a new one from the{' '}
-						<Link href="/forgot-password">Forgot password</Link> page.
+						{t.expiredBefore}
+						<Link href="/forgot-password">{t.expiredLink}</Link>
+						{t.expiredAfter}
 					</>,
 				);
 			} else {
-				setError(apiError.message || 'Something went wrong. Please try again.');
+				setError(apiError.message || shared.tryAgain);
 			}
 		} finally {
 			removeLoader(loader);
@@ -67,21 +72,21 @@ export default function ResetPasswordForm() {
 	if (isInvalidLink) {
 		return (
 			<div className="auth-page">
-				<AuthHeader contextLink={{ href: '/login', label: 'Log in', contextLabel: 'Go back?' }} />
+				<AuthHeader contextLink={{ href: '/login', label: shared.logIn, contextLabel: t.goBack }} />
 				<main className="auth-main">
 					<div className="auth-container">
 						<header className="auth-card-head">
-							<span className="page-eyebrow">Invalid link</span>
+							<span className="page-eyebrow">{t.invalidEyebrow}</span>
 							<h1>
-								Link <em>expired</em>.
+								{t.invalidBefore}
+								<em>{t.invalidEm}</em>
+								{t.invalidAfter}
 							</h1>
-							<p className="auth-subheading">
-								This reset link is missing required information. Please request a new one.
-							</p>
+							<p className="auth-subheading">{t.invalidSubheading}</p>
 						</header>
 						<p className="auth-switch">
 							<Link href="/forgot-password" className="auth-switch-link">
-								Request new link
+								{t.requestNew}
 							</Link>
 						</p>
 					</div>
@@ -93,18 +98,18 @@ export default function ResetPasswordForm() {
 
 	return (
 		<div className="auth-page">
-			<AuthHeader contextLink={{ href: '/login', label: 'Log in', contextLabel: 'Remember it?' }} />
+			<AuthHeader contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }} />
 
 			<main className="auth-main">
 				<div className="auth-container">
 					<header className="auth-card-head">
-						<span className="page-eyebrow">New password</span>
+						<span className="page-eyebrow">{t.eyebrow}</span>
 						<h1>
-							Choose a new <em>key</em>.
+							{t.headingBefore}
+							<em>{t.headingEm}</em>
+							{t.headingAfter}
 						</h1>
-						<p className="auth-subheading">
-							Pick a strong password — at least {PASSWORD_MIN_LENGTH} characters.
-						</p>
+						<p className="auth-subheading">{t.subheading(PASSWORD_MIN_LENGTH)}</p>
 					</header>
 
 					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
@@ -112,8 +117,8 @@ export default function ResetPasswordForm() {
 
 						<FormControl className="auth-field" name="password">
 							<div className="auth-label-row">
-								<Label className="item-label">New Password</Label>
-								<span className="auth-input-hint">{PASSWORD_MIN_LENGTH}+ characters</span>
+								<Label className="item-label">{t.newPassword}</Label>
+								<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
 							</div>
 							<div className="auth-input-wrapper">
 								<TextInput
@@ -126,7 +131,7 @@ export default function ResetPasswordForm() {
 									type="button"
 									className="auth-eye-btn"
 									onClick={() => setShowPassword((v) => !v)}
-									aria-label={showPassword ? 'Hide password' : 'Show password'}
+									aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 								>
 									{showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
 								</button>
@@ -134,7 +139,7 @@ export default function ResetPasswordForm() {
 						</FormControl>
 
 						<FormControl className="auth-field" name="confirmPassword">
-							<Label className="item-label">Confirm Password</Label>
+							<Label className="item-label">{t.confirmPassword}</Label>
 							<TextInput
 								className="auth-input"
 								type={showPassword ? 'text' : 'password'}
@@ -148,7 +153,7 @@ export default function ResetPasswordForm() {
 							type="submit"
 							disabled={isLoading}
 						>
-							{isLoading ? 'Saving…' : 'Set new password'}
+							{isLoading ? t.saving : t.submit}
 							<IconArrowRight size={15} />
 						</button>
 					</Form>

@@ -9,6 +9,9 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightPerson, type FlightView } from '../../types/Flight';
 import { type EntryStatus } from './flightLogic';
 import { formatTimerSeconds } from '../../data/timerData';
+import { type Lang } from '../../i18n';
+import { flightsText } from '../../i18n/flights';
+import { useText } from '../../i18n/LanguageProvider';
 
 export const flightService = new ClientFlightService();
 
@@ -26,8 +29,9 @@ export function useRequireLogin(returnTo: string): boolean {
 
 /** The flight, refreshed every few seconds while the page is open, so statuses stay current. */
 export function useFlight(code: string, enabled: boolean) {
+	const t = useText(flightsText).bits;
 	const [flight, setFlight] = useState<FlightView | null>(null);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<'notFound' | 'loadFailed' | null>(null);
 
 	const reload = useCallback(
 		() =>
@@ -39,9 +43,7 @@ export function useFlight(code: string, enabled: boolean) {
 				})
 				.catch((err) => {
 					const apiError = JsonApiError.create(err);
-					setError(
-						apiError.statusCode === 404 ? 'No flight has that code.' : 'The flight could not be loaded.',
-					);
+					setError(apiError.statusCode === 404 ? 'notFound' : 'loadFailed');
 				}),
 		[code],
 	);
@@ -62,7 +64,7 @@ export function useFlight(code: string, enabled: boolean) {
 		};
 	}, [enabled, reload]);
 
-	return { flight, error, reload };
+	return { flight, error: error && t[error], reload };
 }
 
 /** Re-renders every second, for clocks counting down. */
@@ -82,8 +84,9 @@ export function clockText(endsAt: string | number | null, now: number): string |
 	return formatTimerSeconds(Math.max(0, Math.round((new Date(endsAt).getTime() - now) / 1000)));
 }
 
-export function formatTimer(seconds: number | null): string {
-	return seconds ? `${formatTimerSeconds(seconds)} per wine` : 'Untimed';
+export function formatTimer(seconds: number | null, lang: Lang): string {
+	const t = flightsText[lang].bits;
+	return seconds ? t.perWine(formatTimerSeconds(seconds)) : t.untimed;
 }
 
 /** A taster's initial. Filled once submitted, dashed while tasting, faint before they start. */
@@ -113,18 +116,19 @@ export function Avatar({
 export const avatarState = (status: EntryStatus): 'filled' | 'dashed' | 'faint' =>
 	status === 'submitted' ? 'filled' : status === 'tasting' ? 'dashed' : 'faint';
 
-const STATUS_WORDS: Record<EntryStatus | 'revealed' | 'allsubmitted', { word: string; Icon: typeof IconCheck }> = {
-	notstarted: { word: 'Not started', Icon: IconMinus },
-	tasting: { word: 'Tasting', Icon: IconPointFilled },
-	submitted: { word: 'Submitted', Icon: IconCheck },
-	notsubmitted: { word: 'Not submitted', Icon: IconMinus },
-	revealed: { word: 'Revealed', Icon: IconChecks },
-	allsubmitted: { word: 'All submitted', Icon: IconCheck },
+const STATUS_ICONS: Record<EntryStatus | 'revealed' | 'allsubmitted', typeof IconCheck> = {
+	notstarted: IconMinus,
+	tasting: IconPointFilled,
+	submitted: IconCheck,
+	notsubmitted: IconMinus,
+	revealed: IconChecks,
+	allsubmitted: IconCheck,
 };
 
 /** A status as an icon and a word, never color alone. */
-export function StatusPill({ status, word }: { status: keyof typeof STATUS_WORDS; word?: string }) {
-	const { word: fallback, Icon } = STATUS_WORDS[status];
+export function StatusPill({ status, word }: { status: keyof typeof STATUS_ICONS; word?: string }) {
+	const fallback = useText(flightsText).bits.status[status];
+	const Icon = STATUS_ICONS[status];
 	return (
 		<span className={`flight-status flight-status--${status}`}>
 			<Icon size={12} stroke={2.2} aria-hidden="true" />

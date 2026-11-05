@@ -1,6 +1,8 @@
 import { IconX } from '@tabler/icons-react';
 import React, { type MouseEventHandler, type ReactNode, useCallback, useEffect, useRef } from 'react';
 import { type ThemeColorName } from '../styles/Colors';
+import { useText } from '../i18n/LanguageProvider';
+import { userText } from '../i18n/user';
 
 export type ToastProps = {
 	className?: string;
@@ -15,6 +17,7 @@ export type ToastProps = {
 export default function Toast(props: ToastProps) {
 	const { className, title, children, onClose, toastId, autoCloseMs } = props;
 	const color = props.color ?? 'primary';
+	const t = useText(userText).toast;
 
 	const ref = useRef<HTMLDivElement>(null);
 	const progressRef = useRef<HTMLDivElement>(null);
@@ -68,7 +71,7 @@ export default function Toast(props: ToastProps) {
 		<div ref={ref} id={toastId} className={`Toast ${color} ${className ?? ''}`}>
 			{title && <h4 className="title">{title}</h4>}
 			{children && <div className="body">{children}</div>}
-			<button className="close" onClick={handleCloseButtonClicked} aria-label="Dismiss notification">
+			<button className="close" onClick={handleCloseButtonClicked} aria-label={t.dismiss}>
 				<IconX aria-hidden="true" />
 			</button>
 			{autoCloseMs ? <div ref={progressRef} className="autoclose" /> : null}

@@ -1,9 +1,7 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import { NoseRoute } from '../../../components/tasting/GridRoutes';
 
-export const metadata: Metadata = {
-	title: 'Nose',
-};
+export const generateMetadata = pageTitle({ en: 'Nose', pt: 'Nariz' });
 
 export default async function NosePage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {
 	const { wineType: wineTypeParam } = await searchParams;

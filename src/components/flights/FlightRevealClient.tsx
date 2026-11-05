@@ -9,11 +9,17 @@ import { type Reveal, isRevealed } from '../archives/revealScore';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { FlightMessage, clockText, flightService, useFlight, useNow, useRequireLogin } from './FlightBits';
+import { flightsText } from '../../i18n/flights';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
 
-const listNames = (names: string[]) =>
-	names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
+const listNames = (names: string[], and: string) =>
+	names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} ${and} ${names.at(-1)}`;
 
 export default function FlightRevealClient({ code, number }: { code: string; number: number }) {
+	const text = useText(flightsText);
+	const t = text.reveal;
+	const common = useText(commonText);
 	const ready = useRequireLogin(`/flights/${code}/wines/${number}/reveal`);
 	const { flight, error } = useFlight(code, ready);
 	const router = useRouter();
@@ -38,13 +44,13 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 		return <FlightMessage>{error}</FlightMessage>;
 	}
 	if (!flight) {
-		return <div className="archives-loading">Loading…</div>;
+		return <div className="archives-loading">{common.loading}</div>;
 	}
 	if (flight.role !== 'host') {
-		return <FlightMessage>Only the host reveals the wines.</FlightMessage>;
+		return <FlightMessage>{t.onlyHost}</FlightMessage>;
 	}
 	if (!wine) {
-		return <FlightMessage>This flight has no wine {number}.</FlightMessage>;
+		return <FlightMessage>{t.noWine(number)}</FlightMessage>;
 	}
 
 	const tasting = flight.members.filter((member) => wine.statuses[member.id] === 'tasting');
@@ -56,7 +62,7 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 			await flightService.reveal(code, number, draft);
 			router.push(`/flights/${code}/wines/${number}`);
 		} catch (err) {
-			showToast({ title: 'Not revealed', children: JsonApiError.create(err).message, color: 'error' });
+			showToast({ title: t.notRevealed, children: JsonApiError.create(err).message, color: 'error' });
 			setSaving(false);
 		}
 	};
@@ -70,44 +76,46 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 			<section className="reveal-card reveal-form flight-reveal" aria-labelledby="flight-reveal-heading">
 				{/* Phone only: the form is a full-screen sheet with its own header. */}
 				<div className="reveal-form__sheet-head">
-					<Link href={`/flights/${code}`} className="reveal-form__close no-underline" aria-label="Close">
+					<Link
+						href={`/flights/${code}`}
+						className="reveal-form__close no-underline"
+						aria-label={common.close}
+					>
 						<IconX size={22} aria-hidden="true" />
 					</Link>
 					<div className="reveal-form__sheet-title">
-						<span>Reveal wine {number}</span>
+						<span>{text.bits.revealWine(number)}</span>
 						<span className="reveal-form__sheet-sub">{flight.name}</span>
 					</div>
 				</div>
 				<div className="reveal-form__body">
-					<span className="reveal-eyebrow">
-						Reveal · Wine {number} of {flight.wineCount}
-					</span>
+					<span className="reveal-eyebrow">{t.eyebrow(number, flight.wineCount)}</span>
 					<h1 className="reveal-form__heading" id="flight-reveal-heading">
-						What was wine {number}?
+						{t.heading(number)}
 					</h1>
-					<p className="reveal-form__lede">
-						{flight.grid === 'wset'
-							? 'Enter the quality and readiness from the answer key, and the wine if you want it scored too. Everyone who submitted is scored at the same moment.'
-							: 'Copy it from the label once. Everyone who submitted is scored at the same moment.'}
-					</p>
+					<p className="reveal-form__lede">{flight.grid === 'wset' ? t.ledeWset : t.ledeCms}</p>
 
 					{!revealed && tasting.length > 0 && (
 						<div className="flight-warning" role="note">
 							<IconPointFilled size={16} aria-hidden="true" />
 							<div>
 								<p className="flight-warning__lead">
-									{submitted} of {flight.members.length} have submitted.{' '}
+									{t.haveSubmitted(submitted, flight.members.length)}{' '}
 									{tasting.length === 1
-										? `${tasting[0].name} is still tasting${tasting[0].endsAt ? ` (${clockText(tasting[0].endsAt, now)} left)` : ''}.`
-										: `${listNames(tasting.map((m) => m.name))} are still tasting.`}
+										? t.oneTasting(
+												tasting[0].name,
+												tasting[0].endsAt ? clockText(tasting[0].endsAt, now) : null,
+											)
+										: t.manyTasting(
+												listNames(
+													tasting.map((m) => m.name),
+													t.and,
+												),
+											)}
 								</p>
-								<p className="flight-muted">
-									If you reveal now, wine {number} closes for{' '}
-									{tasting.length === 1 ? 'them' : 'them all'}. They&apos;ll be shown as Not
-									submitted, not scored 0, and left out of the average.
-								</p>
+								<p className="flight-muted">{t.closes(number, tasting.length === 1)}</p>
 								<Link href={`/flights/${code}`} className="outline flight-btn-small no-underline">
-									Wait for {tasting.length === 1 ? tasting[0].name.split(' ')[0] : 'them'}
+									{t.waitFor(tasting.length === 1 ? tasting[0].name.split(' ')[0] : null)}
 								</Link>
 							</div>
 						</div>
@@ -127,12 +135,12 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 						onClick={save}
 						disabled={saving || !isRevealed(draft) || !submitted}
 					>
-						{saving ? 'Revealing…' : revealed ? 'Save correction' : 'Reveal to everyone'}
+						{saving ? t.revealing : revealed ? t.saveCorrection : t.revealAll}
 					</button>
 					<Link href={`/flights/${code}`} className="reveal-btn-quiet reveal-form__cancel no-underline">
-						Cancel
+						{common.cancel}
 					</Link>
-					<span className="reveal-form__footnote">Opens the results for wine {number}.</span>
+					<span className="reveal-form__footnote">{t.footnote(number)}</span>
 				</div>
 			</section>
 		</main>

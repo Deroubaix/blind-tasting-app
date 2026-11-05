@@ -5,9 +5,14 @@ import { FlightMessage, useFlight, useRequireLogin } from './FlightBits';
 import HostDashboard from './HostDashboard';
 import TasterFlight from './TasterFlight';
 import { JoinInvite } from './JoinFlight';
+import { flightsText } from '../../i18n/flights';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
 
 /** One address per flight: the host's dashboard, a taster's wine list, or the invitation to join. */
 export default function FlightPageClient({ code }: { code: string }) {
+	const t = useText(flightsText).page;
+	const common = useText(commonText);
 	const ready = useRequireLogin(`/flights/${code}`);
 	const { flight, error, reload } = useFlight(code, ready);
 
@@ -16,13 +21,13 @@ export default function FlightPageClient({ code }: { code: string }) {
 			<FlightMessage>
 				<p>{error}</p>
 				<Link href="/flights" className="flight-link">
-					← Your flights
+					{t.backToFlights}
 				</Link>
 			</FlightMessage>
 		);
 	}
 	if (!flight) {
-		return <div className="archives-loading">Loading…</div>;
+		return <div className="archives-loading">{common.loading}</div>;
 	}
 	if (flight.role === 'host') {
 		return <HostDashboard flight={flight} reload={reload} />;

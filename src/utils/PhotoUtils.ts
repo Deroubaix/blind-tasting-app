@@ -29,7 +29,7 @@ async function decode(file: Blob): Promise<Decoded> {
 		await image.decode();
 	} catch {
 		URL.revokeObjectURL(url);
-		throw new Error('This photo could not be opened. Try saving it to your photos and choosing it from there.');
+		throw new PhotoError('open');
 	}
 	return {
 		source: image,
@@ -37,6 +37,13 @@ async function decode(file: Blob): Promise<Decoded> {
 		height: image.naturalHeight,
 		release: () => URL.revokeObjectURL(url),
 	};
+}
+
+/** Carries a code, so the page can word the failure in the interface language. */
+export class PhotoError extends Error {
+	constructor(public code: 'open' | 'prepare' | 'preview') {
+		super(`Label photo failed: ${code}`);
+	}
 }
 
 /**
@@ -55,7 +62,7 @@ export async function prepareLabelPhoto(file: Blob): Promise<LabelPhoto> {
 
 	const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY));
 	if (!blob) {
-		throw new Error('This photo could not be prepared for upload.');
+		throw new PhotoError('prepare');
 	}
 	return { blob, preview: await toDataUrl(blob) };
 }
@@ -68,7 +75,7 @@ function toDataUrl(blob: Blob) {
 	return new Promise<string>((resolve, reject) => {
 		const reader = new FileReader();
 		reader.onload = () => resolve(reader.result as string);
-		reader.onerror = () => reject(new Error('This photo could not be previewed.'));
+		reader.onerror = () => reject(new PhotoError('preview'));
 		reader.readAsDataURL(blob);
 	});
 }

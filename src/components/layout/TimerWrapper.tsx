@@ -8,6 +8,11 @@ import { useTastingContext } from '../tasting/TastingContext';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { playBeep, unlockAudio } from '../../utils/beep';
+import { type TimerPhase } from '../../data/timerData';
+import { gridOf } from '../../data/grids';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { layoutText } from '../../i18n/layout';
 
 interface TimerWrapperProps {
 	defaultDuration: number;
@@ -15,8 +20,8 @@ interface TimerWrapperProps {
 	endsAt?: number;
 	pausedAt?: number | null;
 	destination: string;
-	/** Display name of the phase being handed over to. Absent on the last phase. */
-	nextLabel?: string | null;
+	/** The phase being handed over to. Absent on the last phase. */
+	nextPhase?: TimerPhase | null;
 	/** The last timed phase ends the session with a modal instead of moving straight on. */
 	isFinalPhase?: boolean;
 }
@@ -26,11 +31,13 @@ export default function TimerWrapper({
 	endsAt,
 	pausedAt,
 	destination,
-	nextLabel,
+	nextPhase,
 	isFinalPhase,
 }: TimerWrapperProps) {
 	const router = useRouter();
 	const { tastingData } = useTastingContext();
+	const t = useText(layoutText).timer;
+	const phaseNames = useText(commonText).phase[gridOf(tastingData.grid)];
 	const { openModal, closeModal } = useModalProvider();
 	const { showToast } = useToastProvider();
 	const soundOn = tastingData.soundEnabled !== false;
@@ -62,8 +69,8 @@ export default function TimerWrapper({
 		// back unlimited thinking time at exactly the boundary being trained against.
 		if (!isFinalPhase) {
 			showToast({
-				title: 'Time',
-				children: nextLabel ? `Moving on to ${nextLabel}.` : 'Moving on.',
+				title: t.time,
+				children: nextPhase ? t.movingOnTo(phaseNames[nextPhase]) : t.movingOn,
 				autoCloseMs: 4000,
 			});
 			router.push(destination);
@@ -74,21 +81,14 @@ export default function TimerWrapper({
 		const modalId = 'tasting-time-up';
 		openModal({
 			modalId,
-			title: 'Time',
+			title: t.time,
 			className: 'TimeUpModal',
 			closeOnClickOutside: false,
 			closeOnEsc: true,
 			children: (
 				<div className="timeup">
-					<p className="timeup__lead">
-						{tastingData.timerMode === 'exam'
-							? 'Time is up for this wine.'
-							: 'That is the full deductive sequence — all five phases complete.'}
-					</p>
-					<p className="timeup__note">
-						Your answers are kept as you go, so nothing is lost. Save the tasting on the next screen, with
-						any closing notes and a photo.
-					</p>
+					<p className="timeup__lead">{tastingData.timerMode === 'exam' ? t.wineOver : t.sequenceOver}</p>
+					<p className="timeup__note">{t.kept}</p>
 					<button
 						className="btn-primary timeup__action"
 						onClick={() => {
@@ -96,7 +96,7 @@ export default function TimerWrapper({
 							router.push(destination);
 						}}
 					>
-						Review &amp; Save
+						{t.reviewSave}
 						<IconArrowRight size={16} />
 					</button>
 				</div>

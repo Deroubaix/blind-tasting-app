@@ -1,9 +1,8 @@
 import SignupForm from '../../components/user/SignupForm';
-import { type Metadata } from 'next';
+import { pageTitle } from '../../i18n/server';
+import { userText } from '../../i18n/user';
 
-export const metadata: Metadata = {
-	title: 'Sign up',
-};
+export const generateMetadata = pageTitle({ en: userText.en.pages.signUp, pt: userText.pt.pages.signUp });
 
 export default function SignupPage() {
 	return <SignupForm />;

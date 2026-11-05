@@ -1,0 +1,47 @@
+@use '../abstracts' as *;
+
+// EN | PT, sized to sit among the header links and in the footer nav.
+.lang-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: $text-12;
+	font-weight: $font-weight-semibold;
+	letter-spacing: 0.08em;
+
+	&__btn {
+		@include bare-button;
+
+		min-height: 32px;
+		padding: 0 4px;
+		color: $color-text-muted;
+		cursor: pointer;
+
+		&:hover {
+			color: $color-white;
+		}
+
+		&[aria-pressed='true'] {
+			color: $color-white;
+			text-decoration: underline;
+			text-decoration-color: $tasting-accent-light;
+			text-underline-offset: 4px;
+		}
+	}
+
+	&__sep {
+		width: 1px;
+		height: 12px;
+		background: rgba($color-white, 0.2);
+	}
+
+	// In the phone menu it sits in the foot with the log-in links, so it takes their height.
+	.site-menu__foot & {
+		margin-top: 6px;
+
+		&__btn {
+			min-height: 44px;
+			font-size: $text-14;
+		}
+	}
+}

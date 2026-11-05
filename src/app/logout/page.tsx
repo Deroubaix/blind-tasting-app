@@ -3,11 +3,14 @@
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthProvider } from '../../components/auth/AuthProvider';
+import { useText } from '../../i18n/LanguageProvider';
+import { userText } from '../../i18n/user';
 
 export default function LogoutPage() {
 	const { signOut } = useAuthProvider();
 	const router = useRouter();
 	const hasSignedOut = useRef(false);
+	const t = useText(userText).logout;
 
 	useEffect(() => {
 		// Runs exactly once. signOut and router are stable identities, so listing them satisfies
@@ -25,7 +28,7 @@ export default function LogoutPage() {
 
 	return (
 		<div style={{ padding: '2rem', textAlign: 'center' }}>
-			<p>Logging out...</p>
+			<p>{t.loggingOut}</p>
 		</div>
 	);
 }

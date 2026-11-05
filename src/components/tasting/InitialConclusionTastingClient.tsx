@@ -8,10 +8,16 @@ import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { AGE_RANGES, CLIMATES, icAnsweredCount, IC_REQUIRED_COUNT } from './conclusionFields';
 import TastingAutocomplete from './TastingAutocomplete';
 import { GRAPE_VARIETALS, WINE_COUNTRIES } from './autocompleteData';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { tastingText } from '../../i18n/tasting';
 
 export default function InitialConclusionTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
+	const text = useText(tastingText);
+	const t = text.initial;
+	const phaseName = useText(commonText).phase.cms;
 
 	const ic = tastingData.conclusion?.initial ?? {};
 	const [varietalInput, setVarietalInput] = useState('');
@@ -47,24 +53,24 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 			progress={conclusionPct}
 			timerPage="initialConclusion"
 			timerDestination={`/tastings/final-conclusion?wineType=${wineType}`}
-			phase="Phase 04"
-			title="Initial Conclusion"
-			description="Synthesize your observations from sight, nose, and palate into possible grape varieties, climate, possible countries, and age range."
+			phase={text.phaseLabel('04')}
+			title={phaseName.initialConclusion}
+			description={t.description}
 			footer={{
 				onBack: handlePreviousPhase,
-				backLabel: 'Back to Palate',
-				nextLabel: 'Next: Final Conclusion',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: handleNextPhase,
 			}}
 		>
 			<div className="ic-layout">
 				{/* ── Left column ── */}
 				<div className="ic-col">
-					<div className="section-label">Environment</div>
+					<div className="section-label">{t.environment}</div>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label" id="ic-climate-label">
-							Climate
+							{t.climate}
 						</div>
 						<div
 							className="tasting-options tasting-options--equal"
@@ -84,11 +90,11 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 						</div>
 					</div>
 
-					<div className="section-label section-label--mt">Maturity</div>
+					<div className="section-label section-label--mt">{t.maturity}</div>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label" id="ic-age-label">
-							Age Range
+							{t.ageRange}
 						</div>
 						<div className="tasting-options" role="group" aria-labelledby="ic-age-label">
 							{AGE_RANGES.map((opt) => (
@@ -107,26 +113,26 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 
 				{/* ── Right column ── */}
 				<div className="ic-col">
-					<div className="section-label">Varietal Identification</div>
+					<div className="section-label">{t.varietal}</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Possible Grape Varieties</div>
+						<div className="tasting-card__label">{t.grapes}</div>
 						<div className="tasting-search-row">
 							<TastingAutocomplete
 								suggestions={GRAPE_VARIETALS}
-								ariaLabel="Possible grape varieties"
+								ariaLabel={t.grapesAria}
 								value={varietalInput}
 								onChange={setVarietalInput}
 								onConfirm={addVarietal}
-								placeholder="Search varietals..."
+								placeholder={t.searchGrapes}
 								icon={<IconSearch size={14} className="tasting-search-icon" />}
 							/>
 							<button
 								className="tasting-confirm-btn"
-								aria-label="Add grape variety"
+								aria-label={t.addGrape}
 								onClick={() => addVarietal()}
 							>
-								Add
+								{text.add}
 							</button>
 						</div>
 						{(ic.grapeVarieties?.length ?? 0) > 0 && (
@@ -136,7 +142,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 										{v}
 										<button
 											className="tasting-chip__remove"
-											aria-label={`Remove ${v}`}
+											aria-label={text.remove(v)}
 											onClick={() =>
 												updateIC({ grapeVarieties: ic.grapeVarieties!.filter((x) => x !== v) })
 											}
@@ -149,26 +155,26 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 						)}
 					</div>
 
-					<div className="section-label section-label--mt">Geographic Deduction</div>
+					<div className="section-label section-label--mt">{t.geographic}</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Possible Countries</div>
+						<div className="tasting-card__label">{t.countries}</div>
 						<div className="tasting-search-row">
 							<TastingAutocomplete
 								suggestions={WINE_COUNTRIES}
-								ariaLabel="Possible countries"
+								ariaLabel={t.countriesAria}
 								value={countryInput}
 								onChange={setCountryInput}
 								onConfirm={addCountry}
-								placeholder="Search countries..."
+								placeholder={t.searchCountries}
 								icon={<IconSearch size={14} className="tasting-search-icon" />}
 							/>
 							<button
 								className="tasting-confirm-btn"
-								aria-label="Add country"
+								aria-label={t.addCountry}
 								onClick={() => addCountry()}
 							>
-								Add
+								{text.add}
 							</button>
 						</div>
 						{(ic.possibleCountries?.length ?? 0) > 0 && (
@@ -178,7 +184,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 										{c}
 										<button
 											className="tasting-chip__remove"
-											aria-label={`Remove ${c}`}
+											aria-label={text.remove(c)}
 											onClick={() =>
 												updateIC({
 													possibleCountries: ic.possibleCountries!.filter((x) => x !== c),

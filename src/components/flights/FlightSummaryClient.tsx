@@ -7,9 +7,16 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightSummary } from '../../types/Flight';
 import { Avatar, FlightMessage, flightService, formatTimer, useRequireLogin } from './FlightBits';
 import { formatDate } from '../../utils/DateUtils';
-import { plural } from './flightLogic';
+import { flightsText } from '../../i18n/flights';
+import { commonText } from '../../i18n/common';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { formatAverage } from '../../utils/NumberUtils';
 
 export default function FlightSummaryClient({ code }: { code: string }) {
+	const { lang } = useLang();
+	const text = useText(flightsText);
+	const t = text.summary;
+	const common = useText(commonText);
 	const ready = useRequireLogin(`/flights/${code}/summary`);
 	const [summary, setSummary] = useState<FlightSummary | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -21,18 +28,19 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 		flightService
 			.summary(code)
 			.then(setSummary)
-			.catch((err) => setError(JsonApiError.create(err).message || 'The summary could not be loaded.'));
-	}, [ready, code]);
+			.catch((err) => setError(JsonApiError.create(err).message));
+		// The titles and notes are written on the server, so a language switch fetches them again.
+	}, [ready, code, lang]);
 
-	if (error) {
-		return <FlightMessage>{error}</FlightMessage>;
+	if (error !== null) {
+		return <FlightMessage>{error || t.loadFailed}</FlightMessage>;
 	}
 	if (!summary) {
-		return <div className="archives-loading">Loading…</div>;
+		return <div className="archives-loading">{common.loading}</div>;
 	}
 
 	const revealed = summary.wines.filter((wine) => wine.revealed).length;
-	const date = formatDate(summary.createdAt);
+	const date = formatDate(summary.createdAt, lang);
 
 	return (
 		<main className="flight-main">
@@ -42,37 +50,35 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 			<header className="flight-head">
 				<div>
 					<span className="page-eyebrow">
-						Flight summary ·{' '}
+						{text.bits.summary} ·{' '}
 						{revealed === summary.wines.length
-							? `All ${revealed} revealed`
-							: `${revealed} of ${summary.wines.length} revealed`}
+							? text.bits.allRevealed(revealed)
+							: text.bits.revealedOf(revealed, summary.wines.length)}
 					</span>
 					<h1 className="flight-head__title">{summary.name}</h1>
 					<p className="flight-head__sub">
-						{date} · Hosted by {summary.hostName} · {plural(summary.members.length, 'taster')} ·{' '}
-						{formatTimer(summary.timerSeconds)}
+						{date} · {text.bits.hostedBy(summary.hostName)} · {text.bits.tasters(summary.members.length)} ·{' '}
+						{formatTimer(summary.timerSeconds, lang)}
 					</p>
 				</div>
-				<p className="flight-note flight-summary__archive">
-					Each taster&apos;s own tastings are already in their archive.
-				</p>
+				<p className="flight-note flight-summary__archive">{t.inArchive}</p>
 			</header>
 
 			<section className="flight-card flight-results__card">
-				<div className="flight-summary" role="table" aria-label="Scores by wine and taster">
+				<div className="flight-summary" role="table" aria-label={t.tableAria}>
 					<div
 						className="flight-summary__row flight-summary__row--head"
 						role="row"
 						style={{ ['--cols' as string]: summary.members.length }}
 					>
-						<span role="columnheader">Wine</span>
+						<span role="columnheader">{text.bits.wine}</span>
 						{summary.members.map((member) => (
 							<span key={member.id} role="columnheader" className="flight-summary__person">
 								<Avatar person={member} size="sm" />
 								<span className="flight-summary__first">{member.name.split(' ')[0]}</span>
 							</span>
 						))}
-						<span role="columnheader">Group avg</span>
+						<span role="columnheader">{t.groupAvg}</span>
 					</div>
 
 					{summary.wines.map((wine) => (
@@ -93,7 +99,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 											{wine.title}
 										</Link>
 									) : (
-										<span className="flight-muted">Not revealed yet</span>
+										<span className="flight-muted">{t.notRevealedYet}</span>
 									)}
 									{wine.grape && <span className="flight-muted">{wine.grape}</span>}
 								</span>
@@ -107,23 +113,23 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 										) : cell ? (
 											<span>
 												{cell.score === cell.outOf && (
-													<IconCheck size={11} aria-label="Every field right" />
+													<IconCheck size={11} aria-label={t.allRight} />
 												)}
 												{cell.score} / {cell.outOf}
 											</span>
 										) : (
 											<span
 												className="flight-status flight-status--notsubmitted"
-												title={`${member.name}: not submitted`}
+												title={t.notSubmittedTitle(member.name)}
 											>
-												Not submitted
+												{text.bits.status.notsubmitted}
 											</span>
 										)}
 									</span>
 								);
 							})}
 							<span role="cell" className="flight-summary__cell">
-								{wine.average ?? '—'}
+								{formatAverage(wine.average, lang)}
 								{wine.average !== null && <span className="flight-muted"> / {wine.outOf}</span>}
 							</span>
 						</div>
@@ -134,7 +140,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 						role="row"
 						style={{ ['--cols' as string]: summary.members.length }}
 					>
-						<span role="rowheader">Total</span>
+						<span role="rowheader">{t.total}</span>
 						{summary.members.map((member) => {
 							const total = summary.totals[member.id];
 							return (
@@ -142,14 +148,14 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 									<strong>{total.outOf ? `${total.score} / ${total.outOf}` : '—'}</strong>
 									<span className="flight-muted">
 										{total.submitted === revealed
-											? `All ${revealed} submitted`
-											: `${total.submitted} of ${revealed} submitted`}
+											? t.allSubmitted(revealed)
+											: text.bits.submittedOf(total.submitted, revealed)}
 									</span>
 								</span>
 							);
 						})}
 						<span role="cell" className="flight-summary__cell">
-							<strong>{summary.groupAverage ?? '—'}</strong>
+							<strong>{formatAverage(summary.groupAverage, lang)}</strong>
 							{summary.groupAverage !== null && summary.groupOutOf && (
 								<span className="flight-muted"> / {summary.groupOutOf}</span>
 							)}
@@ -160,19 +166,20 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 
 			{summary.mostConfused && (
 				<p className="flight-confused">
-					<span className="tasting-card__label">Most confused</span>
+					<span className="tasting-card__label">{t.mostConfused}</span>
 					<span>
 						<Link href={`/flights/${code}/wines/${summary.mostConfused.number}`} className="flight-link">
-							Wine {summary.mostConfused.number}, {summary.mostConfused.title}
+							{t.confusedWine(summary.mostConfused.number, summary.mostConfused.title)}
 						</Link>
-						: average {summary.mostConfused.average} / {summary.mostConfused.outOf}.
+						{t.confusedAverage(
+							formatAverage(summary.mostConfused.average, lang),
+							summary.mostConfused.outOf,
+						)}
 						{summary.mostConfused.note && ` ${summary.mostConfused.note}`}
 					</span>
 				</p>
 			)}
-			<p className="flight-note">
-				Tasters stay in the order they joined. A wine is scored out of the fields its label gives.
-			</p>
+			<p className="flight-note">{t.footnote}</p>
 		</main>
 	);
 }

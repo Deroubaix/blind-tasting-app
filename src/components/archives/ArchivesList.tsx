@@ -11,7 +11,10 @@ import ClientTastingService from '../../services/client/ClientTastingService';
 import { compareReveal, describeCall, describeWine, isRevealed, revealTitle } from './revealScore';
 import { type TastingData } from '../../types/TastingData';
 import { formatDate } from '../../utils/DateUtils';
-import { GRIDS, gridOf } from '../../data/grids';
+import { gridOf } from '../../data/grids';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { archivesText } from '../../i18n/archives';
+import { commonText } from '../../i18n/common';
 
 const service = new ClientTastingService();
 
@@ -27,11 +30,14 @@ export default function ArchivesList() {
 	const { user, isInitialLoading } = useAuthProvider();
 	const [tastings, setTastings] = useState<SavedTasting[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [loadFailed, setLoadFailed] = useState(false);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
 	const router = useRouter();
 	const { openModal, closeModal } = useModalProvider();
 	const { showToast } = useToastProvider();
+	const { lang } = useLang();
+	const { list: t, shared } = useText(archivesText);
+	const common = useText(commonText);
 
 	const deleteTasting = async (tasting: SavedTasting) => {
 		closeModal(DELETE_MODAL);
@@ -39,9 +45,9 @@ export default function ArchivesList() {
 		try {
 			await service.deleteTasting(tasting.id);
 			setTastings((current) => current.filter((t) => t.id !== tasting.id));
-			showToast({ title: 'Tasting deleted', children: `No. ${tasting.number} has been deleted.` });
+			showToast({ title: t.deletedTitle, children: t.deleted(tasting.number) });
 		} catch {
-			showToast({ title: 'Delete failed', children: 'Something went wrong. Please try again.', color: 'error' });
+			showToast({ title: t.deleteFailed, children: shared.tryAgain, color: 'error' });
 		} finally {
 			setDeletingId(null);
 		}
@@ -51,29 +57,25 @@ export default function ArchivesList() {
 	const confirmDelete = (tasting: SavedTasting, title: string) =>
 		openModal({
 			modalId: DELETE_MODAL,
-			title: 'Delete this tasting?',
+			title: t.confirmTitle,
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
 				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">
-						No. {tasting.number}, {title}, will be deleted for good
-						{tasting.photoKey ? ', along with its photo' : ''}.
-					</p>
+					<p className="confirm-dialog__lead">{t.confirmLead(tasting.number, title, !!tasting.photoKey)}</p>
 					{tasting.flight && (
 						<p className="confirm-dialog__note">
-							It was your call for wine {tasting.flight.wineNumber} of {tasting.flight.name}, so it also
-							leaves that flight&apos;s results.
+							{t.confirmFlight(tasting.flight.wineNumber, tasting.flight.name)}
 						</p>
 					)}
-					<p className="confirm-dialog__note">This cannot be undone.</p>
+					<p className="confirm-dialog__note">{t.cannotUndo}</p>
 					<div className="confirm-dialog__actions">
 						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(DELETE_MODAL)}>
-							Keep it
+							{t.keep}
 						</button>
 						<button className="btn-primary confirm-dialog__confirm" onClick={() => deleteTasting(tasting)}>
 							<IconTrash size={16} />
-							Delete tasting
+							{t.deleteTasting}
 						</button>
 					</div>
 				</div>
@@ -91,24 +93,24 @@ export default function ArchivesList() {
 		service
 			.getTastings()
 			.then((data) => setTastings(data as SavedTasting[]))
-			.catch(() => setError('Failed to load tastings.'))
+			.catch(() => setLoadFailed(true))
 			.finally(() => setIsLoading(false));
 	}, [user, isInitialLoading, router]);
 
 	if (isInitialLoading || isLoading) {
-		return <div className="archives-loading">Loading your tastings…</div>;
+		return <div className="archives-loading">{t.loading}</div>;
 	}
 
-	if (error) {
-		return <div className="archives-error">{error}</div>;
+	if (loadFailed) {
+		return <div className="archives-error">{t.loadFailed}</div>;
 	}
 
 	if (tastings.length === 0) {
 		return (
 			<div className="archives-empty">
-				<p>You have no saved tastings yet.</p>
+				<p>{t.empty}</p>
 				<Link href="/tastings/start" className="btn-primary no-underline">
-					Start Your First Tasting
+					{t.startFirst}
 				</Link>
 			</div>
 		);
@@ -120,7 +122,7 @@ export default function ArchivesList() {
 			    sight with every tasting saved. */}
 			<Link href="/tastings/start" className="archive-card archive-card--new no-underline">
 				<span className="archive-card__new-icon">+</span>
-				<span className="archive-card__new-label">New Tasting</span>
+				<span className="archive-card__new-label">{t.newTasting}</span>
 			</Link>
 
 			{tastings.map((tasting) => {
@@ -130,14 +132,14 @@ export default function ArchivesList() {
 
 				// Revealed: the wine is the title and the call a line beneath it, as on the detail page.
 				const revealed = isRevealed(tasting.reveal);
-				const comparison = revealed ? compareReveal(final, tasting.reveal!, null, grid) : null;
+				const comparison = revealed ? compareReveal(final, tasting.reveal!, null, grid, lang) : null;
 				const title = revealed
-					? revealTitle(tasting.reveal!)
-					: tasting.wineName || final.grapeVariety || 'Untitled Tasting';
+					? revealTitle(tasting.reveal!, lang)
+					: tasting.wineName || final.grapeVariety || shared.untitled;
 				const subtitle = revealed ? describeWine(tasting.reveal) || null : callSummary;
 				const perfect = comparison !== null && comparison.outOf > 0 && comparison.score === comparison.outOf;
 
-				const date = tasting.created_at ? formatDate(tasting.created_at) : null;
+				const date = tasting.created_at ? formatDate(tasting.created_at, lang) : null;
 
 				return (
 					// Not a link itself: a button cannot sit inside one. The Details link stretches over
@@ -146,45 +148,51 @@ export default function ArchivesList() {
 						<div className="archive-card__top">
 							<div className="archive-card__badges">
 								<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
-									{tasting.wineType} Wine
+									{tasting.wineType === 'Red'
+										? common.redWine
+										: tasting.wineType === 'White'
+											? common.whiteWine
+											: ''}
 								</span>
-								{grid === 'wset' && <span className="grid-badge">{GRIDS.wset.short}</span>}
+								{grid === 'wset' && <span className="grid-badge">{common.grid.wset.short}</span>}
 								{comparison ? (
 									<span
 										className="archive-card__score"
-										title={`Score: ${comparison.score} of ${comparison.outOf}`}
-										aria-label={`Score: ${comparison.score} of ${comparison.outOf}`}
+										title={t.score(comparison.score, comparison.outOf)}
+										aria-label={t.score(comparison.score, comparison.outOf)}
 									>
 										{perfect && <IconCheck size={11} stroke={2.5} aria-hidden="true" />}
 										{comparison.score} / {comparison.outOf}
 									</span>
 								) : tasting.flight ? (
-									<span className="archive-card__waiting">Awaiting host</span>
+									<span className="archive-card__waiting">{t.awaitingHost}</span>
 								) : (
 									<Link
 										href={`/archives/${tasting.id}?reveal=1`}
 										className="archive-card__reveal no-underline"
-										aria-label={`Reveal the wine for ${title}`}
+										aria-label={t.revealFor(title)}
 									>
-										Reveal →
+										{t.reveal}
 									</Link>
 								)}
 							</div>
-							{tasting.number != null && <span className="archive-card__id">No. {tasting.number}</span>}
+							{tasting.number != null && (
+								<span className="archive-card__id">{shared.number(tasting.number)}</span>
+							)}
 						</div>
 
 						<h3 className="archive-card__title">{title}</h3>
 						{subtitle && <p className="archive-card__subtitle">{subtitle}</p>}
 						{revealed && callSummary && (
 							<p className="archive-card__call">
-								<span className="archive-card__call-label">Your call</span>
+								<span className="archive-card__call-label">{shared.yourCall}</span>
 								{callSummary}
 							</p>
 						)}
 
 						{tasting.notes && (
 							<div className="archive-card__conclusions">
-								<div className="archive-card__conclusions-label">Key Conclusions</div>
+								<div className="archive-card__conclusions-label">{t.keyConclusions}</div>
 								<p className="archive-card__conclusions-text">&ldquo;{tasting.notes}&rdquo;</p>
 							</div>
 						)}
@@ -196,17 +204,17 @@ export default function ArchivesList() {
 									className="archive-card__delete"
 									onClick={() => confirmDelete(tasting, title)}
 									disabled={deletingId === tasting.id}
-									aria-label={`Delete No. ${tasting.number}, ${title}`}
-									title="Delete tasting"
+									aria-label={t.deleteLabel(tasting.number, title)}
+									title={t.deleteTasting}
 								>
 									<IconTrash size={15} />
 								</button>
 								<Link
 									href={`/archives/${tasting.id}`}
 									className="archive-card__details archive-card__link no-underline"
-									aria-label={`View details for ${title}`}
+									aria-label={t.viewDetails(title)}
 								>
-									Details →
+									{t.details}
 								</Link>
 							</div>
 						</div>

@@ -9,8 +9,11 @@ import RevealPanel from './RevealPanel';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { describeCall, describeWine, isRevealed, revealTitle } from './revealScore';
 import { formatDate } from '../../utils/DateUtils';
-import { GRIDS, gridOf } from '../../data/grids';
+import { gridOf } from '../../data/grids';
 import { WSET_CONCLUSION_KEYS } from '../wset/wsetFields';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { archivesText } from '../../i18n/archives';
+import { commonText } from '../../i18n/common';
 
 const service = new ClientTastingService();
 
@@ -53,26 +56,24 @@ function PhaseSection({ label, data }: { label: string; data: Record<string, str
 export default function TastingDetail({ id, openReveal = false }: { id: string; openReveal?: boolean }) {
 	const [tasting, setTasting] = useState<SavedTasting | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	// The kind of failure, so its message follows a language switch.
+	const [error, setError] = useState<'notFound' | 'loadFailed' | null>(null);
+	const { lang } = useLang();
+	const { detail: t, shared } = useText(archivesText);
+	const common = useText(commonText);
 
 	useEffect(() => {
 		service
 			.getTasting(id)
 			.then(setTasting)
-			.catch((err) =>
-				setError(
-					JsonApiError.create(err).statusCode === 404
-						? 'This tasting does not exist, or it was deleted.'
-						: 'The tasting could not be loaded. Please try again.',
-				),
-			)
+			.catch((err) => setError(JsonApiError.create(err).statusCode === 404 ? 'notFound' : 'loadFailed'))
 			.finally(() => setIsLoading(false));
 	}, [id]);
 
 	if (isLoading) {
 		return (
 			<div className="tasting-detail__container">
-				<div className="archives-loading">Loading…</div>
+				<div className="archives-loading">{common.loading}</div>
 			</div>
 		);
 	}
@@ -81,9 +82,9 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 		return (
 			<div className="tasting-detail__container">
 				<Link href="/archives" className="tasting-detail__back no-underline">
-					← Back to Archive
+					{t.back}
 				</Link>
-				<div className="archives-error">{error ?? 'This tasting does not exist, or it was deleted.'}</div>
+				<div className="archives-error">{t[error ?? 'notFound']}</div>
 			</div>
 		);
 	}
@@ -97,32 +98,32 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	const revealed = isRevealed(tasting.reveal);
 	const callSummary = describeCall(final, grid) || null;
 	const title = revealed
-		? revealTitle(tasting.reveal!)
-		: tasting.wineName || final.grapeVariety || 'Untitled Tasting';
+		? revealTitle(tasting.reveal!, lang)
+		: tasting.wineName || final.grapeVariety || shared.untitled;
 	const subtitle = revealed ? describeWine(tasting.reveal) || null : callSummary;
 
-	const date = formatDate(tasting.created_at);
+	const date = formatDate(tasting.created_at, lang);
 
 	const initial = tasting.conclusion?.initial;
 
 	// The call's fields in grid order, labelled as the grid names them.
 	const FINAL_LABELS: [string, string][] = wset
 		? [
-				[WSET_CONCLUSION_KEYS.quality, 'Quality Level'],
-				[WSET_CONCLUSION_KEYS.readiness, 'Readiness for Drinking'],
-				[WSET_CONCLUSION_KEYS.reasons, 'Reasons'],
-				['grapeVariety', 'Grape Variety or Blend'],
-				['countryOfOrigin', 'Country of Origin'],
-				['regionAppellation', 'Region and Appellation'],
-				['vintage', 'Vintage'],
+				[WSET_CONCLUSION_KEYS.quality, t.final.quality],
+				[WSET_CONCLUSION_KEYS.readiness, t.final.readiness],
+				[WSET_CONCLUSION_KEYS.reasons, t.final.reasons],
+				['grapeVariety', t.final.grapeVariety],
+				['countryOfOrigin', t.final.countryOfOrigin],
+				['regionAppellation', t.final.regionAppellation],
+				['vintage', t.final.vintage],
 			]
 		: [
-				['grapeVariety', 'Grape Variety or Blend'],
-				['countryOfOrigin', 'Country of Origin'],
-				['regionAppellation', 'Region and Appellation'],
-				['qualityLevel', 'Official Quality Level'],
-				['styleCategory', 'Official Style Category'],
-				['vintage', 'Vintage'],
+				['grapeVariety', t.final.grapeVariety],
+				['countryOfOrigin', t.final.countryOfOrigin],
+				['regionAppellation', t.final.regionAppellation],
+				['qualityLevel', t.final.qualityLevel],
+				['styleCategory', t.final.styleCategory],
+				['vintage', t.final.vintage],
 			];
 	const finalConclusionFields: Record<string, string> = {};
 	for (const [key, label] of FINAL_LABELS) {
@@ -133,37 +134,39 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 	const initialFields: Record<string, string> = {};
 	if (initial?.worldOrigin) {
-		initialFields['World Origin'] = initial.worldOrigin;
+		initialFields[t.initial.worldOrigin] = initial.worldOrigin;
 	}
 	if (initial?.climate) {
-		initialFields['Climate'] = initial.climate;
+		initialFields[t.initial.climate] = initial.climate;
 	}
 	if (initial?.ageRange) {
-		initialFields['Age Range'] = initial.ageRange;
+		initialFields[t.initial.ageRange] = initial.ageRange;
 	}
 	if (initial?.grapeVarieties?.length) {
-		initialFields['Possible Grape Varieties'] = initial.grapeVarieties.join(', ');
+		initialFields[t.initial.grapeVarieties] = initial.grapeVarieties.join(', ');
 	}
 	if (initial?.possibleCountries?.length) {
-		initialFields['Possible Countries'] = initial.possibleCountries.join(', ');
+		initialFields[t.initial.possibleCountries] = initial.possibleCountries.join(', ');
 	}
 
 	return (
 		<div className="tasting-detail__container">
 			<Link href="/archives" className="tasting-detail__back no-underline">
-				← Back to Archive
+				{t.back}
 			</Link>
 
 			<div className="tasting-detail__hero-top">
 				<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
-					{tasting.wineType} Wine
+					{tasting.wineType === 'Red' ? common.redWine : tasting.wineType === 'White' ? common.whiteWine : ''}
 				</span>
-				{wset && <span className="grid-badge">{GRIDS.wset.short}</span>}
+				{wset && <span className="grid-badge">{common.grid.wset.short}</span>}
 				<div className="tasting-detail__hero-meta">
-					{tasting.number != null && <span className="tasting-detail__id">No. {tasting.number}</span>}
+					{tasting.number != null && (
+						<span className="tasting-detail__id">{shared.number(tasting.number)}</span>
+					)}
 					{tasting.flight && (
 						<Link href={`/flights/${tasting.flight.code}`} className="tasting-detail__flight no-underline">
-							Flight · {tasting.flight.name} · Wine {tasting.flight.wineNumber}
+							{t.flight(tasting.flight.name, tasting.flight.wineNumber)}
 						</Link>
 					)}
 					{revealed && tasting.wineName && !tasting.flight && (
@@ -179,7 +182,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 					{subtitle && <p className="tasting-detail__subtitle">{subtitle}</p>}
 					{revealed && callSummary && (
 						<p className="tasting-detail__call">
-							<span className="tasting-detail__call-label">Your call</span>
+							<span className="tasting-detail__call-label">{shared.yourCall}</span>
 							{callSummary}
 						</p>
 					)}
@@ -191,14 +194,14 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 						target="_blank"
 						rel="noopener"
 						className="tasting-detail__photo-link no-underline"
-						aria-label="Open photo full size"
+						aria-label={t.openPhoto}
 					>
 						{/* Served by an authenticated route with its own caching; next/image's optimiser
 						    would fetch it without the taster's cookie and get a 401. */}
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img
 							src={ClientPhotoService.url(tasting.photoKey)}
-							alt={`Photo for ${title}`}
+							alt={t.photoAlt(title)}
 							className="tasting-detail__photo"
 						/>
 					</a>
@@ -212,20 +215,23 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 				onRevealed={(updated) => setTasting(updated)}
 			/>
 
-			<PhaseSection label={wset ? 'Appearance' : 'Sight'} data={tasting.sight as Record<string, string>} />
-			<PhaseSection label="Nose" data={tasting.nose as Record<string, string[]>} />
-			<PhaseSection label="Palate" data={tasting.palate as Record<string, string | string[]>} />
+			<PhaseSection label={common.phase[grid].sight} data={tasting.sight as Record<string, string>} />
+			<PhaseSection label={common.phase[grid].nose} data={tasting.nose as Record<string, string[]>} />
+			<PhaseSection
+				label={common.phase[grid].palate}
+				data={tasting.palate as Record<string, string | string[]>}
+			/>
 
 			{tasting.confirmNose && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">Confirm from the Nose</div>
+					<div className="tasting-detail__section-label">{t.confirmNose}</div>
 					<p className="tasting-detail__notes">&ldquo;{tasting.confirmNose}&rdquo;</p>
 				</div>
 			)}
 
 			{Object.keys(initialFields).length > 0 && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">Initial Conclusion</div>
+					<div className="tasting-detail__section-label">{common.phase[grid].initialConclusion}</div>
 					<div className="tasting-detail__grid">
 						{Object.entries(initialFields).map(([label, value]) => (
 							<div key={label} className="tasting-detail__field">
@@ -239,7 +245,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{Object.keys(finalConclusionFields).length > 0 && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">{wset ? 'Conclusions' : 'Final Conclusion'}</div>
+					<div className="tasting-detail__section-label">{common.phase[grid].finalConclusion}</div>
 					<div className="tasting-detail__grid">
 						{Object.entries(finalConclusionFields).map(([label, value]) => (
 							<div key={label} className="tasting-detail__field">
@@ -253,7 +259,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{tasting.notes && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">Notes</div>
+					<div className="tasting-detail__section-label">{t.notes}</div>
 					<p className="tasting-detail__notes">&ldquo;{tasting.notes}&rdquo;</p>
 				</div>
 			)}

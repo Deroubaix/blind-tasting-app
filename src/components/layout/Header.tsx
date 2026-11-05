@@ -7,9 +7,14 @@ import useAuthenticatedUser from '../../hooks/UseAuthenticatedUser';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { CODE_LENGTH, normalizeCode } from '../flights/flightLogic';
 import Wordmark from './Wordmark';
+import LanguageSwitch from '../../i18n/LanguageSwitch';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { layoutText } from '../../i18n/layout';
 
 /** Typing a code straight into the menu: the flight page handles joining, or logging in first. */
 function JoinCodeField({ loggedIn, onGo }: { loggedIn: boolean; onGo: (code: string) => void }) {
+	const t = useText(layoutText).header;
 	const [code, setCode] = useState('');
 	return (
 		<form
@@ -22,13 +27,13 @@ function JoinCodeField({ loggedIn, onGo }: { loggedIn: boolean; onGo: (code: str
 			}}
 		>
 			<label className="site-menu__join-label" htmlFor="menu-flight-code">
-				Join a flight
+				{t.joinFlight}
 			</label>
 			<div className="site-menu__join-row">
 				<input
 					id="menu-flight-code"
 					className="site-menu__join-input"
-					placeholder="Flight code"
+					placeholder={t.flightCode}
 					autoComplete="off"
 					autoCapitalize="characters"
 					spellCheck={false}
@@ -40,17 +45,20 @@ function JoinCodeField({ loggedIn, onGo }: { loggedIn: boolean; onGo: (code: str
 					className="btn-primary site-menu__join-btn"
 					disabled={code.length !== CODE_LENGTH}
 				>
-					Join
+					{t.join}
 				</button>
 			</div>
 			<span className="site-menu__join-hint">
-				It&apos;s on the host&apos;s screen.{loggedIn ? '' : " You'll be asked to log in or sign up."}
+				{t.codeHint}
+				{loggedIn ? '' : t.codeHintLoggedOut}
 			</span>
 		</form>
 	);
 }
 
 export default function Header() {
+	const t = useText(layoutText).header;
+	const c = useText(commonText);
 	const [showMenu, setShowMenu] = useState(false);
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -99,41 +107,43 @@ export default function Header() {
 
 	const menuLinks = isLoggedIn
 		? [
-				{ href: '/flights/new', label: 'Host a flight' },
-				{ href: '/archives', label: 'Archive' },
-				{ href: '/flights', label: 'Flights' },
-				{ href: '/account', label: 'Account' },
+				{ href: '/flights/new', label: t.hostFlight },
+				{ href: '/archives', label: t.archive },
+				{ href: '/progress', label: t.progress },
+				{ href: '/flights', label: t.flights },
+				{ href: '/account', label: t.account },
 			]
 		: [
-				{ href: '/#flights', label: 'Flights' },
-				{ href: '/#grid', label: 'How it works' },
+				{ href: '/#flights', label: t.flights },
+				{ href: '/#grid', label: t.howItWorks },
 			];
 
 	return (
 		<header className="site-header">
-			<Link href="/" className="site-header__logo no-underline" aria-label="Home">
+			<Link href="/" className="site-header__logo no-underline" aria-label={c.home}>
 				<Wordmark />
 			</Link>
 
-			<nav className="site-header__nav" aria-label="Main">
+			<nav className="site-header__nav" aria-label={t.navLabel}>
 				{!isLoggedIn && (
 					<>
 						<Link href="/#flights" className="site-header__link">
-							Flights
+							{t.flights}
 						</Link>
 						<Link href="/#grid" className="site-header__link">
-							How it works
+							{t.howItWorks}
 						</Link>
 					</>
 				)}
 				<Link href="/flights/join" className="site-header__link site-header__link--accent">
-					Join a flight
+					{t.joinFlight}
 				</Link>
 				{!isInitialLoading && !isLoggedIn && (
 					<Link href="/login" className="site-header__link">
-						Log in
+						{t.logIn}
 					</Link>
 				)}
+				<LanguageSwitch className="site-header__lang" />
 			</nav>
 
 			{/* Logged in, the Start button only shows on the phone; desktop has the account menu instead. */}
@@ -142,8 +152,8 @@ export default function Header() {
 					href="/tastings/start"
 					className={`btn-primary site-header__cta no-underline${isLoggedIn ? ' site-header__cta--phone' : ''}`}
 				>
-					<span className="site-header__cta-long">Start a tasting</span>
-					<span className="site-header__cta-short">Start</span>
+					<span className="site-header__cta-long">{t.startTasting}</span>
+					<span className="site-header__cta-short">{t.start}</span>
 				</Link>
 			)}
 
@@ -152,7 +162,7 @@ export default function Header() {
 					<button
 						className="site-header__account"
 						onClick={() => setDropdownOpen((o) => !o)}
-						aria-label="Account menu"
+						aria-label={t.accountMenu}
 						aria-expanded={dropdownOpen}
 						aria-haspopup="true"
 					>
@@ -170,9 +180,10 @@ export default function Header() {
 							</div>
 							<div className="nav-dropdown__divider" />
 							{[
-								['/archives', 'Archive'],
-								['/flights', 'Flights'],
-								['/account', 'Account'],
+								['/archives', t.archive],
+								['/progress', t.progress],
+								['/flights', t.flights],
+								['/account', t.account],
 							].map(([href, label]) => (
 								<Link
 									key={href}
@@ -190,7 +201,7 @@ export default function Header() {
 								role="menuitem"
 								onClick={handleLogout}
 							>
-								Log out
+								{t.logOut}
 							</button>
 						</div>
 					)}
@@ -201,7 +212,7 @@ export default function Header() {
 				type="button"
 				className="site-header__menu-btn"
 				onClick={() => setShowMenu(true)}
-				aria-label="Open menu"
+				aria-label={t.openMenu}
 				aria-expanded={showMenu}
 			>
 				{isLoggedIn ? (
@@ -214,10 +225,10 @@ export default function Header() {
 			</button>
 
 			{showMenu && (
-				<div className="site-menu" role="dialog" aria-modal="true" aria-label="Menu">
+				<div className="site-menu" role="dialog" aria-modal="true" aria-label={t.menu}>
 					<div className="site-menu__head">
 						<Wordmark size="sm" />
-						<button type="button" className="site-menu__close" onClick={closeMenu} aria-label="Close menu">
+						<button type="button" className="site-menu__close" onClick={closeMenu} aria-label={t.closeMenu}>
 							<IconX size={26} aria-hidden="true" />
 						</button>
 					</div>
@@ -243,9 +254,9 @@ export default function Header() {
 							className="btn-primary site-menu__start no-underline"
 							onClick={closeMenu}
 						>
-							Start a tasting →
+							{t.startTasting} →
 						</Link>
-						<nav className="site-menu__links" aria-label="Menu">
+						<nav className="site-menu__links" aria-label={t.menu}>
 							{menuLinks.map((link) => (
 								<Link key={link.href} href={link.href} className="site-menu__link" onClick={closeMenu}>
 									{link.label}
@@ -256,18 +267,19 @@ export default function Header() {
 						<div className="site-menu__foot">
 							{isLoggedIn ? (
 								<button type="button" className="site-menu__foot-link" onClick={handleLogout}>
-									Log out
+									{t.logOut}
 								</button>
 							) : (
 								<>
 									<Link href="/login" className="site-menu__foot-link" onClick={closeMenu}>
-										Log in
+										{t.logIn}
 									</Link>
 									<Link href="/signup" className="site-menu__foot-link" onClick={closeMenu}>
-										Sign up
+										{t.signUp}
 									</Link>
 								</>
 							)}
+							<LanguageSwitch />
 						</div>
 					</div>
 				</div>

@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Loading from '../misc/Loading';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useTastingContext } from '../tasting/TastingContext';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { layoutText } from '../../i18n/layout';
 
 type TastingFooterProps = {
 	onBack?: () => void;
@@ -19,12 +22,15 @@ const START_OVER_MODAL = 'tasting-start-over';
 
 export default function TastingFooter({
 	onBack,
-	backLabel = 'Back',
+	backLabel,
 	nextLabel,
 	onNext,
 	nextLoading,
 	nextDisabled,
 }: TastingFooterProps) {
+	const t = useText(layoutText).tastingFooter;
+	const c = useText(commonText);
+	const back = backLabel ?? c.back;
 	const router = useRouter();
 	const { tastingData, resetTastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
@@ -34,23 +40,17 @@ export default function TastingFooter({
 	const handleStartOver = () => {
 		openModal({
 			modalId: START_OVER_MODAL,
-			title: 'Start over?',
+			title: t.startOverQ,
 			className: 'StartOverModal',
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
 				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">
-						This clears every answer in this tasting — sight, nose, palate and both conclusions — and takes
-						you back to {tastingData.flight ? 'the flight. The wine’s clock keeps running' : 'setup'}.
-					</p>
-					<p className="confirm-dialog__note">
-						Nothing from this tasting has been saved to your archive yet, so there is nothing to come back
-						to.
-					</p>
+					<p className="confirm-dialog__lead">{t.clears(!!tastingData.flight)}</p>
+					<p className="confirm-dialog__note">{t.nothingSaved}</p>
 					<div className="confirm-dialog__actions">
 						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(START_OVER_MODAL)}>
-							Keep tasting
+							{t.keepTasting}
 						</button>
 						<button
 							className="btn-primary confirm-dialog__confirm"
@@ -62,7 +62,7 @@ export default function TastingFooter({
 							}}
 						>
 							<IconRefresh size={16} />
-							Start over
+							{t.startOver}
 						</button>
 					</div>
 				</div>
@@ -73,20 +73,20 @@ export default function TastingFooter({
 	return (
 		<footer className="tasting-footer">
 			<div className="tasting-footer__left">
-				<button className="tasting-footer__start-over" onClick={handleStartOver} aria-label="Start over">
+				<button className="tasting-footer__start-over" onClick={handleStartOver} aria-label={t.startOver}>
 					<span className="tasting-footer__start-over-icon" aria-hidden="true">
 						<IconRefresh size={18} />
 					</span>
-					<span className="tasting-footer__start-over-label">Start over</span>
+					<span className="tasting-footer__start-over-label">{t.startOver}</span>
 				</button>
 			</div>
 
 			{onBack && (
-				<button className="tasting-footer__back-btn" onClick={onBack} aria-label={backLabel}>
+				<button className="tasting-footer__back-btn" onClick={onBack} aria-label={back}>
 					<span className="tasting-footer__back-icon" aria-hidden="true">
 						<IconArrowLeft size={18} />
 					</span>
-					<span className="tasting-footer__back-label">{backLabel}</span>
+					<span className="tasting-footer__back-label">{back}</span>
 				</button>
 			)}
 

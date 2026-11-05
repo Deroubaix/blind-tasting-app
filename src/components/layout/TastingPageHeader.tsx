@@ -11,6 +11,9 @@ import { unlockAudio } from '../../utils/beep';
 import TimerConditional from './TimerConditional';
 import splitPhaseLabel from './phaseLabel';
 import { useTastingContext } from '../tasting/TastingContext';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { layoutText } from '../../i18n/layout';
 
 type TastingPageHeaderProps = {
 	wineType?: 'red' | 'white';
@@ -30,6 +33,8 @@ export default function TastingPageHeader({
 	timerDestination,
 	cancelHref,
 }: TastingPageHeaderProps) {
+	const t = useText(layoutText);
+	const c = useText(commonText);
 	const { user, isInitialLoading, signOut } = useAuthProvider();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
@@ -48,17 +53,17 @@ export default function TastingPageHeader({
 		const modalId = 'tasting-paused';
 		openModal({
 			modalId,
-			title: 'Paused',
+			title: t.tastingHeader.paused,
 			className: 'TimeUpModal',
 			closeOnClickOutside: false,
 			closeOnEsc: true,
 			onClose: () => updateTastingData((current) => resumeClock(current, Date.now())),
 			children: (
 				<div className="timeup">
-					<p className="timeup__lead">The clock is stopped.</p>
-					<p className="timeup__note">It carries on from where it was when you resume.</p>
+					<p className="timeup__lead">{t.tastingHeader.clockStopped}</p>
+					<p className="timeup__note">{t.tastingHeader.carriesOn}</p>
 					<button className="btn-primary timeup__action" onClick={() => closeModal(modalId)}>
-						Resume
+						{t.tastingHeader.resume}
 						<IconPlayerPlayFilled size={14} aria-hidden="true" />
 					</button>
 				</div>
@@ -86,14 +91,18 @@ export default function TastingPageHeader({
 	};
 
 	const flight = tastingData.flight;
-	const flightLabel = flight && timerPage ? `Flight · Wine ${flight.wineNumber} of ${flight.wineCount}` : null;
+	const flightLabel = flight && timerPage ? t.tastingHeader.flightWine(flight.wineNumber, flight.wineCount) : null;
 	const wineLabel =
 		flightLabel ??
-		(wineType === 'red' ? 'Red Wine Assessment' : wineType === 'white' ? 'White Wine Assessment' : null);
+		(wineType === 'red'
+			? t.tastingHeader.redAssessment
+			: wineType === 'white'
+				? t.tastingHeader.whiteAssessment
+				: null);
 
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
 
-	const wineWord = wineType === 'red' ? 'Red' : wineType === 'white' ? 'White' : null;
+	const wineWord = wineType === 'red' ? c.red : wineType === 'white' ? c.white : null;
 	const { name: phaseName, number: phaseNumber } = splitPhaseLabel(phase ?? '');
 
 	return (
@@ -122,7 +131,7 @@ export default function TastingPageHeader({
 					<>
 						<div className="tasting-page-header__clock">
 							<span className="tasting-page-header__timer-label">
-								{paused ? 'Paused' : 'Time Remaining'}
+								{paused ? t.tastingHeader.paused : t.tastingHeader.timeRemaining}
 							</span>
 							<div className="tasting-page-header__timer-display">
 								<TimerConditional page={timerPage!} destination={timerDestination!} />
@@ -135,7 +144,7 @@ export default function TastingPageHeader({
 								className="tasting-page-header__pause"
 								onClick={pause}
 								disabled={paused}
-								aria-label="Pause the timer"
+								aria-label={t.tastingHeader.pauseTimer}
 							>
 								<IconPlayerPauseFilled size={16} aria-hidden="true" />
 							</button>
@@ -147,7 +156,7 @@ export default function TastingPageHeader({
 			<div className="tasting-page-header__right">
 				{cancelHref ? (
 					<Link href={cancelHref} className="tasting-page-header__cancel">
-						Cancel
+						{c.cancel}
 					</Link>
 				) : (
 					<>
@@ -157,7 +166,7 @@ export default function TastingPageHeader({
 								<button
 									className="tasting-page-header__avatar"
 									onClick={() => setDropdownOpen((o) => !o)}
-									aria-label="Account menu"
+									aria-label={t.header.accountMenu}
 									aria-expanded={dropdownOpen}
 									aria-haspopup="true"
 								>
@@ -176,7 +185,15 @@ export default function TastingPageHeader({
 											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
-											Archive
+											{t.header.archive}
+										</Link>
+										<Link
+											href="/progress"
+											className="nav-dropdown__item"
+											role="menuitem"
+											onClick={() => setDropdownOpen(false)}
+										>
+											{t.header.progress}
 										</Link>
 										<Link
 											href="/flights"
@@ -184,7 +201,7 @@ export default function TastingPageHeader({
 											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
-											Flights
+											{t.header.flights}
 										</Link>
 										<Link
 											href="/account"
@@ -192,14 +209,14 @@ export default function TastingPageHeader({
 											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
-											Account
+											{t.header.account}
 										</Link>
 										<button
 											className="nav-dropdown__item nav-dropdown__item--logout"
 											role="menuitem"
 											onClick={handleLogout}
 										>
-											Log Out
+											{t.header.logOut}
 										</button>
 									</div>
 								)}

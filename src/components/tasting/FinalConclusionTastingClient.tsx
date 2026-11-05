@@ -13,6 +13,9 @@ import { NOSE_ASSESSMENTS } from '../nose/noseFields';
 import { BALANCE_NOTE, CONFIRM_ROWS, PALATE_OPTIONS, confirmKey } from '../palate/palateFields';
 import { fcAnsweredCount, FC_REQUIRED, STYLE_CATEGORIES } from './conclusionFields';
 import QualityLevelSelect from './QualityLevelSelect';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { tastingText } from '../../i18n/tasting';
 
 // Values like "Medium−" or "High" mean nothing alone, so the attribute they answer
 // travels with them — flattened, five "Medium−" in a row name neither acid nor tannin.
@@ -51,6 +54,9 @@ function AnalysisRow({ label, value }: { label: string; value: string }) {
 export default function FinalConclusionTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
+	const text = useText(tastingText);
+	const t = text.final;
+	const phaseName = useText(commonText).phase.cms;
 
 	// The committed answers write straight through to the shared context. Local state would
 	// be lost when the phase timer expires. Only the search boxes' typing stays local.
@@ -94,9 +100,9 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const initial = tastingData.conclusion?.initial;
 	const initialPairs = (
 		[
-			['Possible Grape Varieties', (initial?.grapeVarieties ?? []).join(' · ')],
-			['Climate', initial?.climate],
-			['Age Range', initial?.ageRange],
+			[text.initial.grapes, (initial?.grapeVarieties ?? []).join(' · ')],
+			[text.initial.climate, initial?.climate],
+			[text.initial.ageRange, initial?.ageRange],
 		] as [string, string | null | undefined][]
 	)
 		.filter(([, value]) => Boolean(value))
@@ -118,13 +124,13 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 			progress={conclusionPct}
 			timerPage="finalConclusion"
 			timerDestination={`/tastings/save?wineType=${wineType}`}
-			phase="Phase 05"
-			title="Final Conclusion"
-			description="Commit to a single, specific identification — grape variety or blend, country, region and appellation, and vintage. Add quality level and style where appropriate."
+			phase={text.phaseLabel('05')}
+			title={phaseName.finalConclusion}
+			description={t.description}
 			footer={{
 				onBack: handleBack,
-				backLabel: 'Back to Initial Conclusion',
-				nextLabel: 'Review & Save',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: handleNext,
 			}}
 		>
@@ -136,33 +142,33 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							id="fc-grape"
 							className="fc-field"
 							labelClassName="tasting-card__label"
-							label="Grape Variety or Blend"
+							label={t.grape}
 							value={grapeVariety}
 							onChange={(v) => updateFC({ grapeVariety: v })}
 							suggestions={GRAPE_VARIETALS}
-							placeholder="e.g. Pinot Noir"
+							placeholder={t.grapePlaceholder}
 							icon={<IconSearch size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>
 						<ChipSearchField
 							id="fc-country"
 							className="fc-field"
 							labelClassName="tasting-card__label"
-							label="Country of Origin"
+							label={t.country}
 							value={countryOfOrigin}
 							onChange={(v) => updateFC({ countryOfOrigin: v })}
 							suggestions={WINE_COUNTRIES}
-							placeholder="e.g. France"
+							placeholder={t.countryPlaceholder}
 							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>
 						<ChipSearchField
 							id="fc-region"
 							className="fc-field"
 							labelClassName="tasting-card__label"
-							label="Region and Appellation"
+							label={t.region}
 							value={regionAppellation}
 							onChange={(v) => updateFC({ regionAppellation: v })}
 							suggestions={WINE_REGIONS}
-							placeholder="e.g. Burgundy — Côte de Nuits"
+							placeholder={t.regionPlaceholder}
 							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>
 
@@ -170,7 +176,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 						    can be left blank or cleared, and neither counts toward completion. */}
 						<div className="fc-field">
 							<span className="tasting-card__label" id="fc-quality-label">
-								Official Quality Level
+								{t.qualityLevel}
 							</span>
 							<QualityLevelSelect
 								labelId="fc-quality-label"
@@ -181,21 +187,21 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 
 						<div className="fc-field">
 							<span className="tasting-card__label" id="fc-style-label">
-								Official Style Category
+								{t.styleCategory}
 							</span>
 							<TastingCustomSelect
 								options={STYLE_CATEGORIES}
 								labelId="fc-style-label"
 								value={styleCategory}
 								onChange={setStyleCategory}
-								placeholder="Where appropriate…"
-								clearLabel="Not applicable"
+								placeholder={text.inputs.whereAppropriate}
+								clearLabel={text.inputs.notApplicable}
 							/>
 						</div>
 
 						<div className="fc-field fc-field--half">
 							<label className="tasting-card__label" htmlFor="fc-vintage">
-								Vintage
+								{t.vintage}
 							</label>
 							<VintageInput id="fc-vintage" value={vintage} onChange={(v) => updateFC({ vintage: v })} />
 						</div>
@@ -204,22 +210,22 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 				{/* ── Right: what you recorded. A reference, so it scrolls on its own ── */}
 				<div className="fc-analysis">
 					<div className="fc-analysis__header">
-						<span className="section-label">Your Analysis</span>
-						<span className="fc-analysis__subtitle">What you recorded</span>
+						<span className="section-label">{t.yourAnalysis}</span>
+						<span className="fc-analysis__subtitle">{t.whatYouRecorded}</span>
 					</div>
 
-					<AnalysisPairs label="Sight" pairs={sightPairs} />
-					<AnalysisPairs label="Nose" pairs={nosePairs} />
-					<AnalysisRow label="Aroma Descriptors" value={noseDescriptors} />
-					<AnalysisPairs label="Palate Structure" pairs={palatePairs} />
-					<AnalysisPairs label="Initial Call" pairs={initialPairs} />
-					<AnalysisRow label="Possible Countries" value={possibleOriginSummary} />
+					<AnalysisPairs label={phaseName.sight} pairs={sightPairs} />
+					<AnalysisPairs label={phaseName.nose} pairs={nosePairs} />
+					<AnalysisRow label={t.aromaDescriptors} value={noseDescriptors} />
+					<AnalysisPairs label={t.palateStructure} pairs={palatePairs} />
+					<AnalysisPairs label={t.initialCall} pairs={initialPairs} />
+					<AnalysisRow label={text.initial.countries} value={possibleOriginSummary} />
 
 					{finalIdentity && (
 						<>
 							<div className="fc-analysis__divider" />
 							<div className="fc-analysis__row">
-								<div className="fc-analysis__row-label">Final Identity</div>
+								<div className="fc-analysis__row-label">{t.finalIdentity}</div>
 								<div className="fc-analysis__row-value fc-analysis__row-value--identity">
 									{finalIdentity}
 								</div>

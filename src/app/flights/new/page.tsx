@@ -1,8 +1,8 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import TastingPageHeader from '../../../components/layout/TastingPageHeader';
 import FlightCreateClient from '../../../components/flights/FlightCreateClient';
 
-export const metadata: Metadata = { title: 'Host a Flight' };
+export const generateMetadata = pageTitle({ en: 'Host a Flight', pt: 'Organizar um flight' });
 
 export default function NewFlightPage() {
 	return (

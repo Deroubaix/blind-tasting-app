@@ -3,6 +3,7 @@
 import { PALATE_OPTIONS } from '../palate/palateFields';
 import { WSET_PALATE } from '../wset/wsetFields';
 import { type Grid } from '../../data/grids';
+import { flightsText } from '../../i18n/flights';
 
 /** No 0/O or 1/I/L, so a code read across a table can't be misread. */
 export const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -59,6 +60,10 @@ export function average(scores: (number | null)[]): number | null {
 // ── Structure comparison ─────────────────────────────────────────────────────
 
 /** The palate attributes compared, in grid order. Tannin only where a taster called the wine red. */
+/** The stored 'Red' / 'White' as the lower-case kind the flight and progress views use. */
+export const wineTypeOf = (value: string | null | undefined): 'red' | 'white' | null =>
+	value === 'Red' ? 'red' : value === 'White' ? 'white' : null;
+
 export function structureAttributes(wineTypes: ('red' | 'white')[], grid: Grid = 'cms'): string[] {
 	const hasRed = wineTypes.includes('red');
 	if (grid === 'wset') {
@@ -79,8 +84,33 @@ export type StructureAttribute = {
 	phrase: string;
 };
 
-const NUMBER_WORDS = ['none', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-const count = (n: number) => NUMBER_WORDS[n] ?? String(n);
+type PhraseWords = (typeof flightsText)['en']['results']['phrase'];
+
+/** "All three said Medium" for `values`, indexes into `levels`; the words default to English. */
+export function structurePhrase(
+	levels: string[],
+	values: number[],
+	words: PhraseWords = flightsText.en.results.phrase,
+) {
+	const count = (n: number) => words.numbers[n] ?? String(n);
+	const byLevel = new Map<number, number>();
+	values.forEach((level) => byLevel.set(level, (byLevel.get(level) ?? 0) + 1));
+	const groups = [...byLevel.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
+
+	if (groups.length === 1) {
+		const level = levels[groups[0][0]];
+		return values.length === 1
+			? words.one(level)
+			: values.length === 2
+				? words.both(level)
+				: words.all(count(values.length), level);
+	}
+	if (groups.every(([, n]) => n === 1)) {
+		return words.spread(levels[Math.min(...values)], levels[Math.max(...values)]);
+	}
+	const phrase = groups.map(([level, n]) => words.said(count(n), n, levels[level])).join(words.joiner);
+	return phrase.charAt(0).toUpperCase() + phrase.slice(1);
+}
 
 /** Where each taster placed one attribute, and how far apart they were. Unscored: the label can't say. */
 export function compareStructure(
@@ -107,20 +137,7 @@ export function compareStructure(
 	const spread = Math.max(...values) - Math.min(...values);
 	const agreement: Agreement = spread === 0 ? 'agreed' : spread === 1 ? 'near' : 'split';
 
-	const byLevel = new Map<number, number>();
-	values.forEach((level) => byLevel.set(level, (byLevel.get(level) ?? 0) + 1));
-	const groups = [...byLevel.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
-
-	let phrase: string;
-	if (groups.length === 1) {
-		const who = calls.length === 1 ? 'One' : calls.length === 2 ? 'Both' : `All ${count(calls.length)}`;
-		phrase = `${who} said ${levels[groups[0][0]]}`;
-	} else if (groups.every(([, n]) => n === 1)) {
-		phrase = `Spread from ${levels[Math.min(...values)]} to ${levels[Math.max(...values)]}`;
-	} else {
-		phrase = groups.map(([level, n]) => `${count(n)} said ${levels[level]}`).join(', ');
-		phrase = phrase.charAt(0).toUpperCase() + phrase.slice(1);
-	}
+	const phrase = structurePhrase(levels, values);
 
 	return { name, levels, calls, agreement, phrase };
 }

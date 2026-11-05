@@ -9,6 +9,8 @@ import TastingCustomSelect from '../tasting/TastingCustomSelect';
 import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
 import { type Grid } from '../../data/grids';
 import { type Reveal } from './revealScore';
+import { useText } from '../../i18n/LanguageProvider';
+import { archivesText } from '../../i18n/archives';
 
 type Props = {
 	value: Reveal;
@@ -21,6 +23,7 @@ type Props = {
 
 /** The reveal's fields: the final conclusion's controls, plus an optional wine name. */
 export default function RevealFields({ value, onChange, layout = 'form', grid = 'cms' }: Props) {
+	const t = useText(archivesText).fields;
 	const ids = {
 		grape: useId(),
 		country: useId(),
@@ -39,55 +42,53 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 				<>
 					<div className="reveal-field">
 						<span className="reveal-field__label" id={ids.assessment}>
-							Quality level
+							{t.quality}
 						</span>
 						<TastingCustomSelect
 							options={WSET_QUALITY}
 							labelId={ids.assessment}
 							value={value.qualityAssessment ?? ''}
 							onChange={(qualityAssessment) => onChange({ qualityAssessment: qualityAssessment || null })}
-							placeholder="The tutor's call…"
-							clearLabel="Not given"
+							placeholder={t.tutorCall}
+							clearLabel={t.notGiven}
 						/>
 					</div>
 					<div className="reveal-field">
 						<span className="reveal-field__label" id={ids.readiness}>
-							Readiness for drinking
+							{t.readiness}
 						</span>
 						<TastingCustomSelect
 							options={WSET_READINESS}
 							labelId={ids.readiness}
 							value={value.readiness ?? ''}
 							onChange={(readiness) => onChange({ readiness: readiness || null })}
-							placeholder="The tutor's call…"
-							clearLabel="Not given"
+							placeholder={t.tutorCall}
+							clearLabel={t.notGiven}
 						/>
 					</div>
-					<p className="reveal-fields__wide reveal-fields__note">
-						The wine itself is optional: fill in what the label gives and the call is scored on it too.
-					</p>
+					<p className="reveal-fields__wide reveal-fields__note">{t.wsetNote}</p>
 				</>
 			)}
 			<ChipSearchField
 				id={ids.grape}
 				className="reveal-field"
 				labelClassName="reveal-field__label"
-				label="Grape variety or blend"
+				label={t.grape}
 				value={value.grapeVariety}
 				onChange={(grapeVariety) => onChange({ grapeVariety })}
 				suggestions={GRAPE_VARIETALS}
-				placeholder="e.g. Pinot Noir"
+				placeholder={t.grapePlaceholder}
 				icon={<IconSearch size={14} className="tasting-search-icon" aria-hidden="true" />}
 			/>
 			<ChipSearchField
 				id={ids.country}
 				className="reveal-field"
 				labelClassName="reveal-field__label"
-				label="Country of origin"
+				label={t.country}
 				value={value.countryOfOrigin}
 				onChange={(countryOfOrigin) => onChange({ countryOfOrigin })}
 				suggestions={WINE_COUNTRIES}
-				placeholder="e.g. France"
+				placeholder={t.countryPlaceholder}
 				icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 			/>
 			<div className="reveal-fields__wide">
@@ -95,18 +96,18 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 					id={ids.region}
 					className="reveal-field"
 					labelClassName="reveal-field__label"
-					label="Region and appellation"
+					label={t.region}
 					value={value.regionAppellation}
 					onChange={(regionAppellation) => onChange({ regionAppellation })}
 					suggestions={WINE_REGIONS}
-					placeholder="e.g. Chambolle-Musigny"
+					placeholder={t.regionPlaceholder}
 					icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 				/>
 			</div>
 			{!wset && (
 				<div className="reveal-field">
 					<span className="reveal-field__label" id={ids.quality}>
-						Official quality level
+						{t.qualityLevel}
 					</span>
 					<QualityLevelSelect
 						value={value.qualityLevel ?? ''}
@@ -118,7 +119,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 			)}
 			<div className="reveal-field">
 				<label className="reveal-field__label" htmlFor={ids.vintage}>
-					Vintage
+					{t.vintage}
 				</label>
 				<VintageInput
 					id={ids.vintage}
@@ -128,12 +129,12 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 			</div>
 			<div className="reveal-field reveal-fields__wide">
 				<label className="reveal-field__label" htmlFor={ids.name}>
-					Wine name <span className="reveal-field__hint">optional — producer or cuvée</span>
+					{t.wineName} <span className="reveal-field__hint">{t.wineNameHint}</span>
 				</label>
 				<input
 					id={ids.name}
 					className="tasting-input reveal-field__text"
-					placeholder="e.g. Domaine Georges Roumier"
+					placeholder={t.wineNamePlaceholder}
 					maxLength={100}
 					value={value.wineName ?? ''}
 					onChange={(e) => onChange({ wineName: e.target.value || null })}

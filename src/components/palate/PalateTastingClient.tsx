@@ -3,11 +3,15 @@
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 import { BALANCE_NOTE, CONFIRM_ROWS, PALATE_OPTIONS, confirmKey, confirmOptions, palateRequired } from './palateFields';
 
 export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
+	const text = useText(tastingText);
+	const t = text.palate;
 
 	// The CMS palate stores one answer per attribute; only the WSET grid keeps a list there.
 	const selectedOptions = (tastingData.palate as Record<string, string> | undefined) || {};
@@ -46,13 +50,13 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 			progress={palatePct}
 			timerPage="palate"
 			timerDestination={`/tastings/initial-conclusion?wineType=${wineType}`}
-			phase="Phase 03"
-			title="The Palate"
-			description="Assess the structure of the wine on the palate, then confirm what you found on the nose."
+			phase={text.phaseLabel('03')}
+			title={t.title}
+			description={t.description}
 			footer={{
 				onBack: handlePreviousPhase,
-				backLabel: 'Back to Nose',
-				nextLabel: 'Next: Initial Conclusion',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: handleNextPhase,
 				nextDisabled: !requiredFilled,
 			}}
@@ -64,7 +68,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 						<div className="tasting-card__label">
 							{category}
 							{required.has(category) && (
-								<span className="palate-card__required" aria-label="required">
+								<span className="palate-card__required" aria-label={t.required}>
 									*
 								</span>
 							)}
@@ -89,8 +93,8 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 							<input
 								type="text"
 								className="tasting-input palate-balance-note"
-								aria-label="What dominates the wine?"
-								placeholder="What dominates? e.g. acid, alcohol, oak"
+								aria-label={t.balanceAria}
+								placeholder={t.balancePlaceholder}
 								maxLength={120}
 								value={selectedOptions[BALANCE_NOTE] ?? ''}
 								onChange={(e) => setAnswer(BALANCE_NOTE, e.target.value)}
@@ -104,9 +108,9 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 			<div className="palate-notes tasting-card">
 				<div className="palate-notes__header">
 					<span className="tasting-card__label" id="palate-confirm-label">
-						Confirm from the Nose
+						{t.confirm}
 					</span>
-					<span className="palate-notes__sublabel">Has anything changed?</span>
+					<span className="palate-notes__sublabel">{t.anythingChanged}</span>
 				</div>
 				<div className="palate-confirm" role="group" aria-labelledby="palate-confirm-label">
 					{CONFIRM_ROWS.map((row) => {
@@ -140,13 +144,13 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 					})}
 				</div>
 				<label className="palate-confirm__note-label" htmlFor="palate-confirm-nose">
-					What changed? <span className="palate-confirm__optional">optional</span>
+					{t.whatChanged} <span className="palate-confirm__optional">{text.optional}</span>
 				</label>
 				<textarea
 					id="palate-confirm-nose"
 					className="tasting-textarea"
 					rows={2}
-					placeholder="e.g. more earth than on the nose; oak shows as vanilla…"
+					placeholder={t.notePlaceholder}
 					value={confirmNose}
 					onChange={(e) => updateTastingData({ confirmNose: e.target.value })}
 				/>

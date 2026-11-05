@@ -1,13 +1,13 @@
-import { type Metadata } from 'next';
 import TastingPageHeader from '../../components/layout/TastingPageHeader';
 import LeftSidebar from '../../components/tasting/LeftSideBar';
 import AccountPanel from '../../components/user/AccountPanel';
+import { getText, pageTitle } from '../../i18n/server';
+import { userText } from '../../i18n/user';
 
-export const metadata: Metadata = {
-	title: 'Account',
-};
+export const generateMetadata = pageTitle({ en: userText.en.pages.account, pt: userText.pt.pages.account });
 
-export default function AccountPage() {
+export default async function AccountPage() {
+	const t = (await getText(userText)).pages;
 	return (
 		<div className="tasting-phase-page">
 			<TastingPageHeader />
@@ -15,7 +15,7 @@ export default function AccountPage() {
 				<LeftSidebar />
 				<main className="tasting-phase-main">
 					<div className="archives-hero account-hero">
-						<h1>Account</h1>
+						<h1>{t.account}</h1>
 					</div>
 					<AccountPanel />
 				</main>

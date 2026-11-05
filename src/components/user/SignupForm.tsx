@@ -11,7 +11,6 @@ import Label from '../form/Label';
 import TextInput from '../form/TextInput';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { zodResolver } from '../../utils/FormUtils';
 import { signupSchema, PASSWORD_MIN_LENGTH, type SignupFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
@@ -19,6 +18,9 @@ import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { isSavingTasting, safeRedirect } from '../../utils/AuthRedirectUtils';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { translatedResolver } from '../../utils/FormUtils';
+import { userText } from '../../i18n/user';
 
 export default function SignupForm() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +31,8 @@ export default function SignupForm() {
 	const { signUp, signIn } = useAuthProvider();
 	const { showToast } = useToastProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
+	const { lang } = useLang();
+	const { signup: t, shared } = useText(userText);
 
 	const redirectTo = safeRedirect(searchParams.get('r'));
 
@@ -36,7 +40,7 @@ export default function SignupForm() {
 
 	const form = useForm<SignupFormType>({
 		initialValues: { displayName: '', email: '', password: '' },
-		validate: zodResolver(signupSchema),
+		validate: translatedResolver<SignupFormType>(signupSchema, lang),
 	});
 
 	const handleSubmit = async (values: SignupFormType) => {
@@ -47,18 +51,14 @@ export default function SignupForm() {
 			await signUp(values.displayName, values.email, values.password);
 			await signIn(values.email, values.password);
 
-			showToast({ title: 'Welcome to the Ledger', children: 'Your account is ready.', color: 'success' });
+			showToast({ title: t.welcomeTitle, children: t.welcomeBody, color: 'success' });
 			router.push(redirectTo);
 		} catch (err) {
 			const isSyntaxError = err instanceof SyntaxError;
-			const apiError = isSyntaxError
-				? JsonApiError.create(
-						new Error('Signup failed: the server returned an unexpected response. Please try again.'),
-					)
-				: JsonApiError.create(err);
+			const apiError = isSyntaxError ? JsonApiError.create(new Error(t.unexpected)) : JsonApiError.create(err);
 
 			// Shown on the form only, as on login.
-			setError(apiError.message || 'Failed to sign up');
+			setError(apiError.message || t.failed);
 		} finally {
 			removeLoader(loader);
 		}
@@ -69,26 +69,29 @@ export default function SignupForm() {
 			<AuthHeader
 				contextLink={{
 					href: '/login',
-					label: 'Log in',
-					contextLabel: 'Already a member?',
+					label: shared.logIn,
+					contextLabel: t.contextLabel,
 				}}
 			/>
 
 			<main className="auth-main">
 				<div className="auth-container">
 					<header className="auth-card-head">
-						<span className="page-eyebrow">Create account</span>
+						<span className="page-eyebrow">{t.eyebrow}</span>
 						<h1>
-							Begin your <em>ledger</em>.
+							{t.headingBefore}
+							<em>{t.headingEm}</em>
+							{t.headingAfter}
 						</h1>
 						{isSavingTasting(redirectTo) ? (
 							<p className="auth-subheading">
-								<strong>Your tasting is waiting.</strong> Create an account and it will be saved
-								straight away.
+								<strong>{shared.waiting}</strong>
+								{t.waitingRest}
 							</p>
 						) : (
 							<p className="auth-subheading">
-								<strong>Three fields, thirty seconds.</strong> Save your sessions to review later.
+								<strong>{t.pitch}</strong>
+								{t.pitchRest}
 							</p>
 						)}
 					</header>
@@ -97,29 +100,29 @@ export default function SignupForm() {
 						{error && <p className="auth-error">{error}</p>}
 
 						<FormControl className="auth-field" name="displayName">
-							<Label className="item-label">Display Name</Label>
+							<Label className="item-label">{t.displayName}</Label>
 							<TextInput
 								className="auth-input"
 								type="text"
 								autoComplete="name"
-								placeholder="First name first, e.g. Marisha D."
+								placeholder={t.displayNamePlaceholder}
 							/>
 						</FormControl>
 
 						<FormControl className="auth-field" name="email">
-							<Label className="item-label">Email Address</Label>
+							<Label className="item-label">{shared.email}</Label>
 							<TextInput
 								className="auth-input"
 								type="email"
 								autoComplete="email"
-								placeholder="cellar@master.edu"
+								placeholder={shared.emailPlaceholder}
 							/>
 						</FormControl>
 
 						<FormControl className="auth-field" name="password">
 							<div className="auth-label-row">
-								<Label className="item-label">Password</Label>
-								<span className="auth-input-hint">{PASSWORD_MIN_LENGTH}+ characters</span>
+								<Label className="item-label">{shared.password}</Label>
+								<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
 							</div>
 							<div className="auth-input-wrapper">
 								<TextInput
@@ -132,7 +135,7 @@ export default function SignupForm() {
 									type="button"
 									className="auth-eye-btn"
 									onClick={() => setShowPassword((v) => !v)}
-									aria-label={showPassword ? 'Hide password' : 'Show password'}
+									aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 								>
 									{showPassword ? (
 										<IconEyeOff size={24} stroke={1} />
@@ -148,15 +151,15 @@ export default function SignupForm() {
 							type="submit"
 							disabled={isLoading}
 						>
-							{isLoading ? 'Creating account…' : 'Sign up'}
+							{isLoading ? t.creating : shared.signUp}
 							<IconArrowRight size={15} />
 						</button>
 					</Form>
 
 					<p className="auth-switch">
-						Already have an account?{' '}
+						{t.haveAccount}{' '}
 						<Link href="/login" className="auth-switch-link">
-							Log in
+							{shared.logIn}
 						</Link>
 					</p>
 				</div>

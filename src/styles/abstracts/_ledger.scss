@@ -1,0 +1,22 @@
+// The ledger look the home and Progress pages share: hairline rules, double rules, serif figures.
+@use 'theme-only' as *;
+@use 'font-scale' as *;
+
+$rule-soft: rgba($color-white, 0.08);
+$rule: rgba($color-white, 0.12);
+$rule-folio: rgba($color-white, 0.14);
+$rule-mid: rgba($color-white, 0.22);
+$rule-double: 3px double rgba($color-white, 0.24);
+
+@mixin figures {
+	font-family: $font-body-normal-family;
+	font-variant-numeric: lining-nums tabular-nums;
+}
+
+@mixin ledger-label {
+	font-size: $text-11;
+	font-weight: $font-weight-bold;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: $color-text-muted;
+}

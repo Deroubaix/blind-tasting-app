@@ -1,0 +1,1248 @@
+@use '../abstracts' as *;
+// Progress page: the home page's ledger look, from abstracts/_ledger.
+
+@mixin phone {
+	@include responsive($breakpoint-mobile) {
+		@content;
+	}
+}
+
+.progress {
+	max-width: calc(1104px + 2 * $spacing-xxl);
+	margin: 0 auto;
+	padding: 20px $spacing-xxl 72px;
+	color: $color-white;
+	font-family: $font-display-normal-family;
+
+	em {
+		font-family: $font-body-normal-family;
+		font-style: italic;
+		font-weight: 500;
+	}
+
+	// Copy that differs between desktop and phone: both are rendered, one is shown.
+	&__narrow,
+	&__narrow-flex {
+		display: none;
+	}
+
+	&__wide-flex {
+		display: flex;
+	}
+
+	@include phone {
+		padding: 4px 16px 36px;
+
+		&__wide,
+		&__wide-flex {
+			display: none;
+		}
+
+		&__narrow {
+			display: inline;
+		}
+
+		&__narrow-flex {
+			display: flex;
+		}
+	}
+
+	&__head {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 32px;
+		align-items: end;
+		padding-bottom: 22px;
+
+		&--empty {
+			padding-bottom: 28px;
+		}
+
+		@include responsive(64rem) {
+			grid-template-columns: 1fr;
+			gap: 18px;
+		}
+	}
+
+	&__eyebrow {
+		@include ledger-label;
+		letter-spacing: 0.16em;
+		color: $color-text-secondary;
+		margin-bottom: 14px;
+
+		@include phone {
+			letter-spacing: 0.14em;
+			margin-bottom: 8px;
+		}
+	}
+
+	&__title {
+		margin: 0;
+		font-size: 3.0625rem;
+		font-weight: 700;
+		letter-spacing: -0.035em;
+		line-height: 1.05;
+
+		@include phone {
+			font-size: 2.125rem;
+		}
+	}
+
+	&__filters {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+		flex-wrap: wrap;
+
+		@include phone {
+			display: grid;
+			gap: 8px;
+			margin-bottom: 14px;
+		}
+	}
+}
+
+.progress-label {
+	@include ledger-label;
+	margin-bottom: 8px;
+
+	&--list {
+		margin-bottom: 6px;
+	}
+}
+
+.progress-link {
+	font-weight: 600;
+	color: $tasting-accent-light;
+
+	&:after {
+		display: none;
+	}
+
+	&:hover {
+		color: $color-white;
+	}
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────────
+.progress-seg {
+	display: flex;
+	gap: 4px;
+	padding: 4px;
+	border: 1px solid $rule;
+	border-radius: 3px;
+
+	&__btn {
+		min-height: 38px;
+		padding: 0 14px;
+		border-radius: 2px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: $color-text-secondary;
+		font-family: inherit;
+		font-size: $text-13;
+		font-weight: $font-weight-semibold;
+		// The global button style is uppercase; filters read as words.
+		text-transform: none;
+		letter-spacing: normal;
+		cursor: pointer;
+
+		&:hover {
+			color: $color-white;
+		}
+
+		&[aria-pressed='true'] {
+			background: rgba($tasting-accent, 0.22);
+			border-color: $tasting-accent-light;
+			color: $color-white;
+		}
+	}
+
+	@include phone {
+		display: grid;
+
+		&--2 {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		&--3 {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+
+		&__btn {
+			min-height: 44px;
+			padding: 0;
+		}
+	}
+}
+
+// ── Totals strip ──────────────────────────────────────────────────────────────
+.progress-totals {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	border-top: $rule-double;
+	border-bottom: 1px solid $rule;
+	margin-bottom: 12px;
+
+	&--empty {
+		margin-bottom: 48px;
+	}
+
+	&__tile {
+		padding: 20px 24px 18px;
+
+		&:first-child {
+			padding-left: 0;
+		}
+
+		& + & {
+			border-left: 1px solid $rule;
+		}
+	}
+
+	&__value {
+		@include figures;
+		font-size: 2.5rem;
+		font-weight: 500;
+		line-height: 1;
+
+		span {
+			font-size: 1.25rem;
+			color: $color-text-muted;
+		}
+
+		&--quiet {
+			color: $color-text-muted;
+		}
+	}
+
+	&__sub {
+		margin-top: 8px;
+		font-size: $text-13;
+		color: $color-text-secondary;
+	}
+
+	@include phone {
+		grid-template-columns: 1fr 1fr;
+		margin-bottom: 10px;
+
+		&--empty {
+			margin-bottom: 28px;
+
+			// The phone keeps only what exists; "—" twice says nothing on a small screen.
+			.progress-totals__tile:nth-child(n + 3) {
+				display: none;
+			}
+		}
+
+		&__tile {
+			padding: 14px 12px 12px;
+
+			&:nth-child(odd) {
+				padding-left: 0;
+				border-left: none;
+			}
+
+			&:nth-child(n + 3) {
+				border-top: 1px solid $rule;
+			}
+		}
+
+		&__value {
+			font-size: 1.75rem;
+
+			span {
+				font-size: $text-15;
+			}
+		}
+
+		&__sub {
+			margin-top: 6px;
+			font-size: $text-12;
+			line-height: 1.35;
+		}
+	}
+}
+
+.progress-note {
+	margin: 0 0 40px;
+	font-size: $text-13;
+	color: $color-text-secondary;
+
+	@include phone {
+		display: flex;
+		align-items: center;
+		min-height: 44px;
+		margin-bottom: 24px;
+	}
+}
+
+// ── Sections and folios ───────────────────────────────────────────────────────
+.progress-section {
+	display: grid;
+	grid-template-columns: 56px minmax(0, 1fr);
+	column-gap: 28px;
+	margin-bottom: 56px;
+
+	&__folio {
+		text-align: right;
+		padding-right: 18px;
+		border-right: 1px solid $rule-folio;
+		font-family: $font-body-normal-family;
+		font-size: $text-16;
+		color: $color-text-muted;
+	}
+
+	@include phone {
+		display: block;
+		margin-bottom: 40px;
+
+		&__folio {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-bottom: 12px;
+			padding: 0;
+			border: none;
+			text-align: left;
+			font-size: $text-15;
+
+			&::after {
+				content: '';
+				flex: 1;
+				height: 1px;
+				background: $rule-folio;
+			}
+		}
+	}
+}
+
+.progress-pair {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 40px;
+
+	> .progress-section {
+		margin-bottom: 0;
+	}
+
+	.progress-section--palate {
+		align-self: start;
+	}
+
+	@include responsive($breakpoint-tablet) {
+		grid-template-columns: 1fr;
+		gap: 56px;
+	}
+
+	@include phone {
+		gap: 40px;
+	}
+}
+
+.progress-h2 {
+	margin: 0 0 8px;
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+
+	@include phone {
+		font-size: 1.625rem;
+	}
+}
+
+.progress-lede {
+	margin: 0 0 22px;
+	font-size: $text-13;
+	line-height: 1.5;
+	color: $color-text-secondary;
+
+	&--tight {
+		margin: 4px 0 0;
+	}
+
+	@include phone {
+		margin-bottom: 16px;
+		font-size: 0.7812rem;
+
+		&--tight {
+			margin: 0 0 14px;
+		}
+	}
+}
+
+// ── § 1 trend ────────────────────────────────────────────────────────────────
+.progress-trend__head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 22px;
+
+	@include phone {
+		display: block;
+		margin-bottom: 0;
+	}
+}
+
+.progress-trend__headline {
+	margin: 0;
+	font-size: $text-16;
+	line-height: 1.5;
+
+	strong {
+		font-weight: 700;
+	}
+
+	@include phone {
+		margin-bottom: 4px;
+		font-size: $text-15;
+		line-height: 1.45;
+	}
+}
+
+.progress-toggle {
+	flex-shrink: 0;
+	padding: 10px 14px;
+	background: transparent;
+	border: 1px solid $rule-mid;
+	border-radius: 3px;
+	color: $color-white;
+	font-family: inherit;
+	font-size: $text-12;
+	font-weight: $font-weight-bold;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	cursor: pointer;
+
+	&:hover {
+		border-color: $color-text-secondary;
+	}
+
+	&--bottom {
+		display: none;
+	}
+
+	@include phone {
+		&--top {
+			display: none;
+		}
+
+		&--bottom {
+			display: block;
+			width: 100%;
+			min-height: 44px;
+			margin-top: 12px;
+		}
+	}
+}
+
+.progress-card {
+	background: $color-darkGrey;
+	border: 1px solid $rule;
+	border-radius: 4px;
+	padding: 28px 28px 18px;
+
+	&__empty {
+		padding: 40px 0;
+		text-align: center;
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	@include phone {
+		padding: 18px 14px 12px;
+
+		&__empty {
+			padding: 28px 0;
+			font-size: $text-13-5;
+			line-height: 1.5;
+		}
+	}
+}
+
+.progress-chart {
+	position: relative;
+	height: 280px;
+	margin: 0 120px 0 40px;
+
+	&__rule {
+		position: absolute;
+		left: 0;
+		right: 0;
+		border-top: 1px solid $rule-soft;
+
+		&--zero {
+			border-top: $rule-double;
+		}
+	}
+
+	&__tick {
+		@include figures;
+		position: absolute;
+		left: -40px;
+		width: 28px;
+		transform: translateY(-50%);
+		text-align: right;
+		font-size: $text-13;
+		color: $color-text-muted;
+	}
+
+	&__line {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+
+		path {
+			fill: none;
+			stroke: $color-white;
+			stroke-width: 2.5;
+			stroke-linejoin: round;
+		}
+	}
+
+	&__end {
+		position: absolute;
+		left: calc(100% + 14px);
+		transform: translateY(-50%);
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		white-space: nowrap;
+	}
+
+	&__end-value {
+		@include figures;
+		font-size: 1.375rem;
+		line-height: 1;
+	}
+
+	&__end-label {
+		font-size: $text-11;
+		color: $color-text-secondary;
+	}
+
+	&__months {
+		position: relative;
+		height: 26px;
+		margin: 8px 120px 0 40px;
+
+		> span {
+			position: absolute;
+			top: 6px;
+			padding-left: 6px;
+			border-left: 1px solid $rule-mid;
+			font-size: $text-12;
+			color: $color-text-secondary;
+			white-space: nowrap;
+		}
+	}
+
+	@include phone {
+		height: 190px;
+		margin: 0 8px 0 28px;
+
+		&__tick {
+			left: -28px;
+			width: 20px;
+			font-size: $text-12;
+		}
+
+		&__end {
+			display: none;
+		}
+
+		&__months {
+			height: 22px;
+			margin: 6px 8px 0 28px;
+
+			> span {
+				top: 4px;
+				padding-left: 4px;
+				font-size: $text-11;
+			}
+		}
+	}
+}
+
+// Shape carries the wine type, so it survives greyscale: a filled square for red, an open circle for white.
+.progress-mark {
+	position: absolute;
+	width: 11px;
+	height: 11px;
+	transform: translate(-50%, -50%);
+	box-sizing: border-box;
+
+	&:after {
+		display: none;
+	}
+
+	&--red {
+		border-radius: 1px;
+		background: $tasting-accent-light;
+		border: 1.5px solid $tasting-accent-light;
+	}
+
+	&--white {
+		border-radius: 50%;
+		background: $color-darkGrey;
+		border: 1.5px solid $color-white;
+	}
+
+	&:hover,
+	&:focus-visible {
+		width: 15px;
+		height: 15px;
+		outline: 2px solid $tasting-accent-light;
+		outline-offset: 2px;
+		z-index: 1;
+	}
+
+	@include phone {
+		width: 9px;
+		height: 9px;
+	}
+}
+
+.progress-callout {
+	position: absolute;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 200px;
+	max-width: min(280px, 100%);
+	padding: 10px 12px;
+	background: $color-black;
+	border: 1px solid $rule-mid;
+	border-radius: 3px;
+	font-size: $text-12;
+	color: $color-text-secondary;
+	pointer-events: none;
+
+	strong {
+		font-size: $text-14;
+		color: $color-white;
+	}
+
+	&__no {
+		@include figures;
+		color: $color-text-muted;
+	}
+}
+
+.progress-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid $rule-soft;
+	font-size: 0.7812rem;
+	color: $color-text-secondary;
+
+	> span {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	&__mark {
+		position: static;
+		transform: none;
+		width: 11px;
+		height: 11px;
+	}
+
+	&__line {
+		width: 22px;
+		height: 2.5px;
+		background: $color-white;
+	}
+
+	&__axis {
+		margin-left: auto;
+	}
+
+	@include phone {
+		gap: 6px 14px;
+		margin-top: 10px;
+		padding-top: 10px;
+		font-size: $text-12;
+
+		> span {
+			gap: 6px;
+		}
+
+		&__mark {
+			width: 9px;
+			height: 9px;
+		}
+
+		&__line {
+			width: 18px;
+		}
+
+		// Beside `> span`, which would otherwise win on specificity.
+		> .progress-legend__axis {
+			display: none;
+		}
+	}
+}
+
+.progress-table {
+	&__row {
+		display: grid;
+		grid-template-columns: 56px 110px minmax(0, 1fr) 90px 90px 110px;
+		column-gap: 16px;
+		align-items: baseline;
+		padding: 10px 0;
+		border-top: 1px solid $rule-soft;
+
+		&--head {
+			@include ledger-label;
+			letter-spacing: 0.1em;
+			padding-top: 0;
+			border-top: none;
+
+			> span:nth-child(1),
+			> span:nth-child(5),
+			> span:nth-child(6) {
+				text-align: right;
+			}
+		}
+	}
+
+	&__no {
+		@include figures;
+		text-align: right;
+		font-size: $text-14;
+		color: $color-text-muted;
+	}
+
+	&__date,
+	&__type {
+		font-size: $text-13;
+		color: $color-text-secondary;
+	}
+
+	&__wine {
+		min-width: 0;
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+
+		a {
+			color: $color-white;
+
+			&:after {
+				display: none;
+			}
+
+			&:hover {
+				color: $tasting-accent-light;
+			}
+		}
+	}
+
+	&__sub {
+		display: none;
+	}
+
+	&__score {
+		@include figures;
+		text-align: right;
+		font-size: $text-16;
+		white-space: nowrap;
+	}
+
+	&__roll {
+		@include figures;
+		text-align: right;
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	@include phone {
+		&__row {
+			grid-template-columns: 34px minmax(0, 1fr) auto;
+			column-gap: 10px;
+
+			&--head {
+				display: none;
+			}
+		}
+
+		&__no {
+			padding-right: 8px;
+			border-right: 1px solid $rule-folio;
+			font-size: $text-13;
+		}
+
+		&__date,
+		&__type,
+		&__roll {
+			display: none;
+		}
+
+		&__wine {
+			font-size: $text-13-5;
+
+			a {
+				display: block;
+			}
+		}
+
+		&__sub {
+			display: block;
+			font-size: $text-12;
+			font-weight: 400;
+			color: $color-text-secondary;
+		}
+	}
+}
+
+// ── § 2 confusions ───────────────────────────────────────────────────────────
+.progress-ruled {
+	border-bottom: $rule-double;
+	margin-bottom: 28px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	&__none {
+		margin: 0;
+		padding: 13px 0;
+		border-top: 1px solid $rule-soft;
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	@include phone {
+		margin-bottom: 22px;
+	}
+}
+
+.progress-pair-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 16px;
+	align-items: center;
+	padding: 13px 0;
+	border-top: 1px solid $rule-soft;
+
+	&__text {
+		min-width: 0;
+		font-size: $text-15;
+		line-height: 1.45;
+		color: $color-text-secondary;
+
+		strong {
+			font-weight: 700;
+			color: $color-white;
+		}
+	}
+
+	&__count {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+
+	&__figure {
+		@include figures;
+		min-width: 62px;
+		text-align: right;
+		font-size: 1.375rem;
+	}
+
+	&__of {
+		font-size: $text-14;
+		color: $color-text-muted;
+	}
+
+	@include phone {
+		gap: 12px;
+		padding: 12px 0;
+
+		&__line {
+			display: block;
+			font-size: 0.7812rem;
+
+			strong {
+				font-size: $text-14;
+			}
+		}
+
+		&__count {
+			flex-direction: column-reverse;
+			align-items: flex-end;
+			gap: 6px;
+		}
+
+		&__figure {
+			min-width: 0;
+			font-size: 1.3125rem;
+		}
+
+		&__of {
+			font-size: $text-13;
+		}
+	}
+}
+
+// One box per time the wine was poured, filled for each wrong call, so "4 of 5" reads at a glance.
+.progress-tally {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 3px;
+
+	> span {
+		width: 7px;
+		height: 14px;
+		box-sizing: border-box;
+		border: 1px solid rgba($color-white, 0.3);
+
+		&.is-on {
+			background: $color-white;
+			border-color: $color-white;
+		}
+	}
+
+	@include phone {
+		> span {
+			width: 6px;
+			height: 11px;
+		}
+	}
+}
+
+// ── § 3 palate ───────────────────────────────────────────────────────────────
+.progress-bias,
+.progress-bias__scale {
+	display: grid;
+	grid-template-columns: 110px minmax(0, 1fr) 92px;
+	column-gap: 16px;
+	align-items: center;
+}
+
+.progress-bias {
+	padding: 14px 0;
+	border-top: 1px solid $rule-soft;
+
+	&__scale {
+		@include ledger-label;
+		letter-spacing: 0.1em;
+		padding-bottom: 8px;
+	}
+
+	&__ends {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__name {
+		display: flex;
+		flex-direction: column;
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+	}
+
+	&__wines {
+		font-size: $text-12;
+		font-weight: 400;
+		color: $color-text-muted;
+	}
+
+	&__track {
+		position: relative;
+		height: 30px;
+	}
+
+	&__axis {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 15px;
+		height: 1px;
+		background: $rule;
+	}
+
+	&__centre {
+		position: absolute;
+		left: 50%;
+		top: 3px;
+		width: 1px;
+		height: 25px;
+		background: $color-text-muted;
+	}
+
+	&__tick {
+		position: absolute;
+		top: 10px;
+		width: 1px;
+		height: 11px;
+		background: $rule-mid;
+	}
+
+	&__bar {
+		position: absolute;
+		top: 11px;
+		height: 9px;
+		background: rgba($color-white, 0.14);
+	}
+
+	&__dot {
+		position: absolute;
+		top: 15px;
+		width: 13px;
+		height: 13px;
+		transform: translate(-50%, -50%);
+		background: $color-white;
+		box-shadow: 0 0 0 2px $color-black;
+	}
+
+	&__figure {
+		@include figures;
+		text-align: right;
+		font-size: 1.1875rem;
+		line-height: 1.1;
+	}
+
+	&__word {
+		font-family: $font-display-normal-family;
+		font-size: $text-11;
+		font-weight: $font-weight-bold;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: $color-text-secondary;
+		white-space: nowrap;
+	}
+
+	&--high,
+	&--low {
+		.progress-bias__bar {
+			background: rgba($tasting-accent-light, 0.35);
+		}
+
+		.progress-bias__dot {
+			background: $tasting-accent-light;
+		}
+
+		.progress-bias__word {
+			color: $color-white;
+		}
+	}
+
+	@include phone {
+		grid-template-columns: minmax(0, 1fr) 62px;
+		column-gap: 12px;
+		row-gap: 6px;
+		padding: 12px 0;
+
+		&__scale {
+			grid-template-columns: minmax(0, 1fr) 62px;
+			letter-spacing: 0.08em;
+			padding-bottom: 6px;
+
+			> span:first-child {
+				display: none;
+			}
+		}
+
+		&__name {
+			grid-column: 1 / -1;
+			flex-direction: row;
+			align-items: baseline;
+			gap: 6px;
+			font-size: 0.9062rem;
+		}
+
+		&__track {
+			height: 26px;
+		}
+
+		&__figure {
+			font-size: 1.0625rem;
+		}
+
+		&__word {
+			letter-spacing: 0.06em;
+		}
+	}
+}
+
+.progress-summary {
+	margin: 16px 0 0;
+	padding-top: 14px;
+	border-top: $rule-double;
+	font-size: $text-14;
+	line-height: 1.55;
+	color: $color-text-secondary;
+
+	@include phone {
+		margin-top: 12px;
+		padding-top: 12px;
+		font-size: $text-13-5;
+	}
+}
+
+// ── Empty state ──────────────────────────────────────────────────────────────
+.progress-empty {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 420px;
+	gap: 48px;
+	align-items: center;
+	padding: 40px;
+
+	.progress-h2 {
+		margin-bottom: 12px;
+	}
+
+	&__body {
+		max-width: 52ch;
+		margin: 0 0 24px;
+		font-size: $text-15;
+		line-height: 1.6;
+		color: $color-text-secondary;
+	}
+
+	&__actions {
+		align-items: center;
+		gap: 16px;
+	}
+
+	&__reveal {
+		padding: 15px 22px;
+		font-size: $text-13;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	&__start {
+		font-size: $text-14;
+	}
+
+	@include responsive($breakpoint-tablet) {
+		grid-template-columns: 1fr;
+		gap: 28px;
+	}
+
+	@include phone {
+		padding: 22px 18px 18px;
+
+		.progress-h2 {
+			margin-bottom: 10px;
+			font-size: 1.5rem;
+			line-height: 1.15;
+		}
+
+		&__body {
+			margin-bottom: 18px;
+			font-size: $text-14;
+			line-height: 1.55;
+		}
+
+		&__actions {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 6px;
+			margin-top: 18px;
+		}
+
+		&__reveal {
+			min-height: 50px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		&__start {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 44px;
+		}
+	}
+}
+
+.progress-slot {
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr) auto;
+	column-gap: 14px;
+	align-items: baseline;
+	padding: 13px 0;
+	border-top: 1px solid $rule-soft;
+
+	&__n {
+		@include figures;
+		text-align: right;
+		padding-right: 12px;
+		border-right: 1px solid $rule-folio;
+		font-size: $text-15;
+		color: $color-text-muted;
+	}
+
+	&__text {
+		font-size: $text-14;
+	}
+
+	&__score {
+		@include figures;
+		font-size: 1.125rem;
+	}
+
+	&--done &__text {
+		font-weight: $font-weight-semibold;
+	}
+
+	&--waiting,
+	&--next {
+		.progress-slot__text {
+			font-style: italic;
+			color: $color-text-secondary;
+		}
+
+		.progress-slot__score {
+			color: $color-text-secondary;
+		}
+	}
+
+	&--next .progress-slot__text {
+		color: rgba($color-white, 0.55);
+	}
+
+	&__foot {
+		border-top: $rule-double;
+		padding-top: 10px;
+		font-size: $text-13;
+		color: $color-text-secondary;
+	}
+
+	@include phone {
+		grid-template-columns: 30px minmax(0, 1fr) auto;
+		column-gap: 10px;
+		padding: 12px 0;
+
+		&__n {
+			padding-right: 8px;
+			font-size: $text-14;
+		}
+
+		&__text {
+			font-size: $text-13-5;
+		}
+
+		&__score {
+			font-size: 1.0625rem;
+		}
+
+		&__foot {
+			font-size: 0.7812rem;
+		}
+	}
+}

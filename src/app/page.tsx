@@ -11,16 +11,14 @@ import {
 	Folio,
 	GridPhases,
 	RevealTable,
-	WHO,
+	Who,
 } from '../components/home/HomeSections';
+import { homeText } from '../i18n/home';
+import { getText } from '../i18n/server';
 
-const STEPS = [
-	['Pour and bag the wines', 'Number them, then share a join code or QR with the group.'],
-	['Everyone tastes on their own phone', 'In any order, each on their own clock.'],
-	['Reveal each label once', 'Everyone who submitted is scored together, side by side.'],
-];
-
-export default function Homepage() {
+export default async function Homepage() {
+	const t = (await getText(homeText)).page;
+	const steps = t.steps.filter((_, i) => i % 2 === 0).map((title, i) => [title, t.steps[i * 2 + 1]]);
 	return (
 		<>
 			<Header />
@@ -31,21 +29,11 @@ export default function Homepage() {
 					<div className="home-split">
 						<div>
 							<h2 className="home-h2">
-								Scored against <em>the label</em>.
+								{t.scoredTitle} <em>{t.scoredEm}</em>.
 							</h2>
-							<p className="home-lede">
-								Unwrap the bottle and enter what&apos;s on the label. Each field of your final
-								conclusion comes back Correct, Close or Wrong, with one point for every exact match.
-							</p>
-							<p className="home-p">
-								Close covers the near misses: a vintage within two years, or the right region with a
-								different appellation. Blank fields show as Not called. A field the label doesn&apos;t
-								carry drops out of the total.
-							</p>
-							<p className="home-p">
-								Where the CMS core list treats regions as interchangeable for a grape, such as Napa
-								Valley, Sonoma County or Central Coast for Cabernet, they score as correct.
-							</p>
+							<p className="home-lede">{t.scoredLede}</p>
+							<p className="home-p">{t.scoredP1}</p>
+							<p className="home-p">{t.scoredP2}</p>
 						</div>
 						<RevealTable />
 					</div>
@@ -54,22 +42,22 @@ export default function Homepage() {
 				<Folio n={2} id="flights" tint>
 					<div className="home-flights__head">
 						<div>
-							<span className="home-eyebrow">Study groups</span>
+							<span className="home-eyebrow">{t.studyGroups}</span>
 							<h2 className="home-h2 home-h2--lg">
-								Flights: taste as <em>a group</em>.
+								{t.flightsTitle} <em>{t.flightsEm}</em>.
 							</h2>
 						</div>
 						<div className="home-ctas home-ctas--tight">
 							<Link href="/flights/new" className="btn-primary home-btn no-underline">
-								Host a flight
+								{t.host}
 							</Link>
 							<Link href="/flights/join" className="home-btn home-btn--outline no-underline">
-								Join a flight
+								{t.join}
 							</Link>
 						</div>
 					</div>
 					<ol className="home-steps">
-						{STEPS.map(([title, body], i) => (
+						{steps.map(([title, body], i) => (
 							<li key={title} className="home-steps__item">
 								<span className="home-figure home-figure--xl">{String(i + 1).padStart(2, '0')}</span>
 								<span>
@@ -80,22 +68,17 @@ export default function Homepage() {
 						))}
 					</ol>
 					<FlightPreview />
-					<p className="home-p home-p--wide">
-						Structure isn&apos;t scored, because the label can&apos;t tell you what the acidity is. But
-						you&apos;ll see where the group split, and whose tannin call led them to Nebbiolo.
-					</p>
+					<p className="home-p home-p--wide">{t.structureNote}</p>
 				</Folio>
 
 				<Folio n={3}>
 					<div className="home-split home-split--even">
 						<div>
 							<h2 className="home-h2">
-								At <em>exam</em> pace.
+								{t.paceTitle} <em>{t.paceEm}</em>
+								{t.paceTail}
 							</h2>
-							<p className="home-lede">
-								Guided gives each phase its own clock while you learn to pace. Exam runs one clock for
-								the whole wine, as the exam does. Pause when you step away.
-							</p>
+							<p className="home-lede">{t.paceLede}</p>
 						</div>
 						<ExamPace />
 					</div>
@@ -103,7 +86,7 @@ export default function Homepage() {
 
 				<Folio n={4} id="grid">
 					<h2 className="home-h2">
-						The grid, <em>phase by phase</em>.
+						{t.gridTitle} <em>{t.gridEm}</em>.
 					</h2>
 					<GridPhases />
 				</Folio>
@@ -111,33 +94,24 @@ export default function Homepage() {
 				<Folio n={5}>
 					<div className="home-split home-split--even home-split--end">
 						<h2 className="home-h2">
-							Your <em>archive</em>.
+							{t.archiveTitle} <em>{t.archiveEm}</em>.
 						</h2>
-						<p className="home-lede">
-							Every sheet is saved, so you can look back and see how your calls held up.
-						</p>
+						<p className="home-lede">{t.archiveLede}</p>
 					</div>
 					<ArchivePreview />
 				</Folio>
 
 				<Folio n={6}>
-					<span className="home-eyebrow home-eyebrow--plain">Who it&apos;s for</span>
-					<ul className="home-who">
-						{WHO.map(([title, body]) => (
-							<li key={title}>
-								<strong>{title}</strong>
-								<span className="home-muted">{body}</span>
-							</li>
-						))}
-					</ul>
+					<span className="home-eyebrow home-eyebrow--plain">{t.whoFor}</span>
+					<Who />
 				</Folio>
 
 				<section className="home-closing-wrap">
 					<div className="home-closing">
 						<h2 className="home-h2 home-h2--xl">
-							Pour a glass. <em>Open the grid.</em>
+							{t.closingTitle} <em>{t.closingEm}</em>
 						</h2>
-						<p className="home-lede">Free. Delete your account and everything in it any time.</p>
+						<p className="home-lede">{t.closingLede}</p>
 						<CtaLinks />
 					</div>
 				</section>

@@ -151,7 +151,13 @@ pnpm start                     # http://localhost:3002
 - `src/components/tasting/conclusionFields.ts` — one definition of "how many answers count as
   done", read by both the phase pages and the sidebar, so a phase cannot report 100% while the
   sidebar disagrees
-- `src/app/api/` — auth and tastings route handlers
+- `src/app/api/` — route handlers, kept thin as in dr-pam's possums-sleep-program: each one checks
+  the session, parses the body with its zod schema and calls a server service
+- `src/services/server/` — the server services (`AuthService`, `UserService`, `TastingService`,
+  `FlightService`, `PhotoService`, `ProgressService`, `ExportService`), wired in `ServerServices.ts`
+  and taken with `ServerServices.getClass(...)`. Server pages such as `/progress` call them directly
+  instead of fetching their own API
+- `src/services/client/` — the browser's side of the same calls, through `FetchUtils`
 - `src/styles/abstracts/` — tokens, mixins and the type scale, forwarded through `_index.scss`
 - `src/lib/storage.ts` — label photo storage. The browser resizes the photo to a 1200px JPEG, asks
   `/api/photos/sign` for a key, PUTs it (to `/api/photos/upload` on local disk, straight to a
@@ -216,13 +222,30 @@ every wine by every taster, with totals and the wine that confused the group mos
 
 Tables: `Flight`, `FlightWine` (the reveal), `FlightMember`, `FlightEntry` (a taster's go at a
 wine, linked to their `Tasting` on submit). Rules live in `src/components/flights/flightLogic.ts`;
-loading and shaping in `src/lib/flights.ts`.
+loading and shaping in `src/services/server/FlightService.ts`.
 
 ## Privacy and accounts
 
 `/privacy` is the GDPR notice: what is stored, why, who processes it and how to have it deleted.
 `/account` shows the account's details and deletes it, after the password is typed again: every
 tasting, the account row and every photo under `labels/<userId>/` (`DELETE /api/user/me`).
+
+## Languages (English and Portuguese)
+
+The interface runs in English or European Portuguese. The EN | PT switch in the header, phone menu
+and footer sets a `lang` cookie, so server components (`<html lang>`, page titles, the footer, the
+privacy notice) render in the chosen language on the first paint.
+
+- Strings live in one dictionary per area under `src/i18n/`, built with `dict(en, pt)`. The
+  Portuguese half is typed from the English one, so a missing key fails the typecheck.
+- Client components read them with `useText(dictionary)`, server components with `getText`, page
+  titles with `pageTitle({ en, pt })`.
+- API refusals are thrown as `apiError(status, key)` with a key into `src/i18n/errors.ts`, and
+  `errorResponse` words them in the request's language, so the forms and toasts that show a
+  server message show it in Portuguese too.
+- Tasting vocabulary stays in English in both languages: grid descriptors, scale terms, grape and
+  country names. Saved tastings and scoring compare against those exact words.
+- The Portuguese is a draft awaiting review by a native speaker.
 
 ## Commands
 

@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect, useId } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
 import useDropPlacement from './useDropPlacement';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 
 interface Props {
 	options: string[];
@@ -20,14 +22,8 @@ interface Props {
  * from the keyboard and is announced properly: arrows move, Enter or Space picks, Home/End jump,
  * Escape closes, and Tab moves on. It used to open from the keyboard but offer no way to choose.
  */
-export default function TastingCustomSelect({
-	options,
-	value,
-	onChange,
-	placeholder = 'Select...',
-	clearLabel,
-	labelId,
-}: Props) {
+export default function TastingCustomSelect({ options, value, onChange, placeholder, clearLabel, labelId }: Props) {
+	const t = useText(tastingText).inputs;
 	const [open, setOpen] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const wrapRef = useRef<HTMLDivElement>(null);
@@ -141,7 +137,7 @@ export default function TastingCustomSelect({
 				onKeyDown={handleKeyDown}
 			>
 				<span className={`tasting-select-value${!value ? ' tasting-select-value--placeholder' : ''}`}>
-					{value || placeholder}
+					{value || (placeholder ?? t.select)}
 				</span>
 				<IconChevronDown
 					size={14}

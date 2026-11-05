@@ -3,6 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 import { IconMapPin, IconSearch } from '@tabler/icons-react';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
+import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { ChipSearchField, VintageInput } from '../tasting/ConclusionInputs';
@@ -44,6 +47,8 @@ function Recap({ label, pairs }: { label: string; pairs: [string, string][] }) {
  */
 export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
+	const t = useText(wsetText).conclusions;
+	const phases = useText(commonText).phase.wset;
 	const { tastingData, updateTastingData } = useTastingContext();
 	const final = tastingData.conclusion?.final ?? {};
 	const { quality, readiness, reasons } = WSET_CONCLUSION_KEYS;
@@ -78,27 +83,27 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 			progress={pct}
 			timerPage="finalConclusion"
 			timerDestination={`/tastings/save?wineType=${wineType}`}
-			phase="Phase 04"
-			title="Conclusions"
-			description="Judge the quality on balance, length, intensity and complexity, and say whether the wine is ready. Give your reasons; the examiner marks those too."
+			phase={t.phase}
+			title={phases.finalConclusion}
+			description={t.description}
 			footer={{
 				onBack: () => router.push(`/tastings/palate?wineType=${wineType}`),
-				backLabel: 'Back to Palate',
-				nextLabel: 'Review & Save',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: () => router.push(`/tastings/save?wineType=${wineType}`),
 			}}
 		>
 			<div className="fc-layout">
 				<div className="fc-form wset-conclusions">
 					<OptionCard
-						label="Quality level"
+						label={t.quality}
 						options={WSET_QUALITY}
 						value={final[quality] ?? undefined}
 						onChange={(v) => update({ [quality]: v })}
 						required
 					/>
 					<OptionCard
-						label="Readiness for drinking"
+						label={t.readiness}
 						options={WSET_READINESS}
 						value={final[readiness] ?? undefined}
 						onChange={(v) => update({ [readiness]: v })}
@@ -106,14 +111,14 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 					/>
 					<div className="tasting-card">
 						<label className="tasting-card__label" htmlFor="wset-reasons">
-							Reasons <span className="wset-optional">balance · length · intensity · complexity</span>
+							{t.reasons} <span className="wset-optional">{t.reasonsHint}</span>
 						</label>
 						<textarea
 							id="wset-reasons"
 							className="tasting-textarea"
 							rows={3}
 							maxLength={200}
-							placeholder="e.g. High acidity balances the sugar; long finish; pronounced, complex nose with tertiary notes…"
+							placeholder={t.reasonsPlaceholder}
 							value={final[reasons] ?? ''}
 							onChange={(e) => update({ [reasons]: e.target.value || null })}
 						/>
@@ -121,50 +126,47 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 
 					<div className="wset-group">
 						<div className="nose-section-divider">
-							<span className="section-label">The wine itself</span>
+							<span className="section-label">{t.wineItself}</span>
 						</div>
-						<p className="wset-lede">
-							Optional. Not asked at Level 3, but good practice, and scored when the reveal names the
-							wine.
-						</p>
+						<p className="wset-lede">{t.identityLede}</p>
 					</div>
 					<div className="fc-grid">
 						<ChipSearchField
 							id="wset-grape"
 							className="fc-field"
 							labelClassName="tasting-card__label"
-							label="Grape Variety or Blend"
+							label={t.grape}
 							value={final.grapeVariety}
 							onChange={(v) => update({ grapeVariety: v })}
 							suggestions={GRAPE_VARIETALS}
-							placeholder="e.g. Riesling"
+							placeholder={t.grapePlaceholder}
 							icon={<IconSearch size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>
 						<ChipSearchField
 							id="wset-country"
 							className="fc-field"
 							labelClassName="tasting-card__label"
-							label="Country of Origin"
+							label={t.country}
 							value={final.countryOfOrigin}
 							onChange={(v) => update({ countryOfOrigin: v })}
 							suggestions={WINE_COUNTRIES}
-							placeholder="e.g. Germany"
+							placeholder={t.countryPlaceholder}
 							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>
 						<ChipSearchField
 							id="wset-region"
 							className="fc-field"
 							labelClassName="tasting-card__label"
-							label="Region and Appellation"
+							label={t.region}
 							value={final.regionAppellation}
 							onChange={(v) => update({ regionAppellation: v })}
 							suggestions={WINE_REGIONS}
-							placeholder="e.g. Mosel"
+							placeholder={t.regionPlaceholder}
 							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>
 						<div className="fc-field fc-field--half">
 							<label className="tasting-card__label" htmlFor="wset-vintage">
-								Vintage
+								{t.vintage}
 							</label>
 							<VintageInput
 								id="wset-vintage"
@@ -177,21 +179,21 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 
 				<div className="fc-analysis">
 					<div className="fc-analysis__header">
-						<span className="section-label">Your Analysis</span>
-						<span className="fc-analysis__subtitle">What you recorded</span>
+						<span className="section-label">{t.analysis}</span>
+						<span className="fc-analysis__subtitle">{t.recorded}</span>
 					</div>
-					<Recap label="Appearance" pairs={sightPairs} />
-					<Recap label="Nose" pairs={nosePairs} />
+					<Recap label={phases.sight} pairs={sightPairs} />
+					<Recap label={phases.nose} pairs={nosePairs} />
 					{aromas && (
 						<div className="fc-analysis__row">
-							<div className="fc-analysis__row-label">Aromas</div>
+							<div className="fc-analysis__row-label">{t.aromas}</div>
 							<div className="fc-analysis__row-value">{aromas}</div>
 						</div>
 					)}
-					<Recap label="Palate" pairs={palatePairs} />
+					<Recap label={phases.palate} pairs={palatePairs} />
 					{flavours && (
 						<div className="fc-analysis__row">
-							<div className="fc-analysis__row-label">Flavours</div>
+							<div className="fc-analysis__row-label">{t.flavours}</div>
 							<div className="fc-analysis__row-value">{flavours}</div>
 						</div>
 					)}

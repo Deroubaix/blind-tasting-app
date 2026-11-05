@@ -69,26 +69,26 @@ export function phaseSeconds(totalSeconds: number, phase: TimerPhase, grid: Grid
 	return totalSeconds - others;
 }
 
-/** Display name of the phase each phase hands over to. `finalConclusion` ends the timed session. */
-const NEXT_PHASE_LABEL: Record<Grid, Record<TimerPhase, string | null>> = {
+/** The phase each phase hands over to. `finalConclusion` ends the timed session. */
+const NEXT_PHASE: Record<Grid, Record<TimerPhase, TimerPhase | null>> = {
 	cms: {
-		sight: 'The Nose',
-		nose: 'The Palate',
-		palate: 'Initial Conclusion',
-		initialConclusion: 'Final Conclusion',
+		sight: 'nose',
+		nose: 'palate',
+		palate: 'initialConclusion',
+		initialConclusion: 'finalConclusion',
 		finalConclusion: null,
 	},
 	wset: {
-		sight: 'The Nose',
-		nose: 'The Palate',
-		palate: 'Conclusions',
-		initialConclusion: 'Conclusions',
+		sight: 'nose',
+		nose: 'palate',
+		palate: 'finalConclusion',
+		initialConclusion: 'finalConclusion',
 		finalConclusion: null,
 	},
 };
 
-export function nextPhaseLabel(phase: TimerPhase, grid: Grid = 'cms'): string | null {
-	return NEXT_PHASE_LABEL[grid][phase];
+export function nextPhase(phase: TimerPhase, grid: Grid = 'cms'): TimerPhase | null {
+	return NEXT_PHASE[grid][phase];
 }
 
 export function formatTimerSeconds(seconds: number): string {

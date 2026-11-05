@@ -14,6 +14,8 @@ import {
 	NOSE_TOP,
 	noseProgressSteps,
 } from './noseFields';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 
 // ── Fruit dot colors (SCSS modifier suffix per grid fruit group) ───────────────
 const fruitDotClass: Record<string, string> = {
@@ -33,6 +35,8 @@ const fruitDotClass: Record<string, string> = {
 export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
+	const text = useText(tastingText);
+	const t = text.nose;
 
 	const selectedOptions: Record<string, string[]> = (tastingData.nose as Record<string, string[]>) || {};
 	const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
@@ -140,7 +144,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 						key={val}
 						onClick={() => handleRemoveCustom(category, val)}
 						className={`tasting-option${pill} tasting-option--selected tasting-option--custom`}
-						title="Click to remove"
+						title={t.clickToRemove}
 					>
 						{val} ×
 					</button>
@@ -153,7 +157,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 								className="tasting-input"
 								value={customInputs[category] || ''}
 								onChange={(e) => setCustomInputs((prev) => ({ ...prev, [category]: e.target.value }))}
-								placeholder="Type custom note..."
+								placeholder={t.customPlaceholder}
 								onKeyDown={(e) => {
 									if (e.key === 'Enter') {
 										handleAddCustom(category);
@@ -165,11 +169,11 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 								autoFocus
 							/>
 							<button className="tasting-confirm-btn" onClick={() => handleAddCustom(category)}>
-								Add
+								{text.add}
 							</button>
 							<button
 								className="tasting-dismiss-btn"
-								aria-label="Cancel custom note"
+								aria-label={t.cancelCustom}
 								onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: false }))}
 							>
 								✕
@@ -180,7 +184,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 							className={`tasting-option${pill} tasting-option--ghost`}
 							onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: true }))}
 						>
-							+ Other
+							{t.other}
 						</button>
 					))}
 			</div>
@@ -226,7 +230,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			<span className="section-label">{title}</span>
 			<span className="nose-section-header__right">
 				{!isOpen && selectedCount > 0 && (
-					<span className="nose-section-header__count">{selectedCount} selected</span>
+					<span className="nose-section-header__count">{t.selected(selectedCount)}</span>
 				)}
 				{isOpen ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
 			</span>
@@ -240,13 +244,13 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			progress={nosePct}
 			timerPage="nose"
 			timerDestination={`/tastings/palate?wineType=${wineType}`}
-			phase="Phase 02"
-			title="The Nose"
-			description="Note any faults, judge intensity and age, then work through fruit, non-fruit, earth, mineral, and oak."
+			phase={text.phaseLabel('02')}
+			title={t.title}
+			description={t.description}
 			footer={{
 				onBack: handlePreviousPhase,
-				backLabel: 'Back to Sight',
-				nextLabel: 'Next: Palate',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: handleNextPhase,
 			}}
 		>
@@ -261,7 +265,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 			{/* ── Fruit ── */}
 			<div className="nose-section-divider">
-				<span className="section-label">Fruit</span>
+				<span className="section-label">{t.fruit}</span>
 			</div>
 
 			{/* The grid's fruit groups — no card background */}
@@ -277,7 +281,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 			{/* ── Non-Fruit, Earth & Mineral (collapsible) ── */}
 			{renderSectionHeader(
-				'Non-Fruit, Earth & Mineral',
+				t.nonFruit,
 				complexOpen,
 				() => setComplexOpen((o) => !o),
 				countSelected(NOSE_NON_FRUIT),
@@ -300,7 +304,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 			{/* ── Oak (collapsible) ── */}
 			{renderSectionHeader(
-				'Oak',
+				t.oak,
 				woodOpen,
 				() => setWoodOpen((o) => !o),
 				countSelected(['Oak Descriptors', ...NOSE_OAK_ASSESSMENT]),

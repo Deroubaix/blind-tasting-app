@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useText } from '../../i18n/LanguageProvider';
+import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { DescriptorClusters, OptionCard } from './WsetBits';
@@ -8,6 +10,7 @@ import { type AromaCluster, WSET_NOSE_ASSESSMENTS, wsetNoseSteps } from './wsetF
 
 export default function WsetNoseClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
+	const t = useText(wsetText).nose;
 	const { tastingData, updateTastingData } = useTastingContext();
 	const nose: Record<string, string[]> = tastingData.nose ?? {};
 
@@ -42,13 +45,13 @@ export default function WsetNoseClient({ wineType }: { wineType: 'red' | 'white'
 			progress={pct}
 			timerPage="nose"
 			timerDestination={`/tastings/palate?wineType=${wineType}`}
-			phase="Phase 02"
-			title="The Nose"
-			description="Is it clean? How intense? Then the aromas by cluster: primary from the grape, secondary from the winemaking, tertiary from age. Finish with the development."
+			phase={t.phase}
+			title={t.title}
+			description={t.description}
 			footer={{
 				onBack: () => router.push(`/tastings/sight?wineType=${wineType}`),
-				backLabel: 'Back to Appearance',
-				nextLabel: 'Next: The Palate',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: () => router.push(`/tastings/palate?wineType=${wineType}`),
 			}}
 		>

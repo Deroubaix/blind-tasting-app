@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { prisma } from './prisma';
-import { JsonApiError } from '../utils/ErrorUtils';
+import { apiError } from '../utils/ApiUtils';
 
 /**
  * Attempt limits for the auth routes, counted in Postgres rather than in memory so they hold
@@ -58,11 +58,7 @@ export function minutesUntil(windowStart: Date, rule: RateLimitRule, now = Date.
 }
 
 function tooMany(minutes: number) {
-	return new JsonApiError(
-		'TooManyRequests',
-		`Too many attempts. Try again in ${minutes} minute${minutes === 1 ? '' : 's'}.`,
-		429,
-	);
+	return apiError(429, 'tooManyAttempts', minutes);
 }
 
 /**

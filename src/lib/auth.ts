@@ -2,6 +2,7 @@ import { prisma } from './prisma';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { JsonApiError } from '../utils/ErrorUtils';
+import { apiError } from '../utils/ApiUtils';
 
 /**
  * Everything about the session lives here — the cookie's name and attributes, the signing
@@ -49,19 +50,31 @@ export async function endSession() {
 export async function requireUserId() {
 	const token = (await cookies()).get(AUTH_COOKIE)?.value;
 	if (!token) {
-		throw new JsonApiError('Unauthorized', 'Access denied: no token provided', 401);
+		throw apiError(401, 'notSignedIn');
 	}
 
 	let userId: string;
 	try {
 		userId = (jwt.verify(token, secret()) as { userId: string }).userId;
 	} catch {
-		throw new JsonApiError('Unauthorized', 'Your session has expired. Please log in again.', 401);
+		throw apiError(401, 'sessionExpired');
 	}
 
 	const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
 	if (!user) {
-		throw new JsonApiError('Unauthorized', 'Your account could not be found. Please log in again.', 401);
+		throw apiError(401, 'accountMissing');
 	}
 	return userId;
+}
+
+/** For server pages: the signed-in user's id, or null where a route would answer 401. */
+export async function currentUserId() {
+	try {
+		return await requireUserId();
+	} catch (error) {
+		if (error instanceof JsonApiError && error.statusCode === 401) {
+			return null;
+		}
+		throw error;
+	}
 }

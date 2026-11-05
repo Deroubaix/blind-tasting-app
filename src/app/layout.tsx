@@ -7,6 +7,10 @@ import { AuthProvider } from '../components/auth/AuthProvider';
 import ToastProvider from '../toast/ToastProvider';
 import ModalProvider from '../components/modal/ModalProvider';
 import { TastingProvider } from '../components/tasting/TastingContext';
+import { LanguageProvider } from '../i18n/LanguageProvider';
+import { layoutText } from '../i18n/layout';
+import { LOCALES } from '../i18n';
+import { getLang } from '../i18n/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,22 +29,22 @@ const lora = Lora({
 });
 
 // One name everywhere. Pages set only their own part of the title; the template adds the rest.
-export const metadata: Metadata = {
-	title: {
-		default: BRAND.name,
-		template: `%s — ${BRAND.name}`,
-	},
-	description:
-		'Timed blind-tasting practice on the Court of Master Sommeliers deductive grid or the WSET Level 3 Systematic Approach, with an archive of every tasting you save.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const lang = await getLang();
+	return {
+		title: { default: BRAND.name, template: `%s — ${BRAND.name}` },
+		description: layoutText[lang].meta.description,
+	};
+}
 
 export type RootLayoutProps = {
 	children: ReactNode;
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+	const lang = await getLang();
 	return (
-		<html lang="en" className={`${manrope.variable} ${lora.variable}`}>
+		<html lang={LOCALES[lang]} className={`${manrope.variable} ${lora.variable}`}>
 			<head>
 				<meta charSet="utf-8" />
 				<link rel="icon" href="/favicon.ico" />
@@ -48,13 +52,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<meta name="theme-color" content="#141313" />
 			</head>
 			<body>
-				<AuthProvider>
-					<ToastProvider>
-						<ModalProvider>
-							<TastingProvider>{children}</TastingProvider>
-						</ModalProvider>
-					</ToastProvider>
-				</AuthProvider>
+				<LanguageProvider lang={lang}>
+					<AuthProvider>
+						<ToastProvider>
+							<ModalProvider>
+								<TastingProvider>{children}</TastingProvider>
+							</ModalProvider>
+						</ToastProvider>
+					</AuthProvider>
+				</LanguageProvider>
 			</body>
 		</html>
 	);

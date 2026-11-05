@@ -7,13 +7,17 @@ import ClientTastingService from '../../services/client/ClientTastingService';
 import { compareReveal, isRevealed, revealTitle } from '../archives/revealScore';
 import { type TastingData } from '../../types/TastingData';
 import { formatDate } from '../../utils/DateUtils';
+import { gridOf } from '../../data/grids';
 import { Figure, RevealCard } from './HomeSections';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { homeText } from '../../i18n/home';
 
 const service = new ClientTastingService();
 type Saved = TastingData & { id: string; created_at: string };
 
 /** A phone mid-tasting: the timer runs while you taste; the reveal comes after. */
 function TastingPhone() {
+	const t = useText(homeText).hero;
 	const scales: [string, number][] = [
 		['Acidity', 3],
 		['Alcohol', 2],
@@ -23,8 +27,8 @@ function TastingPhone() {
 		<div className="home-phone" aria-hidden="true">
 			<div className="home-phone__bar">
 				<span>
-					<span className="home-label">Phase 03</span>
-					<strong>Palate</strong>
+					<span className="home-label">{t.phase03}</span>
+					<strong>{t.palate}</strong>
 				</span>
 				<span className="home-phone__clock">3:12</span>
 			</div>
@@ -50,33 +54,39 @@ function TastingPhone() {
 }
 
 function RecentTastings({ tastings }: { tastings: Saved[] }) {
+	const { lang } = useLang();
+	const h = useText(homeText).hero;
 	return (
 		<div className="home-card home-recent">
 			<div className="home-card__top">
-				<span className="home-kicker">Recent tastings</span>
+				<span className="home-kicker">{h.recent}</span>
 				<Link href="/archives" className="home-link no-underline">
-					Archive →
+					{h.archive}
 				</Link>
 			</div>
 			<ol className="home-rows">
 				{tastings.map((t) => {
 					const revealed = isRevealed(t.reveal);
-					const result = revealed ? compareReveal(t.conclusion?.final, t.reveal!) : null;
+					const result = revealed
+						? compareReveal(t.conclusion?.final, t.reveal!, null, gridOf(t.grid), lang)
+						: null;
 					return (
 						<li key={t.id} className="home-row home-row--link">
 							<span className="home-row__n">{t.number}</span>
 							<Link href={`/archives/${t.id}`} className="home-row__text no-underline">
 								<strong>
 									{revealed
-										? revealTitle(t.reveal!)
-										: t.wineName || t.conclusion?.final?.grapeVariety || 'Untitled tasting'}
+										? revealTitle(t.reveal!, lang)
+										: t.wineName || t.conclusion?.final?.grapeVariety || h.untitled}
 								</strong>
-								<span className="home-muted">{formatDate(t.created_at)}</span>
+								<span className="home-muted">{formatDate(t.created_at, lang)}</span>
 							</Link>
 							{result ? (
 								<Figure score={result.score} outOf={result.outOf} />
 							) : (
-								<span className="home-figure home-figure--md home-figure--pending">Not revealed</span>
+								<span className="home-figure home-figure--md home-figure--pending">
+									{h.notRevealed}
+								</span>
 							)}
 						</li>
 					);
@@ -87,6 +97,7 @@ function RecentTastings({ tastings }: { tastings: Saved[] }) {
 }
 
 export default function HomeHero() {
+	const t = useText(homeText).hero;
 	const { user, isInitialLoading } = useAuthProvider();
 	const [recent, setRecent] = useState<Saved[] | null>(null);
 
@@ -105,42 +116,32 @@ export default function HomeHero() {
 	return (
 		<section className={`home-hero${showRecent ? ' home-hero--recent' : ''}`}>
 			<div className="home-hero__text">
-				<span className="home-eyebrow">For the CMS deductive grid and the WSET Level 3 SAT</span>
+				<span className="home-eyebrow">{t.eyebrow}</span>
 				<h1 className="home-hero__title">
-					Taste blind. Call it. <em>See how close you got.</em>
+					{t.title} <em>{t.titleEm}</em>
 				</h1>
-				<p className="home-hero__lede">
-					Work each wine through its grid at exam pace: the CMS deduction to a final call, or the WSET
-					Systematic Approach to a quality and readiness assessment. Then reveal the answer and see your call
-					scored field by field, alone or with a study group on their own phones. Free.
-				</p>
+				<p className="home-hero__lede">{t.lede}</p>
 				<div className="home-ctas">
 					<Link href="/tastings/start" className="btn-primary home-btn no-underline">
-						Start a tasting →
+						{t.start}
 					</Link>
 					{loggedIn ? (
 						<>
 							<Link href="/flights/new" className="home-btn home-btn--outline no-underline">
-								Host a flight
+								{t.host}
 							</Link>
 							<Link href="/flights/join" className="home-link no-underline">
-								Join with a code
+								{t.joinCode}
 							</Link>
 						</>
 					) : (
 						<Link href="/flights/join" className="home-link no-underline">
-							Have a flight code? Join →
+							{t.haveCode}
 						</Link>
 					)}
 				</div>
-				{!loggedIn && (
-					<p className="home-note">
-						No account needed to taste solo. Saving and flights need a free account.
-					</p>
-				)}
-				<p className="home-note home-note--quiet">
-					Not affiliated with the Court of Master Sommeliers or WSET.
-				</p>
+				{!loggedIn && <p className="home-note">{t.noAccount}</p>}
+				<p className="home-note home-note--quiet">{t.notAffiliated}</p>
 			</div>
 
 			{showRecent ? (
@@ -150,11 +151,11 @@ export default function HomeHero() {
 			) : (
 				<div className="home-hero__visual">
 					<figure className="home-hero__moment home-hero__moment--taste">
-						<figcaption className="home-label">While you taste</figcaption>
+						<figcaption className="home-label">{t.whileYouTaste}</figcaption>
 						<TastingPhone />
 					</figure>
 					<figure className="home-hero__moment">
-						<figcaption className="home-label">After the reveal</figcaption>
+						<figcaption className="home-label">{t.afterReveal}</figcaption>
 						<RevealCard />
 					</figure>
 				</div>

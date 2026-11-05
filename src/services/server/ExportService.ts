@@ -1,8 +1,8 @@
 import { Zip, ZipDeflate, ZipPassThrough } from 'fflate';
-import { prisma } from './prisma';
-import { readPhoto } from './storage';
-import { compareReveal, isRevealed, type Reveal } from '../components/archives/revealScore';
-import { gridOf } from '../data/grids';
+import { type PrismaClient } from '@prisma/client';
+import { readPhoto } from '../../lib/storage';
+import { compareReveal, isRevealed, type Reveal } from '../../components/archives/revealScore';
+import { gridOf } from '../../data/grids';
 
 /**
  * Everything the app holds about one person, as a ZIP of JSON files and the label photos. Only
@@ -109,91 +109,97 @@ labels/        your label photos, named by tasting number
 Dates are UTC, in ISO 8601. Other people's names are not included.
 `;
 
-/** The archive as a stream, so a photo-heavy account never has to fit in memory at once. */
-export async function exportArchive(userId: string): Promise<ReadableStream<Uint8Array>> {
-	const [user, tastings, flights] = await Promise.all([
-		prisma.user.findUniqueOrThrow({
-			where: { id: userId },
-			select: { id: true, email: true, displayName: true, created_at: true },
-		}),
-		prisma.tasting.findMany({
-			where: { userId },
-			orderBy: { number: 'asc' },
-			select: {
-				id: true,
-				number: true,
-				wineType: true,
-				grid: true,
-				wineName: true,
-				sight: true,
-				nose: true,
-				palate: true,
-				conclusion: true,
-				confirmNose: true,
-				notes: true,
-				timerEnabled: true,
-				timerSeconds: true,
-				timerMode: true,
-				photoKey: true,
-				reveal: true,
-				revealedAt: true,
-				created_at: true,
-				flightEntry: { select: { wineNumber: true, flight: { select: { code: true, name: true } } } },
-			},
-		}),
-		prisma.flight.findMany({
-			where: { OR: [{ hostId: userId }, { members: { some: { userId } } }] },
-			orderBy: { created_at: 'asc' },
-			include: {
-				wines: { orderBy: { number: 'asc' }, select: { number: true, reveal: true, revealedAt: true } },
-				members: { select: { userId: true, joined_at: true } },
-				entries: { select: { userId: true, wineNumber: true, startedAt: true, tastingId: true } },
-			},
-		}),
-	]);
+export default class ExportService {
+	constructor(private readonly _prisma: PrismaClient) {}
 
-	const docs = shapeExport(user, tastings, flights, new Date());
-	const photos = tastings.filter((t) => t.photoKey).map((t) => ({ key: t.photoKey!, name: photoFileName(t.number) }));
-	const encoder = new TextEncoder();
+	/** The archive as a stream, so a photo-heavy account never has to fit in memory at once. */
+	public async archive(userId: string): Promise<ReadableStream<Uint8Array>> {
+		const [user, tastings, flights] = await Promise.all([
+			this._prisma.user.findUniqueOrThrow({
+				where: { id: userId },
+				select: { id: true, email: true, displayName: true, created_at: true },
+			}),
+			this._prisma.tasting.findMany({
+				where: { userId },
+				orderBy: { number: 'asc' },
+				select: {
+					id: true,
+					number: true,
+					wineType: true,
+					grid: true,
+					wineName: true,
+					sight: true,
+					nose: true,
+					palate: true,
+					conclusion: true,
+					confirmNose: true,
+					notes: true,
+					timerEnabled: true,
+					timerSeconds: true,
+					timerMode: true,
+					photoKey: true,
+					reveal: true,
+					revealedAt: true,
+					created_at: true,
+					flightEntry: { select: { wineNumber: true, flight: { select: { code: true, name: true } } } },
+				},
+			}),
+			this._prisma.flight.findMany({
+				where: { OR: [{ hostId: userId }, { members: { some: { userId } } }] },
+				orderBy: { created_at: 'asc' },
+				include: {
+					wines: { orderBy: { number: 'asc' }, select: { number: true, reveal: true, revealedAt: true } },
+					members: { select: { userId: true, joined_at: true } },
+					entries: { select: { userId: true, wineNumber: true, startedAt: true, tastingId: true } },
+				},
+			}),
+		]);
 
-	return new ReadableStream<Uint8Array>({
-		async start(controller) {
-			const zip = new Zip((error, data, final) => {
-				if (error) {
-					controller.error(error);
-					return;
-				}
-				controller.enqueue(data);
-				if (final) {
-					controller.close();
-				}
-			});
+		const docs = shapeExport(user, tastings, flights, new Date());
+		const photos = tastings
+			.filter((t) => t.photoKey)
+			.map((t) => ({ key: t.photoKey!, name: photoFileName(t.number) }));
+		const encoder = new TextEncoder();
 
-			const addText = (name: string, text: string) => {
-				const file = new ZipDeflate(name, { level: 6 });
-				zip.add(file);
-				file.push(encoder.encode(text), true);
-			};
-
-			try {
-				addText('README.txt', README);
-				addText('account.json', JSON.stringify(docs.account, null, 2));
-				addText('tastings.json', JSON.stringify(docs.tastings, null, 2));
-				addText('flights.json', JSON.stringify(docs.flights, null, 2));
-				for (const photo of photos) {
-					const bytes = await readPhoto(photo.key);
-					if (!bytes) {
-						continue;
+		return new ReadableStream<Uint8Array>({
+			async start(controller) {
+				const zip = new Zip((error, data, final) => {
+					if (error) {
+						controller.error(error);
+						return;
 					}
-					// JPEGs don't compress, so store them as they are.
-					const file = new ZipPassThrough(photo.name);
+					controller.enqueue(data);
+					if (final) {
+						controller.close();
+					}
+				});
+
+				const addText = (name: string, text: string) => {
+					const file = new ZipDeflate(name, { level: 6 });
 					zip.add(file);
-					file.push(bytes, true);
+					file.push(encoder.encode(text), true);
+				};
+
+				try {
+					addText('README.txt', README);
+					addText('account.json', JSON.stringify(docs.account, null, 2));
+					addText('tastings.json', JSON.stringify(docs.tastings, null, 2));
+					addText('flights.json', JSON.stringify(docs.flights, null, 2));
+					for (const photo of photos) {
+						const bytes = await readPhoto(photo.key);
+						if (!bytes) {
+							continue;
+						}
+						// JPEGs don't compress, so store them as they are.
+						const file = new ZipPassThrough(photo.name);
+						zip.add(file);
+						file.push(bytes, true);
+					}
+					zip.end();
+				} catch (error) {
+					controller.error(error);
 				}
-				zip.end();
-			} catch (error) {
-				controller.error(error);
-			}
-		},
-	});
+			},
+		});
+	}
 }

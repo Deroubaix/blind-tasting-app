@@ -21,11 +21,15 @@ const call = (grape: string, country: string, region: string, quality: string, v
 	vintage,
 });
 
-/** Maya's call: 3 / 5, region and vintage close. */
-export const SAMPLE_REVEAL = compareReveal(
-	call('Pinot Noir', 'France', 'Gevrey-Chambertin', 'Premier Cru', '2017'),
-	SAMPLE_LABEL,
-);
+const MAYA = call('Pinot Noir', 'France', 'Gevrey-Chambertin', 'Premier Cru', '2017');
+
+/** Maya's call: 3 / 5, region and vintage close. Scored per language for its notes and headline. */
+export const SAMPLE_REVEALS = {
+	en: compareReveal(MAYA, SAMPLE_LABEL, null, 'cms', 'en'),
+	pt: compareReveal(MAYA, SAMPLE_LABEL, null, 'cms', 'pt'),
+};
+
+export const SAMPLE_REVEAL = SAMPLE_REVEALS.en;
 
 const TASTERS = [
 	{
@@ -88,41 +92,18 @@ export const SAMPLE_ARCHIVE = [
 		no: 24,
 		red: true,
 		title: SAMPLE_TITLE,
-		sub: 'Pinot Noir, Chambolle-Musigny, France — 2018',
-		date: 'September 12, 2026',
 		score: `${SAMPLE_REVEAL.score} / ${SAMPLE_REVEAL.outOf}`,
 	},
 	{
 		no: 23,
 		red: true,
 		title: 'Resende',
-		sub: 'Your call: Touriga Nacional, Douro, Portugal — 2020',
-		date: 'September 10, 2026',
 		score: null,
 	},
 	{
 		no: 22,
 		red: false,
 		title: 'Papafigos Branco 2023',
-		sub: 'Douro white blend, Portugal',
-		date: 'September 3, 2026',
 		score: '5 / 5',
 	},
-];
-
-export const PHASES = [
-	[
-		'Sight',
-		'Clarity, intensity of color, primary and secondary color, rim variation and staining (reds), tearing, gas.',
-	],
-	['Nose', 'Faults, intensity, age, fruit and fruit condition, non-fruit, earth, mineral, oak.'],
-	[
-		'Palate',
-		'Sweetness, acidity, alcohol, body, tannin (reds) or phenolic bitterness (whites), texture, balance, finish, complexity.',
-	],
-	['Initial conclusion', 'Possible grapes, climate, possible countries, age range.'],
-	[
-		'Final conclusion',
-		'Grape or blend, country, region and appellation, vintage — plus quality level and style where appropriate.',
-	],
 ];

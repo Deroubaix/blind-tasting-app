@@ -5,10 +5,16 @@ import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { SIGHT_MULTI, SIGHT_SCALES, SIGHT_YES_NO, sightFields } from './sightFields';
 import { type WineColorEntry, wineColors } from './sightData';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { swatchDescPt, tastingText } from '../../i18n/tasting';
 
 export default function SightTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
+	const { lang } = useLang();
+	const desc = (item: { hex: string; desc: string }) => (lang === 'pt' && swatchDescPt[item.hex]) || item.desc;
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
+	const text = useText(tastingText);
+	const t = text.sight;
 
 	const selected: Record<string, string | string[]> = tastingData.sight || {};
 	const isRed = wineType === 'red';
@@ -105,14 +111,14 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 								<span className={`sight-swatch-label${on ? ' sight-swatch-label--selected' : ''}`}>
 									{item.name}
 								</span>
-								<span className="sight-swatch-desc">{item.desc}</span>
+								<span className="sight-swatch-desc">{desc(item)}</span>
 							</button>
 						);
 					})}
 				</div>
 				{chosen.map((item) => (
 					<p key={item.name} className="sight-swatch-chosen">
-						<strong>{item.name}</strong> &mdash; {item.desc}
+						<strong>{item.name}</strong> &mdash; {desc(item)}
 					</p>
 				))}
 			</>
@@ -126,13 +132,9 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 			progress={pct}
 			timerPage="sight"
 			timerDestination={`/tastings/nose?wineType=${wineType}`}
-			phase="Phase 01"
-			title="The Sight"
-			description={
-				isRed
-					? 'Examine the wine against a neutral white background under consistent lighting conditions.'
-					: 'Evaluate the physical appearance of the white wine against a neutral background. Observe clarity, intensity, and secondary colors.'
-			}
+			phase={text.phaseLabel('01')}
+			title={t.title}
+			description={isRed ? t.descRed : t.descWhite}
 			footer={{
 				onBack: () =>
 					router.push(
@@ -140,8 +142,8 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 							? `/flights/${tastingData.flight.code}`
 							: `/tastings/start?wineType=${wineType}`,
 					),
-				backLabel: tastingData.flight ? 'Back to Flight' : 'Back to Setup',
-				nextLabel: 'Next: The Nose',
+				backLabel: tastingData.flight ? t.backToFlight : t.backToSetup,
+				nextLabel: t.next,
 				onNext: handleNextPhase,
 			}}
 		>
@@ -173,7 +175,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				<div className="tasting-card sight-card--span-full sight-card--light">
 					<div className="sight-card__header">
 						<div className="tasting-card__label">Primary Color</div>
-						<span className="sight-card__sublabel">Core</span>
+						<span className="sight-card__sublabel">{t.core}</span>
 					</div>
 					{renderSwatches('Primary Color', colors.primary)}
 				</div>
@@ -181,7 +183,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				<div className="tasting-card sight-card--span-full sight-card--light">
 					<div className="sight-card__header">
 						<div className="tasting-card__label">Secondary Color(s)</div>
-						<span className="sight-card__sublabel">Select all that apply</span>
+						<span className="sight-card__sublabel">{t.selectAll}</span>
 					</div>
 					{renderSwatches('Secondary Color(s)', colors.secondary)}
 				</div>

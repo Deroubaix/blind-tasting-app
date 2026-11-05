@@ -8,38 +8,46 @@ import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightMemberView, type FlightView, type FlightWineView } from '../../types/Flight';
-import { formatCode, plural } from './flightLogic';
-import { GRIDS } from '../../data/grids';
+import { formatCode } from './flightLogic';
 import { Avatar, StatusPill, avatarState, clockText, flightService, formatTimer, useNow } from './FlightBits';
+import { flightsText } from '../../i18n/flights';
+import { commonText } from '../../i18n/common';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { formatAverage } from '../../utils/NumberUtils';
 
-function progressText(flight: FlightView): string {
+type Text = (typeof flightsText)['en'];
+
+function progressText(flight: FlightView, t: Text): string {
 	const revealed = flight.wines.filter((wine) => wine.revealed).length;
 	if (revealed === flight.wineCount) {
-		return `All ${flight.wineCount} revealed`;
+		return t.bits.allRevealed(flight.wineCount);
 	}
 	if (revealed) {
-		return `${revealed} of ${flight.wineCount} revealed`;
+		return t.bits.revealedOf(revealed, flight.wineCount);
 	}
-	return flight.members.some((m) => m.tastingWine || m.submittedCount) ? 'Under way' : 'Not started';
+	return flight.members.some((m) => m.tastingWine || m.submittedCount) ? t.host.underWay : t.bits.status.notstarted;
 }
 
-function tasterLine(member: FlightMemberView, flight: FlightView, now: number): string {
+function tasterLine(member: FlightMemberView, flight: FlightView, now: number, t: Text): string {
 	if (member.tastingWine) {
 		return member.endsAt && new Date(member.endsAt).getTime() <= now
-			? `Out of time on wine ${member.tastingWine}`
-			: `Tasting wine ${member.tastingWine}`;
+			? t.host.outOfTime(member.tastingWine)
+			: t.host.tastingWine(member.tastingWine);
 	}
 	if (member.waitingOn) {
-		return `Submitted wine ${member.waitingOn} · waiting`;
+		return t.host.waiting(member.waitingOn);
 	}
 	if (member.submittedCount === flight.wineCount) {
-		return `${member.submittedCount} of ${flight.wineCount} submitted${member.outOf ? ` · ${member.total} / ${member.outOf}` : ''}`;
+		return `${t.bits.submittedOf(member.submittedCount, flight.wineCount)}${member.outOf ? ` · ${member.total} / ${member.outOf}` : ''}`;
 	}
-	return member.submittedCount ? `${member.submittedCount} of ${flight.wineCount} submitted` : 'Not started';
+	return member.submittedCount
+		? t.bits.submittedOf(member.submittedCount, flight.wineCount)
+		: t.bits.status.notstarted;
 }
 
 function JoinCard({ code }: { code: string }) {
 	// Only ever rendered in the browser, after the flight has loaded.
+	const t = useText(flightsText).host;
 	const link = `${window.location.origin}/f/${code}`;
 	const [qr, setQr] = useState('');
 	const { showToast } = useToastProvider();
@@ -53,18 +61,18 @@ function JoinCard({ code }: { code: string }) {
 	const copy = async () => {
 		try {
 			await navigator.clipboard.writeText(link);
-			showToast({ title: 'Link copied', children: 'Send it to the group.', color: 'success', autoCloseMs: 3000 });
+			showToast({ title: t.linkCopied, children: t.sendIt, color: 'success', autoCloseMs: 3000 });
 		} catch {
-			showToast({ title: 'Could not copy', children: link, color: 'error' });
+			showToast({ title: t.copyFailed, children: link, color: 'error' });
 		}
 	};
 
 	return (
 		<section className="flight-card flight-join" aria-labelledby="flight-join-heading">
 			<span className="tasting-card__label" id="flight-join-heading">
-				Join code
+				{t.joinCode}
 			</span>
-			<p className="flight-join__code" aria-label={`Join code ${code.split('').join(' ')}`}>
+			<p className="flight-join__code" aria-label={t.joinCodeAria(code.split('').join(' '))}>
 				{formatCode(code)}
 			</p>
 			<div className="flight-join__share">
@@ -72,7 +80,7 @@ function JoinCard({ code }: { code: string }) {
 					<span
 						className="flight-join__qr"
 						role="img"
-						aria-label="QR code for the join link"
+						aria-label={t.qrAria}
 						// Generated locally from the link above; no user input reaches it.
 						dangerouslySetInnerHTML={{ __html: qr }}
 					/>
@@ -81,7 +89,7 @@ function JoinCard({ code }: { code: string }) {
 					<span>{link.replace(/^https?:\/\//, '')}</span>
 					<button type="button" className="outline flight-btn-small" onClick={copy}>
 						<IconCopy size={14} aria-hidden="true" />
-						Copy link
+						{t.copyLink}
 					</button>
 				</div>
 			</div>
@@ -90,19 +98,21 @@ function JoinCard({ code }: { code: string }) {
 }
 
 function TastersCard({ flight }: { flight: FlightView }) {
+	const text = useText(flightsText);
+	const t = text.host;
 	const now = useNow();
 	return (
 		<section className="flight-card" aria-labelledby="flight-tasters-heading">
 			<div className="flight-card__head">
 				<span className="tasting-card__label" id="flight-tasters-heading">
-					Tasters
+					{text.bits.tastersHeading}
 				</span>
-				<span className="flight-muted">{flight.members.length} joined</span>
+				<span className="flight-muted">{t.joinedCount(flight.members.length)}</span>
 			</div>
 			{flight.members.length === 0 ? (
 				<div className="flight-empty">
-					<strong>No one&apos;s joined yet</strong>
-					<span>Share the code or the link. Tasters appear here as they join.</span>
+					<strong>{t.emptyTitle}</strong>
+					<span>{t.emptyNote}</span>
 				</div>
 			) : (
 				<ul className="flight-tasters">
@@ -111,7 +121,7 @@ function TastersCard({ flight }: { flight: FlightView }) {
 							<Avatar person={member} />
 							<span className="flight-tasters__text">
 								<span className="flight-tasters__name">{member.name}</span>
-								<span className="flight-muted">{tasterLine(member, flight, now)}</span>
+								<span className="flight-muted">{tasterLine(member, flight, now, text)}</span>
 							</span>
 							{member.endsAt && new Date(member.endsAt).getTime() > now && (
 								<span className="flight-clock">{clockText(member.endsAt, now)}</span>
@@ -125,11 +135,15 @@ function TastersCard({ flight }: { flight: FlightView }) {
 }
 
 function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }) {
+	const { lang } = useLang();
+	const text = useText(flightsText);
+	const t = text.host;
+	const countWords = { submitted: t.countSubmitted, tasting: t.countTasting, notstarted: t.countNotStarted };
 	const statuses = flight.members.map((member) => wine.statuses[member.id] ?? 'notstarted');
 	const counts = (['submitted', 'tasting', 'notstarted'] as const)
 		.map((status) => [statuses.filter((s) => s === status).length, status] as const)
 		.filter(([n]) => n)
-		.map(([n, status]) => `${n} ${status === 'notstarted' ? 'not started' : status}`);
+		.map(([n, status]) => countWords[status](n));
 	const allSubmitted = flight.members.length > 0 && statuses.every((s) => s === 'submitted');
 	const started = statuses.some((s) => s !== 'notstarted');
 
@@ -137,7 +151,7 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 		<article className={`flight-wine${wine.submitted && !wine.revealed ? ' flight-wine--ready' : ''}`}>
 			<div className="flight-wine__top">
 				<span className="flight-wine__label">
-					Wine <span className="flight-wine__number">{wine.number}</span>
+					{text.bits.wine} <span className="flight-wine__number">{wine.number}</span>
 				</span>
 				{wine.revealed ? (
 					<StatusPill status="revealed" />
@@ -154,18 +168,20 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 				<>
 					<p className="flight-wine__title">{wine.title}</p>
 					<p className="flight-muted">
-						Average {wine.average ?? '—'} / {wine.outOf} · {wine.submitted} of {flight.members.length}{' '}
-						submitted
+						{t.average(
+							formatAverage(wine.average, lang),
+							wine.outOf,
+							wine.submitted,
+							flight.members.length,
+						)}
 					</p>
 					<div className="flight-wine__foot">
-						<span className="flight-muted">
-							Best {wine.best ?? '—'} / {wine.outOf}
-						</span>
+						<span className="flight-muted">{t.best(String(wine.best ?? '—'), wine.outOf)}</span>
 						<Link
 							href={`/flights/${flight.code}/wines/${wine.number}`}
 							className="flight-link no-underline"
 						>
-							Results →
+							{text.bits.results}
 						</Link>
 					</div>
 				</>
@@ -180,21 +196,21 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 									person={member}
 									size="sm"
 									state={avatarState(status)}
-									title={`${member.name}: ${status === 'notstarted' ? 'not started' : status}`}
+									title={`${member.name}: ${text.bits.statusLower[status]}`}
 								/>
 							);
 						})}
 					</div>
-					<p className="flight-muted">{counts.length ? counts.join(' · ') : 'Waiting for tasters'}</p>
+					<p className="flight-muted">{counts.length ? counts.join(' · ') : t.waitingForTasters}</p>
 					{wine.submitted ? (
 						<Link
 							href={`/flights/${flight.code}/wines/${wine.number}/reveal`}
 							className="btn-primary flight-wine__reveal no-underline"
 						>
-							Reveal wine {wine.number}
+							{text.bits.revealWine(wine.number)}
 						</Link>
 					) : (
-						<span className="flight-wine__locked">Reveal after first submission</span>
+						<span className="flight-wine__locked">{t.locked}</span>
 					)}
 				</>
 			)}
@@ -203,6 +219,10 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 }
 
 export default function HostDashboard({ flight, reload }: { flight: FlightView; reload: () => Promise<void> }) {
+	const { lang } = useLang();
+	const text = useText(flightsText);
+	const t = text.host;
+	const common = useText(commonText);
 	const { openModal, closeModal } = useModalProvider();
 	const { showToast } = useToastProvider();
 	const allRevealed = flight.wines.every((wine) => wine.revealed);
@@ -211,16 +231,16 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 	const confirmEnd = () =>
 		openModal({
 			modalId: 'end-flight',
-			title: 'End this flight?',
+			title: t.endTitle,
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
 				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">No one else can join, and no more wines can be started.</p>
-					<p className="confirm-dialog__note">Results stay available, and you can still reveal wines.</p>
+					<p className="confirm-dialog__lead">{t.endLead}</p>
+					<p className="confirm-dialog__note">{t.endNote}</p>
 					<div className="confirm-dialog__actions">
 						<button className="outline confirm-dialog__cancel" onClick={() => closeModal('end-flight')}>
-							Keep it open
+							{t.keepOpen}
 						</button>
 						<button
 							className="btn-primary confirm-dialog__confirm"
@@ -231,14 +251,14 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 									await reload();
 								} catch (error) {
 									showToast({
-										title: 'Not ended',
+										title: t.notEnded,
 										children: JsonApiError.create(error).message,
 										color: 'error',
 									});
 								}
 							}}
 						>
-							End flight
+							{t.end}
 						</button>
 					</div>
 				</div>
@@ -249,22 +269,22 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 		<main className="flight-main">
 			<header className="flight-head">
 				<div>
-					<span className="page-eyebrow">Flight · You&apos;re hosting{flight.ended ? ' · Ended' : ''}</span>
+					<span className="page-eyebrow">{`${text.bits.flight} · ${t.hosting}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
 					<h1 className="flight-head__title">{flight.name}</h1>
 					<p className="flight-head__sub">
-						{GRIDS[flight.grid].short} · {plural(flight.wineCount, 'wine')} ·{' '}
-						{formatTimer(flight.timerSeconds)} · {progressText(flight)}
+						{common.grid[flight.grid].short} · {common.wines(flight.wineCount)} ·{' '}
+						{formatTimer(flight.timerSeconds, lang)} · {progressText(flight, text)}
 					</p>
 				</div>
 				<div className="flight-head__actions">
 					{anyRevealed && (
 						<Link href={`/flights/${flight.code}/summary`} className="btn-primary no-underline">
-							Flight summary <IconArrowRight size={16} aria-hidden="true" />
+							{text.bits.summary} <IconArrowRight size={16} aria-hidden="true" />
 						</Link>
 					)}
 					{!flight.ended && (
 						<button type="button" className="outline" onClick={confirmEnd}>
-							End flight
+							{t.end}
 						</button>
 					)}
 				</div>
@@ -281,13 +301,9 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 						<div className="flight-banner">
 							<IconChecks size={18} aria-hidden="true" />
 							<strong>
-								{flight.wineCount === 1
-									? 'The wine is revealed.'
-									: `All ${flight.wineCount} wines revealed.`}
+								{flight.wineCount === 1 ? t.oneRevealed : t.allWinesRevealed(flight.wineCount)}
 							</strong>
-							<span className="flight-muted">
-								Every taster&apos;s tastings are already in their archive.
-							</span>
+							<span className="flight-muted">{t.inArchive}</span>
 						</div>
 					)}
 					<div className="flight-wines">
@@ -296,9 +312,15 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 						))}
 					</div>
 					<p className="flight-legend" aria-hidden="true">
-						<span className="flight-legend__item flight-legend__item--filled">Submitted</span>
-						<span className="flight-legend__item flight-legend__item--dashed">Tasting</span>
-						<span className="flight-legend__item flight-legend__item--faint">Not started</span>
+						<span className="flight-legend__item flight-legend__item--filled">
+							{text.bits.status.submitted}
+						</span>
+						<span className="flight-legend__item flight-legend__item--dashed">
+							{text.bits.status.tasting}
+						</span>
+						<span className="flight-legend__item flight-legend__item--faint">
+							{text.bits.status.notstarted}
+						</span>
 					</p>
 				</div>
 			</div>

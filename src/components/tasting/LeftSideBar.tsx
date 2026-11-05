@@ -7,31 +7,29 @@ import { IconEye, IconWind, IconGlass, IconBrain, IconSquareCheck, IconCheck } f
 import useAuthenticatedUser from '../../hooks/UseAuthenticatedUser';
 import { useTastingContext } from './TastingContext';
 import { phaseComplete } from './phaseCompletion';
-import { GRIDS, type Grid, gridOf } from '../../data/grids';
+import { type Grid, gridOf } from '../../data/grids';
+import { type TimerPhase } from '../../data/timerData';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { tastingText } from '../../i18n/tasting';
 
-// shortLabel is what the phone stepper shows — five segments across 390px cannot
-// carry "Initial Conclusion". Both render; CSS picks one per breakpoint.
+// The phone stepper shows the short name; both render and CSS picks one per breakpoint.
 const NAV_ITEMS = {
 	cms: [
-		{ href: '/tastings/sight', Icon: IconEye, label: 'Sight', shortLabel: 'Sight' },
-		{ href: '/tastings/nose', Icon: IconWind, label: 'Nose', shortLabel: 'Nose' },
-		{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate', shortLabel: 'Palate' },
-		{ href: '/tastings/initial-conclusion', Icon: IconBrain, label: 'Initial Conclusion', shortLabel: 'Initial' },
-		{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Final Conclusion', shortLabel: 'Final' },
+		{ href: '/tastings/sight', Icon: IconEye, phase: 'sight' },
+		{ href: '/tastings/nose', Icon: IconWind, phase: 'nose' },
+		{ href: '/tastings/palate', Icon: IconGlass, phase: 'palate' },
+		{ href: '/tastings/initial-conclusion', Icon: IconBrain, phase: 'initialConclusion' },
+		{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, phase: 'finalConclusion' },
 	],
 	// The SAT has four steps; its conclusions live on the final-conclusion route.
 	wset: [
-		{ href: '/tastings/sight', Icon: IconEye, label: 'Appearance', shortLabel: 'Look' },
-		{ href: '/tastings/nose', Icon: IconWind, label: 'Nose', shortLabel: 'Nose' },
-		{ href: '/tastings/palate', Icon: IconGlass, label: 'Palate', shortLabel: 'Palate' },
-		{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, label: 'Conclusions', shortLabel: 'Conclude' },
+		{ href: '/tastings/sight', Icon: IconEye, phase: 'sight' },
+		{ href: '/tastings/nose', Icon: IconWind, phase: 'nose' },
+		{ href: '/tastings/palate', Icon: IconGlass, phase: 'palate' },
+		{ href: '/tastings/final-conclusion', Icon: IconSquareCheck, phase: 'finalConclusion' },
 	],
-} satisfies Record<Grid, unknown[]>;
-
-const STUDY_LABEL: Record<Grid, { role: string; appName: string }> = {
-	cms: { role: 'Master Level Study', appName: 'Deductive tasting practice' },
-	wset: { role: `${GRIDS.wset.short} Study`, appName: 'Systematic tasting practice' },
-};
+} satisfies Record<Grid, { href: string; Icon: unknown; phase: TimerPhase }[]>;
 
 type LeftSidebarProps = {
 	wineType?: string;
@@ -42,10 +40,14 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 	const pathname = usePathname();
 	const { user, isInitialLoading } = useAuthenticatedUser();
 	const { tastingData } = useTastingContext();
+	const t = useText(tastingText).sidebar;
+	const common = useText(commonText);
 	const isLoggedIn = !isInitialLoading && !!user;
 	const grid = gridOf(tastingData.grid);
 	const navItems = NAV_ITEMS[grid];
-	const currentPhaseName = navItems.find((item) => item.href === pathname)?.label ?? '';
+	const currentPhase = navItems.find((item) => item.href === pathname)?.phase;
+	const currentPhaseName = currentPhase ? common.phase[grid][currentPhase] : '';
+	const role = grid === 'wset' ? t.study(common.grid.wset.short) : t.masterStudy;
 
 	const completedCount = navItems.filter(({ href }) => phaseComplete(href, tastingData)).length;
 
@@ -56,16 +58,16 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 				{isLoggedIn ? (
 					<>
 						<div className="tasting-sidebar__username">{user?.displayName || user?.email}</div>
-						<div className="tasting-sidebar__role">{STUDY_LABEL[grid].role}</div>
+						<div className="tasting-sidebar__role">{role}</div>
 					</>
 				) : (
-					<div className="tasting-sidebar__app-name">{STUDY_LABEL[grid].appName}</div>
+					<div className="tasting-sidebar__app-name">{t.appName[grid]}</div>
 				)}
 			</div>
 
 			<div className="tasting-sidebar__exam-progress">
 				<div className="tasting-sidebar__exam-label">
-					Progress
+					{t.progress}
 					<span className="tasting-sidebar__exam-count">
 						{completedCount} / {navItems.length}
 					</span>
@@ -87,7 +89,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 			{progress !== undefined && currentPhaseName && (
 				<div className="tasting-sidebar__progress-section">
 					<div className="tasting-sidebar__progress-label">
-						{currentPhaseName} Progress:
+						{t.phaseProgress(currentPhaseName)}
 						<span className="tasting-sidebar__progress-pct">{progress}%</span>
 					</div>
 					<div className="tasting-sidebar__progress-track">
@@ -98,7 +100,7 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 			)}
 
 			<nav className="tasting-sidebar__nav">
-				{navItems.map(({ href, Icon, label, shortLabel }) => {
+				{navItems.map(({ href, Icon, phase }) => {
 					const active = pathname === href;
 					const done = phaseComplete(href, tastingData);
 					const linkHref = wineType ? `${href}?wineType=${wineType}` : href;
@@ -109,8 +111,8 @@ export default function LeftSidebar({ wineType, progress }: LeftSidebarProps) {
 							className={`tasting-nav-item${active ? ' tasting-nav-item--active' : ''}`}
 						>
 							<Icon size={16} />
-							<span className="tasting-nav-item__label">{label}</span>
-							<span className="tasting-nav-item__short">{shortLabel}</span>
+							<span className="tasting-nav-item__label">{common.phase[grid][phase]}</span>
+							<span className="tasting-nav-item__short">{t.short[grid][phase]}</span>
 							{done ? (
 								<IconCheck size={15} strokeWidth={2.5} className="tasting-nav-item__check" />
 							) : (

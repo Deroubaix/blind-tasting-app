@@ -1,18 +1,16 @@
-import { requireUserId } from '../../../../lib/auth';
-import { flightView, loadFlight } from '../../../../lib/flights';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
+import ServerServices from '../../../../services/server/ServerServices';
+import FlightService from '../../../../services/server/FlightService';
+import { requireUserId } from '../../../../lib/auth';
+import { getLang } from '../../../../i18n/server';
 
-type Params = { params: Promise<{ code: string }> };
-
-/** The flight as the viewer may see it: host, taster, or someone with the code who hasn't joined. */
-export async function GET(_request: Request, { params }: Params) {
+export async function GET(_request: Request, { params }: { params: Promise<{ code: string }> }) {
 	try {
 		const userId = await requireUserId();
-		const { code } = await params;
-		const flight = await loadFlight(code, userId);
-		return jsonResponse({ flight: flightView(flight, userId) });
+		const flight = await ServerServices.getClass(FlightService).view((await params).code, userId, await getLang());
+		return jsonResponse({ flight });
 	} catch (error) {
 		logServerError('GET /api/flights/[code]', error);
-		return errorResponse(error);
+		return errorResponse(error, await getLang());
 	}
 }

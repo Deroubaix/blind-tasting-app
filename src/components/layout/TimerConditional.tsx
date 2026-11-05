@@ -3,7 +3,7 @@
 import { useLayoutEffect } from 'react';
 import TimerWrapper from '../layout/TimerWrapper';
 import { useTastingContext } from '../../components/tasting/TastingContext';
-import { DEFAULT_TIMER_SECONDS, type TimerPhase, nextPhaseLabel, phaseSeconds } from '../../data/timerData';
+import { DEFAULT_TIMER_SECONDS, type TimerPhase, nextPhase, phaseSeconds } from '../../data/timerData';
 import { stampPhase } from '../../data/timerClock';
 import { gridOf } from '../../data/grids';
 
@@ -45,7 +45,7 @@ export default function TimerConditional({ page, destination }: TimerConditional
 				endsAt={tastingData.timerEndsAt}
 				pausedAt={tastingData.timerPausedAt}
 				destination={`/tastings/save?wineType=${tastingData.wineType?.toLowerCase() ?? 'red'}`}
-				nextLabel={null}
+				nextPhase={null}
 				isFinalPhase
 			/>
 		);
@@ -61,7 +61,7 @@ export default function TimerConditional({ page, destination }: TimerConditional
 			endsAt={phaseEndsAt}
 			pausedAt={tastingData.timerPausedAt}
 			destination={destination}
-			nextLabel={nextPhaseLabel(page, grid)}
+			nextPhase={nextPhase(page, grid)}
 			isFinalPhase={page === 'finalConclusion'}
 		/>
 	);

@@ -1,9 +1,8 @@
 import LoginForm from '../../components/user/LoginForm';
-import { type Metadata } from 'next';
+import { pageTitle } from '../../i18n/server';
+import { userText } from '../../i18n/user';
 
-export const metadata: Metadata = {
-	title: 'Log in',
-};
+export const generateMetadata = pageTitle({ en: userText.en.pages.logIn, pt: userText.pt.pages.logIn });
 
 export default function LoginPage() {
 	return <LoginForm />;

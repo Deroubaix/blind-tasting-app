@@ -1,11 +1,13 @@
-import { type Metadata } from 'next';
 import TastingPageHeader from '../../../components/layout/TastingPageHeader';
 import LeftSidebar from '../../../components/tasting/LeftSideBar';
 import TastingDetail from '../../../components/archives/TastingDetail';
+import { pageTitle } from '../../../i18n/server';
+import { archivesText } from '../../../i18n/archives';
 
-export const metadata: Metadata = {
-	title: 'Tasting Detail',
-};
+export const generateMetadata = pageTitle({
+	en: archivesText.en.page.detailTitle,
+	pt: archivesText.pt.page.detailTitle,
+});
 
 export default async function TastingDetailPage({
 	params,

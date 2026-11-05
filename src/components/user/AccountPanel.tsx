@@ -11,28 +11,27 @@ import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientFlightService from '../../services/client/ClientFlightService';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { formatDate } from '../../utils/DateUtils';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { userText } from '../../i18n/user';
+import { commonText } from '../../i18n/common';
 
 const service = new ClientTastingService();
 const flightService = new ClientFlightService();
 const DELETE_ACCOUNT_MODAL = 'delete-account';
-
-function deletionSummary(count: number | null) {
-	if (count === 0) {
-		return 'Your account';
-	}
-	const tastings = count === null ? 'all your tastings' : count === 1 ? 'your one tasting' : `all ${count} tastings`;
-	return `Your account, ${tastings} and every label photo`;
-}
 
 export default function AccountPanel() {
 	const { user, isInitialLoading, deleteAccount } = useAuthProvider();
 	const { openModal, closeModal } = useModalProvider();
 	const { showToast } = useToastProvider();
 	const router = useRouter();
+	const { lang } = useLang();
+	const { account: t, shared } = useText(userText);
+	const common = useText(commonText);
 	const [tastingCount, setTastingCount] = useState<number | null>(null);
 	const [hostedFlights, setHostedFlights] = useState(0);
 	const [password, setPassword] = useState('');
-	const [error, setError] = useState<string | null>(null);
+	// Server messages arrive as text; the client's own are keys, so they follow a language switch.
+	const [error, setError] = useState<{ message: string } | 'enterPassword' | 'deleteFailed' | null>(null);
 	const [deleting, setDeleting] = useState(false);
 	const [exporting, setExporting] = useState(false);
 	const [exportError, setExportError] = useState<string | null>(null);
@@ -60,12 +59,11 @@ export default function AccountPanel() {
 	}, [user, isInitialLoading, router]);
 
 	// Hosted flights go with the host's account, for everyone who tasted in them.
-	const flightsNote = hostedFlights
-		? `The ${hostedFlights === 1 ? 'flight' : `${hostedFlights} flights`} you host ${hostedFlights === 1 ? 'is' : 'are'} deleted too, for everyone in ${hostedFlights === 1 ? 'it' : 'them'}. Tasters keep their own tastings.`
-		: null;
+	const flightsNote = hostedFlights ? t.flightsNote(hostedFlights) : null;
+	const errorText = error === null ? null : typeof error === 'string' ? t[error] : error.message;
 
 	if (isInitialLoading || !user) {
-		return <div className="archives-loading">Loading…</div>;
+		return <div className="archives-loading">{common.loading}</div>;
 	}
 
 	const remove = async (typed: string) => {
@@ -75,41 +73,42 @@ export default function AccountPanel() {
 		try {
 			deletedRef.current = true;
 			await deleteAccount(typed);
-			showToast({ title: 'Account deleted', children: 'Your account and everything in it are gone.' });
+			showToast({ title: t.deletedTitle, children: t.deletedBody });
 			router.replace('/');
 		} catch (err) {
 			deletedRef.current = false;
-			setError(JsonApiError.create(err).message || 'The account could not be deleted. Please try again.');
+			const message = JsonApiError.create(err).message;
+			setError(message ? { message } : 'deleteFailed');
 			setDeleting(false);
 		}
 	};
 
 	const confirm = () => {
 		if (!password) {
-			setError('Enter your password to confirm.');
+			setError('enterPassword');
 			return;
 		}
 		const typed = password;
 		openModal({
 			modalId: DELETE_ACCOUNT_MODAL,
-			title: 'Delete your account?',
+			title: t.confirmTitle,
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
 				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">{deletionSummary(tastingCount)} will be deleted for good.</p>
+					<p className="confirm-dialog__lead">{t.deletionLead(tastingCount)}</p>
 					{flightsNote && <p className="confirm-dialog__note">{flightsNote}</p>}
-					<p className="confirm-dialog__note">This cannot be undone.</p>
+					<p className="confirm-dialog__note">{t.cannotUndo}</p>
 					<div className="confirm-dialog__actions">
 						<button
 							className="outline confirm-dialog__cancel"
 							onClick={() => closeModal(DELETE_ACCOUNT_MODAL)}
 						>
-							Keep my account
+							{t.keep}
 						</button>
 						<button className="btn-primary confirm-dialog__confirm" onClick={() => remove(typed)}>
 							<IconTrash size={16} aria-hidden="true" />
-							Delete everything
+							{t.deleteEverything}
 						</button>
 					</div>
 				</div>
@@ -126,7 +125,7 @@ export default function AccountPanel() {
 			const response = await fetch('/api/user/export');
 			if (!response.ok) {
 				const body = await response.json().catch(() => null);
-				throw new Error(body?.message || 'The export could not be built. Please try again.');
+				throw new Error(body?.message || t.exportFailed);
 			}
 			const name = response.headers.get('Content-Disposition')?.match(/filename="([^"]+)"/)?.[1];
 			const url = URL.createObjectURL(await response.blob());
@@ -134,47 +133,46 @@ export default function AccountPanel() {
 			link.click();
 			URL.revokeObjectURL(url);
 		} catch (err) {
-			setExportError(err instanceof Error ? err.message : 'The export could not be built. Please try again.');
+			setExportError(err instanceof Error ? err.message : t.exportFailed);
 		} finally {
 			setExporting(false);
 		}
 	};
 
-	const memberSince = user.created_at ? formatDate(user.created_at) : null;
+	const memberSince = user.created_at ? formatDate(user.created_at, lang) : null;
 
 	return (
 		<div className="account">
 			<section className="account-card" aria-labelledby="account-details-heading">
 				<h2 className="account-card__heading" id="account-details-heading">
-					Your details
+					{t.detailsHeading}
 				</h2>
 				<dl className="account-details">
-					<dt>Name</dt>
+					<dt>{t.name}</dt>
 					<dd>{user.displayName}</dd>
-					<dt>Email</dt>
+					<dt>{t.email}</dt>
 					<dd>{user.email}</dd>
 					{memberSince && (
 						<>
-							<dt>Member since</dt>
+							<dt>{t.memberSince}</dt>
 							<dd>{memberSince}</dd>
 						</>
 					)}
-					<dt>Tastings</dt>
+					<dt>{t.tastings}</dt>
 					<dd>{tastingCount ?? '—'}</dd>
 				</dl>
 				<p className="account-card__note">
-					What is stored and why is set out in the <Link href="/privacy">privacy notice</Link>.
+					{t.privacyBefore}
+					<Link href="/privacy">{t.privacyLink}</Link>
+					{t.privacyAfter}
 				</p>
 			</section>
 
 			<section className="account-card" aria-labelledby="account-export-heading">
 				<h2 className="account-card__heading" id="account-export-heading">
-					Download your data
+					{t.exportHeading}
 				</h2>
-				<p className="account-card__text">
-					A ZIP with your account details, every tasting with its reveal and score, your flights and every
-					label photo. JSON files and JPEGs, nothing you need the app to read.
-				</p>
+				<p className="account-card__text">{t.exportText}</p>
 				<button
 					type="button"
 					className="btn-primary account-export__btn"
@@ -182,7 +180,7 @@ export default function AccountPanel() {
 					disabled={exporting}
 				>
 					<IconDownload size={16} aria-hidden="true" />
-					{exporting ? 'Building the archive…' : 'Download my data'}
+					{exporting ? t.exporting : t.download}
 				</button>
 				{exportError && (
 					<p className="account-delete__error" role="alert">
@@ -193,16 +191,13 @@ export default function AccountPanel() {
 
 			<section className="account-card account-card--danger" aria-labelledby="account-delete-heading">
 				<h2 className="account-card__heading" id="account-delete-heading">
-					Delete your account
+					{t.deleteHeading}
 				</h2>
-				<p className="account-card__text">
-					Deletes your account, every tasting and every label photo, straight away and for good. Enter your
-					password to confirm.
-				</p>
+				<p className="account-card__text">{t.deleteText}</p>
 				{flightsNote && <p className="account-card__text">{flightsNote}</p>}
 				<div className="account-delete">
 					<label className="account-delete__label" htmlFor="account-delete-password">
-						Password
+						{shared.password}
 					</label>
 					<input
 						id="account-delete-password"
@@ -211,7 +206,7 @@ export default function AccountPanel() {
 						className="tasting-input account-delete__input"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						aria-describedby={error ? 'account-delete-error' : undefined}
+						aria-describedby={errorText ? 'account-delete-error' : undefined}
 					/>
 					<button
 						type="button"
@@ -220,12 +215,12 @@ export default function AccountPanel() {
 						disabled={deleting}
 					>
 						<IconTrash size={16} aria-hidden="true" />
-						{deleting ? 'Deleting…' : 'Delete my account'}
+						{deleting ? t.deleting : t.deleteMine}
 					</button>
 				</div>
-				{error && (
+				{errorText && (
 					<p className="account-delete__error" id="account-delete-error" role="alert">
-						{error}
+						{errorText}
 					</p>
 				)}
 			</section>

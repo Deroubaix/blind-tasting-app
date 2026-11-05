@@ -12,6 +12,9 @@ import RevealFields from './RevealFields';
 import RevealScorecard from './RevealScorecard';
 import { type Reveal, compareReveal, isRevealed } from './revealScore';
 import { gridOf } from '../../data/grids';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { archivesText } from '../../i18n/archives';
+import { commonText } from '../../i18n/common';
 
 const service = new ClientTastingService();
 
@@ -40,6 +43,9 @@ export default function RevealPanel({
 	const [draft, setDraft] = useState<Reveal>(() => ({ ...(tasting.reveal ?? {}) }));
 	const [saving, setSaving] = useState(false);
 	const { showToast } = useToastProvider();
+	const { lang } = useLang();
+	const { panel: t, shared } = useText(archivesText);
+	const common = useText(commonText);
 
 	const startEditing = () => {
 		setDraft({ ...(tasting.reveal ?? {}) });
@@ -53,16 +59,14 @@ export default function RevealPanel({
 			onRevealed(updated);
 			setEditing(false);
 			showToast({
-				title: isRevealed(updated.reveal) ? 'Wine revealed' : 'Reveal cleared',
-				children: isRevealed(updated.reveal)
-					? 'Your call has been scored against the label.'
-					: 'With no fields filled in, the tasting is back to unrevealed.',
+				title: isRevealed(updated.reveal) ? t.revealedTitle : t.clearedTitle,
+				children: isRevealed(updated.reveal) ? t.revealedBody : t.clearedBody,
 				color: 'success',
 			});
 		} catch (error) {
 			showToast({
-				title: 'Reveal not saved',
-				children: JsonApiError.create(error).message || 'Something went wrong. Please try again.',
+				title: t.notSaved,
+				children: JsonApiError.create(error).message || shared.tryAgain,
 				color: 'error',
 			});
 		} finally {
@@ -80,27 +84,25 @@ export default function RevealPanel({
 						type="button"
 						className="reveal-form__close"
 						onClick={() => setEditing(false)}
-						aria-label="Close"
+						aria-label={common.close}
 					>
 						<IconX size={22} aria-hidden="true" />
 					</button>
 					<div className="reveal-form__sheet-title">
-						<span>Reveal the wine</span>
+						<span>{t.revealWine}</span>
 						<span className="reveal-form__sheet-sub">
-							No. {tasting.number}
+							{shared.number(tasting.number)}
 							{tasting.wineName ? ` · ${tasting.wineName}` : ''}
 						</span>
 					</div>
 				</div>
 
 				<div className="reveal-form__body">
-					<span className="reveal-eyebrow">The reveal</span>
+					<span className="reveal-eyebrow">{t.eyebrow}</span>
 					<h2 className="reveal-form__heading" id="reveal-form-heading">
-						What was in the glass?
+						{t.formHeading}
 					</h2>
-					<p className="reveal-form__lede">
-						Copy it from the label. Your call stays exactly as you saved it.
-					</p>
+					<p className="reveal-form__lede">{t.formLede}</p>
 
 					<div className={`reveal-form__layout${photoUrl ? ' reveal-form__layout--photo' : ''}`}>
 						{photoUrl && (
@@ -109,13 +111,13 @@ export default function RevealPanel({
 								target="_blank"
 								rel="noopener"
 								className="reveal-form__photo no-underline"
-								aria-label="Open your label photo full size"
+								aria-label={t.openLabelPhoto}
 							>
 								{/* Authenticated route; next/image's optimiser would fetch it without the cookie. */}
 								{/* eslint-disable-next-line @next/next/no-img-element */}
-								<img src={photoUrl} alt={`Label photo for ${title}`} />
+								<img src={photoUrl} alt={t.labelPhotoAlt(title)} />
 								<span className="reveal-form__photo-caption">
-									Your label photo <IconExternalLink size={13} aria-hidden="true" />
+									{t.labelPhoto} <IconExternalLink size={13} aria-hidden="true" />
 								</span>
 							</a>
 						)}
@@ -129,16 +131,16 @@ export default function RevealPanel({
 
 				<div className="reveal-form__actions">
 					<button type="button" className="btn-primary reveal-form__save" onClick={save} disabled={saving}>
-						{saving ? 'Saving…' : 'Save reveal'}
+						{saving ? t.saving : t.saveReveal}
 					</button>
 					<button
 						type="button"
 						className="reveal-btn-quiet reveal-form__cancel"
 						onClick={() => setEditing(false)}
 					>
-						Cancel
+						{common.cancel}
 					</button>
-					<span className="reveal-form__footnote">You can edit the reveal at any time.</span>
+					<span className="reveal-form__footnote">{t.footnote}</span>
 				</div>
 			</section>
 		);
@@ -150,6 +152,7 @@ export default function RevealPanel({
 			tasting.reveal as Reveal,
 			tasting.conclusion?.initial,
 			grid,
+			lang,
 		);
 		return flight ? (
 			<RevealScorecard
@@ -166,17 +169,14 @@ export default function RevealPanel({
 		return (
 			<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
 				<div className="reveal-invite__text">
-					<span className="reveal-eyebrow">The reveal</span>
+					<span className="reveal-eyebrow">{t.eyebrow}</span>
 					<h2 className="reveal-invite__heading" id="reveal-invite-heading">
-						Waiting for the host
+						{t.waitingHeading}
 					</h2>
-					<p className="reveal-invite__lede">
-						This is wine {flight.wineNumber} of {flight.name}. The host reveals it for the whole flight, and
-						your score appears here when they do.
-					</p>
+					<p className="reveal-invite__lede">{t.waitingLede(flight.wineNumber, flight.name)}</p>
 				</div>
 				<Link href={`/flights/${flight.code}`} className="btn-primary reveal-invite__btn no-underline">
-					Open the flight
+					{t.openFlight}
 					<IconArrowRight size={16} aria-hidden="true" />
 				</Link>
 			</section>
@@ -186,18 +186,14 @@ export default function RevealPanel({
 	return (
 		<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
 			<div className="reveal-invite__text">
-				<span className="reveal-eyebrow">The reveal</span>
+				<span className="reveal-eyebrow">{t.eyebrow}</span>
 				<h2 className="reveal-invite__heading" id="reveal-invite-heading">
-					Bottle unwrapped?
+					{t.inviteHeading}
 				</h2>
-				<p className="reveal-invite__lede">
-					{grid === 'wset'
-						? 'Enter the quality and readiness from the answer key, and the wine if you know it. Your call is scored against them.'
-						: 'Enter what\u2019s on the label. Your call is compared with it, field by field, and scored.'}
-				</p>
+				<p className="reveal-invite__lede">{grid === 'wset' ? t.inviteWset : t.inviteCms}</p>
 			</div>
 			<button type="button" className="btn-primary reveal-invite__btn" onClick={startEditing}>
-				Reveal the wine
+				{t.revealWine}
 				<IconArrowRight size={16} aria-hidden="true" />
 			</button>
 		</section>

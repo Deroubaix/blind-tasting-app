@@ -11,7 +11,6 @@ import Label from '../form/Label';
 import TextInput from '../form/TextInput';
 import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { zodResolver } from '../../utils/FormUtils';
 import { loginSchema, type LoginFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
@@ -19,6 +18,9 @@ import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { isSavingTasting, safeRedirect } from '../../utils/AuthRedirectUtils';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { translatedResolver } from '../../utils/FormUtils';
+import { userText } from '../../i18n/user';
 
 export default function LoginForm() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +31,8 @@ export default function LoginForm() {
 	const { signIn } = useAuthProvider();
 	const { showToast } = useToastProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
+	const { lang } = useLang();
+	const { login: t, shared } = useText(userText);
 
 	const redirectTo = safeRedirect(searchParams.get('r'));
 	const signupHref = `/signup?r=${encodeURIComponent(redirectTo)}`;
@@ -37,7 +41,7 @@ export default function LoginForm() {
 
 	const form = useForm<LoginFormType>({
 		initialValues: { email: '', password: '' },
-		validate: zodResolver(loginSchema),
+		validate: translatedResolver<LoginFormType>(loginSchema, lang),
 	});
 
 	const handleSubmit = async (values: LoginFormType) => {
@@ -46,11 +50,11 @@ export default function LoginForm() {
 
 		try {
 			await signIn(values.email, values.password);
-			showToast({ title: 'Welcome back', children: 'You are logged in.', color: 'success' });
+			showToast({ title: t.welcomeTitle, children: t.welcomeBody, color: 'success' });
 			router.push(redirectTo);
 		} catch (err) {
 			const apiError = JsonApiError.create(err);
-			const message = apiError.statusCode === 401 ? 'Incorrect email and/or password.' : apiError.message;
+			const message = apiError.statusCode === 401 ? t.incorrect : apiError.message;
 
 			// Shown on the form only; a toast repeating it said the same thing twice.
 			setError(message);
@@ -64,24 +68,27 @@ export default function LoginForm() {
 			<AuthHeader
 				contextLink={{
 					href: signupHref,
-					label: 'Sign up',
-					contextLabel: 'New here?',
+					label: shared.signUp,
+					contextLabel: t.contextLabel,
 				}}
 			/>
 
 			<main className="auth-main">
 				<div className="auth-container">
 					<header className="auth-card-head">
-						<span className="page-eyebrow">Welcome back</span>
+						<span className="page-eyebrow">{t.eyebrow}</span>
 						<h1>
-							Open the <em>ledger</em>.
+							{t.headingBefore}
+							<em>{t.headingEm}</em>
+							{t.headingAfter}
 						</h1>
 						{isSavingTasting(redirectTo) ? (
 							<p className="auth-subheading">
-								<strong>Your tasting is waiting.</strong> Log in and it will be saved straight away.
+								<strong>{shared.waiting}</strong>
+								{t.waitingRest}
 							</p>
 						) : (
-							<p className="auth-subheading">Log in to access your saved tastings.</p>
+							<p className="auth-subheading">{t.subheading}</p>
 						)}
 					</header>
 
@@ -89,20 +96,20 @@ export default function LoginForm() {
 						{error && <p className="auth-error">{error}</p>}
 
 						<FormControl className="auth-field" name="email">
-							<Label className="item-label">Email Address</Label>
+							<Label className="item-label">{shared.email}</Label>
 							<TextInput
 								className="auth-input"
 								type="email"
 								autoComplete="email"
-								placeholder="cellar@master.edu"
+								placeholder={shared.emailPlaceholder}
 							/>
 						</FormControl>
 
 						<FormControl className="auth-field" name="password">
 							<div className="auth-label-row">
-								<Label className="item-label">Password</Label>
+								<Label className="item-label">{shared.password}</Label>
 								<Link href="/forgot-password" className="auth-forgot">
-									Forgot?
+									{t.forgot}
 								</Link>
 							</div>
 							<div className="auth-input-wrapper">
@@ -116,7 +123,7 @@ export default function LoginForm() {
 									type="button"
 									className="auth-eye-btn"
 									onClick={() => setShowPassword((v) => !v)}
-									aria-label={showPassword ? 'Hide password' : 'Show password'}
+									aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 								>
 									{showPassword ? (
 										<IconEyeOff size={24} stroke={1} />
@@ -132,15 +139,15 @@ export default function LoginForm() {
 							type="submit"
 							disabled={isLoading}
 						>
-							{isLoading ? 'Logging in…' : 'Log in'}
+							{isLoading ? t.loggingIn : shared.logIn}
 							<IconArrowRight size={15} />
 						</button>
 					</Form>
 
 					<p className="auth-switch">
-						New to the Ledger?{' '}
+						{t.newHere}{' '}
 						<Link href={signupHref} className="auth-switch-link">
-							Sign up
+							{shared.signUp}
 						</Link>
 					</p>
 				</div>

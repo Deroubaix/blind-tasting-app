@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { tastingText } from '../../i18n/tasting';
 
 interface OtherInputButtonProps {
 	label: string;
@@ -7,6 +10,8 @@ interface OtherInputButtonProps {
 }
 
 export default function OtherInputButton({ label, savedValue, onSave }: OtherInputButtonProps) {
+	const t = useText(tastingText).inputs;
+	const common = useText(commonText);
 	const [showInput, setShowInput] = useState(false);
 	const [customInput, setCustomInput] = useState(savedValue || '');
 
@@ -27,7 +32,7 @@ export default function OtherInputButton({ label, savedValue, onSave }: OtherInp
 					className="tasting-input"
 					value={customInput}
 					onChange={(e) => setCustomInput(e.target.value)}
-					placeholder={`Enter ${label}`}
+					placeholder={t.enterField(label)}
 					onKeyDown={(e) => {
 						if (e.key === 'Enter') {
 							handleSubmit();
@@ -39,7 +44,7 @@ export default function OtherInputButton({ label, savedValue, onSave }: OtherInp
 					autoFocus
 				/>
 				<button className="rounded quiet" onClick={handleSubmit}>
-					Save
+					{common.save}
 				</button>
 				<button className="rounded quiet" onClick={() => setShowInput(false)}>
 					✕
@@ -51,12 +56,12 @@ export default function OtherInputButton({ label, savedValue, onSave }: OtherInp
 	return (
 		<div className="other-input">
 			{savedValue ? (
-				<button className="rounded quiet selected" onClick={() => setShowInput(true)} title="Click to edit">
+				<button className="rounded quiet selected" onClick={() => setShowInput(true)} title={t.clickToEdit}>
 					{savedValue} ✎
 				</button>
 			) : (
 				<button className="rounded quiet" onClick={() => setShowInput(true)}>
-					Enter {label}
+					{t.enterField(label)}
 				</button>
 			)}
 		</div>

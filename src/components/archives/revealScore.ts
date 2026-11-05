@@ -17,6 +17,8 @@ import { WINE_REGION_GROUPS } from '../tasting/autocompleteData';
 import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
 import { type Grid } from '../../data/grids';
 import { interchangeable } from './coreList';
+import { archivesText } from '../../i18n/archives';
+import { DEFAULT_LANG, type Lang } from '../../i18n';
 
 export type Reveal = {
 	/** The WSET answer key: the tutor's quality level and readiness. Absent on a CMS reveal. */
@@ -90,9 +92,14 @@ export const WSET_REVEAL_FIELDS: FieldDef[] = [
 	{ key: 'vintage', label: 'Vintage', short: 'vintage', abbr: 'Vint' },
 ];
 
-export function scoredFields(grid: Grid = 'cms'): FieldDef[] {
-	return grid === 'wset' ? WSET_REVEAL_FIELDS : REVEAL_FIELDS;
+/** The fields a grid scores, labelled in `lang`; the exported lists above stay English. */
+export function scoredFields(grid: Grid = 'cms', lang: Lang = DEFAULT_LANG): FieldDef[] {
+	const fields = grid === 'wset' ? WSET_REVEAL_FIELDS : REVEAL_FIELDS;
+	const words = archivesText[lang].score.fields;
+	return lang === DEFAULT_LANG ? fields : fields.map((field) => ({ key: field.key, ...words[field.key] }));
 }
+
+type ScoreText = (typeof archivesText)[Lang]['score'];
 
 /** Every field either grid scores: what "has a reveal" means regardless of grid. */
 const ANY_SCORED_KEYS = [...new Set([...REVEAL_FIELDS, ...WSET_REVEAL_FIELDS].map((field) => field.key))];
@@ -136,7 +143,7 @@ function regionsClose(call: string, actual: string): boolean {
 const isOther = (value: string) => fold(value) === 'other';
 
 /** On the SAT's scales, one step off (Good for Very good, say) is close. */
-function compareScale(key: RevealField, call: string, actual: string): [FieldStatus, string] | null {
+function compareScale(key: RevealField, call: string, actual: string, t: ScoreText): [FieldStatus, string] | null {
 	const scale = WSET_SCALES[key];
 	if (!scale) {
 		return null;
@@ -144,7 +151,7 @@ function compareScale(key: RevealField, call: string, actual: string): [FieldSta
 	const index = (value: string) => scale.findIndex((step) => fold(step) === fold(value));
 	const [a, b] = [index(call), index(actual)];
 	if (a >= 0 && b >= 0 && Math.abs(a - b) === 1) {
-		return ['close', a < b ? 'One step under' : 'One step over'];
+		return ['close', a < b ? t.stepUnder : t.stepOver];
 	}
 	return ['wrong', ''];
 }
@@ -154,48 +161,48 @@ function compareField(
 	call: string | null,
 	actual: string | null,
 	grape: string | null,
+	t: ScoreText,
 ): [FieldStatus, string] {
 	if (!actual) {
-		return ['na', key === 'qualityLevel' ? 'None on the label' : 'Not given in the reveal'];
+		return ['na', key === 'qualityLevel' ? t.noneOnLabel : t.notInReveal];
 	}
 	if (key === 'qualityLevel' && isOther(actual)) {
-		return ['na', 'The level on the label was not named'];
+		return ['na', t.levelNotNamed];
 	}
 	if (!call) {
-		return ['notcalled', 'Left blank, so it counts as a miss'];
+		return ['notcalled', t.leftBlankMiss];
 	}
 	if (key === 'qualityLevel' && isOther(call)) {
-		return ['wrong', '“Other” does not name a level'];
+		return ['wrong', t.otherNotLevel];
 	}
 	if (sameName(call, actual)) {
 		return ['correct', ''];
 	}
-	const scaled = compareScale(key, call, actual);
+	const scaled = compareScale(key, call, actual, t);
 	if (scaled) {
 		return scaled;
 	}
 	if (key === 'regionAppellation' && interchangeable('regions', grape, call, actual)) {
-		return ['correct', `You called ${call} — interchangeable on the CMS core list`];
+		return ['correct', t.interchangeable(call)];
 	}
 	if (key === 'qualityLevel' && interchangeable('qualityLevels', grape, call, actual)) {
-		return ['correct', `You called ${call} — interchangeable on the CMS core list`];
+		return ['correct', t.interchangeable(call)];
 	}
 	if (key === 'vintage') {
 		const gap = Math.abs(Number(call) - Number(actual));
 		if (Number.isFinite(gap) && gap > 0 && gap <= 2) {
-			return ['close', gap === 1 ? 'One year off' : 'Two years off'];
+			return ['close', gap === 1 ? t.oneYearOff : t.twoYearsOff];
 		}
 	}
 	if (key === 'regionAppellation' && regionsClose(call, actual)) {
-		return ['close', 'Right region, different appellation'];
+		return ['close', t.regionClose];
 	}
 	return ['wrong', ''];
 }
 
-/** "grape", "grape and country", "grape, country and vintage" — capitalised. */
-function sentence(words: string[]): string {
-	const text = words.length <= 1 ? (words[0] ?? '') : `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`;
-	return text.charAt(0).toUpperCase() + text.slice(1);
+/** "grape", "grape and country", "grape, country and vintage"; the dictionary capitalises. */
+function list(words: string[], and: string): string {
+	return words.length <= 1 ? (words[0] ?? '') : `${words.slice(0, -1).join(', ')} ${and} ${words.at(-1)}`;
 }
 
 export function compareReveal(
@@ -203,33 +210,39 @@ export function compareReveal(
 	reveal: Reveal,
 	shortlist?: { grapeVarieties?: string[]; possibleCountries?: string[] } | null,
 	grid: Grid = 'cms',
+	lang: Lang = DEFAULT_LANG,
 ): Comparison {
+	const t = archivesText[lang].score;
 	const grape = clean(reveal.grapeVariety);
-	const fields = scoredFields(grid).map((field) => {
+	const fields = scoredFields(grid, lang).map((field) => {
 		const called = clean(call?.[field.key]);
 		const actual = clean(reveal[field.key]);
-		const [status, note] = compareField(field.key, called, actual, grape);
+		const [status, note] = compareField(field.key, called, actual, grape, t);
 		return { ...field, status, call: called, actual, note };
 	});
 
-	const shorts = (status: FieldStatus) => fields.filter((f) => f.status === status).map((f) => f.short);
+	const shorts = (status: FieldStatus) =>
+		list(
+			fields.filter((f) => f.status === status).map((f) => f.short),
+			t.and,
+		);
 	const score = fields.filter((f) => f.status === 'correct').length;
 	const outOf = fields.filter((f) => f.status !== 'na').length;
 
 	const headline =
 		outOf === 0
-			? 'Nothing to score yet'
+			? t.nothingToScore
 			: score === outOf
-				? 'Every field right'
+				? t.allRight
 				: score === 0
-					? 'No fields right'
-					: `${sentence(shorts('correct'))} right`;
+					? t.noneRight
+					: t.right(shorts('correct'));
 
 	const detailParts = [
-		shorts('close').length ? `${sentence(shorts('close'))} close` : '',
-		shorts('wrong').length ? `${sentence(shorts('wrong'))} wrong` : '',
-		shorts('notcalled').length ? `${sentence(shorts('notcalled'))} not called` : '',
-		shorts('na').length ? `${sentence(shorts('na'))} ${grid === 'wset' ? 'not given' : 'not on the label'}` : '',
+		shorts('close') && t.close(shorts('close')),
+		shorts('wrong') && t.wrong(shorts('wrong')),
+		shorts('notcalled') && t.notCalled(shorts('notcalled')),
+		shorts('na') && (grid === 'wset' ? t.notGiven : t.notOnLabel)(shorts('na')),
 	].filter(Boolean);
 
 	const onList = (list: string[] | undefined, actual: string | null) =>
@@ -240,7 +253,7 @@ export function compareReveal(
 		score,
 		outOf,
 		headline,
-		detail: detailParts.length ? detailParts.join(' · ') : 'A clean call.',
+		detail: detailParts.length ? detailParts.join(' · ') : t.clean,
 		shortlist: {
 			grape: onList(shortlist?.grapeVarieties, clean(reveal.grapeVariety)),
 			country: onList(shortlist?.possibleCountries, clean(reveal.countryOfOrigin)),
@@ -252,14 +265,16 @@ export function compareReveal(
  * The tasting's title once revealed: the wine name if given, else appellation, quality and vintage,
  * else the grape. A WSET answer key with no identity falls back to its quality call.
  */
-export function revealTitle(reveal: Reveal): string {
+export function revealTitle(reveal: Reveal, lang: Lang = DEFAULT_LANG): string {
+	const t = archivesText[lang].score;
+	const quality = clean(reveal.qualityAssessment);
 	return (
 		clean(reveal.wineName) ??
 		([clean(reveal.regionAppellation), clean(reveal.qualityLevel), clean(reveal.vintage)]
 			.filter(Boolean)
 			.join(' ') ||
 			clean(reveal.grapeVariety) ||
-			(clean(reveal.qualityAssessment) ? `${clean(reveal.qualityAssessment)} wine` : 'Revealed wine'))
+			(quality ? t.qualityWine(quality) : t.revealedWine))
 	);
 }
 

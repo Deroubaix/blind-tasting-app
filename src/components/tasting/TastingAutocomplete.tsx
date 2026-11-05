@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect, useId } from 'react';
 import useDropPlacement from './useDropPlacement';
 import { matchSuggestions, resolveEnter } from './autocompleteMatch';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 
 interface Props {
 	suggestions: string[];
@@ -31,6 +33,7 @@ export default function TastingAutocomplete({
 	id,
 	ariaLabel,
 }: Props) {
+	const t = useText(tastingText).inputs;
 	const listId = useId();
 	const optionId = (index: number) => `${listId}-option-${index}`;
 	const [open, setOpen] = useState(false);
@@ -113,7 +116,7 @@ export default function TastingAutocomplete({
 				<ul
 					id={listId}
 					role="listbox"
-					aria-label={ariaLabel ?? 'Suggestions'}
+					aria-label={ariaLabel ?? t.suggestions}
 					className={`tasting-autocomplete__dropdown${dropUp ? ' tasting-autocomplete__dropdown--up' : ''}`}
 					style={{ maxHeight }}
 				>

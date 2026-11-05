@@ -1,5 +1,6 @@
 @use 'form-control';
 @use 'header';
+@use 'lang-switch';
 @use 'tasting-page-header';
 @use 'left-side-bar';
 @use 'tasting-phase-layout';
@@ -14,6 +15,7 @@
 @use 'wset';
 @use 'save-tasting';
 @use 'archives';
+@use 'progress';
 @use 'account';
 @use 'flights';
 @use 'reveal';

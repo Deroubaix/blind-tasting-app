@@ -1,35 +1,17 @@
-import { prisma } from '../../../../lib/prisma';
-import { JsonApiError } from '../../../../utils/ErrorUtils';
 import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
-import { hashPassword } from '../../../../utils/PasswordUtils';
+import { getLang } from '../../../../i18n/server';
+import ServerServices from '../../../../services/server/ServerServices';
+import AuthService from '../../../../services/server/AuthService';
+import { clientIp } from '../../../../lib/rateLimit';
 import { signupSchema } from '../../../../schemas/auth';
-import { RATE_LIMITS, clientIp, consume } from '../../../../lib/rateLimit';
 
 export async function POST(request: Request) {
 	try {
-		const { email, password, displayName } = signupSchema.parse(await request.json());
-		await consume(RATE_LIMITS.signupIp, clientIp(request));
-
-		const existingUser = await prisma.user.findUnique({ where: { email } });
-		if (existingUser) {
-			throw new JsonApiError('UserExists', 'User with this email already exists', 400);
-		}
-
-		const hashedPassword = await hashPassword(password);
-
-		const user = await prisma.user.create({
-			data: { email, password: hashedPassword, displayName },
-		});
-
-		return jsonResponse(
-			{
-				message: 'User created successfully',
-				user: { id: user.id, email: user.email, name: user.displayName },
-			},
-			201,
-		);
+		const input = signupSchema.parse(await request.json());
+		const user = await ServerServices.getClass(AuthService).signUp(input, clientIp(request));
+		return jsonResponse({ message: 'User created successfully', user }, 201);
 	} catch (error) {
-		logServerError('signup', error);
-		return errorResponse(error);
+		logServerError('POST /api/auth/signup', error);
+		return errorResponse(error, await getLang());
 	}
 }

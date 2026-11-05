@@ -9,17 +9,29 @@ import { useToastProvider } from '../../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { MAX_WINES } from './flightLogic';
 import { flightService, useRequireLogin } from './FlightBits';
+import { flightsText } from '../../i18n/flights';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
 
-const timers = (grid: Grid): { seconds: number | null; time: string; label: string }[] => [
-	{ seconds: null, time: 'Off', label: 'Untimed' },
+type CreateText = (typeof flightsText)['en']['create'];
+
+const timers = (
+	grid: Grid,
+	t: CreateText,
+	untimed: string,
+): { seconds: number | null; time: string; label: string }[] => [
+	{ seconds: null, time: t.off, label: untimed },
 	...timerPresets(grid).map((preset) => ({
 		seconds: preset.seconds,
 		time: formatTimerSeconds(preset.seconds),
-		label: preset.label,
+		label: t.presets[String(preset.seconds) as keyof CreateText['presets']] ?? preset.label,
 	})),
 ];
 
 export default function FlightCreateClient() {
+	const text = useText(flightsText);
+	const t = text.create;
+	const common = useText(commonText);
 	const ready = useRequireLogin('/flights/new');
 	const router = useRouter();
 	const { showToast } = useToastProvider();
@@ -45,8 +57,8 @@ export default function FlightCreateClient() {
 			router.push(`/flights/${code}`);
 		} catch (error) {
 			showToast({
-				title: 'Flight not created',
-				children: JsonApiError.create(error).message || 'Please try again.',
+				title: t.notCreated,
+				children: JsonApiError.create(error).message || t.tryAgain,
 				color: 'error',
 			});
 			setSaving(false);
@@ -54,20 +66,19 @@ export default function FlightCreateClient() {
 	};
 
 	if (!ready) {
-		return <div className="archives-loading">Loading…</div>;
+		return <div className="archives-loading">{common.loading}</div>;
 	}
 
 	return (
 		<main className="start-main">
 			<header className="start-head">
-				<span className="page-eyebrow">New flight</span>
+				<span className="page-eyebrow">{t.eyebrow}</span>
 				<h1>
-					Host a <em>flight</em>.
+					{t.titleBefore}
+					<em>{t.titleEm}</em>
+					{t.titleAfter}
 				</h1>
-				<p className="start-sub">
-					Pour the wines bagged and numbered. Everyone tastes on their own phone. You reveal each label once,
-					and everyone who submitted is scored together.
-				</p>
+				<p className="start-sub">{t.sub}</p>
 			</header>
 
 			<form onSubmit={create}>
@@ -75,15 +86,15 @@ export default function FlightCreateClient() {
 					<header className="start-step-label">
 						<span className="start-step-num">01</span>
 						<label className="item-label" htmlFor="flight-name">
-							Flight name
+							{t.name}
 						</label>
-						<span className="start-step-hint">required</span>
+						<span className="start-step-hint">{t.required}</span>
 					</header>
 					<div className="start-identity-wrap">
 						<input
 							id="flight-name"
 							className="start-identity-input"
-							placeholder="Tuesday study group"
+							placeholder={t.namePlaceholder}
 							maxLength={40}
 							value={name}
 							onChange={(e) => setName(e.target.value)}
@@ -95,11 +106,11 @@ export default function FlightCreateClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">02</span>
-						<span className="item-label">Grid</span>
-						<span className="start-step-hint">everyone tastes on the same one</span>
+						<span className="item-label">{t.grid}</span>
+						<span className="start-step-hint">{t.gridHint}</span>
 					</header>
 					<div className="start-setting-row start-setting-row--duration">
-						<div className="start-duration" role="radiogroup" aria-label="Tasting grid">
+						<div className="start-duration" role="radiogroup" aria-label={t.gridAria}>
 							{(Object.keys(GRIDS) as Grid[]).map((option) => (
 								<button
 									key={option}
@@ -109,8 +120,8 @@ export default function FlightCreateClient() {
 									className={`start-duration-pill${grid === option ? ' start-duration-pill--on' : ''}`}
 									onClick={() => chooseGrid(option)}
 								>
-									<span className="start-duration-pill__time">{GRIDS[option].short}</span>
-									<span className="start-duration-pill__label">{GRIDS[option].name}</span>
+									<span className="start-duration-pill__time">{common.grid[option].short}</span>
+									<span className="start-duration-pill__label">{common.grid[option].name}</span>
 								</button>
 							))}
 						</div>
@@ -121,45 +132,45 @@ export default function FlightCreateClient() {
 					<header className="start-step-label">
 						<span className="start-step-num">03</span>
 						<span className="item-label" id="flight-wines-label">
-							Number of wines
+							{t.wines}
 						</span>
-						<span className="start-step-hint">1 to {MAX_WINES}</span>
+						<span className="start-step-hint">{t.winesHint(MAX_WINES)}</span>
 					</header>
 					<div className="flight-stepper" role="group" aria-labelledby="flight-wines-label">
 						<button
 							type="button"
 							className="flight-stepper__btn"
-							aria-label="One fewer wine"
+							aria-label={t.fewer}
 							disabled={wineCount <= 1}
 							onClick={() => setWineCount((n) => n - 1)}
 						>
 							<IconMinus size={16} aria-hidden="true" />
 						</button>
 						<output className="flight-stepper__value" aria-live="polite">
-							{wineCount} <span>{wineCount === 1 ? 'wine' : 'wines'}</span>
+							{wineCount} <span>{t.unit(wineCount)}</span>
 						</output>
 						<button
 							type="button"
 							className="flight-stepper__btn"
-							aria-label="One more wine"
+							aria-label={t.more}
 							disabled={wineCount >= MAX_WINES}
 							onClick={() => setWineCount((n) => n + 1)}
 						>
 							<IconPlus size={16} aria-hidden="true" />
 						</button>
-						<p className="flight-stepper__note">Numbered 1–{wineCount}.</p>
+						<p className="flight-stepper__note">{t.numbered(wineCount)}</p>
 					</div>
 				</section>
 
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">04</span>
-						<span className="item-label">Timer</span>
-						<span className="start-step-hint">one clock per wine</span>
+						<span className="item-label">{t.timer}</span>
+						<span className="start-step-hint">{t.timerHint}</span>
 					</header>
 					<div className="start-setting-row start-setting-row--duration">
-						<div className="start-duration" role="radiogroup" aria-label="Time per wine">
-							{timers(grid).map((option) => (
+						<div className="start-duration" role="radiogroup" aria-label={t.timerAria}>
+							{timers(grid, t, text.bits.untimed).map((option) => (
 								<button
 									key={option.time}
 									type="button"
@@ -174,20 +185,15 @@ export default function FlightCreateClient() {
 							))}
 						</div>
 					</div>
-					<p className="flight-note">
-						Each taster&apos;s clock starts when they open a wine, so nobody has to start at the same
-						moment.
-					</p>
+					<p className="flight-note">{t.timerNote}</p>
 				</section>
 
 				<div className="start-cta">
 					<button type="submit" className="btn-primary start-cta__btn" disabled={!name.trim() || saving}>
-						{saving ? 'Creating…' : 'Create flight'}
+						{saving ? t.creating : t.submit}
 						<IconArrowRight size={16} aria-hidden="true" />
 					</button>
-					<p className="start-hint">
-						You&apos;ll get a join code next. As host, you pour and reveal; you don&apos;t taste.
-					</p>
+					<p className="start-hint">{t.hint}</p>
 				</div>
 			</form>
 		</main>

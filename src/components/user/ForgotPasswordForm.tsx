@@ -9,13 +9,15 @@ import FormControl from '../form/FormControl';
 import Label from '../form/Label';
 import TextInput from '../form/TextInput';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { zodResolver } from '../../utils/FormUtils';
 import { forgotPasswordSchema, type ForgotPasswordFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
 import AuthHeader from '../layout/AuthHeader';
 import Footer from '../layout/Footer';
 import { useAuthProvider } from '../auth/AuthProvider';
+import { useLang, useText } from '../../i18n/LanguageProvider';
+import { translatedResolver } from '../../utils/FormUtils';
+import { userText } from '../../i18n/user';
 
 export default function ForgotPasswordForm() {
 	const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
@@ -23,12 +25,14 @@ export default function ForgotPasswordForm() {
 
 	const { requestPasswordReset } = useAuthProvider();
 	const { isLoading, addLoader, removeLoader } = useLoadTracker();
+	const { lang } = useLang();
+	const { forgot: t, shared } = useText(userText);
 
 	useRedirectIfAuthenticated();
 
 	const form = useForm<ForgotPasswordFormType>({
 		initialValues: { email: '' },
-		validate: zodResolver(forgotPasswordSchema),
+		validate: translatedResolver<ForgotPasswordFormType>(forgotPasswordSchema, lang),
 	});
 
 	const handleSubmit = async (values: ForgotPasswordFormType) => {
@@ -39,7 +43,7 @@ export default function ForgotPasswordForm() {
 			await requestPasswordReset(values.email);
 			setSubmittedEmail(values.email);
 		} catch (err) {
-			setError(JsonApiError.create(err).message || 'Something went wrong. Please try again.');
+			setError(JsonApiError.create(err).message || shared.tryAgain);
 		} finally {
 			removeLoader(loader);
 		}
@@ -47,20 +51,23 @@ export default function ForgotPasswordForm() {
 
 	return (
 		<div className="auth-page">
-			<AuthHeader contextLink={{ href: '/login', label: 'Log in', contextLabel: 'Remember it?' }} />
+			<AuthHeader contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }} />
 
 			<main className="auth-main">
 				<div className="auth-container">
 					{submittedEmail ? (
 						<>
 							<header className="auth-card-head">
-								<span className="page-eyebrow">Check your inbox</span>
+								<span className="page-eyebrow">{t.sentEyebrow}</span>
 								<h1>
-									Email <em>sent</em>.
+									{t.sentBefore}
+									<em>{t.sentEm}</em>
+									{t.sentAfter}
 								</h1>
 								<p className="auth-subheading">
-									If <strong>{submittedEmail}</strong> has an account, you&apos;ll receive a reset
-									link within a minute. Check your spam folder if it doesn&apos;t arrive.
+									{t.sentLedeBefore}
+									<strong>{submittedEmail}</strong>
+									{t.sentLedeAfter}
 								</p>
 							</header>
 
@@ -70,32 +77,32 @@ export default function ForgotPasswordForm() {
 
 							<p className="auth-switch">
 								<Link href="/login" className="auth-switch-link">
-									Back to log in
+									{shared.backToLogIn}
 								</Link>
 							</p>
 						</>
 					) : (
 						<>
 							<header className="auth-card-head">
-								<span className="page-eyebrow">Forgot password</span>
+								<span className="page-eyebrow">{t.eyebrow}</span>
 								<h1>
-									Reset your <em>access</em>.
+									{t.headingBefore}
+									<em>{t.headingEm}</em>
+									{t.headingAfter}
 								</h1>
-								<p className="auth-subheading">
-									Enter your email and we&apos;ll send you a link to choose a new password.
-								</p>
+								<p className="auth-subheading">{t.subheading}</p>
 							</header>
 
 							<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
 								{error && <p className="auth-error">{error}</p>}
 
 								<FormControl className="auth-field" name="email">
-									<Label className="item-label">Email Address</Label>
+									<Label className="item-label">{shared.email}</Label>
 									<TextInput
 										className="auth-input"
 										type="email"
 										autoComplete="email"
-										placeholder="cellar@master.edu"
+										placeholder={shared.emailPlaceholder}
 									/>
 								</FormControl>
 
@@ -104,14 +111,14 @@ export default function ForgotPasswordForm() {
 									type="submit"
 									disabled={isLoading}
 								>
-									{isLoading ? 'Sending…' : 'Send reset link'}
+									{isLoading ? t.sending : t.send}
 									<IconArrowRight size={15} />
 								</button>
 							</Form>
 
 							<p className="auth-switch">
 								<Link href="/login" className="auth-switch-link">
-									Back to log in
+									{shared.backToLogIn}
 								</Link>
 							</p>
 						</>

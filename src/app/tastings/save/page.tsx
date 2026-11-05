@@ -1,9 +1,7 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import SavedTasting from '../../../components/tasting/SavedTastings';
 
-export const metadata: Metadata = {
-	title: 'Review & Save',
-};
+export const generateMetadata = pageTitle({ en: 'Review & Save', pt: 'Rever e guardar' });
 
 export default async function SavedTastingPage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {
 	const { wineType: wineTypeParam } = await searchParams;

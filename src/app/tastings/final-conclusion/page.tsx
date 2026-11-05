@@ -1,9 +1,7 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import { FinalConclusionRoute } from '../../../components/tasting/GridRoutes';
 
-export const metadata: Metadata = {
-	title: 'Final Conclusion',
-};
+export const generateMetadata = pageTitle({ en: 'Final Conclusion', pt: 'Conclusão final' });
 
 export default async function FinalConclusionPage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {
 	const { wineType: wineTypeParam } = await searchParams;

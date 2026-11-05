@@ -3,6 +3,8 @@
 import { IconX } from '@tabler/icons-react';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import type { MouseEventHandler, ReactNode } from 'react';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
 
 export type ModalProps = {
 	modalId: string;
@@ -29,6 +31,7 @@ export type ModalImperativeRef = {
 export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, ref) {
 	const { className, children, modalId, title, onClose, closeOnClickOutside, closeOnEsc } = props;
 	const showClose = props.showClose ?? true;
+	const tc = useText(commonText);
 
 	const elRef = useRef<HTMLDivElement>(null);
 	const innerRef = useRef<HTMLDivElement>(null);
@@ -122,7 +125,7 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 						<div className="header">
 							<h4 id={titleId}>{title}</h4>
 							{showClose && (
-								<button className="close-btn" onClick={handleCloseButtonClicked} aria-label="Close">
+								<button className="close-btn" onClick={handleCloseButtonClicked} aria-label={tc.close}>
 									<IconX stroke={1.5} aria-hidden="true" />
 								</button>
 							)}

@@ -1,6 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { commonText } from '../../i18n/common';
+import { useText } from '../../i18n/LanguageProvider';
+import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { OptionCard, backToSetup } from './WsetBits';
@@ -15,6 +18,9 @@ import {
 
 export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
+	const all = useText(wsetText);
+	const t = all.appearance;
+	const tc = useText(commonText);
 	const { tastingData, updateTastingData } = useTastingContext();
 	const sight = tastingData.sight ?? {};
 
@@ -34,7 +40,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 
 	const answered = WSET_APPEARANCE_FIELDS.filter((field) => sight[field]).length;
 	const pct = Math.round((answered / WSET_APPEARANCE_FIELDS.length) * 100);
-	const back = backToSetup(tastingData.flight, wineType);
+	const back = backToSetup(tastingData.flight, wineType, all.bits);
 
 	return (
 		<TastingPhaseLayout
@@ -42,13 +48,13 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 			progress={pct}
 			timerPage="sight"
 			timerDestination={`/tastings/nose?wineType=${wineType}`}
-			phase="Phase 01"
-			title="Appearance"
-			description="Tilt the glass against a white background. Clarity and intensity first, then the colour, then anything else you notice."
+			phase={t.phase}
+			title={tc.phase.wset.sight}
+			description={t.description}
 			footer={{
 				onBack: () => router.push(back.href),
 				backLabel: back.label,
-				nextLabel: 'Next: The Nose',
+				nextLabel: t.next,
 				onNext: () => router.push(`/tastings/nose?wineType=${wineType}`),
 			}}
 		>
@@ -77,7 +83,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 			/>
 			<div className="tasting-card">
 				<div className="tasting-card__label">
-					{WSET_OBSERVATIONS_KEY} <span className="wset-optional">if apparent</span>
+					{WSET_OBSERVATIONS_KEY} <span className="wset-optional">{t.ifApparent}</span>
 				</div>
 				<div className="tasting-options" role="group" aria-label={WSET_OBSERVATIONS_KEY}>
 					{WSET_OBSERVATIONS.map((option) => {

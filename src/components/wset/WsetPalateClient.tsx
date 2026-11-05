@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useText } from '../../i18n/LanguageProvider';
+import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { DescriptorClusters, OptionCard } from './WsetBits';
@@ -8,6 +10,8 @@ import { type AromaCluster, WSET_FLAVOUR_KEY, WSET_PALATE, aromaClusters } from 
 
 export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
+	const t = useText(wsetText).palate;
+	const tb = useText(wsetText).bits;
 	const { tastingData, updateTastingData } = useTastingContext();
 	const palate = tastingData.palate ?? {};
 	const structure = WSET_PALATE[wineType];
@@ -44,13 +48,13 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 			progress={pct}
 			timerPage="palate"
 			timerDestination={`/tastings/final-conclusion?wineType=${wineType}`}
-			phase="Phase 03"
-			title="The Palate"
-			description="Place each structural element on its scale, then note the flavours and how long they last."
+			phase={t.phase}
+			title={t.title}
+			description={t.description}
 			footer={{
 				onBack: () => router.push(`/tastings/nose?wineType=${wineType}`),
-				backLabel: 'Back to Nose',
-				nextLabel: 'Next: Conclusions',
+				backLabel: t.back,
+				nextLabel: t.next,
 				onNext: () => router.push(`/tastings/final-conclusion?wineType=${wineType}`),
 				nextDisabled: answered < keys.length,
 			}}
@@ -72,9 +76,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 				<div className="nose-section-divider">
 					<span className="section-label">{WSET_FLAVOUR_KEY}</span>
 				</div>
-				<p className="wset-lede">
-					What you taste, in the same clusters as the nose. Often the nose confirmed; sometimes more.
-				</p>
+				<p className="wset-lede">{t.flavourLede}</p>
 			</div>
 			<DescriptorClusters
 				wineType={wineType}
@@ -86,13 +88,13 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 			/>
 			{own.length > 0 && (
 				<div className="nose-fruit-category wset-group">
-					<div className="nose-fruit-category__label">Your own terms</div>
-					<div className="tasting-options" role="group" aria-label="Your own terms">
+					<div className="nose-fruit-category__label">{t.ownTerms}</div>
+					<div className="tasting-options" role="group" aria-label={t.ownTerms}>
 						{own.map((term) => (
 							<button
 								key={term}
 								className="tasting-option tasting-option--pill tasting-option--selected tasting-option--custom"
-								title="Click to remove"
+								title={tb.clickToRemove}
 								onClick={() => setFlavours(flavours.filter((t) => t !== term))}
 							>
 								{term} ×

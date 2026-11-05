@@ -3,20 +3,23 @@
 import Link from 'next/link';
 import { IconBan, IconCheck, IconMinus, IconTilde, IconX } from '@tabler/icons-react';
 import { type Comparison, type ComparedField, type FieldStatus } from './revealScore';
+import { useText } from '../../i18n/LanguageProvider';
+import { archivesText } from '../../i18n/archives';
 
-/** Every status has an icon and a word, so none relies on colour alone. */
-const STATUS: Record<FieldStatus, { word: string; Icon: typeof IconCheck }> = {
-	correct: { word: 'Correct', Icon: IconCheck },
-	close: { word: 'Close', Icon: IconTilde },
-	wrong: { word: 'Wrong', Icon: IconX },
-	notcalled: { word: 'Not called', Icon: IconMinus },
-	na: { word: 'Not applicable', Icon: IconBan },
+/** Every status has an icon and a word (scorecard.status), so none relies on colour alone. */
+const STATUS_ICON: Record<FieldStatus, typeof IconCheck> = {
+	correct: IconCheck,
+	close: IconTilde,
+	wrong: IconX,
+	notcalled: IconMinus,
+	na: IconBan,
 };
 
 const isHit = (field: ComparedField) => field.status === 'correct' || field.status === 'na';
 
 export function StatusBadge({ status }: { status: FieldStatus }) {
-	const { word, Icon } = STATUS[status];
+	const word = useText(archivesText).scorecard.status[status];
+	const Icon = STATUS_ICON[status];
 	return (
 		<span className={`reveal-status reveal-status--${status}`}>
 			<Icon size={12} stroke={2.2} aria-hidden="true" />
@@ -27,7 +30,8 @@ export function StatusBadge({ status }: { status: FieldStatus }) {
 
 /** A correct or not-applicable field: one quiet line. */
 function HitRow({ field }: { field: ComparedField }) {
-	const { word, Icon } = STATUS[field.status];
+	const word = useText(archivesText).scorecard.status[field.status];
+	const Icon = STATUS_ICON[field.status];
 	return (
 		<li className={`reveal-hit reveal-hit--${field.status}`}>
 			<Icon size={16} stroke={2} className="reveal-hit__icon" aria-hidden="true" />
@@ -43,6 +47,7 @@ function HitRow({ field }: { field: ComparedField }) {
 
 /** A miss (close, wrong, not called): opened out, your call struck through above the actual. */
 function MissRow({ field }: { field: ComparedField }) {
+	const { shared, scorecard: t } = useText(archivesText);
 	return (
 		<li className={`reveal-miss reveal-miss--${field.status}`}>
 			<div className="reveal-miss__head">
@@ -50,11 +55,11 @@ function MissRow({ field }: { field: ComparedField }) {
 				<StatusBadge status={field.status} />
 			</div>
 			<dl className="reveal-miss__pair">
-				<dt>Your call</dt>
+				<dt>{shared.yourCall}</dt>
 				<dd className="reveal-miss__call">
-					{field.call ? <s>{field.call}</s> : <span className="reveal-muted-italic">Left blank</span>}
+					{field.call ? <s>{field.call}</s> : <span className="reveal-muted-italic">{t.leftBlank}</span>}
 				</dd>
-				<dt>Actual</dt>
+				<dt>{t.actual}</dt>
 				<dd className="reveal-miss__actual">
 					<span>{field.actual}</span>
 				</dd>
@@ -74,19 +79,20 @@ export default function RevealScorecard({
 	onEdit?: () => void;
 	flightHref?: string;
 }) {
+	const { panel, scorecard: t } = useText(archivesText);
 	const { fields, score, outOf, headline, detail, shortlist } = comparison;
 	const shortlistItems = [
-		{ text: 'the grape', held: shortlist.grape },
-		{ text: 'the country', held: shortlist.country },
+		{ text: t.theGrape, held: shortlist.grape },
+		{ text: t.theCountry, held: shortlist.country },
 	].filter((item) => item.held !== null);
 
 	return (
 		<section className="reveal-card reveal-scorecard" aria-labelledby="reveal-score-heading">
 			<div className="reveal-scorecard__summary">
 				<span className="reveal-eyebrow" id="reveal-score-heading">
-					The reveal
+					{panel.eyebrow}
 				</span>
-				<p className="reveal-score" aria-label={`Score: ${score} out of ${outOf}`}>
+				<p className="reveal-score" aria-label={t.scoreLabel(score, outOf)}>
 					<span className="reveal-score__value">{score}</span>
 					<span className="reveal-score__of">/ {outOf}</span>
 				</p>
@@ -97,7 +103,7 @@ export default function RevealScorecard({
 				{/* Decorative: each row below states its result in words. */}
 				<ol className="reveal-strip" aria-hidden="true">
 					{fields.map((field) => {
-						const { Icon } = STATUS[field.status];
+						const Icon = STATUS_ICON[field.status];
 						return (
 							<li key={field.key} className={`reveal-strip__item reveal-strip__item--${field.status}`}>
 								<span className="reveal-strip__bar" />
@@ -109,7 +115,7 @@ export default function RevealScorecard({
 				</ol>
 				{shortlistItems.length > 0 && (
 					<div className="reveal-shortlist">
-						<span>Your shortlist included</span>
+						<span>{t.shortlistIncluded}</span>
 						{shortlistItems.map((item) => (
 							<span key={item.text} className="reveal-shortlist__item">
 								<span>{item.text}</span>
@@ -121,7 +127,7 @@ export default function RevealScorecard({
 									) : (
 										<IconX size={12} stroke={2.2} aria-hidden="true" />
 									)}
-									{item.held ? 'Yes' : 'No'}
+									{item.held ? t.yes : t.no}
 								</span>
 							</span>
 						))}
@@ -131,15 +137,15 @@ export default function RevealScorecard({
 
 			<div className="reveal-scorecard__fields">
 				<div className="reveal-scorecard__fields-head">
-					<span className="reveal-scorecard__fields-title">Field by field</span>
+					<span className="reveal-scorecard__fields-title">{t.fieldByField}</span>
 					{onEdit ? (
 						<button type="button" className="reveal-btn-quiet" onClick={onEdit}>
-							Edit reveal
+							{t.editReveal}
 						</button>
 					) : (
 						flightHref && (
 							<Link href={flightHref} className="reveal-btn-quiet no-underline">
-								Revealed by the host · Flight results →
+								{t.flightResults}
 							</Link>
 						)
 					)}

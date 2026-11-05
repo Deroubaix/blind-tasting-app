@@ -25,31 +25,26 @@ import {
 	timerPresets,
 } from '../../data/timerData';
 import { DEFAULT_GRID, GRIDS, type Grid, gridOf } from '../../data/grids';
+import { useText } from '../../i18n/LanguageProvider';
+import { commonText } from '../../i18n/common';
+import { tastingText } from '../../i18n/tasting';
 
-const TIMER_MODES: { mode: TimerMode; name: string; label: string }[] = [
-	{ mode: 'guided', name: 'Guided', label: 'A clock per phase' },
-	{ mode: 'exam', name: 'Exam', label: 'One clock per wine' },
-];
+const TIMER_MODES: TimerMode[] = ['guided', 'exam'];
 
-const PHASE_KEYS: Record<Grid, { num: string; name: string; key: TimerPhase }[]> = {
+const PHASE_KEYS: Record<Grid, { num: string; key: TimerPhase }[]> = {
 	cms: [
-		{ num: '01', name: 'Sight', key: 'sight' },
-		{ num: '02', name: 'Nose', key: 'nose' },
-		{ num: '03', name: 'Palate', key: 'palate' },
-		{ num: '04', name: 'Initial', key: 'initialConclusion' },
-		{ num: '05', name: 'Final', key: 'finalConclusion' },
+		{ num: '01', key: 'sight' },
+		{ num: '02', key: 'nose' },
+		{ num: '03', key: 'palate' },
+		{ num: '04', key: 'initialConclusion' },
+		{ num: '05', key: 'finalConclusion' },
 	],
 	wset: [
-		{ num: '01', name: 'Appearance', key: 'sight' },
-		{ num: '02', name: 'Nose', key: 'nose' },
-		{ num: '03', name: 'Palate', key: 'palate' },
-		{ num: '04', name: 'Conclusions', key: 'finalConclusion' },
+		{ num: '01', key: 'sight' },
+		{ num: '02', key: 'nose' },
+		{ num: '03', key: 'palate' },
+		{ num: '04', key: 'finalConclusion' },
 	],
-};
-
-const GRID_TAGS: Record<Grid, string> = {
-	cms: 'Deduce · Identify · Call it',
-	wset: 'Describe · Assess quality · Readiness',
 };
 
 /**
@@ -105,6 +100,9 @@ export default function TastingStartClient() {
 	const router = useRouter();
 	const { showToast } = useToastProvider();
 	const { updateTastingData } = useTastingContext();
+	const text = useText(tastingText);
+	const t = text.start;
+	const common = useText(commonText);
 
 	const [wineType, setWineType] = useState<'White' | 'Red' | null>(null);
 	const [gridChoice, setGrid] = useState<Grid | null>(null);
@@ -133,15 +131,18 @@ export default function TastingStartClient() {
 	const timerEnabled = timerChoice ?? saved?.timerEnabled ?? !firstVisit;
 	const timerSeconds = chosenSeconds ?? savedSeconds ?? defaultTimerSeconds(grid);
 	const timerMode = modeChoice ?? savedMode ?? DEFAULT_TIMER_MODE;
-	const firstPhase = PHASE_KEYS[grid][0].name;
+	const firstPhase = common.phase[grid].sight;
+	// Preset labels and notes by seconds, falling back to the data's English.
+	const presetCopy = (preset: (typeof presets)[number]) =>
+		(t.presets as Record<number, { label: string; note: string } | undefined>)[preset.seconds] ?? preset;
 
 	const handleStart = (e: React.FormEvent) => {
 		e.preventDefault();
 
 		if (!wineType) {
 			showToast({
-				title: 'Select a wine type',
-				children: 'Please choose Red or White Wine to continue.',
+				title: t.selectWineType,
+				children: t.selectWineTypeBody,
 				color: 'error',
 			});
 			return;
@@ -172,13 +173,13 @@ export default function TastingStartClient() {
 		<main className="start-main">
 			{/* ── Page head ── */}
 			<header className="start-head">
-				<span className="page-eyebrow">New session</span>
+				<span className="page-eyebrow">{t.eyebrow}</span>
 				<h1>
-					Begin your <em>tasting</em>.
+					{t.headingBefore}
+					<em>{t.headingEm}</em>
+					{t.headingAfter}
 				</h1>
-				<p className="start-sub">
-					Configure the session below. You can practice without an account — sign up later to save it.
-				</p>
+				<p className="start-sub">{t.sub}</p>
 			</header>
 
 			{firstVisit && !introHidden && (
@@ -187,30 +188,19 @@ export default function TastingStartClient() {
 						type="button"
 						className="start-intro__close"
 						onClick={() => setIntroHidden(true)}
-						aria-label="Hide how it works"
+						aria-label={t.hideIntro}
 					>
 						<IconX size={16} aria-hidden="true" />
 					</button>
 					<h2 className="start-intro__heading" id="start-intro-heading">
-						First time here? How it works
+						{t.introHeading}
 					</h2>
 					<ol className="start-intro__steps">
-						<li>
-							<strong>Pick a grid, then work it in order.</strong> The CMS grid runs Sight, Nose, Palate,
-							then an initial and a final conclusion; the WSET Level 3 SAT runs Appearance, Nose, Palate,
-							then your conclusions on quality and readiness. Tap the terms that describe the wine; tap a
-							chosen term again to clear it.
-						</li>
-						<li>
-							<strong>The clock is optional.</strong> Your first tasting is untimed so you can learn the
-							grid. Later, Guided gives each phase its own clock and moves you on when it runs out; Exam
-							gives one clock for the whole wine. Either can be paused.
-						</li>
-						<li>
-							<strong>Then the reveal.</strong> Save the tasting, unwrap the bottle and enter what&apos;s
-							on the label, or the tutor&apos;s answer key. Your call is scored against it, field by
-							field.
-						</li>
+						{t.introTitles.map((title, index) => (
+							<li key={title}>
+								<strong>{title}</strong> {t.introBodies[index]}
+							</li>
+						))}
 					</ol>
 				</section>
 			)}
@@ -220,11 +210,11 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">01</span>
-						<span className="item-label">Grid</span>
-						<span className="start-step-hint">{GRIDS[grid].title}</span>
+						<span className="item-label">{t.grid}</span>
+						<span className="start-step-hint">{common.grid[grid].title}</span>
 					</header>
 
-					<div className="start-wine-grid" role="radiogroup" aria-label="Tasting grid">
+					<div className="start-wine-grid" role="radiogroup" aria-label={t.gridAria}>
 						{(Object.keys(GRIDS) as Grid[]).map((option) => (
 							<button
 								key={option}
@@ -235,8 +225,8 @@ export default function TastingStartClient() {
 								onClick={() => setGrid(option)}
 							>
 								<div>
-									<h3 className="start-wine-name">{GRIDS[option].name}</h3>
-									<p className="start-wine-tags">{GRID_TAGS[option]}</p>
+									<h3 className="start-wine-name">{common.grid[option].name}</h3>
+									<p className="start-wine-tags">{t.gridTags[option]}</p>
 								</div>
 							</button>
 						))}
@@ -247,11 +237,11 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">02</span>
-						<span className="item-label">Wine type</span>
-						<span className="start-step-hint">required</span>
+						<span className="item-label">{t.wineType}</span>
+						<span className="start-step-hint">{t.required}</span>
 					</header>
 
-					<div className="start-wine-grid" role="radiogroup" aria-label="Wine type">
+					<div className="start-wine-grid" role="radiogroup" aria-label={t.wineType}>
 						<button
 							type="button"
 							role="radio"
@@ -264,9 +254,10 @@ export default function TastingStartClient() {
 							</div>
 							<div>
 								<h3 className="start-wine-name">
-									Red <em>Wine</em>
+									{t.redBefore}
+									<em>{t.redEm}</em>
 								</h3>
-								<p className="start-wine-tags">Tannin · Structure · Earth</p>
+								<p className="start-wine-tags">{t.redTags}</p>
 							</div>
 						</button>
 
@@ -282,9 +273,10 @@ export default function TastingStartClient() {
 							</div>
 							<div>
 								<h3 className="start-wine-name">
-									White <em>Wine</em>
+									{t.whiteBefore}
+									<em>{t.whiteEm}</em>
 								</h3>
-								<p className="start-wine-tags">Acidity · Fruit · Terroir</p>
+								<p className="start-wine-tags">{t.whiteTags}</p>
 							</div>
 						</button>
 					</div>
@@ -294,8 +286,8 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">03</span>
-						<span className="item-label">Session settings</span>
-						<span className="start-step-hint">optional</span>
+						<span className="item-label">{t.settings}</span>
+						<span className="start-step-hint">{text.optional}</span>
 					</header>
 
 					<div className="start-settings">
@@ -304,16 +296,14 @@ export default function TastingStartClient() {
 								{soundEnabled ? <IconVolume size={18} /> : <IconVolumeOff size={18} />}
 							</div>
 							<div className="start-setting-text">
-								<div className="start-setting-name">Sound</div>
-								<p className="start-setting-desc">
-									A beep when the timer reaches zero. On iPhone it follows the silent switch.
-								</p>
+								<div className="start-setting-name">{t.sound}</div>
+								<p className="start-setting-desc">{t.soundDesc}</p>
 							</div>
 							<button
 								type="button"
 								className="start-switch"
 								aria-pressed={soundEnabled}
-								aria-label="Toggle sound"
+								aria-label={t.toggleSound}
 								onClick={() => setSoundEnabled(!soundEnabled)}
 							>
 								<span className="start-switch__knob" />
@@ -325,17 +315,14 @@ export default function TastingStartClient() {
 								<IconStopwatch size={18} />
 							</div>
 							<div className="start-setting-text">
-								<div className="start-setting-name">Timer</div>
-								<p className="start-setting-desc">
-									Practice under the clock. Guided moves you on phase by phase; Exam gives you one
-									clock for the whole wine, as the exam does.
-								</p>
+								<div className="start-setting-name">{t.timer}</div>
+								<p className="start-setting-desc">{t.timerDesc}</p>
 							</div>
 							<button
 								type="button"
 								className="start-switch"
 								aria-pressed={timerEnabled}
-								aria-label="Toggle timer"
+								aria-label={t.toggleTimer}
 								onClick={() => setTimerEnabled(!timerEnabled)}
 							>
 								<span className="start-switch__knob" />
@@ -345,14 +332,14 @@ export default function TastingStartClient() {
 						<div
 							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
 						>
-							<div className="start-duration" role="radiogroup" aria-label="Time per wine">
+							<div className="start-duration" role="radiogroup" aria-label={t.timePerWine}>
 								{presets.map((preset) => (
 									<button
 										key={preset.seconds}
 										type="button"
 										role="radio"
 										aria-checked={timerSeconds === preset.seconds}
-										title={preset.note}
+										title={presetCopy(preset).note}
 										disabled={!timerEnabled}
 										className={`start-duration-pill${timerSeconds === preset.seconds ? ' start-duration-pill--on' : ''}`}
 										onClick={() => setTimerSeconds(preset.seconds)}
@@ -360,7 +347,7 @@ export default function TastingStartClient() {
 										<span className="start-duration-pill__time">
 											{formatTimerSeconds(preset.seconds)}
 										</span>
-										<span className="start-duration-pill__label">{preset.label}</span>
+										<span className="start-duration-pill__label">{presetCopy(preset).label}</span>
 									</button>
 								))}
 							</div>
@@ -369,19 +356,19 @@ export default function TastingStartClient() {
 						<div
 							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
 						>
-							<div className="start-duration" role="radiogroup" aria-label="Clock">
-								{TIMER_MODES.map((option) => (
+							<div className="start-duration" role="radiogroup" aria-label={t.clock}>
+								{TIMER_MODES.map((mode) => (
 									<button
-										key={option.mode}
+										key={mode}
 										type="button"
 										role="radio"
-										aria-checked={timerMode === option.mode}
+										aria-checked={timerMode === mode}
 										disabled={!timerEnabled}
-										className={`start-duration-pill${timerMode === option.mode ? ' start-duration-pill--on' : ''}`}
-										onClick={() => setTimerMode(option.mode)}
+										className={`start-duration-pill${timerMode === mode ? ' start-duration-pill--on' : ''}`}
+										onClick={() => setTimerMode(mode)}
 									>
-										<span className="start-duration-pill__time">{option.name}</span>
-										<span className="start-duration-pill__label">{option.label}</span>
+										<span className="start-duration-pill__time">{t.modes[mode].name}</span>
+										<span className="start-duration-pill__label">{t.modes[mode].label}</span>
 									</button>
 								))}
 							</div>
@@ -395,37 +382,38 @@ export default function TastingStartClient() {
 				<section className="start-step">
 					<header className="start-step-label">
 						<span className="start-step-num">04</span>
-						<span className="item-label">Label</span>
-						<span className="start-step-hint">optional — for your records</span>
+						<span className="item-label">{t.label}</span>
+						<span className="start-step-hint">{t.labelHint}</span>
 					</header>
 
 					<div className="start-identity-wrap">
 						<input
 							className="start-identity-input"
 							type="text"
-							placeholder="Flight 3, wine 2"
+							placeholder={t.labelPlaceholder}
 							maxLength={50}
 							value={wineName}
 							onChange={(e) => setWineName(e.target.value)}
-							aria-label="Label (optional)"
+							aria-label={t.labelAria}
 							aria-describedby="start-label-hint"
 						/>
 						<span className="start-identity-counter">{wineName.length} / 50</span>
 					</div>
 					<p className="start-identity-hint" id="start-label-hint">
 						<IconInfoCircle size={15} aria-hidden="true" />
-						Don&apos;t enter the wine; you&apos;ll reveal it after tasting.
+						{t.labelNote}
 					</p>
 				</section>
 
 				{/* ── CTA ── */}
 				<div className="start-cta">
 					<button type="submit" className="btn-primary start-cta__btn" disabled={!wineType}>
-						Start tasting
+						{t.startTasting}
 						<IconArrowRight size={16} />
 					</button>
 					<p className="start-hint">
-						<span className="start-hint__accent">{firstPhase}</span> begins immediately
+						<span className="start-hint__accent">{firstPhase}</span>
+						{t.beginsImmediately}
 					</p>
 				</div>
 			</form>
@@ -439,7 +427,7 @@ export default function TastingStartClient() {
 					return (
 						<div key={p.num} className="start-phase-chip">
 							<span className="start-phase-chip__num">{p.num}</span>
-							<span className="start-phase-chip__name">{p.name}</span>
+							<span className="start-phase-chip__name">{t.railNames[grid][p.key]}</span>
 							<span className={`start-phase-chip__time${muted ? ' start-phase-chip__time--muted' : ''}`}>
 								{timerEnabled ? formatTimerSeconds(seconds) : '—'}
 							</span>
@@ -451,8 +439,7 @@ export default function TastingStartClient() {
 			{/* The tasting pages have no footer, and every tasting starts here, so the credit and
 			    disclaimer the footer carries elsewhere live on this page too. */}
 			<p className="start-legal">
-				{GRIDS.cms.credit} {GRIDS.wset.credit} The Sommelier&apos;s Ledger is not affiliated with or endorsed by
-				the Court of Master Sommeliers or the Wine &amp; Spirit Education Trust.
+				{common.grid.cms.credit} {common.grid.wset.credit} {t.ledgerNotAffiliated}
 			</p>
 		</main>
 	);

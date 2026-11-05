@@ -1,8 +1,8 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import TastingPageHeader from '../../../components/layout/TastingPageHeader';
 import { JoinCodeClient } from '../../../components/flights/JoinFlight';
 
-export const metadata: Metadata = { title: 'Join a Flight' };
+export const generateMetadata = pageTitle({ en: 'Join a Flight', pt: 'Entrar num flight' });
 
 export default function JoinFlightPage() {
 	return (

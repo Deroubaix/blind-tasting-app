@@ -1,9 +1,7 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import { SightRoute } from '../../../components/tasting/GridRoutes';
 
-export const metadata: Metadata = {
-	title: 'Sight',
-};
+export const generateMetadata = pageTitle({ en: 'Sight', pt: 'Vista' });
 
 export default async function SightPage({ searchParams }: { searchParams: Promise<{ wineType?: string }> }) {
 	const { wineType: wineTypeParam } = await searchParams;

@@ -3,6 +3,8 @@
 import { type ReactNode, useState } from 'react';
 import { IconCalendar } from '@tabler/icons-react';
 import TastingAutocomplete from './TastingAutocomplete';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 
 /** One search-and-pick answer: a suggestion box and Add while empty, a removable chip once chosen. */
 export function ChipSearchField({
@@ -26,6 +28,7 @@ export function ChipSearchField({
 	placeholder: string;
 	icon: ReactNode;
 }) {
+	const text = useText(tastingText);
 	const [input, setInput] = useState('');
 	const confirm = (typed: string) => {
 		if (typed.trim()) {
@@ -46,7 +49,7 @@ export function ChipSearchField({
 						<button
 							type="button"
 							className="tasting-chip__remove"
-							aria-label={`Remove ${value}`}
+							aria-label={text.remove(value)}
 							onClick={() => onChange(null)}
 						>
 							×
@@ -67,10 +70,10 @@ export function ChipSearchField({
 					<button
 						type="button"
 						className="tasting-confirm-btn"
-						aria-label={`Add ${label.toLowerCase()}`}
+						aria-label={text.inputs.addField(label)}
 						onClick={() => confirm(input)}
 					>
-						Add
+						{text.add}
 					</button>
 				</div>
 			)}
@@ -88,6 +91,7 @@ export function VintageInput({
 	value: string;
 	onChange: (value: string | null) => void;
 }) {
+	const t = useText(tastingText).inputs;
 	const clamp = () => {
 		if (!value) {
 			return;
@@ -107,7 +111,7 @@ export function VintageInput({
 			<input
 				id={id}
 				className="tasting-search-input"
-				placeholder="Harvest year"
+				placeholder={t.harvestYear}
 				inputMode="numeric"
 				maxLength={4}
 				value={value}

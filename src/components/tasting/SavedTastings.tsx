@@ -8,13 +8,15 @@ import { isRevealed } from '../archives/revealScore';
 import { type LabelPhoto, useTastingContext } from '../tasting/TastingContext';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
-import { prepareLabelPhoto } from '../../utils/PhotoUtils';
+import { prepareLabelPhoto, PhotoError } from '../../utils/PhotoUtils';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useToastProvider } from '../../toast/ToastProvider';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { gridOf } from '../../data/grids';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 
 export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }) {
 	const { tastingData, updateTastingData, resetTastingData, labelPhoto, setLabelPhoto } = useTastingContext();
@@ -37,6 +39,8 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 	const { user, isInitialLoading, signOut } = useAuthProvider();
 	const { showToast } = useToastProvider();
 	const grid = gridOf(tastingData.grid);
+	const text = useText(tastingText);
+	const t = text.save;
 
 	const clearPhotoInput = () => {
 		if (fileInputRef.current) {
@@ -54,8 +58,8 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 			setLabelPhoto(await prepareLabelPhoto(file));
 		} catch (error) {
 			showToast({
-				title: 'Photo not added',
-				children: error instanceof Error ? error.message : 'This photo could not be opened.',
+				title: t.photoNotAdded,
+				children: error instanceof PhotoError ? t.photoError[error.code] : t.photoNotOpened,
 				color: 'error',
 			});
 		} finally {
@@ -80,8 +84,8 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 	// Short, because it rides along onto the login page, which says the same thing in its heading.
 	const showLoginRequired = () =>
 		showToast({
-			title: 'Log in required',
-			children: 'Please log in or sign up to save your tasting.',
+			title: t.loginRequired,
+			children: t.loginRequiredBody,
 			color: 'error',
 			autoCloseMs: 4000,
 		});
@@ -104,12 +108,8 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 			resetTastingData();
 			if (flight) {
 				showToast({
-					title: flightLate
-						? `Wine ${flight.wineNumber} was already revealed`
-						: `Wine ${flight.wineNumber} submitted`,
-					children: flightLate
-						? 'Saved to your archive with its score, but it is not part of the flight results.'
-						: 'You will see the results once the host reveals it.',
+					title: flightLate ? t.alreadyRevealed(flight.wineNumber) : t.submitted(flight.wineNumber),
+					children: flightLate ? t.lateBody : t.submittedBody,
 					color: flightLate ? undefined : 'success',
 				});
 				router.push(`/flights/${flight.code}`);
@@ -129,11 +129,8 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 				router.push(saveRedirect);
 			} else {
 				showToast({
-					title: stage === 'photo' ? 'Photo upload failed' : 'Save failed',
-					children:
-						stage === 'photo'
-							? 'The photo could not be uploaded. Try again, or remove the photo to save without it.'
-							: 'Something went wrong. Please try again.',
+					title: stage === 'photo' ? t.photoUploadFailed : t.saveFailed,
+					children: stage === 'photo' ? t.photoUploadFailedBody : t.saveFailedBody,
 					color: 'error',
 				});
 			}
@@ -154,13 +151,13 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			phase="Wrap Up"
-			title="Review & Save"
-			description="Add any final notes and a photo before saving your tasting record."
+			phase={t.phase}
+			title={t.title}
+			description={t.description}
 			footer={{
 				onBack: () => router.push(`/tastings/final-conclusion?wineType=${wineType}`),
-				backLabel: grid === 'wset' ? 'Back to Conclusions' : 'Back to Final Conclusion',
-				nextLabel: 'Save Tasting',
+				backLabel: grid === 'wset' ? t.backWset : t.backCms,
+				nextLabel: t.next,
 				onNext: handleSave,
 				nextLoading: isLoading,
 			}}
@@ -168,11 +165,11 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 			<div className="save-layout">
 				{/* Notes */}
 				<div className="tasting-card">
-					<div className="tasting-card__label">Notes</div>
+					<div className="tasting-card__label">{t.notes}</div>
 					<textarea
 						className="tasting-textarea"
 						rows={6}
-						placeholder="Add your final observations, impressions, or anything worth remembering..."
+						placeholder={t.notesPlaceholder}
 						value={notes}
 						onChange={(e) => updateTastingData({ notes: e.target.value })}
 					/>
@@ -180,7 +177,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 
 				{/* Photo */}
 				<div className="tasting-card">
-					<div className="tasting-card__label">Photo</div>
+					<div className="tasting-card__label">{t.photo}</div>
 					<input
 						ref={fileInputRef}
 						type="file"
@@ -194,7 +191,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 							{/* Local data URL — next/image has nothing to optimise here and would need
 							    `unoptimized`, so a plain img is the right element. */}
 							{/* eslint-disable-next-line @next/next/no-img-element */}
-							<img src={labelPhoto.preview} alt="Your photo" className="save-photo-preview__img" />
+							<img src={labelPhoto.preview} alt={t.photoAlt} className="save-photo-preview__img" />
 							<button
 								className="save-photo-remove"
 								onClick={() => {
@@ -203,7 +200,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 								}}
 							>
 								<IconX size={14} />
-								Remove
+								{t.removePhoto}
 							</button>
 						</div>
 					) : (
@@ -213,7 +210,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 							disabled={isLoading}
 						>
 							<IconCamera size={18} />
-							Take / Choose Photo
+							{t.takePhoto}
 						</button>
 					)}
 				</div>
@@ -231,13 +228,11 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 						>
 							<span className="save-reveal__text">
 								<span className="save-reveal__eyebrow">
-									<span className="tasting-card__label">The reveal</span>
-									<span className="save-reveal__optional">optional</span>
+									<span className="tasting-card__label">{t.reveal}</span>
+									<span className="save-reveal__optional">{text.optional}</span>
 								</span>
-								<span className="save-reveal__title">Know the wine already? Reveal it now</span>
-								<span className="save-reveal__sub">
-									Most students skip this and reveal the wine later, from the archive.
-								</span>
+								<span className="save-reveal__title">{t.revealTitle}</span>
+								<span className="save-reveal__sub">{t.revealSub}</span>
 							</span>
 							<IconChevronDown
 								size={16}
@@ -255,9 +250,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 										updateTastingData({ reveal: { ...tastingData.reveal, ...patch } })
 									}
 								/>
-								<p className="save-reveal__note">
-									Saved with the tasting. Your score appears in the archive straight away.
-								</p>
+								<p className="save-reveal__note">{t.revealNote}</p>
 							</div>
 						)}
 					</div>

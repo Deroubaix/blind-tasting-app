@@ -1,8 +1,8 @@
-import { type Metadata } from 'next';
+import { pageTitle } from '../../../i18n/server';
 import TastingPageHeader from '../../../components/layout/TastingPageHeader';
 import FlightPageClient from '../../../components/flights/FlightPageClient';
 
-export const metadata: Metadata = { title: 'Flight' };
+export const generateMetadata = pageTitle({ en: 'Flight', pt: 'Flight' });
 
 export default async function FlightPage({ params }: { params: Promise<{ code: string }> }) {
 	const { code } = await params;

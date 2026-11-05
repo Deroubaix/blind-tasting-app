@@ -1,49 +1,30 @@
-import { requireUserId } from '../../../../lib/auth';
-import {
-	PHOTO_CONTENT_TYPE,
-	ownsPhotoKey,
-	photoDownloadUrl,
-	photoSize,
-	readLocalPhoto,
-	storageDriver,
-} from '../../../../lib/storage';
 import { errorResponse, logServerError } from '../../../../utils/ApiUtils';
-import { JsonApiError } from '../../../../utils/ErrorUtils';
+import { getLang } from '../../../../i18n/server';
+import ServerServices from '../../../../services/server/ServerServices';
+import PhotoService from '../../../../services/server/PhotoService';
+import { requireUserId } from '../../../../lib/auth';
+import { PHOTO_CONTENT_TYPE } from '../../../../lib/storage';
 
-/**
- * Serves a label photo to its owner only. Keys are unique per upload and never rewritten, so the
- * bytes behind one can be cached for good — but privately, since the response depends on the
- * cookie. On R2 this redirects to a signed URL, cached for a little less than the URL lives.
- */
+/** Keys never change, so the bytes cache for good, but privately: the response depends on the cookie. */
 export async function GET(_request: Request, { params }: { params: Promise<{ key: string[] }> }) {
 	try {
 		const userId = await requireUserId();
-		const key = (await params).key.join('/');
-		if (!ownsPhotoKey(userId, key)) {
-			throw new JsonApiError('NotFound', 'Not found', 404);
-		}
-
-		if (storageDriver() === 'r2') {
+		const photo = await ServerServices.getClass(PhotoService).open(userId, (await params).key.join('/'));
+		if ('redirect' in photo) {
 			return new Response(null, {
 				status: 302,
-				headers: { Location: await photoDownloadUrl(key), 'Cache-Control': 'private, max-age=3000' },
+				headers: { Location: photo.redirect, 'Cache-Control': 'private, max-age=3000' },
 			});
 		}
-
-		const size = await photoSize(key);
-		if (size === null) {
-			throw new JsonApiError('NotFound', 'Not found', 404);
-		}
-
-		return new Response(readLocalPhoto(key), {
+		return new Response(photo.body, {
 			headers: {
 				'Content-Type': PHOTO_CONTENT_TYPE,
-				'Content-Length': String(size),
+				'Content-Length': String(photo.size),
 				'Cache-Control': 'private, max-age=31536000, immutable',
 			},
 		});
 	} catch (error) {
 		logServerError('GET /api/photos/[...key]', error);
-		return errorResponse(error);
+		return errorResponse(error, await getLang());
 	}
 }

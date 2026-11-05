@@ -4,7 +4,7 @@ import {
 	WSET_TIMER_PRESETS,
 	type TimerPhase,
 	formatTimerSeconds,
-	nextPhaseLabel,
+	nextPhase,
 	phaseSeconds,
 	timerPresets,
 } from './timerData';
@@ -46,8 +46,8 @@ describe('the WSET grid', () => {
 	});
 
 	it('hands the palate over to Conclusions, not an initial conclusion', () => {
-		expect(nextPhaseLabel('palate', 'wset')).toBe('Conclusions');
-		expect(nextPhaseLabel('palate')).toBe('Initial Conclusion');
-		expect(nextPhaseLabel('finalConclusion', 'wset')).toBeNull();
+		expect(nextPhase('palate', 'wset')).toBe('finalConclusion');
+		expect(nextPhase('palate')).toBe('initialConclusion');
+		expect(nextPhase('finalConclusion', 'wset')).toBeNull();
 	});
 });
