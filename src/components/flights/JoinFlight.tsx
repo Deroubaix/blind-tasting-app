@@ -59,7 +59,7 @@ export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined:
 					</div>
 					<div>
 						<dt>{t.alreadyIn}</dt>
-						<dd className="flight-facts__people">
+						<dd className="flight-people flight-facts__people">
 							{flight.members.length
 								? flight.members.map((member) => <Avatar key={member.id} person={member} size="sm" />)
 								: t.noOneYet}
@@ -68,18 +68,18 @@ export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined:
 				</dl>
 
 				{flight.ended ? (
-					<p className="flight-message">{t.ended}</p>
+					<p className="empty-state empty-state--boxed">{t.ended}</p>
 				) : (
 					<>
 						<p className="flight-invite__me">
 							{t.joiningAs} <strong>{user?.displayName}</strong>{' '}
-							<button type="button" className="flight-link-button" onClick={notMe}>
+							<button type="button" className="text-link" onClick={notMe}>
 								{t.notYou}
 							</button>
 						</p>
 						<button
 							type="button"
-							className="btn-primary flight-invite__join"
+							className="btn-primary btn-primary--block"
 							onClick={join}
 							disabled={joining}
 						>
@@ -159,7 +159,7 @@ export function JoinCodeClient() {
 	};
 
 	if (!ready) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 
 	return (
@@ -187,7 +187,7 @@ export function JoinCodeClient() {
 				<div id="flight-code-status" aria-live="polite">
 					{error && <p className="flight-code-input__error">{error}</p>}
 					{found && (
-						<div className="flight-found">
+						<div className="flight-notice flight-found">
 							<span className="flight-found__ok">
 								<IconCheck size={14} aria-hidden="true" /> {t.found}
 							</span>
@@ -197,7 +197,7 @@ export function JoinCodeClient() {
 								{common.wines(found.wineCount)} · {formatTimer(found.timerSeconds, lang)}
 							</span>
 							{found.members.length > 0 && (
-								<span className="flight-found__people">
+								<span className="flight-people">
 									{found.members.map((member) => (
 										<Avatar key={member.id} person={member} size="sm" />
 									))}
@@ -210,7 +210,7 @@ export function JoinCodeClient() {
 
 				<button
 					type="button"
-					className="btn-primary flight-invite__join"
+					className="btn-primary btn-primary--block"
 					disabled={!found || found.ended || joining}
 					onClick={join}
 				>

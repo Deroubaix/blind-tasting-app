@@ -56,9 +56,7 @@
 	}
 
 	a {
-		color: $tasting-accent-light;
-		text-decoration: underline;
-		text-underline-offset: 2px;
+		@include ledger-link;
 	}
 
 	strong {

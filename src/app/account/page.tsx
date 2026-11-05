@@ -14,9 +14,9 @@ export default async function AccountPage() {
 			<div className="tasting-phase-body">
 				<LeftSidebar />
 				<main className="tasting-phase-main">
-					<div className="archives-hero account-hero">
-						<h1>{t.account}</h1>
-					</div>
+					<header className="page-head account-head">
+						<h1 className="page-head__title">{t.account}</h1>
+					</header>
 					<AccountPanel />
 				</main>
 			</div>

@@ -28,28 +28,28 @@ export default function FlightsListClient() {
 
 	return (
 		<main className="flight-main">
-			<header className="flight-head">
+			<header className="page-head">
 				<div>
-					<span className="page-eyebrow">{t.eyebrow}</span>
-					<h1 className="flight-head__title">{t.title}</h1>
-					<p className="flight-head__sub">{t.sub}</p>
+					<span className="page-head__eyebrow">{t.eyebrow}</span>
+					<h1 className="page-head__title">{t.title}</h1>
+					<p className="page-head__sub">{t.sub}</p>
 				</div>
 			</header>
 
 			<div className="flight-actions">
-				<Link href="/flights/new" className="flight-action no-underline">
+				<Link href="/flights/new" className="flight-action">
 					<IconPlus size={22} aria-hidden="true" />
 					<strong>{t.host}</strong>
 					<span className="flight-muted">{t.hostNote}</span>
 				</Link>
-				<Link href="/flights/join" className="flight-action no-underline">
+				<Link href="/flights/join" className="flight-action">
 					<IconUsersGroup size={22} aria-hidden="true" />
 					<strong>{t.join}</strong>
 					<span className="flight-muted">{t.joinNote}</span>
 				</Link>
 			</div>
 
-			{error && <p className="archives-error">{t.loadFailed}</p>}
+			{error && <p className="empty-state">{t.loadFailed}</p>}
 			{flights && flights.length > 0 && (
 				<section aria-labelledby="your-flights">
 					<h2 className="tasting-card__label" id="your-flights">
@@ -67,7 +67,7 @@ export default function FlightsListClient() {
 										{flight.ended ? ` · ${text.bits.ended}` : ''}
 									</span>
 								</div>
-								<Link href={`/flights/${flight.code}`} className="flight-link no-underline">
+								<Link href={`/flights/${flight.code}`} className="text-link text-link--sm">
 									{t.open}
 								</Link>
 							</li>

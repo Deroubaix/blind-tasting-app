@@ -14,8 +14,7 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { signupSchema, PASSWORD_MIN_LENGTH, type SignupFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
-import AuthHeader from '../layout/AuthHeader';
-import Footer from '../layout/Footer';
+import AuthShell from './AuthShell';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { isSavingTasting, safeRedirect } from '../../utils/AuthRedirectUtils';
 import { useLang, useText } from '../../i18n/LanguageProvider';
@@ -65,107 +64,91 @@ export default function SignupForm() {
 	};
 
 	return (
-		<div className="auth-page">
-			<AuthHeader
-				contextLink={{
-					href: '/login',
-					label: shared.logIn,
-					contextLabel: t.contextLabel,
-				}}
-			/>
-
-			<main className="auth-main">
-				<div className="auth-container">
-					<header className="auth-card-head">
-						<span className="page-eyebrow">{t.eyebrow}</span>
-						<h1>
-							{t.headingBefore}
-							<em>{t.headingEm}</em>
-							{t.headingAfter}
-						</h1>
-						{isSavingTasting(redirectTo) ? (
-							<p className="auth-subheading">
-								<strong>{shared.waiting}</strong>
-								{t.waitingRest}
-							</p>
-						) : (
-							<p className="auth-subheading">
-								<strong>{t.pitch}</strong>
-								{t.pitchRest}
-							</p>
-						)}
-					</header>
-
-					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
-						{error && <p className="auth-error">{error}</p>}
-
-						<FormControl className="auth-field" name="displayName">
-							<Label className="item-label">{t.displayName}</Label>
-							<TextInput
-								className="auth-input"
-								type="text"
-								autoComplete="name"
-								placeholder={t.displayNamePlaceholder}
-							/>
-						</FormControl>
-
-						<FormControl className="auth-field" name="email">
-							<Label className="item-label">{shared.email}</Label>
-							<TextInput
-								className="auth-input"
-								type="email"
-								autoComplete="email"
-								placeholder={shared.emailPlaceholder}
-							/>
-						</FormControl>
-
-						<FormControl className="auth-field" name="password">
-							<div className="auth-label-row">
-								<Label className="item-label">{shared.password}</Label>
-								<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
-							</div>
-							<div className="auth-input-wrapper">
-								<TextInput
-									className="auth-input"
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="new-password"
-									placeholder="••••••••"
-								/>
-								<button
-									type="button"
-									className="auth-eye-btn"
-									onClick={() => setShowPassword((v) => !v)}
-									aria-label={showPassword ? shared.hidePassword : shared.showPassword}
-								>
-									{showPassword ? (
-										<IconEyeOff size={24} stroke={1} />
-									) : (
-										<IconEye size={24} stroke={1} />
-									)}
-								</button>
-							</div>
-						</FormControl>
-
-						<button
-							className="auth-submit btn-primary btn-primary--auth"
-							type="submit"
-							disabled={isLoading}
-						>
-							{isLoading ? t.creating : shared.signUp}
-							<IconArrowRight size={15} />
-						</button>
-					</Form>
-
-					<p className="auth-switch">
-						{t.haveAccount}{' '}
-						<Link href="/login" className="auth-switch-link">
-							{shared.logIn}
-						</Link>
+		<AuthShell
+			contextLink={{
+				href: '/login',
+				label: shared.logIn,
+				contextLabel: t.contextLabel,
+			}}
+		>
+			<header className="auth-card-head">
+				<span className="page-eyebrow">{t.eyebrow}</span>
+				<h1>
+					{t.headingBefore}
+					<em>{t.headingEm}</em>
+					{t.headingAfter}
+				</h1>
+				{isSavingTasting(redirectTo) ? (
+					<p className="body-copy">
+						<strong>{shared.waiting}</strong>
+						{t.waitingRest}
 					</p>
-				</div>
-			</main>
+				) : (
+					<p className="body-copy">
+						<strong>{t.pitch}</strong>
+						{t.pitchRest}
+					</p>
+				)}
+			</header>
 
-			<Footer />
-		</div>
+			<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
+				{error && <p className="auth-error">{error}</p>}
+
+				<FormControl className="auth-field" name="displayName">
+					<Label className="item-label">{t.displayName}</Label>
+					<TextInput
+						className="ledger-field"
+						type="text"
+						autoComplete="name"
+						placeholder={t.displayNamePlaceholder}
+					/>
+				</FormControl>
+
+				<FormControl className="auth-field" name="email">
+					<Label className="item-label">{shared.email}</Label>
+					<TextInput
+						className="ledger-field"
+						type="email"
+						autoComplete="email"
+						placeholder={shared.emailPlaceholder}
+					/>
+				</FormControl>
+
+				<FormControl className="auth-field" name="password">
+					<div className="auth-label-row">
+						<Label className="item-label">{shared.password}</Label>
+						<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
+					</div>
+					<div className="auth-input-wrapper">
+						<TextInput
+							className="ledger-field"
+							type={showPassword ? 'text' : 'password'}
+							autoComplete="new-password"
+							placeholder="••••••••"
+						/>
+						<button
+							type="button"
+							className="auth-eye-btn"
+							onClick={() => setShowPassword((v) => !v)}
+							aria-label={showPassword ? shared.hidePassword : shared.showPassword}
+						>
+							{showPassword ? <IconEyeOff size={24} stroke={1} /> : <IconEye size={24} stroke={1} />}
+						</button>
+					</div>
+				</FormControl>
+
+				<button className="btn-primary btn-primary--block auth-submit" type="submit" disabled={isLoading}>
+					{isLoading ? t.creating : shared.signUp}
+					<IconArrowRight size={15} />
+				</button>
+			</Form>
+
+			<p className="auth-switch">
+				{t.haveAccount}{' '}
+				<Link href="/login" className="auth-switch__link">
+					{shared.logIn}
+				</Link>
+			</p>
+		</AuthShell>
 	);
 }

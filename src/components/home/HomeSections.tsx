@@ -54,7 +54,7 @@ export function Folio({
 }) {
 	return (
 		<section id={id} className={`home-section${tint ? ' home-section--tint' : ''}`}>
-			<div className="home-section__inner">
+			<div className="home-section__inner page-container">
 				<span className="home-folio" aria-hidden="true">
 					§ {n}
 				</span>
@@ -72,7 +72,7 @@ export function RevealCard() {
 	return (
 		<article className="home-card home-reveal" aria-label={t.reveal.sample}>
 			<div className="home-card__top">
-				<span className="home-kicker">{t.reveal.kicker}</span>
+				<span className="page-eyebrow">{t.reveal.kicker}</span>
 				<span className="home-no">{t.reveal.no(24)}</span>
 			</div>
 			<p className="home-card__title">{SAMPLE_TITLE}</p>
@@ -81,7 +81,7 @@ export function RevealCard() {
 					<li key={field.key} className="home-row">
 						<span className="home-row__n">{String(i + 1).padStart(2, '0')}</span>
 						<span className="home-row__text">
-							<span className="home-label">{COLUMNS[field.key]}</span>
+							<span className="muted-label">{COLUMNS[field.key]}</span>
 							<span>{field.call}</span>
 						</span>
 						<StatusBadge status={field.status} />
@@ -103,7 +103,7 @@ export function RevealTable() {
 	const COLUMNS: Record<string, string> = t.columns;
 	return (
 		<div className="home-card home-table" role="table" aria-label={t.reveal.tableLabel}>
-			<div className="home-table__row home-table__row--head" role="row">
+			<div className="home-trow home-trow--head home-table__row" role="row">
 				<span role="columnheader" aria-label={t.reveal.row} />
 				<span role="columnheader">{t.reveal.field}</span>
 				<span role="columnheader">{t.reveal.yourCall}</span>
@@ -111,7 +111,7 @@ export function RevealTable() {
 				<span role="columnheader">{t.reveal.result}</span>
 			</div>
 			{sample.fields.map((field, i) => (
-				<div key={field.key} className="home-table__row" role="row">
+				<div key={field.key} className="home-trow home-table__row" role="row">
 					<span role="cell" className="home-row__n">
 						{String(i + 1).padStart(2, '0')}
 					</span>
@@ -159,21 +159,21 @@ function ScaleRow({ attr }: { attr: (typeof SAMPLE_STRUCTURE)[number] }) {
 	const pos = (level: number) => `${(level / last) * 100}%`;
 	const word = attr.agreement === 'split' ? t.split : attr.agreement === 'near' ? t.near : t.agreed;
 	return (
-		<li className={`home-scale home-scale--${attr.agreement}`}>
-			<span className="home-scale__name">{name}</span>
-			<span className="home-scale__track" role="img" aria-label={`${name}: ${phrase}`}>
-				<span className="home-scale__line" />
+		<li className={`home-scale agreement-scale agreement-scale--${attr.agreement}`}>
+			<span className="agreement-scale__name">{name}</span>
+			<span className="agreement-scale__track" role="img" aria-label={`${name}: ${phrase}`}>
+				<span className="agreement-scale__line" />
 				{max > min && (
 					<span
-						className="home-scale__range"
+						className="agreement-scale__range"
 						style={{ left: pos(min), width: `calc(${pos(max)} - ${pos(min)})` }}
 					/>
 				)}
 				{attr.levels.map((level, index) => {
 					const here = attr.calls.filter((c) => c.level === index);
 					return (
-						<span key={level} className="home-scale__stop" style={{ left: pos(index) }}>
-							<span className="home-scale__dots">
+						<span key={level} className="agreement-scale__stop" style={{ left: pos(index) }}>
+							<span className="agreement-scale__dots">
 								{here.map((c) => {
 									const taster = SAMPLE_FLIGHT.find((t) => t.id === c.personId)!;
 									return (
@@ -187,15 +187,15 @@ function ScaleRow({ attr }: { attr: (typeof SAMPLE_STRUCTURE)[number] }) {
 									);
 								})}
 							</span>
-							<span className={`home-scale__tick${here.length ? ' home-scale__tick--on' : ''}`}>
+							<span className={`agreement-scale__tick${here.length ? ' agreement-scale__tick--on' : ''}`}>
 								{shortLevel(level)}
 							</span>
 						</span>
 					);
 				})}
 			</span>
-			<span className="home-scale__verdict">
-				<span className={`home-agreement home-agreement--${attr.agreement}`}>{word}</span>
+			<span className="agreement-scale__verdict">
+				<span className="agreement-scale__word">{word}</span>
 				<span className="home-muted">{phrase}</span>
 			</span>
 		</li>
@@ -230,7 +230,7 @@ export function FlightPreview() {
 
 			{/* Desktop and tablet: the full table (cards below 1000px, via CSS). */}
 			<div className="home-ftable" role="table" aria-label={f.tableLabel}>
-				<div className="home-ftable__row home-ftable__row--head" role="row">
+				<div className="home-trow home-trow--head home-ftable__row" role="row">
 					<span role="columnheader">{f.taster}</span>
 					{REVEAL_FIELDS.map((rf) => (
 						<span key={rf.key} role="columnheader">
@@ -241,9 +241,9 @@ export function FlightPreview() {
 						{f.score}
 					</span>
 				</div>
-				<div className="home-ftable__row home-ftable__row--label" role="row">
+				<div className="home-trow home-ftable__row home-ftable__row--label" role="row">
 					<span role="rowheader" className="home-ftable__who">
-						<span className="home-kicker">{f.theLabel}</span>
+						<span className="page-eyebrow">{f.theLabel}</span>
 					</span>
 					{REVEAL_FIELDS.map((rf) => (
 						<span key={rf.key} role="cell" className="home-ftable__cell" data-col={COLUMNS[rf.key]}>
@@ -253,7 +253,7 @@ export function FlightPreview() {
 					<span role="cell" />
 				</div>
 				{SAMPLE_FLIGHT.map((t) => (
-					<div key={t.id} className="home-ftable__row" role="row">
+					<div key={t.id} className="home-trow home-ftable__row" role="row">
 						<span role="rowheader" className="home-ftable__who">
 							<span className={`home-dot home-dot--t${t.tint}`} aria-hidden="true">
 								{t.initial}
@@ -276,8 +276,8 @@ export function FlightPreview() {
 						</span>
 					</div>
 				))}
-				<div className="home-ftable__row home-ftable__row--group" role="row">
-					<span role="rowheader" className="home-label">
+				<div className="home-trow home-ftable__row home-ftable__row--group" role="row">
+					<span role="rowheader" className="muted-label">
 						{f.groupRight}
 					</span>
 					{REVEAL_FIELDS.map((rf) => {
@@ -325,8 +325,8 @@ export function FlightPreview() {
 			</ul>
 
 			<div className="home-structure">
-				<div className="home-structure__head">
-					<span className="home-label">{f.structure}</span>
+				<div className="home-card__top">
+					<span className="muted-label">{f.structure}</span>
 					<span className="home-muted">
 						<span className="home-figure home-figure--warn">{splits}</span> /{' '}
 						<span className="home-figure">{SAMPLE_STRUCTURE.length}</span> {f.splitGroup}
@@ -354,7 +354,7 @@ export function ExamPace() {
 		<div className="home-pace">
 			{TIMER_PRESETS.map((preset) => (
 				<div key={preset.seconds} className="home-pace__cell">
-					<span className="home-figure home-figure--xl">{formatTimerSeconds(preset.seconds)}</span>
+					<span className="home-figure home-figure--lg">{formatTimerSeconds(preset.seconds)}</span>
 					<span className="home-pace__label">
 						{presets[preset.seconds].label}
 						<span>{t.minutes(presets[preset.seconds].note)}</span>
@@ -431,11 +431,11 @@ export function CtaLinks({ join = true }: { join?: boolean }) {
 	const t = useText(homeText).cta;
 	return (
 		<div className="home-ctas">
-			<Link href="/tastings/start" className="btn-primary home-btn no-underline">
+			<Link href="/tastings/start" className="btn-primary">
 				{t.start}
 			</Link>
 			{join && (
-				<Link href="/flights/join" className="home-btn home-btn--outline no-underline">
+				<Link href="/flights/join" className="btn-quiet">
 					{t.join}
 				</Link>
 			)}

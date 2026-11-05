@@ -14,8 +14,8 @@ export default function Footer() {
 	const c = useText(commonText);
 	return (
 		<footer className="site-footer">
-			<div className="site-footer__inner">
-				<Link href="/" className="site-footer__logo no-underline" aria-label={c.home}>
+			<div className="site-footer__inner page-container">
+				<Link href="/" className="site-footer__logo" aria-label={c.home}>
 					<Wordmark size="sm" />
 				</Link>
 				<nav className="site-footer__nav" aria-label={t.navLabel}>

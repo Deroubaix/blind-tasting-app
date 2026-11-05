@@ -62,13 +62,13 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 			}}
 		>
 			{/* 2-column category grid */}
-			<div className="palate-grid">
+			<div className="tasting-grid tasting-grid--2">
 				{Object.entries(currentOptions).map(([category, options]) => (
 					<div key={category} className="tasting-card">
 						<div className="tasting-card__label">
 							{category}
 							{required.has(category) && (
-								<span className="palate-card__required" aria-label={t.required}>
+								<span className="tasting-card__required" aria-label={t.required}>
 									*
 								</span>
 							)}
@@ -92,7 +92,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 						{category === 'Balance' && (
 							<input
 								type="text"
-								className="tasting-input palate-balance-note"
+								className="tasting-input tasting-input--block"
 								aria-label={t.balanceAria}
 								placeholder={t.balancePlaceholder}
 								maxLength={120}
@@ -106,11 +106,11 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 
 			{/* Confirm from the nose: six rows, one tap each, plus an optional note. */}
 			<div className="palate-notes tasting-card">
-				<div className="palate-notes__header">
+				<div className="tasting-card__head">
 					<span className="tasting-card__label" id="palate-confirm-label">
 						{t.confirm}
 					</span>
-					<span className="palate-notes__sublabel">{t.anythingChanged}</span>
+					<span className="tasting-aside">{t.anythingChanged}</span>
 				</div>
 				<div className="palate-confirm" role="group" aria-labelledby="palate-confirm-label">
 					{CONFIRM_ROWS.map((row) => {
@@ -143,8 +143,8 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 						);
 					})}
 				</div>
-				<label className="palate-confirm__note-label" htmlFor="palate-confirm-nose">
-					{t.whatChanged} <span className="palate-confirm__optional">{text.optional}</span>
+				<label className="palate-confirm__label palate-confirm__label--field" htmlFor="palate-confirm-nose">
+					{t.whatChanged} <span className="tasting-aside">{text.optional}</span>
 				</label>
 				<textarea
 					id="palate-confirm-nose"

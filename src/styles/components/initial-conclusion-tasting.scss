@@ -1,13 +1,5 @@
 @use '../abstracts' as *;
-// Initial Conclusion page
-
-// ── 2-column layout ───────────────────────────────────────────────────────────
-.ic-layout {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: $spacing-xl;
-	align-items: start;
-}
+// Initial Conclusion page. The two columns are a .tasting-grid--2.
 
 .ic-col {
 	display: flex;
@@ -18,19 +10,4 @@
 // Sections after the first in a column need air above them; the type is .section-label.
 .section-label--mt {
 	margin-top: $spacing-sm;
-}
-
-// ── Phone: one column ────────────────────────────────────────────────────────
-@include responsive($breakpoint-mobile) {
-	.ic-layout {
-		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-}
-
-// ── Narrow main area: one column ──────────────────────────────────────────────
-@container tasting-main (max-width: 600px) {
-	.ic-layout {
-		grid-template-columns: 1fr;
-	}
 }

@@ -1,21 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
 import { IconArrowRight } from '@tabler/icons-react';
+import Wordmark from './Wordmark';
 
-type AuthHeaderProps = {
+export type AuthHeaderProps = {
 	contextLink: { href: string; label: string; contextLabel: string };
 };
 
+/** The site header's bar with only the wordmark and the one link an auth page needs. */
 export default function AuthHeader({ contextLink }: AuthHeaderProps) {
 	return (
-		<header className="auth-header">
-			<Link href="/" className="auth-header-logo no-underline">
-				The Sommelier<em className="logo-serif">&apos;s</em> Ledger
+		<header className="site-header">
+			<Link href="/" className="site-header__logo">
+				<Wordmark />
 			</Link>
-			<Link href={contextLink.href} className="auth-header-link no-underline">
-				<span className="auth-nav-label">{contextLink.contextLabel}</span>
-				<span className="auth-nav-action">{contextLink.label}</span>
-				<span className="auth-nav-arrow">
+			<Link href={contextLink.href} className="site-header__context">
+				<span className="site-header__context-label">{contextLink.contextLabel}</span>
+				<span className="site-header__context-action">{contextLink.label}</span>
+				<span className="site-header__context-arrow">
 					<IconArrowRight size={12} />
 				</span>
 			</Link>

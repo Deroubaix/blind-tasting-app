@@ -36,7 +36,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 		return <FlightMessage>{error || t.loadFailed}</FlightMessage>;
 	}
 	if (!summary) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 
 	const revealed = summary.wines.filter((wine) => wine.revealed).length;
@@ -44,19 +44,19 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 
 	return (
 		<main className="flight-main">
-			<Link href={`/flights/${code}`} className="flight-back no-underline">
+			<Link href={`/flights/${code}`} className="back-link">
 				← {summary.name}
 			</Link>
-			<header className="flight-head">
+			<header className="page-head">
 				<div>
-					<span className="page-eyebrow">
+					<span className="page-head__eyebrow">
 						{text.bits.summary} ·{' '}
 						{revealed === summary.wines.length
 							? text.bits.allRevealed(revealed)
 							: text.bits.revealedOf(revealed, summary.wines.length)}
 					</span>
-					<h1 className="flight-head__title">{summary.name}</h1>
-					<p className="flight-head__sub">
+					<h1 className="page-head__title">{summary.name}</h1>
+					<p className="page-head__sub">
 						{date} · {text.bits.hostedBy(summary.hostName)} · {text.bits.tasters(summary.members.length)} ·{' '}
 						{formatTimer(summary.timerSeconds, lang)}
 					</p>
@@ -94,7 +94,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 									{wine.revealed ? (
 										<Link
 											href={`/flights/${code}/wines/${wine.number}`}
-											className="flight-link no-underline"
+											className="text-link text-link--sm"
 										>
 											{wine.title}
 										</Link>
@@ -168,7 +168,10 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 				<p className="flight-confused">
 					<span className="tasting-card__label">{t.mostConfused}</span>
 					<span>
-						<Link href={`/flights/${code}/wines/${summary.mostConfused.number}`} className="flight-link">
+						<Link
+							href={`/flights/${code}/wines/${summary.mostConfused.number}`}
+							className="text-link text-link--sm"
+						>
 							{t.confusedWine(summary.mostConfused.number, summary.mostConfused.title)}
 						</Link>
 						{t.confusedAverage(

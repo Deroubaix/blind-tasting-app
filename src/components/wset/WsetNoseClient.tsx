@@ -55,7 +55,7 @@ export default function WsetNoseClient({ wineType }: { wineType: 'red' | 'white'
 				onNext: () => router.push(`/tastings/palate?wineType=${wineType}`),
 			}}
 		>
-			<div className="wset-grid wset-grid--two">
+			<div className="tasting-grid tasting-grid--2">
 				{['Condition', 'Intensity'].map((key) => (
 					<OptionCard
 						key={key}

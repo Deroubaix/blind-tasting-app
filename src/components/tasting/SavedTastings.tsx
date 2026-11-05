@@ -162,7 +162,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 				nextLoading: isLoading,
 			}}
 		>
-			<div className="save-layout">
+			<div className="tasting-grid tasting-grid--2">
 				{/* Notes */}
 				<div className="tasting-card">
 					<div className="tasting-card__label">{t.notes}</div>
@@ -193,7 +193,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 							{/* eslint-disable-next-line @next/next/no-img-element */}
 							<img src={labelPhoto.preview} alt={t.photoAlt} className="save-photo-preview__img" />
 							<button
-								className="save-photo-remove"
+								className="btn-quiet btn-quiet--sm"
 								onClick={() => {
 									setLabelPhoto(null);
 									clearPhotoInput();
@@ -205,7 +205,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 						</div>
 					) : (
 						<button
-							className="save-photo-btn"
+							className="btn-quiet btn-quiet--block"
 							onClick={() => fileInputRef.current?.click()}
 							disabled={isLoading}
 						>
@@ -227,9 +227,9 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 							onClick={() => setRevealOpen((open) => !open)}
 						>
 							<span className="save-reveal__text">
-								<span className="save-reveal__eyebrow">
+								<span className="tasting-card__head">
 									<span className="tasting-card__label">{t.reveal}</span>
-									<span className="save-reveal__optional">{text.optional}</span>
+									<span className="tasting-aside">{text.optional}</span>
 								</span>
 								<span className="save-reveal__title">{t.revealTitle}</span>
 								<span className="save-reveal__sub">{t.revealSub}</span>

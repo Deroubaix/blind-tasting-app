@@ -1,104 +1,39 @@
 @use '../abstracts' as *;
-// Nose Assessment page
+@use 'tasting-phase-layout' as layout;
+// Nose Assessment page. Grid, cards, groups and dividers come from tasting-inputs.
 
-// ── Assessment grids ──────────────────────────────────────────────────────────
-.nose-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: $spacing-md;
-	margin-bottom: $spacing-md;
+// The wine hues each fruit family is drawn in.
+$fruit-hues: (
+	'red': #9b1b30,
+	'blue': #5c2d6e,
+	'black': #3d1515,
+	'dried': #8b5e3c,
+	'citrus': #c8a020,
+	'stone': #c07848,
+	'orchard': #5c8b5c,
+	'tropical': #b87820,
+);
 
-	// Primary Fruit Profile uses 2 columns
-	&--two-col {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-// ── Category card (base styles from .tasting-card) ───────────────────────────
-
-// ── Fruit category (no background) ───────────────────────────────────────────
-// Used for: Primary Fruit Profile — sits directly on page background
-.nose-fruit-category {
-	padding: $spacing-xs 0;
-
-	// Group label beside its wine-hue dot — accent, one step down from a card
-	// label on both size and tracking.
-	&__label {
-		@include eyebrow-label($text-11, $tasting-accent-light);
-		letter-spacing: 0.14em;
-		margin-bottom: $spacing-xs;
-		display: flex;
-		align-items: center;
-		gap: $spacing-xs;
-	}
-}
-
-// ── Fruit category color dots ─────────────────────────────────────────────────
 .nose-fruit-dot {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
 	flex-shrink: 0;
 
-	// Red wine fruit types
-	&--red {
-		background-color: #9b1b30;
+	@each $name, $hue in $fruit-hues {
+		&--#{$name} {
+			background-color: $hue;
+		}
 	}
-	&--blue {
-		background-color: #5c2d6e;
-	}
+
+	// Near-black on the page ground; the ring keeps it visible.
 	&--black {
-		background-color: #3d1515;
-		box-shadow: 0 0 0 1px rgba(228, 228, 204, 0.15);
+		box-shadow: 0 0 0 1px $rule-folio;
 	}
-	&--dried {
-		background-color: #8b5e3c;
-	}
-
-	// White wine fruit types
-	&--citrus {
-		background-color: #c8a020;
-	}
-	&--stone {
-		background-color: #c07848;
-	}
-	&--orchard {
-		background-color: #5c8b5c;
-	}
-	&--tropical {
-		background-color: #b87820;
-	}
-}
-
-// ── Equal-width pill variant (Fruit Character, Condition) ─────────────────────
-.tasting-options--equal {
-	flex-wrap: nowrap;
-
-	.tasting-option {
-		flex: 1;
-		justify-content: center;
-		text-align: center;
-		padding: 11px 10px;
-	}
-}
-
-// ── Custom "other" input ──────────────────────────────────────────────────────
-.nose-other-input {
-	display: inline-flex;
-	align-items: center;
-	gap: $spacing-xs;
-}
-
-// ── Non-collapsible section divider (Primary Fruit Profile) ───────────────────
-.nose-section-divider {
-	margin-top: $spacing-xl;
-	margin-bottom: $spacing-md;
-	padding-bottom: $spacing-sm;
-	border-bottom: 1px solid $tasting-border;
 }
 
 // ── Wood Exposure layout ──────────────────────────────────────────────────────
-// Oak descriptors (wide, no bg) on the left; new oak, intensity and type stacked on the right
+// Oak descriptors (wide) on the left; new oak, intensity and type stacked on the right.
 .nose-wood-layout {
 	display: grid;
 	grid-template-columns: 2fr 3fr;
@@ -112,23 +47,13 @@
 	}
 }
 
-// ── Collapsible section header ────────────────────────────────────────────────
+// ── Collapsible section header (a .tasting-divider that toggles) ──────────────
 .nose-section-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	width: 100%;
-	padding: $spacing-sm 0;
-	background: none;
-	border: none;
-	border-bottom: 1px solid $tasting-border;
-	cursor: pointer;
-	margin-top: $spacing-xl;
-	margin-bottom: $spacing-md;
-	@include transition(border-color, 0.2s);
+	padding-top: $spacing-sm;
+	transition: border-color 0.15s ease;
 
 	&:hover {
-		border-bottom-color: rgba(228, 228, 204, 0.22);
+		border-bottom-color: $rule-mid;
 	}
 
 	&__right {
@@ -137,22 +62,14 @@
 		gap: $spacing-sm;
 		color: $color-text-secondary;
 	}
-
-	&__count {
-		font-size: $font-size-xs;
-		font-family: $font-display-normal-family;
-		color: $color-text-muted;
-		font-style: italic;
-		font-weight: $font-weight-regular;
-	}
 }
 
 // ── Collapsible content wrapper ───────────────────────────────────────────────
-// CSS grid trick for smooth height animation without JS measuring
+// Grid rows animate the height without measuring it in JS.
 .nose-collapsible {
 	display: grid;
 	grid-template-rows: 1fr;
-	@include transition(grid-template-rows, 0.25s, ease);
+	transition: grid-template-rows 0.25s ease;
 	overflow: hidden;
 
 	&--collapsed {
@@ -164,26 +81,14 @@
 	}
 }
 
-// ── Phone: one column ────────────────────────────────────────────────────────
-@include responsive($breakpoint-mobile) {
-	.nose-grid {
-		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-
+@include layout.narrow {
 	.nose-wood-layout {
 		grid-template-columns: 1fr;
-		gap: 12px;
 	}
 }
 
-// ── Narrow main area: two columns, oak stacked ────────────────────────────────
-@container tasting-main (max-width: 720px) {
-	.nose-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-
+@include responsive($breakpoint-mobile) {
 	.nose-wood-layout {
-		grid-template-columns: 1fr;
+		gap: 12px;
 	}
 }

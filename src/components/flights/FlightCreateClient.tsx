@@ -66,7 +66,7 @@ export default function FlightCreateClient() {
 	};
 
 	if (!ready) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 
 	return (

@@ -111,7 +111,7 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 					/>
 					<div className="tasting-card">
 						<label className="tasting-card__label" htmlFor="wset-reasons">
-							{t.reasons} <span className="wset-optional">{t.reasonsHint}</span>
+							{t.reasons} <span className="tasting-aside">{t.reasonsHint}</span>
 						</label>
 						<textarea
 							id="wset-reasons"
@@ -125,12 +125,12 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 					</div>
 
 					<div className="wset-group">
-						<div className="nose-section-divider">
+						<div className="tasting-divider">
 							<span className="section-label">{t.wineItself}</span>
 						</div>
 						<p className="wset-lede">{t.identityLede}</p>
 					</div>
-					<div className="fc-grid">
+					<div className="tasting-grid">
 						<ChipSearchField
 							id="wset-grape"
 							className="fc-field"

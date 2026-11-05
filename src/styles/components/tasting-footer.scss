@@ -1,6 +1,6 @@
 @use '../abstracts' as *;
-@use 'sass:color';
-// Tasting Footer — sticky bottom bar shared by all tasting phase pages
+// Tasting Footer — sticky bottom bar shared by all tasting phase pages.
+// Start over is a .btn-quiet--sm and Next a .btn-primary; only the layout lives here.
 
 .tasting-footer {
 	position: fixed;
@@ -9,36 +9,17 @@
 	right: 0;
 	height: 60px;
 	background-color: $color-darkGrey;
-	border-top: 1px solid $tasting-border;
+	border-top: 1px solid $rule;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 0 $page-spacing;
-	z-index: $index-navbar - 100;
+	z-index: $index-sticky;
 
 	&__left {
 		display: flex;
 		align-items: center;
 		gap: $spacing-md;
-	}
-
-	&__start-over {
-		@include icon-label($text-8);
-
-		background: none;
-		border: 1px solid rgba(228, 228, 204, 0.2);
-		border-radius: 8px;
-		padding: 7px 14px;
-		color: $color-text-secondary;
-		cursor: pointer;
-
-		@include action-label;
-		@include transition(color border-color, 0.15s);
-
-		&:hover {
-			color: $color-white;
-			border-color: rgba(228, 228, 204, 0.4);
-		}
 	}
 
 	&__start-over-icon,
@@ -48,31 +29,14 @@
 	}
 
 	&__back-btn {
+		@include bare-button;
 		@include icon-label;
-
-		background: none;
-		border: none;
-		padding: 0;
-		color: $color-text-secondary;
-		cursor: pointer;
-
-		@include action-label;
-		letter-spacing: 0.05em;
-		@include transition(color, 0.2s);
-
-		&:hover {
-			color: $color-white;
-		}
-	}
-
-	&__next {
-		// All styles come from .btn-primary — no overrides needed.
+		@include quiet-link($text-13);
 	}
 }
 
 // ── Phone action bar ─────────────────────────────────────────────────────────
-// Thumb zone: Reset and Back become 54x52 icon squares, Next takes the rest. 52px targets
-// against the desktop bar's ~30px.
+// Thumb zone: Start over and Back become 54x52 icon squares, Next takes the rest.
 @include responsive($breakpoint-mobile) {
 	.tasting-footer {
 		height: auto;
@@ -91,14 +55,11 @@
 			width: 54px;
 			height: 52px;
 			flex-shrink: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
 			gap: 0;
 			padding: 0;
-			border-radius: 12px;
+			border: 1px solid $rule;
+			border-radius: $radius;
 			background-color: $tasting-m-control;
-			border: 1px solid rgba(228, 228, 204, 0.1);
 			color: $color-text-secondary;
 		}
 
@@ -108,19 +69,10 @@
 			display: none;
 		}
 
-		&__start-over-icon,
-		&__back-icon {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		// Layout only — the type comes from .btn-primary, same as every other breakpoint.
 		&__next {
 			flex: 1;
 			min-width: 0;
 			height: 52px;
-			border-radius: 12px;
 			padding: 0 $spacing-sm;
 		}
 	}

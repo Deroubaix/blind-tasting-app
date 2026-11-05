@@ -13,8 +13,7 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { resetPasswordSchema, PASSWORD_MIN_LENGTH, type ResetPasswordFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
-import AuthHeader from '../layout/AuthHeader';
-import Footer from '../layout/Footer';
+import AuthShell from './AuthShell';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { translatedResolver } from '../../utils/FormUtils';
@@ -71,96 +70,78 @@ export default function ResetPasswordForm() {
 
 	if (isInvalidLink) {
 		return (
-			<div className="auth-page">
-				<AuthHeader contextLink={{ href: '/login', label: shared.logIn, contextLabel: t.goBack }} />
-				<main className="auth-main">
-					<div className="auth-container">
-						<header className="auth-card-head">
-							<span className="page-eyebrow">{t.invalidEyebrow}</span>
-							<h1>
-								{t.invalidBefore}
-								<em>{t.invalidEm}</em>
-								{t.invalidAfter}
-							</h1>
-							<p className="auth-subheading">{t.invalidSubheading}</p>
-						</header>
-						<p className="auth-switch">
-							<Link href="/forgot-password" className="auth-switch-link">
-								{t.requestNew}
-							</Link>
-						</p>
-					</div>
-				</main>
-				<Footer />
-			</div>
+			<AuthShell contextLink={{ href: '/login', label: shared.logIn, contextLabel: t.goBack }}>
+				<header className="auth-card-head">
+					<span className="page-eyebrow">{t.invalidEyebrow}</span>
+					<h1>
+						{t.invalidBefore}
+						<em>{t.invalidEm}</em>
+						{t.invalidAfter}
+					</h1>
+					<p className="body-copy">{t.invalidSubheading}</p>
+				</header>
+				<p className="auth-switch">
+					<Link href="/forgot-password" className="auth-switch__link">
+						{t.requestNew}
+					</Link>
+				</p>
+			</AuthShell>
 		);
 	}
 
 	return (
-		<div className="auth-page">
-			<AuthHeader contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }} />
+		<AuthShell contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }}>
+			<header className="auth-card-head">
+				<span className="page-eyebrow">{t.eyebrow}</span>
+				<h1>
+					{t.headingBefore}
+					<em>{t.headingEm}</em>
+					{t.headingAfter}
+				</h1>
+				<p className="body-copy">{t.subheading(PASSWORD_MIN_LENGTH)}</p>
+			</header>
 
-			<main className="auth-main">
-				<div className="auth-container">
-					<header className="auth-card-head">
-						<span className="page-eyebrow">{t.eyebrow}</span>
-						<h1>
-							{t.headingBefore}
-							<em>{t.headingEm}</em>
-							{t.headingAfter}
-						</h1>
-						<p className="auth-subheading">{t.subheading(PASSWORD_MIN_LENGTH)}</p>
-					</header>
+			<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
+				{error && <p className="auth-error">{error}</p>}
 
-					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
-						{error && <p className="auth-error">{error}</p>}
-
-						<FormControl className="auth-field" name="password">
-							<div className="auth-label-row">
-								<Label className="item-label">{t.newPassword}</Label>
-								<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
-							</div>
-							<div className="auth-input-wrapper">
-								<TextInput
-									className="auth-input"
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="new-password"
-									placeholder="••••••••"
-								/>
-								<button
-									type="button"
-									className="auth-eye-btn"
-									onClick={() => setShowPassword((v) => !v)}
-									aria-label={showPassword ? shared.hidePassword : shared.showPassword}
-								>
-									{showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-								</button>
-							</div>
-						</FormControl>
-
-						<FormControl className="auth-field" name="confirmPassword">
-							<Label className="item-label">{t.confirmPassword}</Label>
-							<TextInput
-								className="auth-input"
-								type={showPassword ? 'text' : 'password'}
-								autoComplete="new-password"
-								placeholder="••••••••"
-							/>
-						</FormControl>
-
+				<FormControl className="auth-field" name="password">
+					<div className="auth-label-row">
+						<Label className="item-label">{t.newPassword}</Label>
+						<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
+					</div>
+					<div className="auth-input-wrapper">
+						<TextInput
+							className="ledger-field"
+							type={showPassword ? 'text' : 'password'}
+							autoComplete="new-password"
+							placeholder="••••••••"
+						/>
 						<button
-							className="auth-submit btn-primary btn-primary--auth"
-							type="submit"
-							disabled={isLoading}
+							type="button"
+							className="auth-eye-btn"
+							onClick={() => setShowPassword((v) => !v)}
+							aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 						>
-							{isLoading ? t.saving : t.submit}
-							<IconArrowRight size={15} />
+							{showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
 						</button>
-					</Form>
-				</div>
-			</main>
+					</div>
+				</FormControl>
 
-			<Footer />
-		</div>
+				<FormControl className="auth-field" name="confirmPassword">
+					<Label className="item-label">{t.confirmPassword}</Label>
+					<TextInput
+						className="ledger-field"
+						type={showPassword ? 'text' : 'password'}
+						autoComplete="new-password"
+						placeholder="••••••••"
+					/>
+				</FormControl>
+
+				<button className="btn-primary btn-primary--block auth-submit" type="submit" disabled={isLoading}>
+					{isLoading ? t.saving : t.submit}
+					<IconArrowRight size={15} />
+				</button>
+			</Form>
+		</AuthShell>
 	);
 }

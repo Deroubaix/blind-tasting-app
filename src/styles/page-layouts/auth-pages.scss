@@ -1,75 +1,20 @@
 @use '../abstracts' as *;
-@use 'sass:color';
 
+// Log in, sign up, forgot and reset password: AuthShell's frame. The bar is .site-header (AuthHeader).
 .auth-page {
 	min-height: 100dvh;
 	display: flex;
 	flex-direction: column;
+	padding-top: var(--navbar-height_approx);
 	background-color: $color-black;
 }
 
-// ── Auth header ───────────────────────────────────────────────────────────────
-.auth-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 ($page-spacing * 1.5);
-	height: var(--navbar-height_approx);
-	border-bottom: 1px solid rgba(228, 228, 204, 0.06);
-	flex-shrink: 0;
-}
-
-.auth-header-logo {
-	@include eyebrow-label($text-12, $color-white);
-	letter-spacing: 0.18em;
-
-	&:after {
-		display: none;
-	}
-}
-
-.auth-header-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	font-size: $text-11-5;
-	font-weight: 600;
-	letter-spacing: 0.18em;
-	text-transform: uppercase;
-	font-family: $font-display-normal-family;
-	transition: color 0.2s ease;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover .auth-nav-label {
-		color: $color-text-secondary;
-	}
-}
-
-.auth-nav-label {
-	color: $color-text-muted;
-	transition: color 0.2s ease;
-}
-
-.auth-nav-action {
-	color: $color-white;
-}
-
-.auth-nav-arrow {
-	color: $color-display-accent;
-	display: flex;
-	align-items: center;
-}
-
-// ── Main form area ────────────────────────────────────────────────────────────
 .auth-main {
 	flex: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 3rem ($page-spacing * 1.5);
+	padding: 48px 56px;
 	position: relative;
 
 	&::before {
@@ -77,11 +22,11 @@
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		background: radial-gradient(700px 500px at 50% 0%, rgba(74, 14, 14, 0.22), transparent 65%);
+		background: radial-gradient(700px 500px at 50% 0%, rgba($color-burgundy, 0.22), transparent 65%);
 	}
 
 	@include responsive($breakpoint-mobile) {
-		padding: 2rem ($page-spacing * 1.5);
+		padding: 32px 20px;
 	}
 }
 
@@ -95,23 +40,11 @@
 	gap: 2.25rem;
 }
 
-// ── Card head (eyebrow + heading + subtitle) ──────────────────────────────────
+// Eyebrow, heading, .body-copy.
 .auth-card-head {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
-}
-
-.auth-subheading {
-	font-size: $text-15;
-	color: $color-text-secondary;
-	line-height: 1.65;
-	margin: 0;
-
-	strong {
-		color: rgba(228, 228, 204, 0.78);
-		font-weight: 600;
-	}
 }
 
 // ── Form ──────────────────────────────────────────────────────────────────────
@@ -134,118 +67,40 @@
 }
 
 .auth-input-hint {
-	font-size: $text-10;
-	letter-spacing: 0.04em;
+	font-size: $text-11;
 	color: $color-text-muted;
-	font-weight: 500;
-	font-family: $font-display-normal-family;
 }
 
 .auth-forgot {
-	@include eyebrow-label($text-9-5);
-	transition: color 0.2s ease;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
+	@include quiet-link($text-10);
 }
 
+// The field with the show-password button inside its right edge.
 .auth-input-wrapper {
 	position: relative;
 
-	.auth-input {
-		width: 100%;
-		padding-right: 2.75rem;
-	}
-}
-
-.auth-input {
-	width: 100%;
-	background-color: $color-darkGrey;
-	border: 1px solid rgba(228, 228, 204, 0.06);
-	border-radius: 6px;
-	color: $color-white;
-	padding: 0.95rem 1rem;
-	font-family: $font-display-normal-family;
-	font-size: $text-15;
-	line-height: 1.3;
-	transition:
-		border-color 0.2s ease,
-		background-color 0.2s ease,
-		box-shadow 0.2s ease;
-
-	&::placeholder {
-		color: $color-text-muted;
-	}
-
-	&:hover {
-		border-color: rgba(228, 228, 204, 0.12);
-	}
-
-	&:focus {
-		outline: none;
-		border-color: $color-accent-light;
-		background-color: $color-surface-variant;
-	}
-
-	&:focus-visible {
-		box-shadow: 0 0 0 1px $color-accent-light;
-	}
-
-	// Override browser autofill — prevent background + text colour changes
-	&:-webkit-autofill,
-	&:-webkit-autofill:hover,
-	&:-webkit-autofill:focus,
-	&:-webkit-autofill:active {
-		-webkit-box-shadow: 0 0 0 1000px $color-surface-variant inset;
-		-webkit-text-fill-color: $color-white;
-		caret-color: $color-white;
-		transition:
-			background-color 9999s ease-in-out,
-			color 9999s ease-in-out;
+	.ledger-field {
+		padding-right: 52px;
 	}
 }
 
 .auth-eye-btn {
+	@include bare-button;
 	position: absolute;
-	right: 0.7rem;
+	right: 4px;
 	top: 50%;
 	transform: translateY(-50%);
-	background: none;
-	border: none;
+	width: 44px;
+	height: 44px;
 	color: $color-text-secondary;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0.4rem;
-	border-radius: 4px;
-	transition:
-		color 0.15s ease,
-		background-color 0.15s ease;
-	text-transform: none;
-	letter-spacing: 0;
+	transition: color 0.15s ease;
 
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
-
+	&:hover,
 	&:focus-visible {
-		outline: 2px solid $color-accent-light;
-		outline-offset: 1px;
+		color: $color-white;
 	}
 }
 
-// Colours, sizing, hover, focus, and disabled come from .btn-primary.btn-primary--auth.
-// Only the form-specific margin lives here.
 .auth-submit {
 	margin-top: 0.4rem;
 }
@@ -255,17 +110,19 @@
 	color: $color-error;
 	margin: 0;
 	padding: 0.5rem 0.75rem;
-	background-color: rgba(229, 115, 115, 0.1);
+	background-color: rgba($color-error, 0.1);
 	border-left: 2px solid $color-error;
+
+	a {
+		@include ledger-link;
+	}
 }
 
-// ── Success state icon ────────────────────────────────────────────────────────
 .auth-success-icon {
+	@include icon-tile($color-status-ok);
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
-	@include icon-tile($color-status-ok);
-
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -278,19 +135,8 @@
 	color: $color-text-secondary;
 	text-align: center;
 	margin: 0;
-}
 
-.auth-switch-link {
-	color: $color-white;
-	font-weight: 600;
-	border-bottom: 1px solid rgba(228, 228, 204, 0.12);
-	padding-bottom: 1px;
-	transition: border-color 0.2s ease;
-
-	&:after {
-		display: none;
-	}
-	&:hover {
-		border-color: $color-accent;
+	&__link {
+		@include ledger-link;
 	}
 }

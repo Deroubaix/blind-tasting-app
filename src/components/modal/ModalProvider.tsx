@@ -75,7 +75,7 @@ export default function ModalProvider(props: ModalProviderProps) {
 		<ModalProviderContext.Provider value={value}>
 			{children}
 			{modals.length > 0 && (
-				<div className="ModalProvider">
+				<div className="modal-stack">
 					{modals.map((modalProps) => (
 						<Modal
 							key={modalProps.modalId}

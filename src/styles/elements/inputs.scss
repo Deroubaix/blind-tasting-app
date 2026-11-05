@@ -1,57 +1,19 @@
 @use '../abstracts' as *;
-@mixin set-input-group-colors($color) {
-	label {
-		color: $color;
-	}
 
-	input,
-	textarea,
-	select {
-		@include set-input-color($color);
-	}
-}
-
-@mixin set-input-color($color) {
-	border-color: $color;
-	color: $color;
-	background-color: transparent;
-
-	svg.tabler-icon,
-	+ svg.tabler-icon {
-		stroke: $color;
-	}
-
-	&::placeholder {
-		color: get-transparent-color($color, 20%);
-	}
-	@include active-state {
-		background-color: get-transparent-color($color, 10%);
-	}
-}
-
-// Labels
-
+// Fields are neutral; each form styles its own. What every field shares is here.
 label {
 	display: block;
-	font-size: 0.75em;
-	font-weight: 300;
-	color: $color-primary;
 }
-
-// Shared styles
-
-@include set-input-group-colors($color-primary); // Setting all inputs to primary-color by default
 
 input,
 textarea,
 select {
-	font-family: $font-body-normal-family;
-	font-weight: $font-body-normal-weight;
-	font-size: 0.9em;
-	transition: background-color 60ms ease-in-out;
-	&:hover {
-		cursor: text;
-	}
+	margin: 0;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
 }
 
 // iOS Safari zooms the page into any focused field whose text is under 16px, and does not zoom
@@ -59,90 +21,8 @@ select {
 // screens therefore get 16px in every field. `!important` because the tasting inputs set their
 // own compact size at higher specificity; this one rule has to win over all of them.
 @media (pointer: coarse) {
-	input:not([type='checkbox']):not([type='radio']),
-	textarea,
-	select {
+	// :where() keeps this at zero specificity, so a larger field's own !important size (the join code) wins.
+	:where(input:not([type='checkbox']):not([type='radio']), textarea, select) {
 		font-size: max(1rem, 16px) !important;
-	}
-}
-
-input:not([type='checkbox']),
-select {
-	padding: 1em 1em;
-	position: relative;
-
-	border-width: 0px;
-	border-bottom-width: 2px;
-}
-
-// Dropdown (selects)
-
-select {
-	padding-right: 2rem;
-	&:hover {
-		cursor: pointer;
-	}
-}
-
-// Textareas
-
-textarea {
-	padding: 0.5em 1em;
-	line-height: 1.15em;
-	border: 2px solid;
-}
-
-// Checkboxes
-
-label.checkbox {
-	display: flex;
-	flex-wrap: nowrap;
-	align-items: center;
-}
-
-.Checkbox {
-	margin-right: 0.5em;
-
-	&.checked {
-		input[type='checkbox'] {
-			background-color: $color-primary;
-		}
-		svg.tabler-icon {
-			stroke: $color-secondary;
-		}
-		@include active-state {
-			input[type='checkbox'] {
-				background-color: get-transparent-color($color-primary, 50%);
-			}
-			svg.tabler-icon {
-				stroke: $color-primary;
-			}
-		}
-	}
-}
-
-@mixin set-checkbox-size($size) {
-	width: $size;
-	height: $size;
-	+ svg.tabler-icon {
-		width: calc($size * 0.8);
-		height: calc($size * 0.8);
-	}
-}
-input[type='checkbox'] {
-	appearance: none;
-	border: 2px solid;
-	margin: 0;
-
-	@include set-checkbox-size(2em);
-	@include set-input-color($color-primary);
-	cursor: pointer;
-
-	&.small {
-		@include set-checkbox-size(1.25em);
-	}
-
-	&.large {
-		@include set-checkbox-size(2.5em);
 	}
 }

@@ -1,52 +1,12 @@
 @use '../abstracts' as *;
-// Palate Assessment page
+@use 'tasting-phase-layout' as layout;
+// Palate Assessment page. Grid, cards and fields come from tasting-inputs.
 
-// ── 2-column category grid ────────────────────────────────────────────────────
-.palate-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: $spacing-md;
-	margin-bottom: $spacing-lg;
-}
-
-// ── Card required marker ──────────────────────────────────────────────────────
-.palate-card__required {
-	// The light accent: the base accent measured 2.5:1 on the card, too faint to read.
-	color: $tasting-accent-light;
-	margin-left: 3px;
-	font-size: $text-11;
-	line-height: 1;
-	vertical-align: middle;
-}
-
-// ── Balance: what dominates ───────────────────────────────────────────────────
-input.palate-balance-note {
-	display: block;
-	width: 100%;
-	margin-top: $spacing-sm;
-}
-
-// ── Confirm from the Nose textarea card ────────────────────────────────────────────
+// ── Confirm from the Nose ─────────────────────────────────────────────────────
 .palate-notes {
 	margin-bottom: $spacing-lg;
-
-	&__header {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		margin-bottom: $spacing-sm;
-	}
-
-	&__sublabel {
-		font-size: $font-size-xs;
-		font-family: $font-display-normal-family;
-		color: $color-text-muted;
-		font-style: italic;
-		font-weight: $font-weight-regular;
-	}
 }
 
-// ── Confirm from the Nose rows ─────────────────────────────────────────────────
 .palate-confirm {
 	display: flex;
 	flex-direction: column;
@@ -61,42 +21,19 @@ input.palate-balance-note {
 	}
 
 	&__label {
-		font-size: $text-13;
-		font-weight: $font-weight-medium;
-		color: $color-text-secondary;
-	}
-
-	&__note-label {
 		display: block;
-		margin-bottom: $spacing-xs;
 		font-size: $text-13;
 		font-weight: $font-weight-medium;
 		color: $color-text-secondary;
-	}
 
-	&__optional {
-		margin-left: 4px;
-		font-size: $text-12;
-		font-style: italic;
-		font-weight: $font-weight-regular;
-		color: $color-text-muted;
+		// The note's label sits above its field rather than beside a row.
+		&--field {
+			margin-bottom: $spacing-xs;
+		}
 	}
 }
 
-// ── Phone: one column ────────────────────────────────────────────────────────
-@include responsive($breakpoint-mobile) {
-	.palate-grid {
-		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-}
-
-// ── Narrow main area: one column ──────────────────────────────────────────────
-@container tasting-main (max-width: 520px) {
-	.palate-grid {
-		grid-template-columns: 1fr;
-	}
-
+@include layout.narrow {
 	.palate-confirm__row {
 		grid-template-columns: 1fr;
 		gap: $spacing-xs;

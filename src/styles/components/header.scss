@@ -1,5 +1,4 @@
 @use '../abstracts' as *;
-@use 'sass:color';
 
 body.menu-open {
 	overflow: hidden;
@@ -10,151 +9,158 @@ body.menu-open {
 	}
 }
 
-$menu-padding-top: $page-spacing * 0.6;
-$menu-padding-sides: $page-spacing * 1.5;
-$item-gap: $page-spacing * 1.5;
+// The bar the site header and the open phone menu both start with.
+@mixin header-bar {
+	height: var(--navbar-height_approx);
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid $rule-soft;
+}
 
-// ── Account dropdown — shared between navbar and tasting header ───────────────
+// The right edge is 4px: the 44px icon button at the end carries its own space.
+$bar-padding-phone: 0 4px 0 16px;
+
+// One row of a menu: dropdown items, phone-menu links, log in/out.
+@mixin menu-row($color: $color-text-secondary) {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	color: $color;
+	text-align: left;
+	transition:
+		color 0.15s ease,
+		background-color 0.15s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: $color-white;
+	}
+
+	&--logout {
+		color: $color-error;
+	}
+}
+
+// ── Account: avatar, profile, dropdown — shared with the tasting header ──────
 .nav-user {
 	position: relative;
 	display: flex;
 	align-items: center;
 }
 
-.nav-icon-btn {
-	display: flex !important;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	padding: 0;
-	border-radius: 50%;
-	background: transparent !important;
-	border: none !important;
-	cursor: pointer;
-	text-transform: none;
-	letter-spacing: 0;
-	transition: opacity 0.2s ease;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		opacity: 0.75;
-	}
-}
-
 // The initial in a square, set in the ledger's serif.
 .nav-avatar {
 	width: 28px;
 	height: 28px;
-	border-radius: 2px;
-	background: $color-surface-variant;
-	border: 1px solid rgba($color-white, 0.14);
+	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border-radius: $radius-sm;
+	background: $color-surface-variant;
+	border: 1px solid $rule-folio;
 	font-family: $font-body-normal-family;
 	font-size: $text-14;
-	font-weight: $font-weight-regular;
 	color: $color-white;
 	pointer-events: none;
-	flex-shrink: 0;
+
+	&--lg {
+		width: 40px;
+		height: 40px;
+		font-size: $text-18;
+	}
+}
+
+.nav-profile {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	&__text {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		min-width: 0;
+	}
+}
+
+.nav-profile__name {
+	font-size: $text-14;
+	font-weight: $font-weight-semibold;
+	color: $color-white;
+}
+
+.nav-profile__email {
+	font-size: $text-12;
+	color: $color-text-secondary;
+	overflow-wrap: anywhere;
 }
 
 .nav-dropdown {
+	@include ledger-panel(0);
 	position: absolute;
 	top: calc(100% + 12px);
 	right: 0;
 	width: 240px;
-	background: $color-darkGrey;
-	border: 1px solid rgba($color-white, 0.12);
-	border-radius: 4px;
-	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+	box-shadow: $shadow-lift;
 	z-index: $index-navbar + 1;
 	overflow: hidden;
 
 	&__profile {
-		padding: 1rem 1rem 0.85rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
-	}
-
-	&__name {
-		font-size: $text-13-5;
-		font-weight: 600;
-		color: $color-white;
-		font-family: $font-display-normal-family;
-	}
-
-	&__email {
-		font-size: $text-12;
-		color: $color-text-secondary;
-		font-family: $font-display-normal-family;
+		gap: 2px;
+		padding: 16px 16px 14px;
 	}
 
 	&__divider {
 		height: 1px;
-		background: rgba(228, 228, 204, 0.08);
+		background: $rule-soft;
 
 		&--double {
 			height: 0;
 			margin-top: 6px;
 			background: none;
-			border-top: 3px double rgba($color-white, 0.12);
+			border-top: $rule-double;
 		}
 	}
 
 	&__item {
-		display: block;
-		width: 100%;
+		@include menu-row;
 		min-height: 40px;
 		padding: 0.6rem 1rem;
 		font-size: $text-14;
-		font-family: $font-display-normal-family;
-		color: $color-text-secondary;
-		text-align: left;
-		background: none;
-		border: none;
-		cursor: pointer;
-		transition:
-			color 0.2s ease,
-			background-color 0.2s ease;
-		letter-spacing: 0;
-		text-transform: none;
 
-		&:after {
-			display: none;
+		&:hover,
+		&:focus-visible {
+			background: $color-surface-variant;
 		}
 
-		&:hover {
-			color: $color-white;
-			background: rgba(228, 228, 204, 0.06);
-		}
-
-		&--logout {
-			color: rgba(229, 115, 115, 0.8);
+		// Inside the panel's overflow: hidden, an outset ring would be clipped.
+		&:focus-visible {
+			outline-offset: -2px;
 		}
 	}
 }
 
+// A 44px button that is only its icon: the phone menu's open and close.
+.nav-icon-btn {
+	@include bare-button;
+	width: 44px;
+	height: 44px;
+	flex-shrink: 0;
+	color: $color-white;
+}
+
 // ── Wordmark: the name, with one italic serif accent and a double underline ───
 .wordmark {
-	font-size: 1.0625rem;
+	font-size: $text-16;
 	font-weight: $font-weight-bold;
 	letter-spacing: -0.02em;
 	white-space: nowrap;
 	padding-bottom: 3px;
-	border-bottom: 3px double rgba($color-white, 0.24);
+	border-bottom: $rule-double;
 	color: $color-white;
-
-	em {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-weight: 500;
-	}
 
 	&--sm {
 		font-size: $text-15;
@@ -163,25 +169,18 @@ $item-gap: $page-spacing * 1.5;
 
 // ── Site header ───────────────────────────────────────────────────────────────
 .site-header {
+	@include header-bar;
 	position: fixed;
 	z-index: $index-navbar;
 	top: 0;
 	left: 0;
 	right: 0;
-	height: var(--navbar-height_approx);
-	display: flex;
-	align-items: center;
 	gap: 32px;
 	padding: 0 56px;
 	box-sizing: border-box;
-	background-color: rgba(20, 19, 19, 0.94);
+	background-color: rgba($color-black, 0.94);
 	backdrop-filter: blur(8px);
-	border-bottom: 1px solid rgba($color-white, 0.08);
 	font-family: $font-display-normal-family;
-
-	&__logo:after {
-		display: none;
-	}
 
 	&__nav {
 		display: flex;
@@ -194,27 +193,44 @@ $item-gap: $page-spacing * 1.5;
 		font-size: $text-14;
 		font-weight: $font-weight-medium;
 		color: $color-text-secondary;
+		transition: color 0.15s ease;
 
-		&:after {
-			display: none;
-		}
-
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			color: $color-white;
 		}
 
 		&--accent {
-			color: $tasting-accent-light;
+			color: $color-accent-light;
 			font-weight: $font-weight-semibold;
 		}
 	}
 
-	&__cta {
-		display: inline-flex;
-		align-items: center;
+	// The auth pages' one link: "New here? Sign up →".
+	&__context {
+		@include quiet-link;
+		@include icon-label(8px);
+		margin-left: auto;
 		min-height: 44px;
-		padding: 0 18px;
-		border-radius: 3px;
+
+		&:hover .site-header__context-label,
+		&:focus-visible .site-header__context-label {
+			color: $color-text-secondary;
+		}
+	}
+
+	&__context-label {
+		color: $color-text-muted;
+		transition: color 0.15s ease;
+	}
+
+	&__context-action {
+		color: $color-white;
+	}
+
+	&__context-arrow {
+		display: flex;
+		color: $color-accent-light;
 	}
 
 	&__cta-short,
@@ -224,21 +240,18 @@ $item-gap: $page-spacing * 1.5;
 
 	&__account {
 		@include bare-button;
-
 		gap: 10px;
 		padding: 6px 10px 6px 6px;
 		background: $color-darkGrey;
-		border: 1px solid rgba($color-white, 0.12);
-		border-radius: 3px;
-		color: $color-white;
+		border: 1px solid $rule;
+		border-radius: $radius;
 		font-size: $text-14;
 		font-weight: $font-weight-semibold;
+		transition: border-color 0.15s ease;
 
 		&:hover,
-		&:focus,
-		&:active {
-			background: $color-darkGrey;
-			border: 1px solid rgba($color-white, 0.3);
+		&:focus-visible {
+			border-color: $rule-mid;
 		}
 
 		svg {
@@ -247,22 +260,17 @@ $item-gap: $page-spacing * 1.5;
 	}
 
 	&__menu-btn {
-		@include bare-button;
-
 		display: none;
-		width: 44px;
-		height: 44px;
-		color: $color-white;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		padding: 0 24px;
 		gap: 16px;
 	}
 
 	// Phone: wordmark, Join, Start, menu.
 	@include responsive($breakpoint-mobile) {
-		padding: 0 4px 0 16px;
+		padding: $bar-padding-phone;
 		gap: 6px;
 
 		.wordmark {
@@ -286,25 +294,24 @@ $item-gap: $page-spacing * 1.5;
 			color: $color-white;
 		}
 
+		// A compact .btn-primary that still meets the 44px target.
 		&__cta,
 		&__cta--phone {
 			display: inline-flex;
-			min-height: 40px;
-			padding: 0 10px;
+			min-height: 44px;
+			padding: 0 12px;
 		}
 
 		&__cta-long {
 			display: none;
 		}
 
-		&__cta-short {
-			display: inline;
+		&__context {
+			padding-right: 12px;
 		}
 
-		&__menu-btn .nav-avatar {
-			width: 30px;
-			height: 30px;
-			font-size: $text-15;
+		&__cta-short {
+			display: inline;
 		}
 
 		&__user {
@@ -328,21 +335,10 @@ $item-gap: $page-spacing * 1.5;
 	overflow-y: auto;
 
 	&__head {
-		height: var(--navbar-height_approx);
-		display: flex;
-		align-items: center;
+		@include header-bar;
 		justify-content: space-between;
-		padding: 0 4px 0 16px;
-		border-bottom: 1px solid rgba($color-white, 0.08);
+		padding: $bar-padding-phone;
 		flex-shrink: 0;
-	}
-
-	&__close {
-		@include bare-button;
-
-		width: 44px;
-		height: 44px;
-		color: $color-white;
 	}
 
 	&__body {
@@ -353,53 +349,15 @@ $item-gap: $page-spacing * 1.5;
 		gap: 20px;
 	}
 
-	&__profile {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-
-		> span:last-child {
-			display: flex;
-			flex-direction: column;
-			font-size: $text-13;
-			color: $color-text-secondary;
-
-			strong {
-				font-size: $text-15;
-				color: $color-white;
-			}
-		}
-	}
-
-	&__initial {
-		width: 40px;
-		height: 40px;
-		border-radius: 2px;
-		background: #211f1f;
-		border: 1px solid rgba($color-white, 0.14);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-family: $font-body-normal-family;
-		font-size: 1.125rem;
-	}
-
 	&__join {
-		background: $color-darkGrey;
-		border: 1px solid rgba($color-white, 0.12);
-		border-radius: 4px;
-		padding: 14px;
+		@include ledger-panel(14px);
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
 	}
 
 	&__join-label {
-		font-size: $text-11;
-		font-weight: $font-weight-bold;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: $color-text-secondary;
+		@include ledger-label($text-11, $color-text-secondary);
 	}
 
 	&__join-row {
@@ -407,30 +365,12 @@ $item-gap: $page-spacing * 1.5;
 		gap: 8px;
 	}
 
-	input.site-menu__join-input {
+	&__join-input {
 		flex: 1;
-		min-width: 0;
-		height: 52px;
-		box-sizing: border-box;
-		padding: 0 14px;
-		background: #211f1f;
-		border: 1px solid rgba($color-white, 0.22);
-		border-radius: 3px;
-		color: $color-white;
-		font-family: $font-mono-family;
-		font-size: 1.375rem !important;
-		font-weight: 600;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-
-		&::placeholder {
-			color: rgba($color-white, 0.35);
-		}
 	}
 
 	&__join-btn {
 		min-width: 72px;
-		border-radius: 3px;
 	}
 
 	&__join-hint {
@@ -438,33 +378,19 @@ $item-gap: $page-spacing * 1.5;
 		color: $color-text-muted;
 	}
 
-	&__start {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 52px;
-		border-radius: 3px;
-	}
-
 	&__links {
 		display: flex;
 		flex-direction: column;
-		border-top: 1px solid rgba($color-white, 0.08);
+		border-top: 1px solid $rule-soft;
 	}
 
 	&__link {
+		@include menu-row($color-white);
 		min-height: 52px;
-		display: flex;
-		align-items: center;
 		justify-content: space-between;
-		border-bottom: 1px solid rgba($color-white, 0.08);
+		border-bottom: 1px solid $rule-soft;
 		font-size: $text-16;
 		font-weight: $font-weight-semibold;
-		color: $color-white;
-
-		&:after {
-			display: none;
-		}
 
 		svg {
 			color: $color-text-muted;
@@ -473,37 +399,31 @@ $item-gap: $page-spacing * 1.5;
 
 	&__foot {
 		margin-top: auto;
-		border-top: 3px double rgba($color-white, 0.12);
+		border-top: $rule-double;
 		padding-top: 6px;
 		display: flex;
 		flex-direction: column;
 	}
 
 	&__foot-link {
-		@include bare-button;
-
-		justify-content: flex-start;
+		@include menu-row;
 		min-height: 48px;
 		font-size: $text-15;
-		color: $color-text-secondary;
+	}
 
-		&:after {
-			display: none;
-		}
+	&__lang {
+		margin-top: 6px;
 	}
 }
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 .site-footer {
-	border-top: 3px double rgba($color-white, 0.24);
+	border-top: $rule-double;
 	background-color: $color-black;
 	font-family: $font-display-normal-family;
 
 	&__inner {
-		max-width: 1300px;
-		margin: 0 auto;
-		padding: 36px 56px 44px;
-		box-sizing: border-box;
+		padding-block: 36px 44px;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		gap: 24px 40px;
@@ -512,10 +432,6 @@ $item-gap: $page-spacing * 1.5;
 
 	&__logo {
 		justify-self: start;
-
-		&:after {
-			display: none;
-		}
 	}
 
 	&__nav {
@@ -526,12 +442,10 @@ $item-gap: $page-spacing * 1.5;
 		a {
 			font-size: $text-14;
 			color: $color-text-secondary;
+			transition: color 0.15s ease;
 
-			&:after {
-				display: none;
-			}
-
-			&:hover {
+			&:hover,
+			&:focus-visible {
 				color: $color-white;
 			}
 		}
@@ -541,16 +455,16 @@ $item-gap: $page-spacing * 1.5;
 		grid-column: 1 / -1;
 		margin: 0;
 		padding-top: 20px;
-		border-top: 1px solid rgba($color-white, 0.08);
+		border-top: 1px solid $rule-soft;
 		font-size: $text-12;
 		line-height: 1.6;
 		color: $color-text-muted;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		&__inner {
 			grid-template-columns: 1fr;
-			padding: 32px 24px 40px;
+			padding-block: 32px 40px;
 		}
 
 		&__nav a {

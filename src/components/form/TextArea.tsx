@@ -44,7 +44,7 @@ export default forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
 			ref={ref}
 			rows={rows}
 			cols={cols}
-			className={`TextArea ${className ?? ''}`}
+			className={`text-area ${className ?? ''}`}
 			placeholder={placeholder}
 			id={formControl?.fieldId}
 			disabled={disabled}

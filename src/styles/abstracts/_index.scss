@@ -2,11 +2,9 @@
 // Theme first, so the real palette is in scope before anything reads a colour.
 @forward 'theme-only';
 @forward 'font-scale';
-@forward 'functions';
 @forward 'layers';
 @forward 'ledger';
 @forward 'mixins';
 @forward 'responsiveness';
 @forward 'spacing';
-@forward 'typography';
 @forward 'tasting-tokens';

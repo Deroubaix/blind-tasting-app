@@ -27,7 +27,7 @@ function TastingPhone() {
 		<div className="home-phone" aria-hidden="true">
 			<div className="home-phone__bar">
 				<span>
-					<span className="home-label">{t.phase03}</span>
+					<span className="muted-label">{t.phase03}</span>
 					<strong>{t.palate}</strong>
 				</span>
 				<span className="home-phone__clock">3:12</span>
@@ -39,7 +39,7 @@ function TastingPhone() {
 			</div>
 			{scales.map(([name, on]) => (
 				<div key={name} className="home-phone__card">
-					<span className="home-label">{name}</span>
+					<span className="muted-label">{name}</span>
 					<span className="home-phone__opts">
 						{['Low', 'Med−', 'Med', 'Med+', 'High'].map((opt, i) => (
 							<span key={opt} className={i === on ? 'is-on' : ''}>
@@ -59,8 +59,8 @@ function RecentTastings({ tastings }: { tastings: Saved[] }) {
 	return (
 		<div className="home-card home-recent">
 			<div className="home-card__top">
-				<span className="home-kicker">{h.recent}</span>
-				<Link href="/archives" className="home-link no-underline">
+				<span className="page-eyebrow">{h.recent}</span>
+				<Link href="/archives" className="home-link">
 					{h.archive}
 				</Link>
 			</div>
@@ -73,7 +73,7 @@ function RecentTastings({ tastings }: { tastings: Saved[] }) {
 					return (
 						<li key={t.id} className="home-row home-row--link">
 							<span className="home-row__n">{t.number}</span>
-							<Link href={`/archives/${t.id}`} className="home-row__text no-underline">
+							<Link href={`/archives/${t.id}`} className="home-row__text">
 								<strong>
 									{revealed
 										? revealTitle(t.reveal!, lang)
@@ -114,28 +114,28 @@ export default function HomeHero() {
 	const showRecent = loggedIn && !!recent && recent.length > 0;
 
 	return (
-		<section className={`home-hero${showRecent ? ' home-hero--recent' : ''}`}>
+		<section className={`home-hero page-container${showRecent ? ' home-hero--recent' : ''}`}>
 			<div className="home-hero__text">
-				<span className="home-eyebrow">{t.eyebrow}</span>
+				<span className="page-head__eyebrow">{t.eyebrow}</span>
 				<h1 className="home-hero__title">
 					{t.title} <em>{t.titleEm}</em>
 				</h1>
-				<p className="home-hero__lede">{t.lede}</p>
+				<p className="body-copy body-copy--lg home-hero__lede">{t.lede}</p>
 				<div className="home-ctas">
-					<Link href="/tastings/start" className="btn-primary home-btn no-underline">
+					<Link href="/tastings/start" className="btn-primary">
 						{t.start}
 					</Link>
 					{loggedIn ? (
 						<>
-							<Link href="/flights/new" className="home-btn home-btn--outline no-underline">
+							<Link href="/flights/new" className="btn-quiet">
 								{t.host}
 							</Link>
-							<Link href="/flights/join" className="home-link no-underline">
+							<Link href="/flights/join" className="home-link">
 								{t.joinCode}
 							</Link>
 						</>
 					) : (
-						<Link href="/flights/join" className="home-link no-underline">
+						<Link href="/flights/join" className="home-link">
 							{t.haveCode}
 						</Link>
 					)}
@@ -151,11 +151,11 @@ export default function HomeHero() {
 			) : (
 				<div className="home-hero__visual">
 					<figure className="home-hero__moment home-hero__moment--taste">
-						<figcaption className="home-label">{t.whileYouTaste}</figcaption>
+						<figcaption className="muted-label">{t.whileYouTaste}</figcaption>
 						<TastingPhone />
 					</figure>
 					<figure className="home-hero__moment">
-						<figcaption className="home-label">{t.afterReveal}</figcaption>
+						<figcaption className="muted-label">{t.afterReveal}</figcaption>
 						<RevealCard />
 					</figure>
 				</div>

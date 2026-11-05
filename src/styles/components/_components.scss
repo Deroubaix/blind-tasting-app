@@ -4,12 +4,12 @@
 @use 'tasting-page-header';
 @use 'left-side-bar';
 @use 'tasting-phase-layout';
+@use 'tasting-inputs';
 @use 'tasting-footer';
 @use 'tasting-start-client';
 @use 'sight-tasting';
 @use 'nose-tasting';
 @use 'palate-tasting';
-@use 'tasting-inputs';
 @use 'initial-conclusion-tasting';
 @use 'final-conclusion-tasting';
 @use 'wset';
@@ -17,6 +17,7 @@
 @use 'archives';
 @use 'progress';
 @use 'account';
+@use 'agreement-scale';
 @use 'flights';
 @use 'reveal';
 @use 'toast';

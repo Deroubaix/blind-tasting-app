@@ -20,14 +20,14 @@ export default function FlightPageClient({ code }: { code: string }) {
 		return (
 			<FlightMessage>
 				<p>{error}</p>
-				<Link href="/flights" className="flight-link">
+				<Link href="/flights" className="text-link text-link--sm">
 					{t.backToFlights}
 				</Link>
 			</FlightMessage>
 		);
 	}
 	if (!flight) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 	if (flight.role === 'host') {
 		return <HostDashboard flight={flight} reload={reload} />;

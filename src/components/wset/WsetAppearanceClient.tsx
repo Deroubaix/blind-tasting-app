@@ -58,7 +58,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 				onNext: () => router.push(`/tastings/nose?wineType=${wineType}`),
 			}}
 		>
-			<div className="wset-grid wset-grid--two">
+			<div className="tasting-grid tasting-grid--2">
 				<OptionCard
 					label="Clarity"
 					options={WSET_APPEARANCE.Clarity}
@@ -83,7 +83,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 			/>
 			<div className="tasting-card">
 				<div className="tasting-card__label">
-					{WSET_OBSERVATIONS_KEY} <span className="wset-optional">{t.ifApparent}</span>
+					{WSET_OBSERVATIONS_KEY} <span className="tasting-aside">{t.ifApparent}</span>
 				</div>
 				<div className="tasting-options" role="group" aria-label={WSET_OBSERVATIONS_KEY}>
 					{WSET_OBSERVATIONS.map((option) => {
@@ -91,7 +91,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 						return (
 							<button
 								key={option}
-								className={`tasting-option tasting-option--pill${on ? ' tasting-option--selected' : ''}`}
+								className={`tasting-option tasting-option--compact${on ? ' tasting-option--selected' : ''}`}
 								aria-pressed={on}
 								onClick={() => toggleObservation(option)}
 							>

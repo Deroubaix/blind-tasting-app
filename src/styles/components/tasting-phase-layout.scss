@@ -2,6 +2,16 @@
 // Tasting Phase Layout — generic page shell shared by all tasting phase pages
 // (Sight, Nose, Palate, Initial Conclusion, Final Conclusion)
 
+// Below this the main area narrows its grids: the one threshold every phase uses.
+$narrow: 720px;
+
+// Sized against the main area, not the viewport: beside the sidebar on a tablet the viewport is wide but the room is not.
+@mixin narrow {
+	@container tasting-main (max-width: #{$narrow}) {
+		@content;
+	}
+}
+
 .tasting-phase-page {
 	display: flex;
 	flex-direction: column;
@@ -9,7 +19,6 @@
 	background-color: $color-black;
 	color: $color-white;
 	overflow: hidden;
-	font-family: $font-display-normal-family;
 }
 
 .tasting-phase-body {
@@ -19,9 +28,7 @@
 }
 
 .tasting-phase-main {
-	// The phase grids size themselves to this box, not to the viewport: beside the sidebar on a
-	// tablet the viewport is wide but the room left for a grid is not. Inline-size containment
-	// only, so the main area's height still comes from the flex layout.
+	// Inline-size only, so the height still comes from the flex layout.
 	container: tasting-main / inline-size;
 	flex: 1;
 	overflow: auto;
@@ -31,26 +38,18 @@
 
 .tasting-phase-content {
 	padding: $spacing-xxl $spacing-xxl 0;
-
-	// Answers and toggles are labels, not calls to action, so they drop the global
-	// uppercase. Scoped to the form: the footer is chrome, and its actions keep the
-	// action-button treatment so the row reads as one set.
-	button {
-		text-transform: none;
-		letter-spacing: normal;
-		min-width: unset;
-	}
 }
 
 // ── Shared page heading elements (used on every phase page) ───────────────────
 
 .phase-label {
-	@include eyebrow-label($text-10-5);
+	@include ledger-label($text-10-5, $color-text-secondary);
 	margin-bottom: $spacing-xxxs;
 
 	// The number is the part worth reading; the word is just its frame.
 	&__num {
-		color: $color-brand-1;
+		@include figures;
+		color: $color-accent-light;
 		font-size: 1.15em;
 	}
 }
@@ -61,7 +60,7 @@
 }
 
 .phase-description {
-	font-size: $font-size-sm;
+	font-size: $text-13;
 	font-style: italic;
 	color: $color-text-secondary;
 	margin: 0 0 $spacing-lg;
@@ -69,8 +68,7 @@
 }
 
 // ── Phone layout ─────────────────────────────────────────────────────────────
-// The desktop shell locks the viewport (100vh + overflow:hidden) around a 300px sidebar,
-// leaving 90px of unreachable content at 390px. The phone layout scrolls normally instead.
+// The desktop shell locks the viewport around a 300px sidebar; the phone layout scrolls normally instead.
 @include responsive($breakpoint-mobile) {
 	.tasting-phase-page {
 		height: auto;
@@ -97,15 +95,13 @@
 		padding: 16px;
 	}
 
-	// Both are in the header strip on this breakpoint; showing them twice would push
-	// the first question below the fold.
+	// Both are in the header strip on this breakpoint; twice would push the first question below the fold.
 	.phase-label,
 	.phase-label + h1 {
 		display: none;
 	}
 
 	.phase-description {
-		font-size: $text-13;
 		line-height: 1.55;
 		margin-bottom: 0;
 	}

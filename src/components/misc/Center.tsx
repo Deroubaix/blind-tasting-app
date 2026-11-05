@@ -9,5 +9,5 @@ export type CenterProps = {
 export default function Center(props: CenterProps) {
 	const { className, children } = props;
 
-	return <div className={`Center ${className ?? ''}`}>{children}</div>;
+	return <div className={`center ${className ?? ''}`}>{children}</div>;
 }

@@ -2,66 +2,18 @@
 @use '../abstracts' as *;
 // Home page: the ledger look (abstracts/_ledger) with square corners.
 
-$taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
-
 .home {
 	padding-top: var(--navbar-height_approx);
 	background-color: $color-black;
 	color: $color-white;
 	font-family: $font-display-normal-family;
-
-	em {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-weight: 500;
-		letter-spacing: -0.02em;
-	}
 }
 
 // ── Shared pieces ─────────────────────────────────────────────────────────────
+// Labels and eyebrows are the shared .muted-label and .page-eyebrow; copy is .body-copy.
 .home-muted {
 	color: $color-text-secondary;
 	font-size: $text-13;
-}
-
-.home-label {
-	@include ledger-label;
-}
-
-.home-kicker {
-	@include ledger-label;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	color: $color-text-secondary;
-
-	&::before {
-		content: '';
-		width: 5px;
-		height: 5px;
-		background: $color-text-muted;
-	}
-}
-
-.home-eyebrow {
-	@include ledger-label;
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	letter-spacing: 0.16em;
-	color: $color-text-secondary;
-	margin-bottom: 20px;
-
-	&::before {
-		content: '';
-		width: 6px;
-		height: 6px;
-		background: $color-text-muted;
-	}
-
-	&--plain::before {
-		display: none;
-	}
 }
 
 .home-no {
@@ -72,7 +24,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 
 .home-figure {
 	@include figures;
-	font-weight: 500;
+	font-weight: $font-weight-medium;
 	color: $color-white;
 	line-height: 1;
 	white-space: nowrap;
@@ -82,19 +34,15 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 
 	&--sm {
-		font-size: 1.05rem;
+		font-size: $text-16;
 	}
 
 	&--md {
-		font-size: 1.25rem;
+		font-size: $text-20;
 	}
 
 	&--lg {
-		font-size: 2.25rem;
-	}
-
-	&--xl {
-		font-size: 2.1rem;
+		font-size: $text-32;
 	}
 
 	&--warn {
@@ -104,24 +52,14 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	&--pending {
 		font-style: italic;
 		color: $color-text-secondary;
-		font-size: 1.05rem;
+		font-size: $text-16;
 	}
 }
 
 .home-link {
+	@include ledger-link;
 	font-size: $text-15;
-	font-weight: $font-weight-semibold;
-	color: $tasting-accent-light;
-	border-bottom: 1px solid rgba($color-white, 0.14);
 	padding-bottom: 2px;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
 }
 
 .home-ctas {
@@ -132,30 +70,6 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 
 	&--tight {
 		gap: 12px;
-	}
-}
-
-.home .home-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 48px;
-	padding: 0 24px;
-	border-radius: 3px;
-
-	&--outline {
-		@include action-label;
-		background: transparent;
-		border: 1px solid rgba($color-white, 0.22);
-		color: $color-white;
-
-		&:after {
-			display: none;
-		}
-
-		&:hover {
-			border-color: $color-white;
-		}
 	}
 }
 
@@ -172,10 +86,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 }
 
 .home-card {
-	background: $color-darkGrey;
-	border: 1px solid $rule;
-	border-radius: 4px;
-	padding: 20px 22px 16px;
+	@include ledger-panel(20px 22px 16px);
 
 	&__top {
 		display: flex;
@@ -202,23 +113,18 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 }
 
 .home-row {
+	@include ledger-row(8px);
 	display: grid;
 	grid-template-columns: 34px minmax(0, 1fr) auto;
 	column-gap: 12px;
 	align-items: center;
-	padding: 8px 0;
-	border-top: 1px solid $rule-soft;
 
 	&__n {
-		@include figures;
+		@include folio-number;
 		align-self: stretch;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		padding-right: 10px;
-		border-right: 1px solid $rule-folio;
-		font-size: $text-13;
-		color: $color-text-muted;
 	}
 
 	&__text {
@@ -227,10 +133,6 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		min-width: 0;
 		font-size: $text-14;
 		color: $color-white;
-
-		&:after {
-			display: none;
-		}
 	}
 }
 
@@ -251,7 +153,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 
 	&--quiet {
-		border-top-color: rgba($color-white, 0.12);
+		border-top-color: $rule;
 	}
 }
 
@@ -264,7 +166,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	align-items: center;
 	justify-content: center;
 	font-size: $text-11;
-	font-weight: 800;
+	font-weight: $font-weight-extrabold;
 	color: $color-black;
 
 	@for $i from 1 through list.length($taster-tints) {
@@ -275,19 +177,18 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 }
 
 // ── Hero ──────────────────────────────────────────────────────────────────────
+// Width and side padding come from .page-container, here and on every section.
 .home-hero {
-	max-width: 1300px;
-	margin: 0 auto;
-	padding: 88px 56px 96px;
-	box-sizing: border-box;
+	padding-block: 88px 96px;
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 600px);
 	gap: 48px;
 	align-items: center;
 
+	// The one h1 that runs past the global cap: one step further up the scale.
 	&__title {
 		margin: 0 0 26px;
-		font-size: clamp(2.5rem, 5vw, 4.1rem);
+		font-size: clamp(#{$text-40}, 5vw, #{$font-size-xxxxl * $text-scale-ratio});
 		font-weight: $font-weight-bold;
 		letter-spacing: -0.045em;
 		line-height: 1;
@@ -297,9 +198,6 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	&__lede {
 		margin: 0 0 36px;
 		max-width: 50ch;
-		font-size: 1.0625rem;
-		line-height: 1.65;
-		color: $color-text-secondary;
 	}
 
 	&__visual {
@@ -326,9 +224,9 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		gap: 56px;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		grid-template-columns: 1fr;
-		padding: 56px 40px 72px;
+		padding-block: 56px 72px;
 
 		&__visual {
 			max-width: 640px;
@@ -336,7 +234,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 
 	@include responsive($breakpoint-mobile) {
-		padding: 40px 20px 56px;
+		padding-block: 40px 56px;
 
 		// The phone shows the scorecard alone.
 		&__visual {
@@ -357,15 +255,16 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 }
 
 .home-reveal {
-	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+	box-shadow: $shadow-lift;
 }
 
+// A drawing of a phone, so its corners are a phone's, not the ledger's.
 .home-phone {
 	height: 460px;
 	border-radius: 32px;
 	border: 1px solid $rule;
 	background: $color-black;
-	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+	box-shadow: $shadow-lift;
 	overflow: hidden;
 	padding-top: 24px;
 
@@ -388,10 +287,10 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	&__clock {
 		font-family: $font-mono-family;
 		font-size: $text-15;
-		font-weight: 600;
+		font-weight: $font-weight-semibold;
 		padding: 6px 9px;
 		border: 1px solid $rule;
-		border-radius: 3px;
+		border-radius: $radius;
 	}
 
 	&__steps {
@@ -409,17 +308,14 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 			}
 
 			&.is-on {
-				background: $tasting-accent-light;
+				background: $color-accent-light;
 			}
 		}
 	}
 
 	&__card {
+		@include ledger-panel(11px 10px);
 		margin: 0 12px 10px;
-		padding: 11px 10px;
-		background: $color-darkGrey;
-		border: 1px solid $rule-soft;
-		border-radius: 4px;
 		display: flex;
 		flex-direction: column;
 		gap: 9px;
@@ -435,23 +331,21 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			border-radius: 3px;
+			border-radius: $radius-sm;
 			font-size: $text-11;
-			background: #211f1f;
+			background: $color-surface-variant;
 			border: 1px solid $rule-soft;
 			color: $color-text-secondary;
 
 			&.is-on {
-				background: rgba($color-accent, 0.22);
-				border-color: $color-accent;
-				color: $color-white;
+				@include selected-outline;
 			}
 		}
 	}
 }
 
 .home-recent .home-row {
-	padding: 12px 0;
+	@include ledger-row;
 
 	&__text strong {
 		font-size: $text-14;
@@ -467,15 +361,12 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		background: $color-darkGrey;
 
 		.home-card {
-			background: #211f1f;
+			background: $color-surface-variant;
 		}
 	}
 
 	&__inner {
-		max-width: 1300px;
-		margin: 0 auto;
-		padding: 104px 56px;
-		box-sizing: border-box;
+		padding-block: 104px;
 		display: grid;
 		grid-template-columns: 72px minmax(0, 1fr);
 		column-gap: 36px;
@@ -485,9 +376,9 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		min-width: 0;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		&__inner {
-			padding: 72px 40px;
+			padding-block: 72px;
 			grid-template-columns: 48px minmax(0, 1fr);
 			column-gap: 24px;
 		}
@@ -496,7 +387,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	// On phone the folio sits above the section, not in a margin.
 	@include responsive($breakpoint-mobile) {
 		&__inner {
-			padding: 56px 20px;
+			padding-block: 56px;
 			grid-template-columns: 1fr;
 			row-gap: 12px;
 		}
@@ -504,13 +395,9 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 }
 
 .home-folio {
-	@include figures;
+	@include folio-number($text-16);
 	align-self: start;
-	text-align: right;
 	padding-right: 20px;
-	border-right: 1px solid $rule-folio;
-	font-size: $text-16;
-	color: $color-text-muted;
 
 	@include responsive($breakpoint-mobile) {
 		text-align: left;
@@ -519,44 +406,24 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 }
 
+// Marketing section titles, a size above the global h2. `--lg` opens § 2 and the closing.
 .home-h2 {
 	margin: 0 0 20px;
-	font-size: clamp(2rem, 3.5vw, 2.75rem);
-	font-weight: $font-weight-bold;
+	font-size: clamp(#{$text-32}, 3.5vw, #{$font-size-xxxl});
 	letter-spacing: -0.035em;
 	line-height: 1.05;
 
 	&--lg {
 		margin: 0;
-		font-size: clamp(2.25rem, 4.2vw, 3.5rem);
-		letter-spacing: -0.04em;
-		line-height: 1;
-	}
-
-	&--xl {
-		font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+		font-size: clamp(#{$text-32}, 4.5vw, #{$font-size-xxxxl});
 		letter-spacing: -0.045em;
 		line-height: 1;
 	}
 }
 
-.home-lede {
-	margin: 0 0 18px;
-	font-size: $text-16;
-	line-height: 1.65;
-	color: $color-text-secondary;
-}
-
-.home-p {
-	margin: 0 0 18px;
-	font-size: $text-15;
-	line-height: 1.65;
-	color: $color-text-secondary;
-
-	&--wide {
-		margin: 18px 0 0;
-		max-width: 70ch;
-	}
+.home-flights__note {
+	margin-top: 18px;
+	max-width: 70ch;
 }
 
 .home-split {
@@ -575,9 +442,23 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		margin-bottom: 36px;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		grid-template-columns: 1fr;
 		gap: 32px;
+	}
+}
+
+// A row of the § 1 and § 2 tables; each table sets its own columns.
+.home-trow {
+	@include ledger-row;
+	display: grid;
+	align-items: start;
+	font-size: $text-14;
+
+	&--head {
+		@include ledger-label;
+		border-top: none;
+		padding-top: 0;
 	}
 }
 
@@ -586,20 +467,9 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	padding: 22px 24px 18px;
 
 	&__row {
-		display: grid;
 		// Fixed result column: every row is its own grid, so auto widths would misalign them.
 		grid-template-columns: 34px 90px minmax(0, 1fr) minmax(0, 1fr) 124px;
 		column-gap: 14px;
-		align-items: start;
-		padding: 12px 0;
-		border-top: 1px solid $rule-soft;
-		font-size: $text-14;
-
-		&--head {
-			@include ledger-label;
-			border-top: none;
-			padding-top: 0;
-		}
 	}
 
 	&__field {
@@ -628,10 +498,10 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		&__row {
 			grid-template-columns: 30px minmax(0, 1fr) auto;
 			row-gap: 4px;
+		}
 
-			&--head {
-				display: none;
-			}
+		.home-trow--head {
+			display: none;
 		}
 
 		&__field {
@@ -708,7 +578,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		}
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		grid-template-columns: 1fr;
 
 		&__item + &__item {
@@ -721,7 +591,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 
 .home-flight {
 	padding: 0;
-	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+	box-shadow: $shadow-lift;
 
 	&__head {
 		display: flex;
@@ -742,8 +612,6 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 
 		.home-figure {
 			margin-left: 6px;
-			font-size: 1.2rem;
-			color: $color-white;
 		}
 
 		&:first-of-type {
@@ -756,19 +624,8 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	padding: 18px 24px 16px;
 
 	&__row {
-		display: grid;
 		grid-template-columns: 140px repeat(5, minmax(0, 1fr)) 64px;
 		column-gap: 16px;
-		align-items: start;
-		padding: 12px 0;
-		border-top: 1px solid $rule-soft;
-		font-size: $text-14;
-
-		&--head {
-			@include ledger-label;
-			border-top: none;
-			padding-top: 0;
-		}
 
 		&--label {
 			border-top-color: $rule;
@@ -807,10 +664,10 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		&__row {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 10px 16px;
+		}
 
-			&--head {
-				display: none;
-			}
+		.home-trow--head {
+			display: none;
 		}
 
 		&__who {
@@ -846,11 +703,10 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	padding: 8px 16px;
 
 	&__row {
+		@include ledger-row;
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		padding: 12px 0;
-		border-top: 1px solid $rule-soft;
 
 		&:first-child {
 			border-top: none;
@@ -873,14 +729,6 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 .home-structure {
 	padding: 18px 24px 14px;
 	border-top: 1px solid $rule-soft;
-
-	&__head {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 12px;
-		margin-bottom: 6px;
-	}
 
 	@include responsive($breakpoint-mobile) {
 		padding: 16px;
@@ -907,103 +755,9 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 }
 
-.home-scale {
-	display: grid;
-	grid-template-columns: 110px minmax(0, 1fr) 260px;
-	gap: 28px;
-	align-items: center;
-	padding: 10px 0 6px;
-	border-top: 1px solid $rule-soft;
-	--range: #{rgba($color-white, 0.1)};
-
-	&--split {
-		--range: #{rgba($color-warning, 0.3)};
-	}
-
-	&__name {
-		font-size: $text-14;
-		font-weight: $font-weight-semibold;
-	}
-
-	&__track {
-		position: relative;
-		height: 54px;
-		margin: 0 20px;
-	}
-
-	&__line {
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 14px;
-		height: 1px;
-		background: $rule;
-	}
-
-	&__range {
-		position: absolute;
-		top: 10px;
-		height: 9px;
-		background: var(--range);
-	}
-
-	&__stop {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		transform: translateX(-50%);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	&__dots {
-		display: flex;
-		gap: 2px;
-		min-height: 24px;
-		margin-top: 3px;
-
-		.home-dot {
-			box-shadow: 0 0 0 2px #211f1f;
-		}
-	}
-
-	&__tick {
-		font-size: $text-11;
-		color: $color-text-muted;
-		white-space: nowrap;
-
-		&--on {
-			color: $color-white;
-		}
-	}
-
-	&__verdict {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: $text-13;
-	}
-
-	@include responsive(62.5rem) {
-		grid-template-columns: 1fr;
-		gap: 8px;
-	}
-}
-
-.home-agreement {
-	@include ledger-label;
-	flex-shrink: 0;
-	padding: 3px 7px;
-	border-radius: 2px;
-	border: 1px solid rgba($color-white, 0.22);
-	color: $color-text-secondary;
-
-	&--split {
-		color: $color-warning;
-		border-color: rgba($color-warning, 0.4);
-	}
+.home-scale .home-dot {
+	// Overlapping taster dots stay apart on the track.
+	box-shadow: 0 0 0 2px $color-surface-variant;
 }
 
 // ── § 3 Exam pace ─────────────────────────────────────────────────────────────
@@ -1011,7 +765,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	border: 1px solid $rule;
-	border-radius: 4px;
+	border-radius: $radius;
 
 	&__cell {
 		display: flex;
@@ -1024,7 +778,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		}
 
 		.home-figure {
-			font-size: clamp(3rem, 5vw, 4.5rem);
+			font-size: clamp(#{$font-size-xxxxl}, 5vw, #{$font-size-xxxxl * $text-scale-ratio});
 			letter-spacing: -0.02em;
 		}
 	}
@@ -1038,6 +792,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		border-top: $rule-double;
 		color: $color-text-secondary;
 
+		// The sub-line under the label reads as a sentence.
 		span {
 			font-weight: $font-weight-regular;
 			letter-spacing: normal;
@@ -1076,18 +831,18 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 
 	&__n {
-		font-size: 1.375rem;
+		font-size: $text-24;
 		text-align: right;
 		color: $color-text-muted;
 	}
 
 	&__name {
-		font-size: 1.125rem;
+		font-size: $text-18;
 		font-weight: $font-weight-bold;
 		letter-spacing: -0.015em;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		&__row {
 			grid-template-columns: 40px minmax(0, 1fr);
 			row-gap: 6px;
@@ -1118,27 +873,26 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 
 	&__title {
 		margin: 6px 0 0;
-		font-size: 1.375rem;
+		font-size: $text-24;
 		font-weight: $font-weight-bold;
 		letter-spacing: -0.015em;
 		line-height: 1.2;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		grid-template-columns: 1fr;
 	}
 }
 
 .home-type {
-	@include ledger-label;
-	padding: 3px 7px;
-	border-radius: 2px;
-	border: 1px solid rgba($color-accent, 0.7);
-	color: $color-white;
+	@include ledger-tag;
+
+	&--red {
+		--tone: #{$color-accent-light};
+	}
 
 	&--white {
-		border-color: rgba($color-status-ok, 0.4);
-		color: $color-status-ok;
+		--tone: #{$color-status-ok};
 	}
 }
 
@@ -1159,7 +913,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 
 	strong {
-		font-size: 1.1875rem;
+		font-size: $text-18;
 		letter-spacing: -0.015em;
 	}
 
@@ -1168,7 +922,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 		line-height: 1.6;
 	}
 
-	@include responsive(64rem) {
+	@include responsive($breakpoint-laptop) {
 		grid-template-columns: 1fr;
 	}
 }
@@ -1179,10 +933,7 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 }
 
 .home-closing {
-	max-width: 1300px;
-	margin: 0 auto;
-	padding: 112px 56px 104px;
-	box-sizing: border-box;
+	padding-block: 112px 104px;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -1195,6 +946,6 @@ $taster-tints: (#d4a0ab, #a8c49f, #d8c9a3, #93a8c6);
 	}
 
 	@include responsive($breakpoint-mobile) {
-		padding: 72px 20px;
+		padding-block: 72px;
 	}
 }

@@ -86,11 +86,11 @@ export default function TimerWrapper({
 			closeOnClickOutside: false,
 			closeOnEsc: true,
 			children: (
-				<div className="timeup">
-					<p className="timeup__lead">{tastingData.timerMode === 'exam' ? t.wineOver : t.sequenceOver}</p>
-					<p className="timeup__note">{t.kept}</p>
+				<div className="dialog">
+					<p className="dialog__lead">{tastingData.timerMode === 'exam' ? t.wineOver : t.sequenceOver}</p>
+					<p className="dialog__note">{t.kept}</p>
 					<button
-						className="btn-primary timeup__action"
+						className="btn-primary dialog__action"
 						onClick={() => {
 							closeModal(modalId);
 							router.push(destination);

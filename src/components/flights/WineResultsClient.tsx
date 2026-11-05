@@ -80,21 +80,21 @@ function ScaleRow({ attr, results }: { attr: StructureAttribute; results: WineRe
 			.map((call) => results.rows.find((row) => row.person.id === call.personId)!.person);
 
 	return (
-		<li className={`flight-scale flight-scale--${attr.agreement}`}>
-			<span className="flight-scale__name">{attr.name === 'Length of Finish' ? 'Finish' : attr.name}</span>
-			<div className="flight-scale__track" role="img" aria-label={`${attr.name}: ${phrase}`}>
-				<span className="flight-scale__line" />
+		<li className={`agreement-scale agreement-scale--${attr.agreement}`}>
+			<span className="agreement-scale__name">{attr.name === 'Length of Finish' ? 'Finish' : attr.name}</span>
+			<div className="agreement-scale__track" role="img" aria-label={`${attr.name}: ${phrase}`}>
+				<span className="agreement-scale__line" />
 				{max > min && (
 					<span
-						className="flight-scale__range"
+						className="agreement-scale__range"
 						style={{ left: pos(min), width: `calc(${pos(max)} - ${pos(min)})` }}
 					/>
 				)}
 				{attr.levels.map((level, index) => {
 					const here = people(index);
 					return (
-						<span key={level} className="flight-scale__stop" style={{ left: pos(index) }}>
-							<span className="flight-scale__dots">
+						<span key={level} className="agreement-scale__stop" style={{ left: pos(index) }}>
+							<span className="agreement-scale__dots">
 								{here.map((person) => (
 									<Avatar
 										key={person.id}
@@ -104,17 +104,17 @@ function ScaleRow({ attr, results }: { attr: StructureAttribute; results: WineRe
 									/>
 								))}
 							</span>
-							<span className={`flight-scale__tick${here.length ? ' flight-scale__tick--on' : ''}`}>
+							<span className={`agreement-scale__tick${here.length ? ' agreement-scale__tick--on' : ''}`}>
 								{shortLevel(level)}
 							</span>
 						</span>
 					);
 				})}
 			</div>
-			<span className="flight-scale__verdict">
+			<span className="agreement-scale__verdict">
 				{/* Agreement needs two people. */}
 				{attr.calls.length > 1 && (
-					<span className="flight-scale__word">
+					<span className="agreement-scale__word">
 						<Icon size={12} stroke={2.2} aria-hidden="true" />
 						{word}
 					</span>
@@ -193,7 +193,7 @@ function TasterSheet({
 				</div>
 			)}
 			{row.tastingId && (
-				<Link href={`/archives/${row.tastingId}`} className="flight-link no-underline">
+				<Link href={`/archives/${row.tastingId}`} className="text-link text-link--sm">
 					{t.fullSheet}
 				</Link>
 			)}
@@ -227,14 +227,14 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 		return (
 			<FlightMessage>
 				<p>{error || t.loadFailed}</p>
-				<Link href={`/flights/${code}`} className="flight-link">
+				<Link href={`/flights/${code}`} className="text-link text-link--sm">
 					{t.back}
 				</Link>
 			</FlightMessage>
 		);
 	}
 	if (!results) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 
 	const attrs = structure(results);
@@ -270,24 +270,24 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 	return (
 		<main className="flight-main">
 			<nav className="flight-results__nav" aria-label={t.winesAria}>
-				<Link href={`/flights/${code}`} className="flight-back no-underline">
+				<Link href={`/flights/${code}`} className="back-link">
 					← {results.flightName}
 				</Link>
 				<span className="flight-results__pager">
 					{prev && (
-						<Link href={`/flights/${code}/wines/${prev}`} className="outline flight-btn-small no-underline">
+						<Link href={`/flights/${code}/wines/${prev}`} className="btn-quiet btn-quiet--sm">
 							<IconChevronLeft size={14} aria-hidden="true" /> {text.bits.wineN(prev)}
 						</Link>
 					)}
 					{next && (
-						<Link href={`/flights/${code}/wines/${next}`} className="outline flight-btn-small no-underline">
+						<Link href={`/flights/${code}/wines/${next}`} className="btn-quiet btn-quiet--sm">
 							{text.bits.wineN(next)} <IconChevronRight size={14} aria-hidden="true" />
 						</Link>
 					)}
 				</span>
 			</nav>
 
-			<header className="flight-results__head">
+			<header className="page-head">
 				<div>
 					<span className="flight-results__kicker">
 						{results.wineType && (
@@ -299,33 +299,33 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 							{common.wineOf(results.number, results.wineCount)} · {t.revealed}
 						</span>
 					</span>
-					<h1 className="flight-results__title">{results.title}</h1>
-					<p className="flight-head__sub">{results.detail}</p>
+					<h1 className="page-head__title">{results.title}</h1>
+					<p className="page-head__sub">{results.detail}</p>
 				</div>
 				<dl className="flight-stats">
 					<div>
 						<dt>{t.groupAverage}</dt>
-						<dd>
+						<dd className="flight-stats__value">
 							{formatAverage(results.average, lang)}
 							<span> / {results.outOf}</span>
 						</dd>
-						<dd className="flight-muted">{t.ofSubmitted(results.submitted)}</dd>
+						<dd className="flight-stats__sub">{t.ofSubmitted(results.submitted)}</dd>
 					</div>
 					<div>
 						<dt>{t.best}</dt>
-						<dd>
+						<dd className="flight-stats__value">
 							{results.best?.score ?? '—'}
 							<span> / {results.outOf}</span>
 						</dd>
-						<dd className="flight-muted">{results.best?.name ?? '—'}</dd>
+						<dd className="flight-stats__sub">{results.best?.name ?? '—'}</dd>
 					</div>
 					<div>
 						<dt>{t.submittedHeading}</dt>
-						<dd>
+						<dd className="flight-stats__value">
 							{results.submitted}
 							<span>{t.ofTotal(results.memberCount)}</span>
 						</dd>
-						<dd className="flight-muted">
+						<dd className="flight-stats__sub">
 							{missing.length === 0
 								? t.everyone
 								: missing.length === 1
@@ -385,18 +385,14 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 								<Avatar person={row.person} />
 								<span className="flight-table__name">
 									{row.status === 'submitted' ? (
-										<button
-											type="button"
-											className="flight-link-button"
-											onClick={() => openSheet(row)}
-										>
+										<button type="button" className="text-link" onClick={() => openSheet(row)}>
 											{row.person.name} ›
 										</button>
 									) : (
 										<span>{row.person.name}</span>
 									)}
 									{row.status === 'submitted' ? (
-										<span className="flight-score">
+										<span className="score-tag">
 											{row.score} / {row.outOf}
 										</span>
 									) : (
@@ -439,7 +435,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 								<span className="flight-muted">{g.text}</span>
 								<span className="flight-table__bar" aria-hidden="true">
 									{g.statuses.map((status, i) => (
-										<span key={i} className={`reveal-status--${status}`} />
+										<span key={i} className={`flight-table__seg flight-table__seg--${status}`} />
 									))}
 								</span>
 							</span>
@@ -459,7 +455,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 						</span>
 					</div>
 					<p className="flight-muted">{t.structureNote}</p>
-					<ul className="flight-scales">
+					<ul className="agreement-scales">
 						{attrs.map((attr) => (
 							<ScaleRow key={attr.name} attr={attr} results={results} />
 						))}

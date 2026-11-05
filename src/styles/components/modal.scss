@@ -1,48 +1,44 @@
 @use '../abstracts' as *;
 
-// The 60ms here is what the component's `closing` hand-off is timed against.
+// The 60ms closing hand-off in the component is timed against these animations.
+@keyframes modal-overlay-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes modal-overlay-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+@keyframes modal-content-in {
+	from {
+		scale: 0.9;
+		opacity: 0;
+	}
+	to {
+		scale: 1;
+		opacity: 1;
+	}
+}
+@keyframes modal-content-out {
+	from {
+		scale: 1;
+		opacity: 1;
+	}
+	to {
+		scale: 0.9;
+		opacity: 0;
+	}
+}
 
-$modal-padding-vertical: 2.5rem;
-$modal-padding-horizontal: 2rem;
-
-.Modal {
-	@keyframes modal-overlay-transition-in {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
-	}
-	@keyframes modal-overlay-transition-out {
-		from {
-			opacity: 1;
-		}
-		to {
-			opacity: 0;
-		}
-	}
-	@keyframes modal-content-transition-in {
-		from {
-			scale: 0.9;
-			opacity: 0;
-		}
-		to {
-			scale: 1;
-			opacity: 1;
-		}
-	}
-	@keyframes modal-content-transition-out {
-		from {
-			scale: 1;
-			opacity: 1;
-		}
-		to {
-			scale: 0.9;
-			opacity: 0;
-		}
-	}
-
+.modal {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -50,53 +46,39 @@ $modal-padding-horizontal: 2rem;
 	height: 100dvh;
 	z-index: $index-above-navbar;
 
-	.overlay {
+	&__overlay {
 		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(10, 9, 9, 0.72);
+		inset: 0;
+		background: rgba($color-black, 0.72);
 		backdrop-filter: blur(2px);
-		animation-name: modal-overlay-transition-in;
-		animation-iteration-count: 1;
-		animation-timing-function: ease-out;
-		animation-duration: 120ms;
-		z-index: 10;
+		animation: modal-overlay-in 120ms ease-out 1;
 	}
 
-	.inner {
+	&__inner {
 		position: fixed;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		min-width: min(340px, 100dvw);
-		max-width: min(560px, calc(100dvw - 2rem));
+		max-width: min(560px, calc(100dvw - 32px));
 		max-height: 95dvh;
 		width: max-content;
 		overflow: auto;
-		z-index: 11;
 		display: grid;
 		grid-template-rows: 1fr;
 
 		@include responsive($breakpoint-mobile) {
-			min-width: unset;
-			max-width: calc(100dvw - 1.5rem);
+			min-width: 0;
+			max-width: calc(100dvw - 24px);
 			max-height: 90dvh;
 		}
 	}
 
-	.content {
-		background-color: $color-darkGrey;
-		border: 1px solid $tasting-border-mid;
-		border-radius: 12px;
-		box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-		animation-name: modal-content-transition-in;
-		animation-iteration-count: 1;
-		animation-timing-function: ease-out;
-		animation-duration: 140ms;
+	&__content {
+		@include ledger-panel($spacing-xxxl $spacing-xxl);
+		box-shadow: $shadow-lift;
+		animation: modal-content-in 140ms ease-out 1;
 		scale: 1;
-		padding: $modal-padding-vertical $modal-padding-horizontal;
 		height: 100%;
 		display: grid;
 		grid-template-rows: auto 1fr;
@@ -107,154 +89,96 @@ $modal-padding-horizontal: 2rem;
 		}
 	}
 
-	.header {
+	&__header {
 		margin-bottom: $spacing-lg;
 		padding-bottom: $spacing-md;
-		border-bottom: 1px solid $tasting-border;
+		border-bottom: 1px solid $rule-soft;
 		display: flex;
 		gap: $spacing-sm;
 		justify-content: space-between;
 		align-items: flex-start;
+	}
 
-		h4 {
-			font-weight: $font-weight-bold;
-			font-size: $font-size-xl;
-			letter-spacing: -0.01em;
-			flex-grow: 1;
-		}
+	&__title {
+		flex-grow: 1;
+		font-weight: $font-weight-bold;
+		font-size: $text-24;
+		letter-spacing: -0.01em;
+	}
 
-		.close-btn {
-			@include bare-button;
-			color: $color-text-secondary;
-			cursor: pointer;
-			flex-shrink: 0;
-			@include transition(color, 0.2s);
+	&__close {
+		@include bare-button;
+		flex-shrink: 0;
+		color: $color-text-secondary;
+		transition: color 0.15s ease;
 
-			&:hover {
-				color: $color-white;
-			}
+		&:hover {
+			color: $color-white;
 		}
 	}
 
-	.body {
+	&__body {
 		overflow: auto;
 		min-height: 36px;
 		color: $color-text-secondary;
 
-		@include scrollbar(5px, $tasting-accent, $color-surface-variant);
+		@include scrollbar(5px, $color-accent, $color-surface-variant);
 	}
 
-	&.closing {
-		.overlay {
-			animation-name: modal-overlay-transition-out;
+	&--closing {
+		.modal__overlay {
+			animation-name: modal-overlay-out;
 			opacity: 0;
 		}
-		.content {
-			animation-name: modal-content-transition-out;
+
+		.modal__content {
+			animation-name: modal-content-out;
 			opacity: 0;
 			scale: 0.9;
 		}
 	}
 }
 
-// End-of-session modal, shown when the final phase's timer expires.
-.timeup {
+// ── Dialog body: time up, start over, delete ──────────────────────────────────
+.dialog {
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;
+}
 
-	&__lead {
-		color: $color-white;
-		font-size: $font-size-md;
-		line-height: 1.5;
-		margin: 0;
-	}
+.dialog__lead {
+	margin: 0;
+	color: $color-white;
+	font-size: $text-16;
+	line-height: 1.5;
+}
 
-	&__note {
-		color: $color-text-secondary;
-		font-size: $text-13-5;
-		line-height: 1.6;
-		margin: 0;
-	}
+.dialog__note {
+	margin: 0;
+	color: $color-text-secondary;
+	font-size: $text-13-5;
+	line-height: 1.6;
+}
 
-	&__action {
-		margin-top: $spacing-xs;
-		align-self: flex-start;
-		cursor: pointer;
+// A lone action under the text.
+.dialog__action {
+	margin-top: $spacing-xs;
+	align-self: flex-start;
 
-		@include responsive($breakpoint-mobile) {
-			align-self: stretch;
-		}
+	@include responsive($breakpoint-mobile) {
+		align-self: stretch;
 	}
 }
 
-// Confirmation dialogs: "Start over" in the tasting footer, "Delete tasting" on a saved tasting.
-.confirm-dialog {
+// Cancel beside confirm: .btn-quiet and .btn-primary, so the two already stand the same height.
+.dialog__actions {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	gap: $spacing-md;
+	margin-top: $spacing-xs;
 
-	&__lead {
-		color: $color-white;
-		font-size: $font-size-md;
-		line-height: 1.5;
-		margin: 0;
-	}
-
-	&__note {
-		color: $color-text-secondary;
-		font-size: $text-13-5;
-		line-height: 1.6;
-		margin: 0;
-	}
-
-	&__actions {
-		display: flex;
-		align-items: center;
-		gap: $spacing-md;
-		margin-top: $spacing-xs;
-
-		// Both actions are sized by their padding, so their content boxes have to agree.
-		// The confirm button is a flex row around a 16px icon; pinning the line box to the
-		// same 16px is what keeps the outlined button from standing 2px taller.
-		> button {
-			line-height: 16px;
-		}
-
-		@include responsive($breakpoint-mobile) {
-			flex-direction: column-reverse;
-			align-items: stretch;
-		}
-	}
-
-	// The shared .outline button. Its --color defaults to $color-primary, which is
-	// near-black on this ground, so the dark theme has to name its own.
-	&__cancel {
-		--color: #{$color-text-secondary};
-
-		border-radius: 6px;
-		cursor: pointer;
-
-		// Compounded with .outline on purpose: the mixin sets both border and padding at
-		// `button.outline`, which outranks this class on its own. The values match
-		// .btn-primary so the two actions stand the same height.
-		&.outline {
-			border-width: 1px;
-			padding: 1.2rem 1.6rem;
-			font-size: $text-13;
-		}
-
-		&:hover {
-			--color: #{$color-white};
-		}
-	}
-
-	&__confirm {
-		@include icon-label($text-8);
-
-		// .btn-primary has no border; without a transparent one it stands 2px shorter
-		// than the outlined button beside it.
-		border: 1px solid transparent;
-		cursor: pointer;
+	@include responsive($breakpoint-mobile) {
+		flex-direction: column-reverse;
+		align-items: stretch;
 	}
 }

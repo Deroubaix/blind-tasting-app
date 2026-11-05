@@ -59,7 +59,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 				nextDisabled: answered < keys.length,
 			}}
 		>
-			<div className="palate-grid">
+			<div className="tasting-grid tasting-grid--2">
 				{keys.map((key) => (
 					<OptionCard
 						key={key}
@@ -73,7 +73,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 			</div>
 
 			<div className="wset-group">
-				<div className="nose-section-divider">
+				<div className="tasting-divider">
 					<span className="section-label">{WSET_FLAVOUR_KEY}</span>
 				</div>
 				<p className="wset-lede">{t.flavourLede}</p>
@@ -87,13 +87,13 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 				onRemove={remove}
 			/>
 			{own.length > 0 && (
-				<div className="nose-fruit-category wset-group">
-					<div className="nose-fruit-category__label">{t.ownTerms}</div>
+				<div className="tasting-group wset-group">
+					<div className="tasting-group__label">{t.ownTerms}</div>
 					<div className="tasting-options" role="group" aria-label={t.ownTerms}>
 						{own.map((term) => (
 							<button
 								key={term}
-								className="tasting-option tasting-option--pill tasting-option--selected tasting-option--custom"
+								className="tasting-option tasting-option--compact tasting-option--selected tasting-option--custom"
 								title={tb.clickToRemove}
 								onClick={() => setFlavours(flavours.filter((t) => t !== term))}
 							>

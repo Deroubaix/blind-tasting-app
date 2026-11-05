@@ -23,7 +23,7 @@ const sizeMap = {
 export default function Loading(props: LoadingProps) {
 	const { children, inline } = props;
 
-	const className = `Loading ${props.className ?? ''}`;
+	const className = `loading${inline ? ' loading--inline' : ''} ${props.className ?? ''}`;
 	const size = getSize(props.size);
 
 	const content = (

@@ -14,8 +14,7 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { loginSchema, type LoginFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
-import AuthHeader from '../layout/AuthHeader';
-import Footer from '../layout/Footer';
+import AuthShell from './AuthShell';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { isSavingTasting, safeRedirect } from '../../utils/AuthRedirectUtils';
 import { useLang, useText } from '../../i18n/LanguageProvider';
@@ -64,96 +63,80 @@ export default function LoginForm() {
 	};
 
 	return (
-		<div className="auth-page">
-			<AuthHeader
-				contextLink={{
-					href: signupHref,
-					label: shared.signUp,
-					contextLabel: t.contextLabel,
-				}}
-			/>
-
-			<main className="auth-main">
-				<div className="auth-container">
-					<header className="auth-card-head">
-						<span className="page-eyebrow">{t.eyebrow}</span>
-						<h1>
-							{t.headingBefore}
-							<em>{t.headingEm}</em>
-							{t.headingAfter}
-						</h1>
-						{isSavingTasting(redirectTo) ? (
-							<p className="auth-subheading">
-								<strong>{shared.waiting}</strong>
-								{t.waitingRest}
-							</p>
-						) : (
-							<p className="auth-subheading">{t.subheading}</p>
-						)}
-					</header>
-
-					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
-						{error && <p className="auth-error">{error}</p>}
-
-						<FormControl className="auth-field" name="email">
-							<Label className="item-label">{shared.email}</Label>
-							<TextInput
-								className="auth-input"
-								type="email"
-								autoComplete="email"
-								placeholder={shared.emailPlaceholder}
-							/>
-						</FormControl>
-
-						<FormControl className="auth-field" name="password">
-							<div className="auth-label-row">
-								<Label className="item-label">{shared.password}</Label>
-								<Link href="/forgot-password" className="auth-forgot">
-									{t.forgot}
-								</Link>
-							</div>
-							<div className="auth-input-wrapper">
-								<TextInput
-									className="auth-input"
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="current-password"
-									placeholder="••••••••"
-								/>
-								<button
-									type="button"
-									className="auth-eye-btn"
-									onClick={() => setShowPassword((v) => !v)}
-									aria-label={showPassword ? shared.hidePassword : shared.showPassword}
-								>
-									{showPassword ? (
-										<IconEyeOff size={24} stroke={1} />
-									) : (
-										<IconEye size={24} stroke={1} />
-									)}
-								</button>
-							</div>
-						</FormControl>
-
-						<button
-							className="auth-submit btn-primary btn-primary--auth"
-							type="submit"
-							disabled={isLoading}
-						>
-							{isLoading ? t.loggingIn : shared.logIn}
-							<IconArrowRight size={15} />
-						</button>
-					</Form>
-
-					<p className="auth-switch">
-						{t.newHere}{' '}
-						<Link href={signupHref} className="auth-switch-link">
-							{shared.signUp}
-						</Link>
+		<AuthShell
+			contextLink={{
+				href: signupHref,
+				label: shared.signUp,
+				contextLabel: t.contextLabel,
+			}}
+		>
+			<header className="auth-card-head">
+				<span className="page-eyebrow">{t.eyebrow}</span>
+				<h1>
+					{t.headingBefore}
+					<em>{t.headingEm}</em>
+					{t.headingAfter}
+				</h1>
+				{isSavingTasting(redirectTo) ? (
+					<p className="body-copy">
+						<strong>{shared.waiting}</strong>
+						{t.waitingRest}
 					</p>
-				</div>
-			</main>
+				) : (
+					<p className="body-copy">{t.subheading}</p>
+				)}
+			</header>
 
-			<Footer />
-		</div>
+			<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
+				{error && <p className="auth-error">{error}</p>}
+
+				<FormControl className="auth-field" name="email">
+					<Label className="item-label">{shared.email}</Label>
+					<TextInput
+						className="ledger-field"
+						type="email"
+						autoComplete="email"
+						placeholder={shared.emailPlaceholder}
+					/>
+				</FormControl>
+
+				<FormControl className="auth-field" name="password">
+					<div className="auth-label-row">
+						<Label className="item-label">{shared.password}</Label>
+						<Link href="/forgot-password" className="auth-forgot">
+							{t.forgot}
+						</Link>
+					</div>
+					<div className="auth-input-wrapper">
+						<TextInput
+							className="ledger-field"
+							type={showPassword ? 'text' : 'password'}
+							autoComplete="current-password"
+							placeholder="••••••••"
+						/>
+						<button
+							type="button"
+							className="auth-eye-btn"
+							onClick={() => setShowPassword((v) => !v)}
+							aria-label={showPassword ? shared.hidePassword : shared.showPassword}
+						>
+							{showPassword ? <IconEyeOff size={24} stroke={1} /> : <IconEye size={24} stroke={1} />}
+						</button>
+					</div>
+				</FormControl>
+
+				<button className="btn-primary btn-primary--block auth-submit" type="submit" disabled={isLoading}>
+					{isLoading ? t.loggingIn : shared.logIn}
+					<IconArrowRight size={15} />
+				</button>
+			</Form>
+
+			<p className="auth-switch">
+				{t.newHere}{' '}
+				<Link href={signupHref} className="auth-switch__link">
+					{shared.signUp}
+				</Link>
+			</p>
+		</AuthShell>
 	);
 }

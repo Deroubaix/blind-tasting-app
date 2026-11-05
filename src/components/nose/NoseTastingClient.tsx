@@ -117,8 +117,8 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		equalWidth = false,
 	) => {
 		// The design splits chips by selection mode, not by layout: single-select
-		// rows are segmented rectangles, multi-select descriptors are pills.
-		const pill = SINGLE_SELECT.has(category) ? '' : ' tasting-option--pill';
+		// rows are full-size options, multi-select descriptors are compact chips.
+		const pill = SINGLE_SELECT.has(category) ? '' : ' tasting-option--compact';
 
 		return (
 			<div
@@ -151,7 +151,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				))}
 				{!SINGLE_SELECT.has(category) &&
 					(showCustomInput[category] ? (
-						<span className="nose-other-input">
+						<span className="tasting-other-input">
 							<input
 								type="text"
 								className="tasting-input"
@@ -168,11 +168,11 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 								}}
 								autoFocus
 							/>
-							<button className="tasting-confirm-btn" onClick={() => handleAddCustom(category)}>
+							<button className="btn-primary btn-primary--sm" onClick={() => handleAddCustom(category)}>
 								{text.add}
 							</button>
 							<button
-								className="tasting-dismiss-btn"
+								className="btn-quiet btn-quiet--sm"
 								aria-label={t.cancelCustom}
 								onClick={() => setShowCustomInput((prev) => ({ ...prev, [category]: false }))}
 							>
@@ -191,7 +191,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
-	// Into .nose-card — top assessment, complex, wood.
+	// Into .tasting-card — top assessment, complex, wood.
 	const renderCategory = (category: string, equalWidth = false) => {
 		const options = presetOptions[category];
 		const selections = selectedOptions[category] || [];
@@ -206,7 +206,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
-	// Into .nose-fruit-category — no background, coloured dot.
+	// Into .tasting-group — no background, coloured dot.
 	const renderFruitCategory = (category: string) => {
 		const options = presetOptions[category];
 		const selections = selectedOptions[category] || [];
@@ -216,7 +216,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 		return (
 			<>
-				<div className="nose-fruit-category__label">
+				<div className="tasting-group__label">
 					{dotClass && <span className={`nose-fruit-dot nose-fruit-dot--${dotClass}`} />}
 					{category}
 				</div>
@@ -226,12 +226,10 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	};
 
 	const renderSectionHeader = (title: string, isOpen: boolean, onToggle: () => void, selectedCount: number) => (
-		<button className="nose-section-header" onClick={onToggle} aria-expanded={isOpen}>
+		<button className="tasting-divider nose-section-header" onClick={onToggle} aria-expanded={isOpen}>
 			<span className="section-label">{title}</span>
 			<span className="nose-section-header__right">
-				{!isOpen && selectedCount > 0 && (
-					<span className="nose-section-header__count">{t.selected(selectedCount)}</span>
-				)}
+				{!isOpen && selectedCount > 0 && <span className="tasting-aside">{t.selected(selectedCount)}</span>}
 				{isOpen ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
 			</span>
 		</button>
@@ -255,7 +253,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			}}
 		>
 			{/* ── Faults, intensity and age (3 cols), in grid order ── */}
-			<div className="nose-grid">
+			<div className="tasting-grid tasting-grid--3">
 				{NOSE_TOP.map((cat) => (
 					<div key={cat} className="tasting-card">
 						{renderCategory(cat)}
@@ -264,14 +262,14 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			</div>
 
 			{/* ── Fruit ── */}
-			<div className="nose-section-divider">
+			<div className="tasting-divider">
 				<span className="section-label">{t.fruit}</span>
 			</div>
 
 			{/* The grid's fruit groups — no card background */}
-			<div className="nose-grid nose-grid--two-col">
+			<div className="tasting-grid tasting-grid--2">
 				{FRUIT_FAMILIES[wineType].map((cat) => (
-					<div key={cat} className="nose-fruit-category">
+					<div key={cat} className="tasting-group">
 						{renderFruitCategory(cat)}
 					</div>
 				))}
@@ -292,9 +290,9 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				inert={!complexOpen}
 			>
 				<div className="nose-collapsible__inner">
-					<div className="nose-grid">
+					<div className="tasting-grid tasting-grid--3">
 						{NOSE_NON_FRUIT.map((cat) => (
-							<div key={cat} className="nose-fruit-category">
+							<div key={cat} className="tasting-group">
 								{renderFruitCategory(cat)}
 							</div>
 						))}
@@ -322,7 +320,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 						</div>
 
 						{/* Descriptors — right, no background */}
-						<div className="nose-fruit-category nose-wood-layout__aromas">
+						<div className="tasting-group nose-wood-layout__aromas">
 							{renderFruitCategory('Oak Descriptors')}
 						</div>
 					</div>

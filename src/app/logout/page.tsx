@@ -27,7 +27,7 @@ export default function LogoutPage() {
 	}, [signOut, router]);
 
 	return (
-		<div style={{ padding: '2rem', textAlign: 'center' }}>
+		<div className="empty-state">
 			<p>{t.loggingOut}</p>
 		</div>
 	);

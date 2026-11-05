@@ -30,7 +30,7 @@ export default function Toast(props: ToastProps) {
 			autoCloseTimeout.current = null;
 		}
 		if (ref.current) {
-			ref.current.classList.add('closing');
+			ref.current.classList.add('toast--closing');
 			setTimeout(() => {
 				onClose?.(toastId);
 			}, 60);
@@ -46,7 +46,7 @@ export default function Toast(props: ToastProps) {
 			}
 			setTimeout(() => {
 				if (progressRef.current) {
-					progressRef.current.classList.add('progressing');
+					progressRef.current.classList.add('toast__timer--running');
 				}
 			}, 10);
 			autoCloseTimeout.current = setTimeout(() => {
@@ -68,13 +68,13 @@ export default function Toast(props: ToastProps) {
 	};
 
 	return (
-		<div ref={ref} id={toastId} className={`Toast ${color} ${className ?? ''}`}>
-			{title && <h4 className="title">{title}</h4>}
-			{children && <div className="body">{children}</div>}
-			<button className="close" onClick={handleCloseButtonClicked} aria-label={t.dismiss}>
+		<div ref={ref} id={toastId} className={`toast toast--${color} ${className ?? ''}`}>
+			{title && <h4 className="toast__title">{title}</h4>}
+			{children && <div className="toast__body">{children}</div>}
+			<button className="toast__close" onClick={handleCloseButtonClicked} aria-label={t.dismiss}>
 				<IconX aria-hidden="true" />
 			</button>
-			{autoCloseMs ? <div ref={progressRef} className="autoclose" /> : null}
+			{autoCloseMs ? <div ref={progressRef} className="toast__timer" /> : null}
 		</div>
 	);
 }

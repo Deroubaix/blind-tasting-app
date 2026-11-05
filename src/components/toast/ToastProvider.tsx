@@ -56,7 +56,7 @@ export default function ToastProvider(props: ToastProviderProps) {
 			{children}
 			{/* Always mounted: a live region only announces changes made after it exists, so one
 			    created together with its first toast would stay silent. */}
-			<div className="ToastProvider" role="status" aria-live="polite">
+			<div className="toast-stack" role="status" aria-live="polite">
 				{toasts.map((props) => {
 					return <Toast key={props.toastId} {...props} onClose={hideToast} />;
 				})}

@@ -1,8 +1,6 @@
 @use '../abstracts' as *;
 // Tasting session header — Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
 
-$tph-border: rgba(228, 228, 204, 0.06);
-
 .tasting-page-header {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -10,19 +8,11 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	padding: 0 $page-spacing;
 	height: 52px;
 	background-color: $color-black;
-	border-bottom: 1px solid $tph-border;
+	border-bottom: 1px solid $rule-faint;
 	flex-shrink: 0;
-	font-family: $font-display-normal-family;
 
 	&__logo {
-		@include eyebrow-label($text-11-5, $color-white);
-		letter-spacing: 0.15em;
 		justify-self: start;
-		text-decoration: none;
-
-		&:after {
-			display: none;
-		}
 	}
 
 	&--no-timer {
@@ -56,47 +46,46 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	}
 
 	&__timer-label {
-		@include eyebrow-label($text-10, $color-text-muted);
-		letter-spacing: 0.16em;
+		@include ledger-label($text-10, $color-text-muted);
 	}
 
 	&__timer-display {
 		font-family: $font-mono-family;
 		font-size: $text-timer-live;
-		font-weight: 600;
+		font-weight: $font-weight-semibold;
 		letter-spacing: 0.06em;
 		line-height: 1;
 		color: $color-white;
 
-		// `<Timer>` renders its own <span class="timer-display …"> inside this element, so the
-		// state classes must be matched as descendants, not as `&.timer-display--warning`.
+		// `<Timer>` renders its own .timer-display inside, so the states are matched as descendants.
 		.timer-display {
 			color: inherit;
-			@include transition(color, 0.3s);
+			transition: color 0.3s ease;
 
 			&.timer-display--warning {
 				color: $color-warning;
 			}
 
 			&.timer-display--expired {
-				color: $tasting-accent-light;
+				color: $color-accent-light;
 			}
 		}
 	}
 
 	&__pause {
 		@include bare-button;
-
 		width: 32px;
 		height: 32px;
 		border-radius: 50%;
-		border: 1px solid $tasting-border-mid;
+		border: 1px solid $rule;
 		color: $color-text-secondary;
-		@include transition(color, 0.2s);
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
-			border: 1px solid $tasting-accent-light;
+			border-color: $color-accent-light;
 			color: $color-white;
 		}
 
@@ -116,48 +105,26 @@ $tph-border: rgba(228, 228, 204, 0.06);
 	}
 
 	&__wine-label {
-		@include eyebrow-label($text-10-5, rgba(228, 228, 204, 0.55));
-		letter-spacing: 0.2em;
+		@include ledger-label($text-10-5, $color-text-muted);
 	}
 
 	&__cancel {
-		font-size: $text-11-5;
-		font-weight: 600;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: $color-text-muted;
-		font-family: $font-display-normal-family;
-		transition: color 0.2s ease;
-
-		&:after {
-			display: none;
-		}
-		&:hover {
-			color: $color-white;
-		}
+		@include quiet-link($text-11-5, $color-text-muted);
 	}
 
 	&__avatar {
-		display: flex !important;
-		align-items: center;
-		justify-content: center;
+		@include bare-button;
 		width: 32px;
 		height: 32px;
 		border-radius: 50%;
-		background: rgba(228, 228, 204, 0.1) !important;
-		border: 1px solid rgba(228, 228, 204, 0.15) !important;
+		background-color: $color-surface-variant;
+		border: 1px solid $rule-folio;
 		color: $color-accent-light;
-		font-family: $font-display-normal-family;
 		font-size: $text-11;
-		font-weight: 600;
+		font-weight: $font-weight-semibold;
 		letter-spacing: 0.04em;
-		cursor: pointer;
-		text-transform: none;
-		@include transition(opacity, 0.2s);
+		transition: opacity 0.15s ease;
 
-		&:after {
-			display: none;
-		}
 		&:hover {
 			opacity: 0.75;
 		}
@@ -165,13 +132,13 @@ $tph-border: rgba(228, 228, 204, 0.06);
 }
 
 // ── Phone: one strip carrying phase, title and clock ─────────────────────────
-// Sticky rather than fixed so the stepper below can sit at the strip's height without a
-// hand-maintained offset. Expiry navigates on by itself, so the clock cannot scroll away.
+// Sticky, so the stepper below can sit at the strip's height; expiry navigates on, so the clock never scrolls away.
 @include responsive($breakpoint-mobile) {
 	.tasting-page-header {
 		position: sticky;
 		top: 0;
-		z-index: 6;
+		// Sticky chrome, with the footer: over the page, under menus and dialogs.
+		z-index: $index-sticky;
 		display: flex;
 		align-items: center;
 		gap: $spacing-sm;
@@ -187,8 +154,6 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__timer-label {
-			@include eyebrow-label($text-10, $color-text-muted);
-			letter-spacing: 0.12em;
 			order: 2; // under the clock, not above it
 			margin-top: 3px;
 		}
@@ -202,12 +167,12 @@ $tph-border: rgba(228, 228, 204, 0.06);
 		}
 
 		&__phase-label {
-			@include eyebrow-label($text-11, $color-text-muted);
-			letter-spacing: 0.18em;
+			@include ledger-label($text-11, $color-text-muted);
 		}
 
 		&__phase-num {
-			color: $tasting-accent-light;
+			@include figures;
+			color: $color-accent-light;
 		}
 
 		&__phase-title {
@@ -236,18 +201,11 @@ $tph-border: rgba(228, 228, 204, 0.06);
 			height: 40px;
 		}
 
+		// Bold on the strip: glanced at from arm's length mid-tasting.
 		&__timer-display {
-			// White and the largest thing on the strip: it is glanced at from arm's length
-			// mid-tasting. The warning and expired states still override the colour.
-			color: $color-white;
-			text-align: right;
-		}
-
-		&__timer-display .timer-display {
-			font-size: $text-timer-live;
-			font-weight: 700;
-			line-height: 1;
+			font-weight: $font-weight-bold;
 			letter-spacing: 0.02em;
+			text-align: right;
 		}
 	}
 }

@@ -87,7 +87,7 @@ function JoinCard({ code }: { code: string }) {
 				)}
 				<div className="flight-join__link">
 					<span>{link.replace(/^https?:\/\//, '')}</span>
-					<button type="button" className="outline flight-btn-small" onClick={copy}>
+					<button type="button" className="btn-quiet btn-quiet--sm" onClick={copy}>
 						<IconCopy size={14} aria-hidden="true" />
 						{t.copyLink}
 					</button>
@@ -110,7 +110,7 @@ function TastersCard({ flight }: { flight: FlightView }) {
 				<span className="flight-muted">{t.joinedCount(flight.members.length)}</span>
 			</div>
 			{flight.members.length === 0 ? (
-				<div className="flight-empty">
+				<div className="empty-state empty-state--boxed flight-empty">
 					<strong>{t.emptyTitle}</strong>
 					<span>{t.emptyNote}</span>
 				</div>
@@ -177,17 +177,14 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 					</p>
 					<div className="flight-wine__foot">
 						<span className="flight-muted">{t.best(String(wine.best ?? '—'), wine.outOf)}</span>
-						<Link
-							href={`/flights/${flight.code}/wines/${wine.number}`}
-							className="flight-link no-underline"
-						>
+						<Link href={`/flights/${flight.code}/wines/${wine.number}`} className="text-link text-link--sm">
 							{text.bits.results}
 						</Link>
 					</div>
 				</>
 			) : (
 				<>
-					<div className="flight-wine__people">
+					<div className="flight-people">
 						{flight.members.map((member) => {
 							const status = wine.statuses[member.id] ?? 'notstarted';
 							return (
@@ -205,7 +202,7 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 					{wine.submitted ? (
 						<Link
 							href={`/flights/${flight.code}/wines/${wine.number}/reveal`}
-							className="btn-primary flight-wine__reveal no-underline"
+							className="btn-primary flight-wine__reveal"
 						>
 							{text.bits.revealWine(wine.number)}
 						</Link>
@@ -235,15 +232,15 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
-				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">{t.endLead}</p>
-					<p className="confirm-dialog__note">{t.endNote}</p>
-					<div className="confirm-dialog__actions">
-						<button className="outline confirm-dialog__cancel" onClick={() => closeModal('end-flight')}>
+				<div className="dialog">
+					<p className="dialog__lead">{t.endLead}</p>
+					<p className="dialog__note">{t.endNote}</p>
+					<div className="dialog__actions">
+						<button className="btn-quiet" onClick={() => closeModal('end-flight')}>
 							{t.keepOpen}
 						</button>
 						<button
-							className="btn-primary confirm-dialog__confirm"
+							className="btn-primary"
 							onClick={async () => {
 								closeModal('end-flight');
 								try {
@@ -267,23 +264,23 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 
 	return (
 		<main className="flight-main">
-			<header className="flight-head">
+			<header className="page-head">
 				<div>
-					<span className="page-eyebrow">{`${text.bits.flight} · ${t.hosting}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
-					<h1 className="flight-head__title">{flight.name}</h1>
-					<p className="flight-head__sub">
+					<span className="page-head__eyebrow">{`${text.bits.flight} · ${t.hosting}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
+					<h1 className="page-head__title">{flight.name}</h1>
+					<p className="page-head__sub">
 						{common.grid[flight.grid].short} · {common.wines(flight.wineCount)} ·{' '}
 						{formatTimer(flight.timerSeconds, lang)} · {progressText(flight, text)}
 					</p>
 				</div>
-				<div className="flight-head__actions">
+				<div className="page-head__actions">
 					{anyRevealed && (
-						<Link href={`/flights/${flight.code}/summary`} className="btn-primary no-underline">
+						<Link href={`/flights/${flight.code}/summary`} className="btn-primary">
 							{text.bits.summary} <IconArrowRight size={16} aria-hidden="true" />
 						</Link>
 					)}
 					{!flight.ended && (
-						<button type="button" className="outline" onClick={confirmEnd}>
+						<button type="button" className="btn-quiet" onClick={confirmEnd}>
 							{t.end}
 						</button>
 					)}
@@ -298,7 +295,7 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 
 				<div className="flight-dashboard__wines">
 					{allRevealed && (
-						<div className="flight-banner">
+						<div className="flight-notice flight-banner">
 							<IconChecks size={18} aria-hidden="true" />
 							<strong>
 								{flight.wineCount === 1 ? t.oneRevealed : t.allWinesRevealed(flight.wineCount)}

@@ -67,17 +67,17 @@ export default function ProgressClient({ list, palate, name, memberSince }: Prop
 
 	return (
 		<div className="progress">
-			<div className="progress__head">
+			<div className="page-head">
 				<div>
 					{since && (
-						<div className="progress__eyebrow">
+						<div className="page-head__eyebrow">
 							<span className="progress__wide">{t.since(name, since)}</span>
 							<span className="progress__narrow">{t.sinceShort(since)}</span>
 						</div>
 					)}
-					<h1 className="progress__title">{t.title}</h1>
+					<h1 className="page-head__title">{t.title}</h1>
 				</div>
-				<div className="progress__filters">
+				<div className="page-head__actions progress__filters">
 					<Segmented
 						label={t.filters.grid}
 						value={shown}
@@ -139,7 +139,7 @@ function Totals({ tiles, className = '' }: { tiles: Tile[]; className?: string }
 		<div className={`progress-totals ${className}`.trim()}>
 			{tiles.map((tile) => (
 				<div key={tile.label} className="progress-totals__tile">
-					<div className="progress-label">{tile.label}</div>
+					<div className="muted-label progress-label">{tile.label}</div>
 					<div className={`progress-totals__value${tile.quiet ? ' progress-totals__value--quiet' : ''}`}>
 						{tile.value}
 						{tile.unit && <span>{tile.unit}</span>}
@@ -227,7 +227,7 @@ function ProgressBody({
 
 			<div className="progress-pair">
 				<Folio n={2}>
-					<h2 className="progress-h2">
+					<h2 className="progress-section__title">
 						{t.confuse.title} <em>{t.confuse.titleEm}</em>
 					</h2>
 					<p className="progress-lede">
@@ -295,7 +295,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 		<Folio n={1} className="progress-section--trend">
 			<div className="progress-trend__head">
 				<div>
-					<h2 className="progress-h2">
+					<h2 className="progress-section__title">
 						{t.trend.title} <em>{t.trend.titleEm}</em>
 					</h2>
 					<p className="progress-trend__headline">
@@ -312,7 +312,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 				{trend && (
 					<button
 						type="button"
-						className="progress-toggle progress-toggle--top"
+						className="btn-quiet btn-quiet--sm progress-toggle progress-toggle--top"
 						aria-pressed={table}
 						onClick={() => setTable((v) => !v)}
 					>
@@ -323,7 +323,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 
 			<div className="progress-card">
 				{!trend && (
-					<div className="progress-card__empty">
+					<div className="empty-state">
 						<span className="progress__wide">{t.trend.tooFew}</span>
 						<span className="progress__narrow">{t.trend.tooFewShort}</span>
 					</div>
@@ -452,9 +452,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 										{shortDate(x.date)}
 									</span>
 									<span role="cell" className="progress-table__wine">
-										<Link href={`/archives/${x.id}`} className="no-underline">
-											{x.title}
-										</Link>
+										<Link href={`/archives/${x.id}`}>{x.title}</Link>
 										<span className="progress-table__sub">
 											{shortDate(x.date)}
 											{x.wineType ? ` · ${typeWord(x)}` : ''}
@@ -477,7 +475,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 				{trend && (
 					<button
 						type="button"
-						className="progress-toggle progress-toggle--bottom"
+						className="btn-quiet btn-quiet--sm progress-toggle progress-toggle--bottom"
 						aria-pressed={table}
 						onClick={() => setTable((v) => !v)}
 					>
@@ -503,9 +501,9 @@ function ConfusionList({
 }) {
 	return (
 		<>
-			<div className="progress-label progress-label--list">{title}</div>
+			<div className="muted-label progress-label progress-label--list">{title}</div>
 			<div className="progress-ruled">
-				{pairs.length === 0 && <p className="progress-ruled__none">{t.confuse.none}</p>}
+				{pairs.length === 0 && <p className="empty-state empty-state--row">{t.confuse.none}</p>}
 				{pairs.map((pair) => (
 					<div key={`${pair.call}-${pair.actual}`} className="progress-pair-row">
 						<div className="progress-pair-row__text">
@@ -568,7 +566,7 @@ function PalateSection({
 
 	return (
 		<Folio n={3} className="progress-section--palate">
-			<h2 className="progress-h2">
+			<h2 className="progress-section__title">
 				{t.palate.title} <em>{t.palate.titleEm}</em>
 			</h2>
 			{rows.length === 0 ? (
@@ -652,11 +650,11 @@ function ProgressEmpty({
 	const actions = (
 		<>
 			{firstWaiting && (
-				<Link href={`/archives/${firstWaiting.id}`} className="btn-primary progress-empty__reveal no-underline">
+				<Link href={`/archives/${firstWaiting.id}`} className="btn-primary">
 					{t.empty.reveal(firstWaiting.number)}
 				</Link>
 			)}
-			<Link href="/tastings/start" className="progress-link progress-empty__start">
+			<Link href="/tastings/start" className="btn-quiet">
 				{t.empty.start}
 			</Link>
 		</>
@@ -664,10 +662,10 @@ function ProgressEmpty({
 
 	return (
 		<div className="progress">
-			<div className="progress__head progress__head--empty">
+			<div className="page-head">
 				<div>
-					{since && <div className="progress__eyebrow progress__wide">{t.since(name, since)}</div>}
-					<h1 className="progress__title">{t.title}</h1>
+					{since && <div className="page-head__eyebrow progress__wide">{t.since(name, since)}</div>}
+					<h1 className="page-head__title">{t.title}</h1>
 				</div>
 			</div>
 			<Totals
@@ -681,17 +679,17 @@ function ProgressEmpty({
 			/>
 			<div className="progress-card progress-empty">
 				<div className="progress-empty__text">
-					<h2 className="progress-h2">
+					<h2 className="progress-section__title">
 						{revealed.length ? t.empty.title(needed) : t.empty.titleFresh} <em>{t.empty.titleEm}</em>
 					</h2>
-					<p className="progress-empty__body">
+					<p className="body-copy progress-empty__body">
 						<span className="progress__wide">{t.empty.body}</span>
 						<span className="progress__narrow">{t.empty.bodyShort}</span>
 					</p>
 					<div className="progress-empty__actions progress__wide-flex">{actions}</div>
 				</div>
 				<div>
-					<div className="progress-label progress__wide">{t.empty.soFar}</div>
+					<div className="muted-label progress-label progress__wide">{t.empty.soFar}</div>
 					{slots.map((slot, i) => (
 						<div key={i} className={`progress-slot progress-slot--${slot.kind}`}>
 							<span className="progress-slot__n">{i + 1}</span>

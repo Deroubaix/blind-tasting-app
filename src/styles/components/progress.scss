@@ -1,24 +1,12 @@
 @use '../abstracts' as *;
 // Progress page: the home page's ledger look, from abstracts/_ledger.
 
-@mixin phone {
-	@include responsive($breakpoint-mobile) {
-		@content;
-	}
-}
-
 .progress {
 	max-width: calc(1104px + 2 * $spacing-xxl);
 	margin: 0 auto;
 	padding: 20px $spacing-xxl 72px;
 	color: $color-white;
 	font-family: $font-display-normal-family;
-
-	em {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-weight: 500;
-	}
 
 	// Copy that differs between desktop and phone: both are rendered, one is shown.
 	&__narrow,
@@ -30,7 +18,7 @@
 		display: flex;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		padding: 4px 16px 36px;
 
 		&__wide,
@@ -47,54 +35,9 @@
 		}
 	}
 
-	&__head {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 32px;
-		align-items: end;
-		padding-bottom: 22px;
-
-		&--empty {
-			padding-bottom: 28px;
-		}
-
-		@include responsive(64rem) {
-			grid-template-columns: 1fr;
-			gap: 18px;
-		}
-	}
-
-	&__eyebrow {
-		@include ledger-label;
-		letter-spacing: 0.16em;
-		color: $color-text-secondary;
-		margin-bottom: 14px;
-
-		@include phone {
-			letter-spacing: 0.14em;
-			margin-bottom: 8px;
-		}
-	}
-
-	&__title {
-		margin: 0;
-		font-size: 3.0625rem;
-		font-weight: 700;
-		letter-spacing: -0.035em;
-		line-height: 1.05;
-
-		@include phone {
-			font-size: 2.125rem;
-		}
-	}
-
-	&__filters {
-		display: flex;
-		gap: 16px;
-		align-items: center;
-		flex-wrap: wrap;
-
-		@include phone {
+	// The head is .page-head; on the phone the filters stack full width.
+	@include responsive($breakpoint-mobile) {
+		&__filters {
 			display: grid;
 			gap: 8px;
 			margin-bottom: 14px;
@@ -102,8 +45,8 @@
 	}
 }
 
+// Spacing under a .muted-label.
 .progress-label {
-	@include ledger-label;
 	margin-bottom: 8px;
 
 	&--list {
@@ -112,16 +55,7 @@
 }
 
 .progress-link {
-	font-weight: 600;
-	color: $tasting-accent-light;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
+	@include ledger-link;
 }
 
 // ── Filters ───────────────────────────────────────────────────────────────────
@@ -130,35 +64,29 @@
 	gap: 4px;
 	padding: 4px;
 	border: 1px solid $rule;
-	border-radius: 3px;
+	border-radius: $radius;
 
 	&__btn {
 		min-height: 38px;
 		padding: 0 14px;
-		border-radius: 2px;
+		border-radius: $radius-sm;
 		border: 1px solid transparent;
-		background: transparent;
 		color: $color-text-secondary;
-		font-family: inherit;
 		font-size: $text-13;
 		font-weight: $font-weight-semibold;
-		// The global button style is uppercase; filters read as words.
-		text-transform: none;
-		letter-spacing: normal;
-		cursor: pointer;
+		transition: color 0.15s ease;
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			color: $color-white;
 		}
 
 		&[aria-pressed='true'] {
-			background: rgba($tasting-accent, 0.22);
-			border-color: $tasting-accent-light;
-			color: $color-white;
+			@include selected-outline;
 		}
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		display: grid;
 
 		&--2 {
@@ -202,12 +130,12 @@
 
 	&__value {
 		@include figures;
-		font-size: 2.5rem;
-		font-weight: 500;
+		font-size: $text-40;
+		font-weight: $font-weight-medium;
 		line-height: 1;
 
 		span {
-			font-size: 1.25rem;
+			font-size: $text-20;
 			color: $color-text-muted;
 		}
 
@@ -222,7 +150,7 @@
 		color: $color-text-secondary;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		grid-template-columns: 1fr 1fr;
 		margin-bottom: 10px;
 
@@ -249,7 +177,7 @@
 		}
 
 		&__value {
-			font-size: 1.75rem;
+			font-size: $text-28;
 
 			span {
 				font-size: $text-15;
@@ -269,7 +197,7 @@
 	font-size: $text-13;
 	color: $color-text-secondary;
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		display: flex;
 		align-items: center;
 		min-height: 44px;
@@ -285,15 +213,11 @@
 	margin-bottom: 56px;
 
 	&__folio {
-		text-align: right;
+		@include folio-number($text-16);
 		padding-right: 18px;
-		border-right: 1px solid $rule-folio;
-		font-family: $font-body-normal-family;
-		font-size: $text-16;
-		color: $color-text-muted;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		display: block;
 		margin-bottom: 40px;
 
@@ -335,21 +259,14 @@
 		gap: 56px;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		gap: 40px;
 	}
 }
 
-.progress-h2 {
+// A section's h2; the global h2 gives the type.
+.progress-section__title {
 	margin: 0 0 8px;
-	font-size: 2rem;
-	font-weight: 700;
-	letter-spacing: -0.03em;
-	line-height: 1.1;
-
-	@include phone {
-		font-size: 1.625rem;
-	}
 }
 
 .progress-lede {
@@ -362,9 +279,8 @@
 		margin: 4px 0 0;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		margin-bottom: 16px;
-		font-size: 0.7812rem;
 
 		&--tight {
 			margin: 0 0 14px;
@@ -380,7 +296,7 @@
 	gap: 24px;
 	margin-bottom: 22px;
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		display: block;
 		margin-bottom: 0;
 	}
@@ -392,45 +308,31 @@
 	line-height: 1.5;
 
 	strong {
-		font-weight: 700;
+		font-weight: $font-weight-bold;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		margin-bottom: 4px;
 		font-size: $text-15;
 		line-height: 1.45;
 	}
 }
 
+// A .btn-quiet--sm shown above the chart on desktop, below it on the phone.
 .progress-toggle {
 	flex-shrink: 0;
-	padding: 10px 14px;
-	background: transparent;
-	border: 1px solid $rule-mid;
-	border-radius: 3px;
-	color: $color-white;
-	font-family: inherit;
-	font-size: $text-12;
-	font-weight: $font-weight-bold;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	cursor: pointer;
-
-	&:hover {
-		border-color: $color-text-secondary;
-	}
 
 	&--bottom {
 		display: none;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		&--top {
 			display: none;
 		}
 
 		&--bottom {
-			display: block;
+			display: flex;
 			width: 100%;
 			min-height: 44px;
 			margin-top: 12px;
@@ -439,26 +341,10 @@
 }
 
 .progress-card {
-	background: $color-darkGrey;
-	border: 1px solid $rule;
-	border-radius: 4px;
-	padding: 28px 28px 18px;
+	@include ledger-panel(28px 28px 18px);
 
-	&__empty {
-		padding: 40px 0;
-		text-align: center;
-		font-size: $text-14;
-		color: $color-text-secondary;
-	}
-
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		padding: 18px 14px 12px;
-
-		&__empty {
-			padding: 28px 0;
-			font-size: $text-13-5;
-			line-height: 1.5;
-		}
 	}
 }
 
@@ -516,7 +402,7 @@
 
 	&__end-value {
 		@include figures;
-		font-size: 1.375rem;
+		font-size: $text-24;
 		line-height: 1;
 	}
 
@@ -541,7 +427,7 @@
 		}
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		height: 190px;
 		margin: 0 8px 0 28px;
 
@@ -576,14 +462,10 @@
 	transform: translate(-50%, -50%);
 	box-sizing: border-box;
 
-	&:after {
-		display: none;
-	}
-
 	&--red {
-		border-radius: 1px;
-		background: $tasting-accent-light;
-		border: 1.5px solid $tasting-accent-light;
+		border-radius: $radius-sm;
+		background: $color-accent-light;
+		border: 1.5px solid $color-accent-light;
 	}
 
 	&--white {
@@ -596,12 +478,12 @@
 	&:focus-visible {
 		width: 15px;
 		height: 15px;
-		outline: 2px solid $tasting-accent-light;
+		outline: 2px solid $color-accent-light;
 		outline-offset: 2px;
 		z-index: 1;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		width: 9px;
 		height: 9px;
 	}
@@ -618,7 +500,8 @@
 	padding: 10px 12px;
 	background: $color-black;
 	border: 1px solid $rule-mid;
-	border-radius: 3px;
+	border-radius: $radius;
+	box-shadow: $shadow-lift;
 	font-size: $text-12;
 	color: $color-text-secondary;
 	pointer-events: none;
@@ -641,7 +524,7 @@
 	margin-top: 14px;
 	padding-top: 12px;
 	border-top: 1px solid $rule-soft;
-	font-size: 0.7812rem;
+	font-size: $text-13;
 	color: $color-text-secondary;
 
 	> span {
@@ -667,7 +550,7 @@
 		margin-left: auto;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		gap: 6px 14px;
 		margin-top: 10px;
 		padding-top: 10px;
@@ -699,12 +582,10 @@
 		grid-template-columns: 56px 110px minmax(0, 1fr) 90px 90px 110px;
 		column-gap: 16px;
 		align-items: baseline;
-		padding: 10px 0;
-		border-top: 1px solid $rule-soft;
+		@include ledger-row(10px);
 
 		&--head {
 			@include ledger-label;
-			letter-spacing: 0.1em;
 			padding-top: 0;
 			border-top: none;
 
@@ -734,15 +615,13 @@
 		font-size: $text-14;
 		font-weight: $font-weight-semibold;
 
+		// A row title: white, accent on hover; .progress-link is the accent inline link.
 		a {
-			color: $color-white;
+			transition: color 0.15s ease;
 
-			&:after {
-				display: none;
-			}
-
-			&:hover {
-				color: $tasting-accent-light;
+			&:hover,
+			&:focus-visible {
+				color: $color-accent-light;
 			}
 		}
 	}
@@ -765,7 +644,7 @@
 		color: $color-text-secondary;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		&__row {
 			grid-template-columns: 34px minmax(0, 1fr) auto;
 			column-gap: 10px;
@@ -798,7 +677,7 @@
 		&__sub {
 			display: block;
 			font-size: $text-12;
-			font-weight: 400;
+			font-weight: $font-weight-regular;
 			color: $color-text-secondary;
 		}
 	}
@@ -813,15 +692,7 @@
 		margin-bottom: 0;
 	}
 
-	&__none {
-		margin: 0;
-		padding: 13px 0;
-		border-top: 1px solid $rule-soft;
-		font-size: $text-14;
-		color: $color-text-secondary;
-	}
-
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		margin-bottom: 22px;
 	}
 }
@@ -831,8 +702,7 @@
 	grid-template-columns: minmax(0, 1fr) auto;
 	gap: 16px;
 	align-items: center;
-	padding: 13px 0;
-	border-top: 1px solid $rule-soft;
+	@include ledger-row(13px);
 
 	&__text {
 		min-width: 0;
@@ -841,7 +711,7 @@
 		color: $color-text-secondary;
 
 		strong {
-			font-weight: 700;
+			font-weight: $font-weight-bold;
 			color: $color-white;
 		}
 	}
@@ -856,7 +726,7 @@
 		@include figures;
 		min-width: 62px;
 		text-align: right;
-		font-size: 1.375rem;
+		font-size: $text-24;
 	}
 
 	&__of {
@@ -864,13 +734,13 @@
 		color: $color-text-muted;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		gap: 12px;
 		padding: 12px 0;
 
 		&__line {
 			display: block;
-			font-size: 0.7812rem;
+			font-size: $text-13;
 
 			strong {
 				font-size: $text-14;
@@ -885,7 +755,7 @@
 
 		&__figure {
 			min-width: 0;
-			font-size: 1.3125rem;
+			font-size: $text-20;
 		}
 
 		&__of {
@@ -905,7 +775,7 @@
 		width: 7px;
 		height: 14px;
 		box-sizing: border-box;
-		border: 1px solid rgba($color-white, 0.3);
+		border: 1px solid $rule-mid;
 
 		&.is-on {
 			background: $color-white;
@@ -913,7 +783,7 @@
 		}
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		> span {
 			width: 6px;
 			height: 11px;
@@ -931,12 +801,10 @@
 }
 
 .progress-bias {
-	padding: 14px 0;
-	border-top: 1px solid $rule-soft;
+	@include ledger-row(14px);
 
 	&__scale {
 		@include ledger-label;
-		letter-spacing: 0.1em;
 		padding-bottom: 8px;
 	}
 
@@ -954,7 +822,7 @@
 
 	&__wines {
 		font-size: $text-12;
-		font-weight: 400;
+		font-weight: $font-weight-regular;
 		color: $color-text-muted;
 	}
 
@@ -993,7 +861,7 @@
 		position: absolute;
 		top: 11px;
 		height: 9px;
-		background: rgba($color-white, 0.14);
+		background: $rule-folio;
 	}
 
 	&__dot {
@@ -1009,28 +877,23 @@
 	&__figure {
 		@include figures;
 		text-align: right;
-		font-size: 1.1875rem;
+		font-size: $text-20;
 		line-height: 1.1;
 	}
 
 	&__word {
-		font-family: $font-display-normal-family;
-		font-size: $text-11;
-		font-weight: $font-weight-bold;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: $color-text-secondary;
+		@include ledger-label($text-11, $color-text-secondary);
 		white-space: nowrap;
 	}
 
 	&--high,
 	&--low {
 		.progress-bias__bar {
-			background: rgba($tasting-accent-light, 0.35);
+			background: rgba($color-accent-light, 0.35);
 		}
 
 		.progress-bias__dot {
-			background: $tasting-accent-light;
+			background: $color-accent-light;
 		}
 
 		.progress-bias__word {
@@ -1038,7 +901,7 @@
 		}
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		grid-template-columns: minmax(0, 1fr) 62px;
 		column-gap: 12px;
 		row-gap: 6px;
@@ -1046,7 +909,6 @@
 
 		&__scale {
 			grid-template-columns: minmax(0, 1fr) 62px;
-			letter-spacing: 0.08em;
 			padding-bottom: 6px;
 
 			> span:first-child {
@@ -1059,7 +921,7 @@
 			flex-direction: row;
 			align-items: baseline;
 			gap: 6px;
-			font-size: 0.9062rem;
+			font-size: $text-15;
 		}
 
 		&__track {
@@ -1067,11 +929,7 @@
 		}
 
 		&__figure {
-			font-size: 1.0625rem;
-		}
-
-		&__word {
-			letter-spacing: 0.06em;
+			font-size: $text-18;
 		}
 	}
 }
@@ -1084,7 +942,7 @@
 	line-height: 1.55;
 	color: $color-text-secondary;
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		margin-top: 12px;
 		padding-top: 12px;
 		font-size: $text-13-5;
@@ -1099,16 +957,14 @@
 	align-items: center;
 	padding: 40px;
 
-	.progress-h2 {
+	.progress-section__title {
 		margin-bottom: 12px;
 	}
 
+	// .body-copy, narrower.
 	&__body {
 		max-width: 52ch;
-		margin: 0 0 24px;
-		font-size: $text-15;
-		line-height: 1.6;
-		color: $color-text-secondary;
+		margin-bottom: 24px;
 	}
 
 	&__actions {
@@ -1116,56 +972,27 @@
 		gap: 16px;
 	}
 
-	&__reveal {
-		padding: 15px 22px;
-		font-size: $text-13;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-	}
-
-	&__start {
-		font-size: $text-14;
-	}
-
 	@include responsive($breakpoint-tablet) {
 		grid-template-columns: 1fr;
 		gap: 28px;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		padding: 22px 18px 18px;
 
-		.progress-h2 {
+		.progress-section__title {
 			margin-bottom: 10px;
-			font-size: 1.5rem;
-			line-height: 1.15;
 		}
 
 		&__body {
 			margin-bottom: 18px;
-			font-size: $text-14;
-			line-height: 1.55;
 		}
 
 		&__actions {
 			flex-direction: column;
 			align-items: stretch;
-			gap: 6px;
+			gap: 8px;
 			margin-top: 18px;
-		}
-
-		&__reveal {
-			min-height: 50px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		&__start {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			min-height: 44px;
 		}
 	}
 }
@@ -1175,16 +1002,10 @@
 	grid-template-columns: 40px minmax(0, 1fr) auto;
 	column-gap: 14px;
 	align-items: baseline;
-	padding: 13px 0;
-	border-top: 1px solid $rule-soft;
+	@include ledger-row(13px);
 
 	&__n {
-		@include figures;
-		text-align: right;
-		padding-right: 12px;
-		border-right: 1px solid $rule-folio;
-		font-size: $text-15;
-		color: $color-text-muted;
+		@include folio-number($text-15);
 	}
 
 	&__text {
@@ -1193,7 +1014,7 @@
 
 	&__score {
 		@include figures;
-		font-size: 1.125rem;
+		font-size: $text-18;
 	}
 
 	&--done &__text {
@@ -1213,7 +1034,7 @@
 	}
 
 	&--next .progress-slot__text {
-		color: rgba($color-white, 0.55);
+		color: $color-text-muted;
 	}
 
 	&__foot {
@@ -1223,7 +1044,7 @@
 		color: $color-text-secondary;
 	}
 
-	@include phone {
+	@include responsive($breakpoint-mobile) {
 		grid-template-columns: 30px minmax(0, 1fr) auto;
 		column-gap: 10px;
 		padding: 12px 0;
@@ -1238,11 +1059,11 @@
 		}
 
 		&__score {
-			font-size: 1.0625rem;
+			font-size: $text-16;
 		}
 
 		&__foot {
-			font-size: 0.7812rem;
+			font-size: $text-13;
 		}
 	}
 }

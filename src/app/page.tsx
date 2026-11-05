@@ -31,9 +31,9 @@ export default async function Homepage() {
 							<h2 className="home-h2">
 								{t.scoredTitle} <em>{t.scoredEm}</em>.
 							</h2>
-							<p className="home-lede">{t.scoredLede}</p>
-							<p className="home-p">{t.scoredP1}</p>
-							<p className="home-p">{t.scoredP2}</p>
+							<p className="body-copy body-copy--lg">{t.scoredLede}</p>
+							<p className="body-copy">{t.scoredP1}</p>
+							<p className="body-copy">{t.scoredP2}</p>
 						</div>
 						<RevealTable />
 					</div>
@@ -42,16 +42,16 @@ export default async function Homepage() {
 				<Folio n={2} id="flights" tint>
 					<div className="home-flights__head">
 						<div>
-							<span className="home-eyebrow">{t.studyGroups}</span>
+							<span className="page-head__eyebrow">{t.studyGroups}</span>
 							<h2 className="home-h2 home-h2--lg">
 								{t.flightsTitle} <em>{t.flightsEm}</em>.
 							</h2>
 						</div>
 						<div className="home-ctas home-ctas--tight">
-							<Link href="/flights/new" className="btn-primary home-btn no-underline">
+							<Link href="/flights/new" className="btn-primary">
 								{t.host}
 							</Link>
-							<Link href="/flights/join" className="home-btn home-btn--outline no-underline">
+							<Link href="/flights/join" className="btn-quiet">
 								{t.join}
 							</Link>
 						</div>
@@ -59,7 +59,7 @@ export default async function Homepage() {
 					<ol className="home-steps">
 						{steps.map(([title, body], i) => (
 							<li key={title} className="home-steps__item">
-								<span className="home-figure home-figure--xl">{String(i + 1).padStart(2, '0')}</span>
+								<span className="home-figure home-figure--lg">{String(i + 1).padStart(2, '0')}</span>
 								<span>
 									<strong>{title}</strong>
 									<span className="home-muted">{body}</span>
@@ -68,7 +68,7 @@ export default async function Homepage() {
 						))}
 					</ol>
 					<FlightPreview />
-					<p className="home-p home-p--wide">{t.structureNote}</p>
+					<p className="body-copy home-flights__note">{t.structureNote}</p>
 				</Folio>
 
 				<Folio n={3}>
@@ -78,7 +78,7 @@ export default async function Homepage() {
 								{t.paceTitle} <em>{t.paceEm}</em>
 								{t.paceTail}
 							</h2>
-							<p className="home-lede">{t.paceLede}</p>
+							<p className="body-copy body-copy--lg">{t.paceLede}</p>
 						</div>
 						<ExamPace />
 					</div>
@@ -96,22 +96,22 @@ export default async function Homepage() {
 						<h2 className="home-h2">
 							{t.archiveTitle} <em>{t.archiveEm}</em>.
 						</h2>
-						<p className="home-lede">{t.archiveLede}</p>
+						<p className="body-copy body-copy--lg">{t.archiveLede}</p>
 					</div>
 					<ArchivePreview />
 				</Folio>
 
 				<Folio n={6}>
-					<span className="home-eyebrow home-eyebrow--plain">{t.whoFor}</span>
+					<span className="page-head__eyebrow page-eyebrow--plain">{t.whoFor}</span>
 					<Who />
 				</Folio>
 
 				<section className="home-closing-wrap">
-					<div className="home-closing">
-						<h2 className="home-h2 home-h2--xl">
+					<div className="home-closing page-container">
+						<h2 className="home-h2 home-h2--lg">
 							{t.closingTitle} <em>{t.closingEm}</em>
 						</h2>
-						<p className="home-lede">{t.closingLede}</p>
+						<p className="body-copy body-copy--lg">{t.closingLede}</p>
 						<CtaLinks />
 					</div>
 				</section>

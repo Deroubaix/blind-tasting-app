@@ -1,57 +1,55 @@
 @use '../abstracts' as *;
 // Archives page — card grid + tasting detail view
 
-// ── Hero ──────────────────────────────────────────────────────────────────────
-.archives-hero {
-	padding: $spacing-xxl $spacing-xxl $spacing-xl;
+// ── Head ──────────────────────────────────────────────────────────────────────
+// Lines the .page-head up with the card grid below it.
+.archives-head {
 	max-width: 1200px;
 	margin: 0 auto;
+	padding-top: $spacing-xxl;
+	padding-inline: $spacing-xxl;
 
-	h1 {
-		margin-bottom: $spacing-sm;
-	}
-
-	&__description {
-		font-size: $font-size-sm;
-		color: $color-text-secondary;
-		font-style: italic;
-		margin: 0;
-		line-height: 1.6;
+	@include responsive($breakpoint-mobile) {
+		padding-top: $spacing-lg;
+		padding-inline: $spacing-md;
 	}
 }
 
 // ── Card grid ─────────────────────────────────────────────────────────────────
 .archives-grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: $spacing-lg;
 	padding: 0 $spacing-xxl $spacing-xxl;
 	max-width: 1200px;
 	margin: 0 auto;
+
+	@container tasting-main (max-width: 900px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@container tasting-main (max-width: 600px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: 0 $spacing-md $spacing-xl;
+	}
 }
 
 // ── Archive card ──────────────────────────────────────────────────────────────
 .archive-card {
+	@include ledger-panel($spacing-lg);
 	position: relative; // the box the Details link stretches over
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
-	padding: $spacing-lg;
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-sm;
 	cursor: pointer;
-	@include transition(border-color, 0.2s);
-	text-decoration: none;
 	color: $color-white;
+	transition: border-color 0.15s ease;
 
 	&:hover {
-		border-color: rgba(228, 228, 204, 0.22);
-	}
-
-	// suppress the global link underline animation
-	&::after {
-		display: none;
+		border-color: $rule-mid;
 	}
 
 	&__top {
@@ -68,59 +66,27 @@
 		flex-wrap: wrap;
 	}
 
-	// A quiet chip, no fill and no colour by grade; a perfect score earns one small green tick.
-	&__score {
-		display: inline-flex;
-		align-items: center;
-		gap: 5px;
-		padding: 2px 8px;
-		border-radius: 4px;
-		border: 1px solid rgba(228, 228, 204, 0.22);
-		font-size: $text-11;
-		font-weight: $font-weight-bold;
-		font-variant-numeric: tabular-nums;
-
-		svg {
-			color: $color-status-ok;
-		}
-	}
-
-	// Not yet revealed: the chip is the way in. Dashed, so it reads as waiting rather than failed,
-	// and raised above the card's stretched Details link so it takes its own clicks.
-	// A flight wine waits for the host's reveal: a status, not a button.
+	// A flight wine waits for the host's reveal: a status, not a button. Dashed, so it reads as waiting.
 	&__waiting {
-		padding: 3px 8px;
-		border-radius: 4px;
-		border: 1px dashed rgba(228, 228, 204, 0.25);
-		font-size: $text-11;
-		font-weight: $font-weight-bold;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: $color-text-secondary;
+		@include ledger-tag;
+		border-style: dashed;
 	}
 
+	// Not yet revealed: the tag is the way in, raised above the card's stretched Details link.
 	&__reveal {
+		@include ledger-tag;
+		--tone: #{$color-accent-light};
 		position: relative;
 		z-index: 1;
-		padding: 3px 8px;
-		border-radius: 4px;
-		border: 1px dashed rgba(228, 228, 204, 0.35);
-		font-size: $text-11;
-		font-weight: $font-weight-bold;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: $tasting-accent-light;
-		@include transition(color border-color, 0.15s);
-
-		&:after {
-			display: none;
-		}
+		border-style: dashed;
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
+			--tone: #{$color-white};
 			border-style: solid;
-			border-color: $tasting-accent-light;
-			color: $color-white;
 		}
 	}
 
@@ -132,19 +98,18 @@
 	}
 
 	&__call-label {
-		@include eyebrow-label($text-9, $color-text-muted);
-		letter-spacing: 0.1em;
+		@include ledger-label($text-9);
 		margin-right: 6px;
 	}
 
 	&__id {
-		font-size: $text-11;
+		@include figures;
+		font-size: $text-12;
 		color: $color-text-muted;
-		letter-spacing: 0.05em;
 	}
 
 	&__title {
-		font-size: $font-size-xl; // 25px, the scale step next to its old 24px
+		font-size: $text-24;
 		font-weight: $font-weight-bold;
 		line-height: 1.2;
 		letter-spacing: -0.01em;
@@ -166,13 +131,12 @@
 	}
 
 	&__conclusions-label {
-		@include eyebrow-label($text-9, $color-text-muted);
-		letter-spacing: 0.1em;
+		@include ledger-label($text-9);
 	}
 
 	&__conclusions-text {
+		@include serif-italic;
 		font-size: $text-13;
-		font-style: italic;
 		color: $color-text-secondary;
 		line-height: 1.55;
 		margin: 0;
@@ -188,17 +152,17 @@
 		justify-content: space-between;
 		margin-top: auto;
 		padding-top: $spacing-sm;
-		border-top: 1px solid $tasting-border;
+		border-top: 1px solid $rule-soft;
 	}
 
 	&__date {
-		font-size: $text-11-5;
+		font-size: $text-12;
 		color: $color-text-muted;
 	}
 
 	&__details {
-		@include eyebrow-label($text-10, $tasting-accent-light);
-		letter-spacing: 0.1em;
+		@include ledger-label($text-10, $color-accent-light);
+		transition: color 0.15s ease;
 	}
 
 	&:hover &__details {
@@ -222,7 +186,7 @@
 
 	// The card is the link visually, so it takes the keyboard focus ring too.
 	&:has(&__link:focus-visible) {
-		outline: 2px solid $tasting-accent-light;
+		outline: 2px solid $color-accent-light;
 		outline-offset: 2px;
 	}
 
@@ -233,30 +197,32 @@
 	// Raised above the stretched link so it gets its own clicks. Quiet until hovered, so it is
 	// findable without competing with Details.
 	&__delete {
+		@include bare-button;
 		position: relative;
 		z-index: 1;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
 		width: 28px;
 		height: 28px;
-		padding: 0;
-		background: none;
 		border: 1px solid transparent;
-		border-radius: 6px;
+		border-radius: $radius;
 		color: $color-text-muted;
-		cursor: pointer;
-		@include transition(color border-color, 0.15s);
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease;
 
 		&:hover:not(:disabled),
 		&:focus-visible {
 			color: $color-error;
-			border-color: rgba(229, 115, 115, 0.4);
+			border-color: rgba($color-error, 0.4);
 		}
 
 		&:disabled {
 			opacity: 0.5;
 			cursor: default;
+		}
+
+		@include responsive($breakpoint-mobile) {
+			width: 44px;
+			height: 44px;
 		}
 	}
 
@@ -267,25 +233,24 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 160px;
-		cursor: pointer;
 		gap: $spacing-sm;
 		transition:
-			border-color 0.2s ease-in-out,
-			background-color 0.2s ease-in-out;
+			border-color 0.15s ease,
+			background-color 0.15s ease;
 
 		&:hover {
-			border-color: rgba(228, 228, 204, 0.3);
-			background-color: rgba(228, 228, 204, 0.03);
+			border-color: $rule-mid;
+			background-color: $color-darkGrey;
 		}
 	}
 
 	&__new-icon {
-		font-size: $font-size-xl;
+		font-size: $text-24;
 		color: $color-text-secondary;
 		line-height: 1;
 		width: 40px;
 		height: 40px;
-		border: 1px solid $tasting-border-mid;
+		border: 1px solid $rule;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -293,50 +258,32 @@
 	}
 
 	&__new-label {
-		@include eyebrow-label($text-10, $color-text-secondary);
-		letter-spacing: 0.15em;
+		@include ledger-label($text-10, $color-text-secondary);
 	}
 }
 
 // ── Wine type badge ───────────────────────────────────────────────────────────
 .wine-type-badge {
-	@include eyebrow-label($text-9);
-	padding: 3px 8px;
-	border-radius: 4px;
-	letter-spacing: 0.1em;
+	@include ledger-tag;
 
 	&--red {
-		background-color: rgba(139, 69, 87, 0.25);
-		border: 1px solid rgba(139, 69, 87, 0.5);
-		color: $tasting-accent-light;
+		--tone: #{$color-accent-light};
 	}
 
 	&--white {
-		background-color: rgba(45, 74, 62, 0.4);
-		border: 1px solid rgba($color-status-ok, 0.3);
-		color: $color-status-ok;
+		--tone: #{$color-status-ok};
 	}
 }
 
-// ── State: loading / error / empty ────────────────────────────────────────────
-.archives-loading,
-.archives-error {
-	padding: $spacing-xxl;
-	text-align: center;
-	color: $color-text-secondary;
-	font-size: $font-size-sm;
-}
-
+// ── State: empty ──────────────────────────────────────────────────────────────
+// Inside .empty-state; lined up with the grid.
 .archives-empty {
-	padding: $spacing-xxl $spacing-xxl 0;
 	max-width: 1200px;
 	margin: 0 auto;
+	padding-inline: $spacing-xxl;
 
 	p {
-		color: $color-text-secondary;
-		font-size: $font-size-sm;
-		font-style: italic;
-		margin-bottom: $spacing-lg;
+		margin: 0 0 $spacing-lg;
 	}
 }
 
@@ -346,24 +293,14 @@
 	max-width: 900px;
 	margin: 0 auto;
 	padding: $spacing-xxl $spacing-xxl $spacing-xxxl;
+
+	@include responsive($breakpoint-mobile) {
+		padding: $spacing-lg $spacing-md $spacing-xxl;
+	}
 }
 
 .tasting-detail__back {
-	display: inline-flex;
-	align-items: center;
-	gap: $spacing-xs;
-	font-size: $font-size-sm;
-	color: $color-text-secondary;
-	text-decoration: none;
 	margin-bottom: $spacing-xl;
-	@include transition(color, 0.15s);
-
-	&::after {
-		display: none;
-	}
-	&:hover {
-		color: $color-white;
-	}
 }
 
 .tasting-detail__hero-top {
@@ -377,26 +314,19 @@
 	margin-left: auto;
 	display: flex;
 	align-items: center;
-	gap: $spacing-md;
-}
-
-.tasting-detail__flight {
-	font-size: $text-11-5;
-	color: $tasting-accent-light;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: $spacing-xxs $spacing-md;
+	font-size: $text-12;
 }
 
 .tasting-detail__id,
 .tasting-detail__date {
-	font-size: $text-11-5;
 	color: $color-text-muted;
+}
+
+.tasting-detail__id {
+	@include figures;
 }
 
 // Title and subtitle on the left, the photo thumbnail beside them.
@@ -416,11 +346,9 @@
 	margin-bottom: $spacing-xs;
 }
 
+// Spacing only; the type is .page-head__sub.
 .tasting-detail__subtitle {
-	font-size: $font-size-sm;
-	color: $color-text-secondary;
 	margin: 0 0 $spacing-xl;
-	line-height: 1.4;
 }
 
 // Once revealed, the actual wine is the subtitle and the call sits beneath it.
@@ -436,28 +364,16 @@
 }
 
 .tasting-detail__call-label {
-	@include eyebrow-label($text-9, $color-text-muted);
-	letter-spacing: 0.1em;
+	@include ledger-label($text-9);
 	margin-right: $spacing-xxs;
 }
 
-.tasting-detail__divider {
-	height: 1px;
-	background-color: $tasting-border-mid;
-	margin: $spacing-xl 0;
-}
-
 .tasting-detail__section {
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
-	padding: $spacing-lg;
+	@include ledger-panel($spacing-lg);
 	margin-bottom: $spacing-lg;
 }
 
 .tasting-detail__section-label {
-	@include eyebrow-label($text-10, $tasting-accent-light);
-	letter-spacing: 0.12em;
 	margin-bottom: $spacing-md;
 }
 
@@ -474,8 +390,7 @@
 }
 
 .tasting-detail__field-label {
-	@include eyebrow-label($text-9, $color-text-muted);
-	letter-spacing: 0.1em;
+	@include ledger-label($text-9);
 }
 
 .tasting-detail__field-value {
@@ -485,8 +400,8 @@
 }
 
 .tasting-detail__notes {
-	font-size: $font-size-sm;
-	font-style: italic;
+	@include serif-italic;
+	font-size: $text-14;
 	color: $color-text-secondary;
 	line-height: 1.65;
 	margin: 0;
@@ -495,18 +410,14 @@
 // A thumbnail; the link opens the full-size photo in a new tab.
 .tasting-detail__photo-link {
 	flex-shrink: 0;
-	border-radius: 8px;
-	border: 1px solid $tasting-border-mid;
+	border-radius: $radius;
+	border: 1px solid $rule;
 	overflow: hidden;
-	@include transition(border-color, 0.15s);
-
-	&::after {
-		display: none;
-	}
+	transition: border-color 0.15s ease;
 
 	&:hover,
 	&:focus-visible {
-		border-color: $tasting-accent-light;
+		border-color: $color-accent-light;
 	}
 }
 

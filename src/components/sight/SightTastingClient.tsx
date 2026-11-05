@@ -75,7 +75,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				return (
 					<button
 						key={opt}
-						className={`tasting-toggle-btn${on ? ' tasting-toggle-btn--selected' : ''}`}
+						className={`tasting-option${on ? ' tasting-option--selected' : ''}`}
 						aria-pressed={on}
 						onClick={() => choose(field, opt)}
 					>
@@ -161,29 +161,29 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
               │ Tearing (span 2)            │ Gas Evidence │
               └─────────────────────────────┴──────────────┘
             */}
-			<div className="sight-grid">
+			<div className="tasting-grid tasting-grid--3">
 				<div className="tasting-card">
 					<div className="tasting-card__label">Clarity / Visible Sediment</div>
 					{renderOptions('Clarity', SIGHT_SCALES.Clarity)}
 				</div>
 
-				<div className="tasting-card sight-card--span-2">
+				<div className="tasting-card tasting-grid__span-2">
 					<div className="tasting-card__label">Intensity of Color</div>
 					{renderOptions('Intensity of Color', SIGHT_SCALES['Intensity of Color'])}
 				</div>
 
-				<div className="tasting-card sight-card--span-full sight-card--light">
-					<div className="sight-card__header">
+				<div className="tasting-card tasting-grid__span-full tasting-card--light">
+					<div className="tasting-card__head">
 						<div className="tasting-card__label">Primary Color</div>
-						<span className="sight-card__sublabel">{t.core}</span>
+						<span className="sight-sublabel">{t.core}</span>
 					</div>
 					{renderSwatches('Primary Color', colors.primary)}
 				</div>
 
-				<div className="tasting-card sight-card--span-full sight-card--light">
-					<div className="sight-card__header">
+				<div className="tasting-card tasting-grid__span-full tasting-card--light">
+					<div className="tasting-card__head">
 						<div className="tasting-card__label">Secondary Color(s)</div>
-						<span className="sight-card__sublabel">{t.selectAll}</span>
+						<span className="sight-sublabel">{t.selectAll}</span>
 					</div>
 					{renderSwatches('Secondary Color(s)', colors.secondary)}
 				</div>
@@ -195,14 +195,14 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 							{renderToggle('Rim Variation')}
 						</div>
 
-						<div className="tasting-card sight-card--span-2">
+						<div className="tasting-card tasting-grid__span-2">
 							<div className="tasting-card__label">Staining</div>
 							{renderOptions('Staining', SIGHT_SCALES.Staining)}
 						</div>
 					</>
 				)}
 
-				<div className="tasting-card sight-card--span-2">
+				<div className="tasting-card tasting-grid__span-2">
 					<div className="tasting-card__label">Tearing</div>
 					{renderOptions('Tearing', SIGHT_SCALES.Tearing)}
 				</div>

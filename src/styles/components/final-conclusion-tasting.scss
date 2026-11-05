@@ -1,9 +1,9 @@
 @use '../abstracts' as *;
-// Final Conclusion page — Search inputs and chips use shared .tasting-* classes from tasting-inputs.scss
+@use 'tasting-phase-layout' as layout;
+// Final Conclusion page, both grids. The form is a one-column .tasting-grid of .fc-field.
 
 // ── Two-column page layout ────────────────────────────────────────────────────
-// The form leads; the recap is reference material beside it. Rows stretch (the grid default),
-// which is what lets the recap take exactly the form's height — see .fc-analysis.
+// The form leads; the recap sits beside it. Rows stretch, which lets the recap take the form's height.
 .fc-layout {
 	display: grid;
 	grid-template-columns: 1fr 320px;
@@ -11,19 +11,14 @@
 }
 
 // ── Your Analysis panel ───────────────────────────────────────────────────────
-// The recap is far taller than the five fields beside it. Left to grow, it made the whole page
-// scroll, carrying the form away while you filled it in. `contain: size` stops it contributing to
-// the row's height, so the row is exactly as tall as the form; the stretch then hands it that
-// height and it scrolls inside itself. The page is only ever as tall as the form.
+// `contain: size` keeps the tall recap out of the row's height, so the page is only as tall as the
+// form and the recap scrolls inside itself.
 .fc-analysis {
+	@include ledger-panel($spacing-md);
 	contain: size;
 	min-height: 240px;
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	background-color: $color-surface-variant;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
-	padding: $spacing-md;
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-sm;
@@ -36,7 +31,7 @@
 	}
 
 	&__subtitle {
-		font-size: $font-size-sm;
+		font-size: $text-13;
 		font-style: italic;
 		color: $color-text-secondary;
 	}
@@ -47,10 +42,8 @@
 		gap: 3px;
 	}
 
-	// Recap labels sit below the section tier, so they take the accent.
 	&__row-label {
-		@include eyebrow-label($text-11, $tasting-accent-light);
-		letter-spacing: 0.14em;
+		@include ledger-label($text-11, $color-accent-light);
 	}
 
 	&__row-value {
@@ -60,12 +53,11 @@
 
 		&--identity {
 			font-style: italic;
-			color: $tasting-accent-light;
+			color: $color-accent-light;
 		}
 	}
 
-	// Attribute / answer pairs. Two columns so the answers align down the panel
-	// and can be scanned without reading the attribute names again.
+	// Two columns, so the answers align down the panel and scan without rereading the names.
 	&__pairs {
 		display: grid;
 		grid-template-columns: auto 1fr;
@@ -90,55 +82,24 @@
 
 	&__divider {
 		height: 1px;
-		background-color: $tasting-border-mid;
+		background-color: $rule;
 		margin: $spacing-xs 0;
 	}
 }
 
-// ── Form grid (single column inside the right panel) ─────────────────────────
-.fc-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: $spacing-lg;
-	align-items: start;
-}
-
-// ── Field ─────────────────────────────────────────────────────────────────────
 .fc-field {
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-xs;
 }
 
-// ── Quality Level select ──────────────────────────────────────────────────────
-
-// ── Phone: one column ────────────────────────────────────────────────────────
-@include responsive($breakpoint-mobile) {
+// ── Narrow main area (and every phone): one column ────────────────────────────
+// Stacked, the recap follows the form at its natural height; without this, size containment
+// would collapse it to its min-height.
+@include layout.narrow {
 	.fc-layout {
 		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-
-	.fc-grid {
-		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-
-	// One column that scrolls as a page, so the recap simply follows the form at full height.
-	// Without this, size containment would collapse it to its min-height.
-	.fc-analysis {
-		contain: none;
-		min-height: 0;
-		overflow-y: visible;
-	}
-}
-
-// ── Narrow main area (tablet beside the sidebar): one column ─────────────────
-// Below this the form beside a 320px recap was squeezed to ~50px on an upright iPad. Stacked,
-// the recap follows the form at its natural height, as on a phone.
-@container tasting-main (max-width: 760px) {
-	.fc-layout {
-		grid-template-columns: 1fr;
+		gap: $spacing-md;
 	}
 
 	.fc-analysis {

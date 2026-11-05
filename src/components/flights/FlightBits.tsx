@@ -138,5 +138,5 @@ export function StatusPill({ status, word }: { status: keyof typeof STATUS_ICONS
 }
 
 export function FlightMessage({ children }: { children: React.ReactNode }) {
-	return <div className="flight-message">{children}</div>;
+	return <div className="empty-state flight-message">{children}</div>;
 }

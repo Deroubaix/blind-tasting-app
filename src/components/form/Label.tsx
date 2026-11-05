@@ -14,7 +14,7 @@ export default function Label(props: LabelProps) {
 	const formControl = useFormControlContext();
 
 	return (
-		<label className={`Label ${className ?? ''}`} htmlFor={htmlFor ?? formControl?.fieldId}>
+		<label className={`form-label ${className ?? ''}`} htmlFor={htmlFor ?? formControl?.fieldId}>
 			{children}
 		</label>
 	);

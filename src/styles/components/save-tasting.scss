@@ -1,44 +1,5 @@
 @use '../abstracts' as *;
-@use 'sass:color';
-// Review & Save page
-
-// ── Two-column layout ─────────────────────────────────────────────────────────
-.save-layout {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: $spacing-lg;
-	margin-bottom: $spacing-lg;
-
-	// Side by side on a phone leaves the notes field ~180px wide, which wraps the
-	// placeholder to five lines and gives the taster a column to write in.
-	@include responsive($breakpoint-mobile) {
-		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-}
-
-// ── Photo upload ──────────────────────────────────────────────────────────────
-.save-photo-btn {
-	display: flex;
-	align-items: center;
-	gap: $spacing-xs;
-	padding: $spacing-sm $spacing-md;
-	border-radius: 6px;
-	border: 1px dashed $tasting-border-mid;
-	background: none;
-	color: $color-text-secondary;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
-	cursor: pointer;
-	width: 100%;
-	justify-content: center;
-	@include transition(all, 0.15s);
-
-	&:hover {
-		border-color: rgba(228, 228, 204, 0.25);
-		color: $color-white;
-	}
-}
+// Review & Save page. The two columns are a .tasting-grid--2; buttons are .btn-quiet.
 
 .save-photo-preview {
 	display: flex;
@@ -49,42 +10,13 @@
 	&__img {
 		max-width: 100%;
 		max-height: 200px;
-		border-radius: 6px;
+		border-radius: $radius;
 		object-fit: cover;
 	}
 }
 
-.save-photo-remove {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-	background: none;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 6px;
-	padding: 4px 10px;
-	color: $color-text-secondary;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
-	cursor: pointer;
-	@include transition(all, 0.15s);
-
-	&:hover {
-		color: $color-white;
-	}
-}
-
-// ── Auth notice ───────────────────────────────────────────────────────────────
-
-// ── Narrow main area: one column ──────────────────────────────────────────────
-@container tasting-main (max-width: 600px) {
-	.save-layout {
-		grid-template-columns: 1fr;
-	}
-}
-
 // ── Optional reveal ───────────────────────────────────────────────────────────
-// Full width under Notes and Photo. Collapsed it is one line and a chevron, so skipping it costs
-// nothing.
+// Full width under Notes and Photo. Collapsed it is one line and a chevron, so skipping it costs nothing.
 .save-reveal {
 	grid-column: 1 / -1;
 	padding: 0;
@@ -96,7 +28,7 @@
 		gap: $spacing-md;
 		padding: $spacing-md;
 		text-align: left;
-		border-radius: 8px;
+		border-radius: $radius;
 	}
 
 	&__text {
@@ -105,23 +37,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-	}
-
-	&__eyebrow {
-		display: flex;
-		align-items: baseline;
-		gap: $spacing-xs;
-
-		.tasting-card__label {
-			margin-bottom: 0;
-		}
-	}
-
-	&__optional {
-		font-family: $font-body-normal-family;
-		font-style: italic;
-		font-size: $text-12;
-		color: $color-text-muted;
 	}
 
 	&__title {
@@ -139,8 +54,8 @@
 		box-sizing: content-box;
 		padding: 8px;
 		border-radius: 50%;
-		border: 1px solid $tasting-border-mid;
-		@include transition(transform, 0.2s);
+		border: 1px solid $rule;
+		transition: transform 0.15s ease;
 
 		&--open {
 			transform: rotate(180deg);
@@ -149,7 +64,7 @@
 
 	&__body {
 		padding: $spacing-md;
-		border-top: 1px solid $tasting-border;
+		border-top: 1px solid $rule-soft;
 	}
 
 	&__note {

@@ -1,22 +1,127 @@
-// The ledger look the home and Progress pages share: hairline rules, double rules, serif figures.
+// The ledger look every page shares: hairline rules, square corners, serif figures, tracked
+// uppercase labels. Reach for these before writing a card, tag, label, row or link by hand.
 @use 'theme-only' as *;
 @use 'font-scale' as *;
 
+// ── Rules ────────────────────────────────────────────────────────────────────
+$rule-faint: rgba($color-white, 0.06);
 $rule-soft: rgba($color-white, 0.08);
 $rule: rgba($color-white, 0.12);
 $rule-folio: rgba($color-white, 0.14);
 $rule-mid: rgba($color-white, 0.22);
 $rule-double: 3px double rgba($color-white, 0.24);
+// The border of a panel or row that is current, selected or needs attention.
+$rule-accent: rgba($color-accent-light, 0.45);
+
+// ── Corners ──────────────────────────────────────────────────────────────────
+// Square, as in an account book: marks and tags at 2px, everything else at 4px.
+$radius-sm: 2px;
+$radius: 4px;
+// Large enough that the corners always meet, so a chip reads as a pill at any height.
+$radius-pill: 100px;
+
+// ── Tracking for uppercase text ──────────────────────────────────────────────
+$tracking-eyebrow: 0.16em; // page and section eyebrows
+$tracking-label: 0.12em; // field labels, column heads, tags
+$tracking-action: 0.08em; // button and quiet-action labels
+
+// ── Tasters ──────────────────────────────────────────────────────────────────
+// One tint per taster in a flight, in join order: avatars, dots and their marks on scales.
+$taster-tints: ($color-accent-light, #a8c49f, #d6bf8e, #a6b8d2);
+
+// ── Depth ────────────────────────────────────────────────────────────────────
+$shadow-lift: 0 20px 40px rgba($color-black, 0.5); // dropdowns, popovers, dialogs
 
 @mixin figures {
 	font-family: $font-body-normal-family;
 	font-variant-numeric: lining-nums tabular-nums;
 }
 
-@mixin ledger-label {
-	font-size: $text-11;
+// The one small uppercase label.
+@mixin ledger-label($size: $text-11, $color: $color-text-muted) {
+	font-family: $font-display-normal-family;
+	font-size: $size;
 	font-weight: $font-weight-bold;
-	letter-spacing: 0.12em;
+	letter-spacing: $tracking-label;
+	line-height: 1.2;
 	text-transform: uppercase;
+	color: $color;
+}
+
+// A page or section eyebrow: a label with a square mark before it.
+@mixin ledger-eyebrow($color: $color-text-secondary, $mark: $color-text-muted) {
+	@include ledger-label($text-11, $color);
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	letter-spacing: $tracking-eyebrow;
+
+	&::before {
+		content: '';
+		width: 6px;
+		height: 6px;
+		flex-shrink: 0;
+		background: $mark;
+	}
+}
+
+// A raised panel on the page ground.
+@mixin ledger-panel($padding: 20px 22px) {
+	background: $color-darkGrey;
+	border: 1px solid $rule;
+	border-radius: $radius;
+	padding: $padding;
+}
+
+// A small status tag. Colour it with `--tone`; it defaults to the muted text level.
+@mixin ledger-tag {
+	--tone: #{$color-text-secondary};
+	@include ledger-label($text-10, var(--tone));
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 7px;
+	border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent);
+	border-radius: $radius-sm;
+	background: color-mix(in srgb, var(--tone) 10%, transparent);
+	white-space: nowrap;
+}
+
+// A row in a ruled list: a hairline above, even padding.
+@mixin ledger-row($padding: 12px) {
+	padding: $padding 0;
+	border-top: 1px solid $rule-soft;
+}
+
+// The number in a folio column, right-aligned against its rule.
+@mixin folio-number($size: $text-13) {
+	@include figures;
+	text-align: right;
+	padding-right: 10px;
+	border-right: 1px solid $rule-folio;
+	font-size: $size;
 	color: $color-text-muted;
+}
+
+// An inline text link: accent, a quiet rule under it, white on hover.
+@mixin ledger-link {
+	color: $color-accent-light;
+	font-weight: $font-weight-semibold;
+	border-bottom: 1px solid $rule-folio;
+	text-decoration: none;
+	transition: color 0.15s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: $color-white;
+	}
+}
+
+// What a list says when it has nothing in it.
+@mixin ledger-empty {
+	padding: 40px 0;
+	text-align: center;
+	font-size: $text-14;
+	line-height: 1.5;
+	color: $color-text-secondary;
 }

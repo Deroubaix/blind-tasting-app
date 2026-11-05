@@ -32,7 +32,7 @@ function JoinCodeField({ loggedIn, onGo }: { loggedIn: boolean; onGo: (code: str
 			<div className="site-menu__join-row">
 				<input
 					id="menu-flight-code"
-					className="site-menu__join-input"
+					className="ledger-field ledger-field--code site-menu__join-input"
 					placeholder={t.flightCode}
 					autoComplete="off"
 					autoCapitalize="characters"
@@ -120,7 +120,7 @@ export default function Header() {
 
 	return (
 		<header className="site-header">
-			<Link href="/" className="site-header__logo no-underline" aria-label={c.home}>
+			<Link href="/" className="site-header__logo" aria-label={c.home}>
 				<Wordmark />
 			</Link>
 
@@ -150,7 +150,7 @@ export default function Header() {
 			{!isInitialLoading && (
 				<Link
 					href="/tastings/start"
-					className={`btn-primary site-header__cta no-underline${isLoggedIn ? ' site-header__cta--phone' : ''}`}
+					className={`btn-primary site-header__cta${isLoggedIn ? ' site-header__cta--phone' : ''}`}
 				>
 					<span className="site-header__cta-long">{t.startTasting}</span>
 					<span className="site-header__cta-short">{t.start}</span>
@@ -175,8 +175,8 @@ export default function Header() {
 					{dropdownOpen && (
 						<div className="nav-dropdown" role="menu">
 							<div className="nav-dropdown__profile">
-								<span className="nav-dropdown__name">{user.displayName}</span>
-								<span className="nav-dropdown__email">{user.email}</span>
+								<span className="nav-profile__name">{user.displayName}</span>
+								<span className="nav-profile__email">{user.email}</span>
 							</div>
 							<div className="nav-dropdown__divider" />
 							{[
@@ -210,7 +210,7 @@ export default function Header() {
 
 			<button
 				type="button"
-				className="site-header__menu-btn"
+				className="nav-icon-btn site-header__menu-btn"
 				onClick={() => setShowMenu(true)}
 				aria-label={t.openMenu}
 				aria-expanded={showMenu}
@@ -228,17 +228,17 @@ export default function Header() {
 				<div className="site-menu" role="dialog" aria-modal="true" aria-label={t.menu}>
 					<div className="site-menu__head">
 						<Wordmark size="sm" />
-						<button type="button" className="site-menu__close" onClick={closeMenu} aria-label={t.closeMenu}>
+						<button type="button" className="nav-icon-btn" onClick={closeMenu} aria-label={t.closeMenu}>
 							<IconX size={26} aria-hidden="true" />
 						</button>
 					</div>
 					<div className="site-menu__body">
 						{isLoggedIn && (
-							<div className="site-menu__profile">
-								<span className="site-menu__initial">{initials}</span>
-								<span>
-									<strong>{user.displayName}</strong>
-									<span>{user.email}</span>
+							<div className="nav-profile">
+								<span className="nav-avatar nav-avatar--lg">{initials}</span>
+								<span className="nav-profile__text">
+									<strong className="nav-profile__name">{user.displayName}</strong>
+									<span className="nav-profile__email">{user.email}</span>
 								</span>
 							</div>
 						)}
@@ -249,11 +249,7 @@ export default function Header() {
 								router.push(`/flights/${code}`);
 							}}
 						/>
-						<Link
-							href="/tastings/start"
-							className="btn-primary site-menu__start no-underline"
-							onClick={closeMenu}
-						>
+						<Link href="/tastings/start" className="btn-primary btn-primary--block" onClick={closeMenu}>
 							{t.startTasting} →
 						</Link>
 						<nav className="site-menu__links" aria-label={t.menu}>
@@ -266,7 +262,11 @@ export default function Header() {
 						</nav>
 						<div className="site-menu__foot">
 							{isLoggedIn ? (
-								<button type="button" className="site-menu__foot-link" onClick={handleLogout}>
+								<button
+									type="button"
+									className="site-menu__foot-link site-menu__foot-link--logout"
+									onClick={handleLogout}
+								>
 									{t.logOut}
 								</button>
 							) : (
@@ -279,7 +279,7 @@ export default function Header() {
 									</Link>
 								</>
 							)}
-							<LanguageSwitch />
+							<LanguageSwitch className="lang-switch--lg site-menu__lang" />
 						</div>
 					</div>
 				</div>

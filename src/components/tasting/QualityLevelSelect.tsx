@@ -38,7 +38,7 @@ export default function QualityLevelSelect({ value, onChange, labelId, textClass
 			{other && (
 				<input
 					id={inputId}
-					className={`${textClassName} quality-level-other`}
+					className={`${textClassName} tasting-input--block`}
 					aria-label={t.whichLevel}
 					placeholder={t.whichLevelPlaceholder}
 					maxLength={60}

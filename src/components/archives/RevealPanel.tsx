@@ -98,11 +98,11 @@ export default function RevealPanel({
 				</div>
 
 				<div className="reveal-form__body">
-					<span className="reveal-eyebrow">{t.eyebrow}</span>
-					<h2 className="reveal-form__heading" id="reveal-form-heading">
+					<span className="accent-label">{t.eyebrow}</span>
+					<h2 className="reveal-heading" id="reveal-form-heading">
 						{t.formHeading}
 					</h2>
-					<p className="reveal-form__lede">{t.formLede}</p>
+					<p className="reveal-lede">{t.formLede}</p>
 
 					<div className={`reveal-form__layout${photoUrl ? ' reveal-form__layout--photo' : ''}`}>
 						{photoUrl && (
@@ -110,7 +110,7 @@ export default function RevealPanel({
 								href={photoUrl}
 								target="_blank"
 								rel="noopener"
-								className="reveal-form__photo no-underline"
+								className="reveal-form__photo"
 								aria-label={t.openLabelPhoto}
 							>
 								{/* Authenticated route; next/image's optimiser would fetch it without the cookie. */}
@@ -133,11 +133,7 @@ export default function RevealPanel({
 					<button type="button" className="btn-primary reveal-form__save" onClick={save} disabled={saving}>
 						{saving ? t.saving : t.saveReveal}
 					</button>
-					<button
-						type="button"
-						className="reveal-btn-quiet reveal-form__cancel"
-						onClick={() => setEditing(false)}
-					>
+					<button type="button" className="btn-quiet reveal-form__cancel" onClick={() => setEditing(false)}>
 						{common.cancel}
 					</button>
 					<span className="reveal-form__footnote">{t.footnote}</span>
@@ -169,13 +165,13 @@ export default function RevealPanel({
 		return (
 			<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
 				<div className="reveal-invite__text">
-					<span className="reveal-eyebrow">{t.eyebrow}</span>
-					<h2 className="reveal-invite__heading" id="reveal-invite-heading">
+					<span className="accent-label">{t.eyebrow}</span>
+					<h2 className="reveal-heading" id="reveal-invite-heading">
 						{t.waitingHeading}
 					</h2>
-					<p className="reveal-invite__lede">{t.waitingLede(flight.wineNumber, flight.name)}</p>
+					<p className="reveal-lede">{t.waitingLede(flight.wineNumber, flight.name)}</p>
 				</div>
-				<Link href={`/flights/${flight.code}`} className="btn-primary reveal-invite__btn no-underline">
+				<Link href={`/flights/${flight.code}`} className="btn-primary reveal-invite__btn">
 					{t.openFlight}
 					<IconArrowRight size={16} aria-hidden="true" />
 				</Link>
@@ -186,11 +182,11 @@ export default function RevealPanel({
 	return (
 		<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
 			<div className="reveal-invite__text">
-				<span className="reveal-eyebrow">{t.eyebrow}</span>
-				<h2 className="reveal-invite__heading" id="reveal-invite-heading">
+				<span className="accent-label">{t.eyebrow}</span>
+				<h2 className="reveal-heading" id="reveal-invite-heading">
 					{t.inviteHeading}
 				</h2>
-				<p className="reveal-invite__lede">{grid === 'wset' ? t.inviteWset : t.inviteCms}</p>
+				<p className="reveal-lede">{grid === 'wset' ? t.inviteWset : t.inviteCms}</p>
 			</div>
 			<button type="button" className="btn-primary reveal-invite__btn" onClick={startEditing}>
 				{t.revealWine}

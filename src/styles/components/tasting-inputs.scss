@@ -1,101 +1,262 @@
 @use '../abstracts' as *;
-@use 'sass:color';
-// Shared tasting patterns — Used by: Sight, Nose, Palate, Initial Conclusion, Final Conclusion
+@use 'tasting-phase-layout' as layout;
+// Shared tasting patterns — Used by: Start, Sight, Nose, Palate, Initial and Final Conclusion, Save, the WSET grid.
 
-// ── Card container ────────────────────────────────────────────────────────────
-.tasting-card {
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border;
-	border-radius: 8px;
-	padding: $spacing-md;
+// ── Phase grid ────────────────────────────────────────────────────────────────
+// One column by default; --2 and --3 step down together at the one narrow threshold.
+.tasting-grid {
+	display: grid;
+	gap: $spacing-md;
+	margin-bottom: $spacing-md;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	&--2 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	&--3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	&__span-2 {
+		grid-column: span 2;
+	}
+
+	&__span-full {
+		grid-column: 1 / -1;
+	}
 }
 
-// The accent label tier: one per card, above its controls. Section headers sit
-// quieter (muted cream) and leaf group labels brighter (full cream).
+@include layout.narrow {
+	.tasting-grid--2 {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.tasting-grid--3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+// Phone: one column. The spans count desktop columns; left in place they would add implicit ones.
+@include responsive($breakpoint-mobile) {
+	// The phone content column already spaces its children 12px apart.
+	.tasting-grid {
+		gap: 12px;
+		margin-bottom: 0;
+
+		&--2,
+		&--3 {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		&__span-2,
+		&__span-full {
+			grid-column: auto;
+		}
+	}
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.tasting-card {
+	@include ledger-panel($spacing-md);
+
+	// The light swatch tile: wine colour is judged against a neutral light ground.
+	&--light {
+		background-color: $tasting-swatch-tile;
+		border-color: transparent;
+		padding: 20px;
+
+		.tasting-card__label {
+			color: $tasting-on-light-accent;
+		}
+	}
+}
+
+// The accent label tier: one per card, above its controls.
 .tasting-card__label {
-	@include eyebrow-label($text-12, $tasting-accent-light);
-	letter-spacing: 0.14em;
+	@include ledger-label($text-12, $color-accent-light);
 	margin-bottom: $spacing-sm;
 }
 
-// ── Quality level: the level typed out under "Other" ─────────────────────────
-input.quality-level-other {
-	display: block;
-	width: 100%;
-	margin-top: $spacing-sm;
-	box-sizing: border-box;
+// A label with a note beside it; the row carries the gap, so the label drops its own.
+.tasting-card__head {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 4px $spacing-sm;
+	margin-bottom: $spacing-sm;
+
+	> .tasting-card__label {
+		margin-bottom: 0;
+	}
 }
 
-// ── Notes textarea ────────────────────────────────────────────────────────────
-.tasting-textarea {
+.tasting-card__required {
+	// The light accent: the base accent measured 2.5:1 on the card, too faint to read.
+	color: $color-accent-light;
+	margin-left: 3px;
+	font-size: $text-11;
+	line-height: 1;
+	vertical-align: middle;
+}
+
+// ── Group without a card (fruit clusters, WSET aroma clusters) ────────────────
+.tasting-group {
+	padding: $spacing-xs 0;
+
+	&__label {
+		@include ledger-label($text-11, $color-accent-light);
+		display: flex;
+		align-items: center;
+		gap: $spacing-xs;
+		margin-bottom: $spacing-xs;
+	}
+}
+
+// ── Section divider (a section label on a rule) ───────────────────────────────
+.tasting-divider {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	width: 100%;
-	background: transparent;
-	border: 0.5px solid $tasting-border-mid;
-	border-radius: 6px;
-	padding: $spacing-sm;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
+	margin: $spacing-xl 0 $spacing-md;
+	padding-bottom: $spacing-sm;
+	border-bottom: 1px solid $rule-soft;
+}
+
+// ── Aside: the muted italic note beside a label ───────────────────────────────
+// Often sits inside an uppercase label, so it sets its own case and tracking.
+.tasting-aside,
+.start-step-hint {
+	@include serif-italic;
+	font-size: $text-12;
+	letter-spacing: normal;
+	text-transform: none;
+	color: $color-text-muted;
+}
+
+// ── Fields ────────────────────────────────────────────────────────────────────
+// One skin for every tasting field: the text fields and the shells that hold an icon and an input.
+.tasting-textarea,
+.tasting-input,
+.tasting-search-input-wrap,
+.start-identity-wrap {
+	background-color: $color-surface-variant;
+	border: 1px solid $rule;
+	border-radius: $radius;
 	color: $color-white;
-	resize: vertical;
-	box-sizing: border-box;
-	line-height: 1.6;
+	font-size: $text-13;
+	transition: border-color 0.15s ease;
 
 	&::placeholder {
 		color: $color-text-muted;
 	}
-	&:focus {
-		border-color: $tasting-accent-light;
+
+	&:hover {
+		border-color: $rule-mid;
+	}
+
+	&:focus,
+	&:focus-within {
+		border-color: $color-accent-light;
+	}
+
+	// The accent border is the focus edge; the global ring 2px out would read as a second one.
+	&:focus-visible {
+		outline: none;
 	}
 }
 
-// ── Standalone text input ─────────────────────────────────────────────────────
-// Compounded with the element on purpose: the shared `input:not([type='checkbox'])`
-// reset strips the side borders and forces 1em padding at (0,1,1), which outranks a
-// lone class. Without this the field renders as a bare underline and the focus ring
-// reads as a second border along the bottom.
-input.tasting-input {
-	background: transparent;
-	border: 0.5px solid $tasting-border-mid;
-	border-radius: 6px;
-	padding: 5px 10px;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
-	color: $color-white;
+.tasting-textarea {
+	display: block;
+	width: 100%;
+	padding: $spacing-sm;
+	resize: vertical;
+	line-height: 1.6;
+}
 
-	// Shares a row with .tasting-confirm-btn and .tasting-option, so it takes their
-	// height rather than sitting 3px short of them — and on phone that is also what
-	// lifts it to a thumb-sized target instead of a 29px sliver.
-	min-height: 32px;
+.tasting-input {
+	padding: 5px 10px;
+	// Matches .btn-primary--sm beside it; on a phone, a thumb-sized target.
+	min-height: 36px;
 
 	@include responsive($breakpoint-mobile) {
 		min-height: 46px;
 	}
 
+	// Under the options, full width: Balance's "what dominates", the typed quality level.
+	&--block {
+		display: block;
+		width: 100%;
+		margin-top: $spacing-sm;
+	}
+}
+
+// The shell's inner input carries no skin: the shell shows the focus.
+.tasting-search-input-wrap {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	gap: $spacing-xs;
+	padding: 0 10px;
+	height: 40px;
+
+	@include responsive($breakpoint-mobile) {
+		height: 46px;
+	}
+
+	// The custom select trigger.
+	&--select {
+		cursor: pointer;
+		user-select: none;
+		justify-content: space-between;
+	}
+}
+
+.tasting-search-icon {
+	color: $color-text-muted;
+	flex-shrink: 0;
+}
+
+.tasting-search-input {
+	flex: 1;
+	min-width: 0;
+
 	&::placeholder {
 		color: $color-text-muted;
 	}
-	&:focus {
-		border-color: $tasting-accent-light;
+
+	&:focus-visible {
+		outline: none;
 	}
 }
 
-// The global focus ring sits 2px out, which on a bordered field reads as two concentric
-// rings. Flush against the border it makes one hairline edge instead. Sub-pixel: this
-// is one device pixel at 2x and rounds up on a 1x display.
-.tasting-textarea:focus-visible,
-input.tasting-input:focus-visible {
-	outline-width: 0.5px;
-	outline-offset: 0;
-}
-
-// ── Option pill container ─────────────────────────────────────────────────────
+// ── Option row ────────────────────────────────────────────────────────────────
 .tasting-options {
 	display: flex;
 	gap: $spacing-xs;
 	flex-wrap: wrap;
+
+	// Equal-width segments (Fruit Character, Condition, Climate).
+	&--equal {
+		flex-wrap: nowrap;
+
+		.tasting-option {
+			flex: 1;
+			padding: 11px 10px;
+		}
+	}
+
+	@include responsive($breakpoint-mobile) {
+		gap: 10px;
+	}
 }
 
-// ── Search input row ──────────────────────────────────────────────────────────
+// ── Field + inline actions (search row, typed "other") ────────────────────────
 .tasting-search-row {
 	display: flex;
 	gap: $spacing-xs;
@@ -107,98 +268,25 @@ input.tasting-input:focus-visible {
 	}
 }
 
-.tasting-search-input-wrap {
-	flex: 1;
-	display: flex;
-	align-items: center;
-	gap: $spacing-xs;
-	background-color: $color-surface-variant;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 6px;
-	padding: 0 10px;
-	height: 40px;
-	@include transition(border-color, 0.15s);
-
-	// The inner input has `outline: none`, so this border is the whole focus signal — it takes
-	// the light accent, the same as .tasting-input, to clear 3:1 against the page.
-	&:focus-within {
-		border-color: $tasting-accent-light;
-	}
-}
-
-.tasting-search-icon {
-	color: $color-text-muted;
-	flex-shrink: 0;
-}
-
-.tasting-search-input {
-	flex: 1;
-	background: transparent;
-	border: none;
-	outline: none;
-	color: $color-white;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
-
-	&::placeholder {
-		color: $color-text-muted;
-	}
-	&:focus-visible {
-		outline: none;
-	}
-}
-
-// ── Confirm button (burgundy) ─────────────────────────────────────────────────
-.tasting-confirm-btn {
-	align-self: stretch;
-	padding: 0 14px;
-	border-radius: 6px;
-	border: none;
-	background-color: $tasting-accent;
-	color: $color-white;
-	font-size: $font-size-sm;
-	font-weight: $font-weight-semibold;
-	font-family: $font-display-normal-family;
-	cursor: pointer;
-	white-space: nowrap;
-	@include transition(background-color, 0.15s);
-
-	&:hover {
-		background-color: color.scale($tasting-accent, $lightness: 8%);
-	}
-}
-
-// ── Dismiss button, beside a confirm ─────────────────────────────────────────
-// Square, and sized to the row rather than to the option scale: it carries one glyph,
-// and borrowing .tasting-option made it an 84px pill reading as a third answer.
-.tasting-dismiss-btn {
-	flex: 0 0 auto;
+.tasting-other-input {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	width: 32px;
-	min-height: 32px;
-	border-radius: 6px;
-	border: 1px solid $tasting-border-mid;
-	background-color: $color-surface-variant;
-	color: $color-text-secondary;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
-	cursor: pointer;
-	@include transition(color border-color, 0.15s);
+	gap: $spacing-xs;
+}
 
-	&:hover {
-		color: $color-white;
-		border-color: rgba(228, 228, 204, 0.22);
-	}
+// The buttons beside a field take the field's height, a thumb-sized square on a phone.
+.tasting-search-row > button,
+.tasting-other-input > button {
+	align-self: stretch;
+	white-space: nowrap;
 
 	@include responsive($breakpoint-mobile) {
-		width: 46px;
+		min-width: 46px;
 		min-height: 46px;
 	}
 }
 
-// ── Tag chips ────────────────────────────────────────────────────────────────
+// ── Chosen-value chips ────────────────────────────────────────────────────────
 .tasting-chips {
 	display: flex;
 	flex-wrap: wrap;
@@ -206,26 +294,19 @@ input.tasting-input:focus-visible {
 }
 
 .tasting-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
+	@include icon-label;
 	padding: 4px 10px;
-	border-radius: 4px;
-	background-color: rgba(139, 69, 87, 0.2);
-	border: 1px solid rgba(139, 69, 87, 0.4);
-	color: $tasting-accent-light;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
+	border: 1px solid;
+	border-radius: $radius-sm;
+	font-size: $text-13;
+	@include selected-outline;
 
 	&__remove {
-		background: none;
-		border: none;
+		@include bare-button;
 		color: $color-text-muted;
-		cursor: pointer;
 		font-size: $text-16;
 		line-height: 1;
-		padding: 0;
-		@include transition(color, 0.15s);
+		transition: color 0.15s ease;
 
 		&:hover {
 			color: $color-white;
@@ -233,22 +314,9 @@ input.tasting-input:focus-visible {
 	}
 }
 
-// ── Custom select (dropdown trigger) ─────────────────────────────────────────
-.tasting-search-input-wrap--select {
-	cursor: pointer;
-	user-select: none;
-	justify-content: space-between;
-
-	&:focus-visible {
-		outline: none;
-	}
-}
-
+// ── Custom select ─────────────────────────────────────────────────────────────
 .tasting-select-value {
 	flex: 1;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
-	color: $color-white;
 
 	&--placeholder {
 		color: $color-text-muted;
@@ -264,68 +332,26 @@ input.tasting-input:focus-visible {
 	}
 }
 
-// ── Native select (kept for fallback use) ────────────────────────────────────
-.tasting-select {
-	position: relative;
-	width: 100%;
-
-	&__native {
-		appearance: none;
-		width: 100%;
-		background-color: $color-surface-variant;
-		border: 1px solid $tasting-border-mid;
-		border-radius: 6px;
-		padding: 0 36px 0 $spacing-sm;
-		height: 40px;
-		font-size: $font-size-sm;
-		font-family: $font-display-normal-family;
-		color: $color-white;
-		cursor: pointer;
-		@include transition(border-color, 0.15s);
-
-		option {
-			background-color: $color-darkGrey;
-		}
-
-		&:invalid,
-		&:has(option[value='']:checked) {
-			color: $color-text-muted;
-		}
-	}
-
-	&__chevron {
-		position: absolute;
-		right: $spacing-sm;
-		top: 50%;
-		transform: translateY(-50%);
-		pointer-events: none;
-		color: $color-white;
-	}
-}
-
-// ── Autocomplete wrapper ──────────────────────────────────────────────────────
+// ── Autocomplete ──────────────────────────────────────────────────────────────
 .tasting-autocomplete {
 	flex: 1;
 	position: relative;
 }
 
 .tasting-autocomplete__dropdown {
+	@include ledger-panel(4px 0);
 	position: absolute;
 	top: calc(100% + 4px);
 	left: 0;
 	right: 0;
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 6px;
-	padding: 4px 0;
 	margin: 0;
 	list-style: none;
+	box-shadow: $shadow-lift;
 	z-index: $index-dropdown;
 	max-height: 200px;
 	overflow-y: auto;
 
-	// No room below the field — see useDropUp. Opening upward keeps the menu inside
-	// `.tasting-phase-main`, which would otherwise clip it at the footer's top edge.
+	// No room below the field (see useDropUp): opening upward keeps it clear of the footer.
 	&--up {
 		top: auto;
 		bottom: calc(100% + 4px);
@@ -334,15 +360,18 @@ input.tasting-input:focus-visible {
 
 .tasting-autocomplete__option {
 	padding: 7px $spacing-sm;
-	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
+	font-size: $text-13;
 	color: $color-text-secondary;
 	cursor: pointer;
-	@include transition(background-color color, 0.1s);
+	transition:
+		background-color 0.15s ease,
+		color 0.15s ease;
 
+	// The light rule marks the keyboard row; a wash alone is too faint on the panel.
 	&:hover,
 	&--active {
-		background-color: rgba(139, 69, 87, 0.15);
+		background-color: $color-surface-variant;
+		box-shadow: inset 2px 0 0 $color-accent-light;
 		color: $color-white;
 	}
 
@@ -350,6 +379,6 @@ input.tasting-input:focus-visible {
 	&--clear {
 		font-style: italic;
 		color: $color-text-muted;
-		border-bottom: 1px solid $tasting-border;
+		border-bottom: 1px solid $rule-soft;
 	}
 }

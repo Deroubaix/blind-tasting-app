@@ -1,50 +1,188 @@
 @use '../abstracts' as *;
-// ── Logo serif mark — the italic 's in "The Sommelier's Ledger" ───────────────
-.logo-serif {
-	@include serif-italic-accent;
-
-	letter-spacing: 0;
-	text-transform: none;
-	font-size: 1.05em;
+// ── Serif italic accent ────────────────────────────────────────────────────────
+// A step heavier than _base's, so it holds beside bold Manrope. (0,0,2) and later than _base, so it wins.
+:is(h1, h2, h3, h4, h5, h6) em,
+.wordmark em {
+	@include serif-italic;
+	font-weight: $font-weight-medium;
 }
 
-// ── Shared eyebrow label with rosegold dot ─────────────────────────────────────
-// Used on auth pages, start page, and any full-page section heading.
+// ── Page eyebrow ───────────────────────────────────────────────────────────────
+// The line above a page or section title. `--plain` drops the square mark.
 .page-eyebrow {
-	font-size: $text-11;
-	font-weight: 700;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: $color-brand-1;
-	line-height: 1;
-	display: inline-flex;
-	align-items: center;
-	gap: 0.55rem;
-	font-family: $font-display-normal-family;
+	@include ledger-eyebrow;
+}
 
-	&::before {
-		content: '';
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: $color-brand-1;
-		box-shadow: 0 0 12px rgba($color-brand-1, 0.55);
-		flex-shrink: 0;
+// ── Page head ──────────────────────────────────────────────────────────────────
+// Eyebrow, title and lede on the left, actions or filters on the right; stacks below laptop width.
+.page-head {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 18px 32px;
+	align-items: end;
+	padding-bottom: 22px;
+
+	&__eyebrow {
+		@extend .page-eyebrow;
+		margin-bottom: 14px;
+	}
+
+	&__title {
+		margin: 0;
+		// A flight or wine name can be one long word.
+		overflow-wrap: anywhere;
+	}
+
+	&__sub {
+		margin: 10px 0 0;
+		max-width: 40rem;
+		font-size: $text-15;
+		line-height: 1.5;
+		color: $color-text-secondary;
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+	}
+
+	@include responsive($breakpoint-laptop) {
+		grid-template-columns: 1fr;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		&__eyebrow {
+			margin-bottom: 8px;
+		}
 	}
 }
 
-// ── Shared section label ──────────────────────────────────────────────────────
+// After .page-head__eyebrow so it can take the mark off that one too.
+.page-eyebrow--plain::before {
+	display: none;
+}
+
+// ── Body copy ──────────────────────────────────────────────────────────────────
+// Running copy on the marketing, auth and empty-state pages.
+.body-copy {
+	margin: 0;
+	font-size: $text-15;
+	line-height: 1.65;
+	color: $color-text-secondary;
+
+	& + & {
+		margin-top: 18px;
+	}
+
+	strong {
+		color: $color-white;
+		font-weight: $font-weight-semibold;
+	}
+
+	&--lg {
+		font-size: $text-16;
+	}
+}
+
+// ── Empty state ────────────────────────────────────────────────────────────────
+.empty-state {
+	@include ledger-empty;
+
+	&--boxed {
+		border: 1px dashed $rule;
+		border-radius: $radius;
+	}
+
+	// A ruled list with nothing in it: one row, left-aligned.
+	&--row {
+		@include ledger-row(13px);
+		margin: 0;
+		text-align: left;
+	}
+}
+
+// ── Labels ─────────────────────────────────────────────────────────────────────
+// Three tiers. The muted label names a value, a column or a figure caption.
+.muted-label {
+	@include ledger-label;
+}
+
 // The cream tier that names a group of cards within a phase — Initial and Final
 // Conclusion, and both kinds of Nose section header. One step above the accent
 // .tasting-card__label that sits on the cards themselves.
 .section-label {
-	@include eyebrow-label($text-10-5, $color-white);
+	@include ledger-label($text-10-5, $color-white);
 }
 
-// ── Shared item label ─────────────────────────────────────────────────────────
 // Names one thing in a list or form: an auth field, a numbered step on the start
 // page, a phase in the home page preview. Brighter and a step larger than
 // .section-label, which names a whole group.
 .item-label {
-	@include eyebrow-label($text-13, $color-white);
+	@include ledger-label($text-13, $color-white);
+}
+
+// ── Links, labels and score tags shared by several pages ─────────────────────────
+.text-link {
+	@include ledger-link;
+
+	// A thumb-sized target on phones without moving the text.
+	@include responsive($breakpoint-mobile) {
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -12px -4px;
+		}
+	}
+
+	&--sm {
+		font-size: $text-13;
+		white-space: nowrap;
+	}
+}
+
+.back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: $spacing-xs;
+	width: fit-content;
+	font-size: $text-14;
+	color: $color-text-secondary;
+	transition: color 0.15s ease;
+
+	&:hover,
+	&:focus-visible {
+		color: $color-white;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		min-height: 44px;
+	}
+}
+
+// A score as figures in a quiet box; a perfect score earns one small green tick.
+.score-tag {
+	@include figures;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	width: fit-content;
+	padding: 2px 7px;
+	border: 1px solid $rule-mid;
+	border-radius: $radius-sm;
+	font-size: $text-13;
+	white-space: nowrap;
+
+	svg {
+		color: $color-status-ok;
+	}
+}
+
+// The accent label over a field, a form or a section.
+.accent-label {
+	@include ledger-label($text-10, $color-accent-light);
+	display: block;
 }

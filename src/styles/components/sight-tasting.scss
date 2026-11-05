@@ -1,95 +1,15 @@
 @use '../abstracts' as *;
-// Sight Assessment page — Local palette (accent colours specific to the tasting assessment UI)
+// Sight Assessment page. Grid, cards and options come from tasting-inputs and buttons.
 
-// ── Three-column assessment grid ──────────────────────────────────────────────
-.sight-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	gap: $spacing-md;
-}
-
-// ── Card modifiers (base styles from .tasting-card) ──────────────────────────
-.sight-card {
-	&--span-2 {
-		grid-column: span 2;
-	}
-
-	&--span-full {
-		grid-column: 1 / -1;
-	}
-
-	// ── Light swatch tile ────────────────────────────────────────────────────
-	// Wine colour is judged against a neutral light ground, the app's one light surface.
-	// Every on-light colour is scoped here so nothing leaks to the dark cards.
-	&--light {
-		// Compounded with .tasting-card on purpose: this file is imported first, so at equal
-		// specificity .tasting-card would win. The descendant rules below are already 0,2,0.
-		&.tasting-card {
-			background-color: $tasting-swatch-tile;
-			border: none;
-			border-radius: 12px;
-			padding: 20px;
-		}
-
-		.tasting-card__label {
-			color: $tasting-on-light-accent;
-		}
-
-		.sight-card__sublabel {
-			color: $tasting-on-light-faint;
-		}
-
-		.sight-swatch-label {
-			color: $tasting-on-light;
-
-			&--selected {
-				color: $tasting-on-light-strong;
-				font-weight: $font-weight-bold;
-			}
-		}
-
-		.sight-swatch-desc {
-			color: $tasting-on-light-muted;
-		}
-
-		.sight-swatch-rect--selected {
-			border-color: $tasting-on-light-strong;
-			box-shadow: none;
-		}
-	}
-}
-
-// Sight cards need a slightly larger label gap than the shared default
-.sight-grid .tasting-card__label {
-	margin-bottom: $spacing-md;
-}
-
-.sight-card__header {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: baseline;
-	gap: 4px $spacing-sm;
-	margin-bottom: $spacing-md;
-
-	// When inside a header wrapper, the label loses its own bottom margin
-	.tasting-card__label {
-		margin-bottom: 0;
-	}
-}
-
-.sight-card__sublabel {
-	@include eyebrow-label($text-11, $color-text-muted);
-	letter-spacing: 0.1em;
-	// Kept on one line: on a narrow card it drops below the label rather than breaking into a column.
+.sight-sublabel {
+	@include ledger-label($text-11, $color-text-muted);
+	// One line: on a narrow card it drops below the label rather than breaking into a column.
 	white-space: nowrap;
 }
 
-// ── Yes / No toggles ─────────────────────────────────────────────────────────
+// ── Yes / No pair ────────────────────────────────────────────────────────────
 .sight-toggle-group {
-	// Equal columns rather than flex: "No" is a character shorter than "Yes", and in an
-	// auto-width flex row `flex: 1` resolves to each button's own content size, so the
-	// pair comes out 4px apart. At this size that reads as misaligned.
+	// Equal columns rather than flex: in an auto-width flex row "No" comes out narrower than "Yes".
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: $spacing-md;
@@ -101,6 +21,7 @@
 	gap: $spacing-md;
 }
 
+// A button for keyboards and screen readers; the look is all the swatch's own.
 .sight-swatch-item {
 	position: relative;
 	flex: 1;
@@ -108,52 +29,42 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	// A button for keyboard and screen readers; the look is all the swatch's own.
-	background: none;
-	border: none;
-	padding: 0;
-	font: inherit;
-	text-transform: none;
-	letter-spacing: normal;
-	cursor: pointer;
 }
 
 .sight-swatch-rect {
 	display: block;
 	width: 100%;
 	height: 64px;
-	border-radius: 9px;
+	border-radius: $radius;
 	border: 3px solid transparent;
 	// background is set inline (dynamic hex value)
-	@include transition(border-color box-shadow, 0.15s);
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.15s ease;
 
 	&--selected {
-		border-color: $tasting-accent-light;
-		box-shadow: 0 0 0 1px $tasting-accent-light;
+		border-color: $color-accent-light;
+		box-shadow: 0 0 0 1px $color-accent-light;
 	}
 }
 
 .sight-swatch-label {
 	margin-top: 9px;
-	font-size: $text-13-5; // 13.5px
+	font-size: $text-13-5;
+	font-weight: $font-weight-semibold;
 	text-align: center;
 	color: $color-text-secondary;
-	font-family: $font-display-normal-family;
-	font-weight: $font-weight-semibold;
 
 	&--selected {
-		color: $tasting-accent-light;
-		font-weight: $font-weight-semibold;
+		color: $color-accent-light;
 	}
 }
 
 .sight-swatch-desc {
 	margin-top: 4px;
-	font-size: $text-11-5; // 11.5px
+	font-size: $text-11-5;
 	text-align: center;
 	color: $color-text-secondary;
-	font-family: $font-display-normal-family;
-	font-weight: $font-weight-regular;
 	line-height: 1.45;
 }
 
@@ -162,11 +73,11 @@
 	display: none;
 	margin: $spacing-sm 0 0;
 	padding-top: $spacing-sm;
-	border-top: 1px solid rgba(20, 19, 19, 0.1);
+	// The $rule tokens are cream, invisible on the light tile.
+	border-top: 1px solid rgba($color-black, 0.1);
 	font-size: $text-11-5;
 	line-height: 1.5;
 	color: $tasting-on-light-muted;
-	font-family: $font-display-normal-family;
 
 	strong {
 		color: $tasting-on-light-strong;
@@ -180,30 +91,41 @@
 	border-top: none;
 }
 
-// ── Phone: one column ────────────────────────────────────────────────────────
-@include responsive($breakpoint-mobile) {
-	.sight-grid {
-		grid-template-columns: 1fr;
-		gap: 12px;
+// ── On the light tile ────────────────────────────────────────────────────────
+// Every on-light colour is scoped here so nothing leaks to the dark cards.
+.tasting-card--light {
+	.sight-sublabel {
+		color: $tasting-on-light-faint;
 	}
 
-	// A description under every swatch in a 390px-wide row is most of a screen; the
-	// chosen ones alone say the same thing.
+	.sight-swatch-label {
+		color: $tasting-on-light;
+
+		&--selected {
+			color: $tasting-on-light-strong;
+			font-weight: $font-weight-bold;
+		}
+	}
+
+	.sight-swatch-desc {
+		color: $tasting-on-light-muted;
+	}
+
+	.sight-swatch-rect--selected {
+		border-color: $tasting-on-light-strong;
+		box-shadow: none;
+	}
+}
+
+// ── Phone ─────────────────────────────────────────────────────────────────────
+@include responsive($breakpoint-mobile) {
+	// A description under every swatch in a 390px row is most of a screen; the chosen ones say the same.
 	.sight-swatch-desc {
 		display: none;
 	}
 
 	.sight-swatch-chosen {
 		display: block;
-	}
-
-	// Both spans are relative to the three-column desktop grid. Left in place they
-	// generate implicit columns and the single-column template never takes effect.
-	.sight-card {
-		&--span-2,
-		&--span-full {
-			grid-column: auto;
-		}
 	}
 
 	// Six secondary colours for a red do not fit one 390px row at a usable size.
@@ -213,12 +135,5 @@
 
 	.sight-swatch-item {
 		flex: 1 0 28%;
-	}
-}
-
-// ── Narrow main area: two columns ─────────────────────────────────────────────
-@container tasting-main (max-width: 720px) {
-	.sight-grid {
-		grid-template-columns: 1fr 1fr;
 	}
 }

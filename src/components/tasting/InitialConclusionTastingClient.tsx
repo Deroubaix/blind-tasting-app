@@ -63,7 +63,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 				onNext: handleNextPhase,
 			}}
 		>
-			<div className="ic-layout">
+			<div className="tasting-grid tasting-grid--2">
 				{/* ── Left column ── */}
 				<div className="ic-col">
 					<div className="section-label">{t.environment}</div>
@@ -128,7 +128,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 								icon={<IconSearch size={14} className="tasting-search-icon" />}
 							/>
 							<button
-								className="tasting-confirm-btn"
+								className="btn-primary btn-primary--sm"
 								aria-label={t.addGrape}
 								onClick={() => addVarietal()}
 							>
@@ -170,7 +170,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 								icon={<IconSearch size={14} className="tasting-search-icon" />}
 							/>
 							<button
-								className="tasting-confirm-btn"
+								className="btn-primary btn-primary--sm"
 								aria-label={t.addCountry}
 								onClick={() => addCountry()}
 							>

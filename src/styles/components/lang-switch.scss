@@ -7,24 +7,24 @@
 	gap: 6px;
 	font-size: $text-12;
 	font-weight: $font-weight-semibold;
-	letter-spacing: 0.08em;
+	letter-spacing: $tracking-action;
 
 	&__btn {
 		@include bare-button;
-
 		min-height: 32px;
 		padding: 0 4px;
 		color: $color-text-muted;
-		cursor: pointer;
+		transition: color 0.15s ease;
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			color: $color-white;
 		}
 
 		&[aria-pressed='true'] {
 			color: $color-white;
 			text-decoration: underline;
-			text-decoration-color: $tasting-accent-light;
+			text-decoration-color: $color-accent-light;
 			text-underline-offset: 4px;
 		}
 	}
@@ -32,16 +32,17 @@
 	&__sep {
 		width: 1px;
 		height: 12px;
-		background: rgba($color-white, 0.2);
+		background: $rule-mid;
 	}
 
-	// In the phone menu it sits in the foot with the log-in links, so it takes their height.
-	.site-menu__foot & {
-		margin-top: 6px;
+	// Beside the 48px rows of the phone menu's foot.
+	&--lg &__btn {
+		font-size: $text-14;
+	}
 
+	@include responsive($breakpoint-laptop) {
 		&__btn {
 			min-height: 44px;
-			font-size: $text-14;
 		}
 	}
 }

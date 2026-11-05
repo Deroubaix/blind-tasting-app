@@ -1,6 +1,5 @@
 // Entry point. The `@use` order below is the order of the emitted CSS.
 @use 'base';
 @use 'elements/elements';
-@use 'utilities/utilities';
 @use 'components/components';
 @use 'page-layouts/page-layouts';

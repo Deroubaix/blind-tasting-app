@@ -1,5 +1,7 @@
+// Sticky tasting chrome: the footer, the phone header strip and the phone sidebar rail.
+$index-sticky: 900;
+// Open menus clear the sticky chrome but stay under the navbar.
+$index-dropdown: 950;
 $index-navbar: 1000;
-$index-navbar-logo: $index-navbar - 100;
 $index-above-navbar: 1100;
-// Open menus clear the sticky tasting footer ($index-navbar - 100) but stay under the navbar.
-$index-dropdown: $index-navbar - 50;
+$index-toast: 1200;

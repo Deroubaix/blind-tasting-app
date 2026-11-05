@@ -69,7 +69,7 @@ export function ChipSearchField({
 					/>
 					<button
 						type="button"
-						className="tasting-confirm-btn"
+						className="btn-primary btn-primary--sm"
 						aria-label={text.inputs.addField(label)}
 						onClick={() => confirm(input)}
 					>

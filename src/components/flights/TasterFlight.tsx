@@ -75,9 +75,9 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
-				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">{t.whatColor}</p>
-					<p className="confirm-dialog__note">
+				<div className="dialog">
+					<p className="dialog__lead">{t.whatColor}</p>
+					<p className="dialog__note">
 						{wine.status === 'tasting' ? t.notKept : flight.timerSeconds ? t.clockNow : t.untimedFlight}
 					</p>
 					<div className="flight-color">
@@ -102,17 +102,17 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 
 	return (
 		<main className="flight-main flight-main--narrow">
-			<header className="flight-head">
+			<header className="page-head">
 				<div>
-					<span className="page-eyebrow">{`${text.bits.flight}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
-					<h1 className="flight-head__title">{flight.name}</h1>
-					<p className="flight-head__sub">
+					<span className="page-head__eyebrow">{`${text.bits.flight}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
+					<h1 className="page-head__title">{flight.name}</h1>
+					<p className="page-head__sub">
 						{text.bits.hostedBy(flight.host.name)} · {common.grid[flight.grid].short} ·{' '}
 						{common.wines(flight.wineCount)} · {formatTimer(flight.timerSeconds, lang)} ·{' '}
 						{text.bits.revealedOf(revealed, flight.wineCount)}
 					</p>
 				</div>
-				<div className="flight-head__people" aria-label={text.bits.tastersHeading}>
+				<div className="flight-people" aria-label={text.bits.tastersHeading}>
 					{flight.members.map((member) => (
 						<Avatar key={member.id} person={member} size="sm" />
 					))}
@@ -159,27 +159,27 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 								<span className="flight-muted">{detail}</span>
 							</div>
 							{wine.score !== null && (
-								<span className="flight-score">
+								<span className="score-tag">
 									{wine.score} / {wine.outOf}
 								</span>
 							)}
 							{info?.revealed ? (
 								<Link
 									href={`/flights/${flight.code}/wines/${wine.number}`}
-									className="flight-link no-underline"
+									className="text-link text-link--sm"
 								>
 									{text.bits.results}
 								</Link>
 							) : wine.status === 'tasting' ? (
 								<button
 									type="button"
-									className="btn-primary flight-btn-small"
+									className="btn-primary btn-primary--sm"
 									onClick={() => open(wine)}
 								>
 									{t.continue}
 								</button>
 							) : wine.status === 'notstarted' && !flight.ended ? (
-								<button type="button" className="outline flight-btn-small" onClick={() => open(wine)}>
+								<button type="button" className="btn-quiet btn-quiet--sm" onClick={() => open(wine)}>
 									{t.start}
 								</button>
 							) : null}
@@ -193,7 +193,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 				{revealed > 0 && (
 					<>
 						{' '}
-						<Link href={`/flights/${flight.code}/summary`} className="flight-link">
+						<Link href={`/flights/${flight.code}/summary`} className="text-link text-link--sm">
 							{text.bits.summary}
 						</Link>
 					</>

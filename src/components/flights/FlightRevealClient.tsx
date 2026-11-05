@@ -44,7 +44,7 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 		return <FlightMessage>{error}</FlightMessage>;
 	}
 	if (!flight) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 	if (flight.role !== 'host') {
 		return <FlightMessage>{t.onlyHost}</FlightMessage>;
@@ -69,18 +69,14 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 
 	return (
 		<main className="flight-main flight-main--narrow">
-			<Link href={`/flights/${code}`} className="flight-back no-underline">
+			<Link href={`/flights/${code}`} className="back-link">
 				← {flight.name}
 			</Link>
 
 			<section className="reveal-card reveal-form flight-reveal" aria-labelledby="flight-reveal-heading">
 				{/* Phone only: the form is a full-screen sheet with its own header. */}
 				<div className="reveal-form__sheet-head">
-					<Link
-						href={`/flights/${code}`}
-						className="reveal-form__close no-underline"
-						aria-label={common.close}
-					>
+					<Link href={`/flights/${code}`} className="reveal-form__close" aria-label={common.close}>
 						<IconX size={22} aria-hidden="true" />
 					</Link>
 					<div className="reveal-form__sheet-title">
@@ -89,14 +85,14 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 					</div>
 				</div>
 				<div className="reveal-form__body">
-					<span className="reveal-eyebrow">{t.eyebrow(number, flight.wineCount)}</span>
-					<h1 className="reveal-form__heading" id="flight-reveal-heading">
+					<span className="accent-label">{t.eyebrow(number, flight.wineCount)}</span>
+					<h1 className="reveal-heading" id="flight-reveal-heading">
 						{t.heading(number)}
 					</h1>
-					<p className="reveal-form__lede">{flight.grid === 'wset' ? t.ledeWset : t.ledeCms}</p>
+					<p className="reveal-lede">{flight.grid === 'wset' ? t.ledeWset : t.ledeCms}</p>
 
 					{!revealed && tasting.length > 0 && (
-						<div className="flight-warning" role="note">
+						<div className="flight-notice flight-notice--warning flight-warning" role="note">
 							<IconPointFilled size={16} aria-hidden="true" />
 							<div>
 								<p className="flight-warning__lead">
@@ -114,7 +110,7 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 											)}
 								</p>
 								<p className="flight-muted">{t.closes(number, tasting.length === 1)}</p>
-								<Link href={`/flights/${code}`} className="outline flight-btn-small no-underline">
+								<Link href={`/flights/${code}`} className="btn-quiet btn-quiet--sm">
 									{t.waitFor(tasting.length === 1 ? tasting[0].name.split(' ')[0] : null)}
 								</Link>
 							</div>
@@ -137,7 +133,7 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 					>
 						{saving ? t.revealing : revealed ? t.saveCorrection : t.revealAll}
 					</button>
-					<Link href={`/flights/${code}`} className="reveal-btn-quiet reveal-form__cancel no-underline">
+					<Link href={`/flights/${code}`} className="btn-quiet reveal-form__cancel">
 						{common.cancel}
 					</Link>
 					<span className="reveal-form__footnote">{t.footnote(number)}</span>

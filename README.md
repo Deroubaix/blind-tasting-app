@@ -165,6 +165,12 @@ pnpm start                     # http://localhost:3002
   and rate-limit rules
 - `src/services/client/` — the browser's side of the same calls, through `FetchUtils`
 - `src/styles/abstracts/` — tokens, mixins and the type scale, forwarded through `_index.scss`
+- `src/styles/abstracts/_ledger.scss` — the one look every page shares: square-ish corners
+  (`$radius`), hairline rules (`$rule-*`), Lora figures, tracked uppercase labels. Reach for its
+  mixins (`ledger-panel`, `ledger-label`, `ledger-row`, `ledger-tag`, `figures`) and the shared
+  classes in `elements/` (`.btn-primary`, `.btn-quiet`, `.page-head`, `.empty-state`,
+  `.text-link`) before writing a new card, label or button. A bare `<button>` and `<a>` are
+  neutral on purpose; raw colours, radii and z-indexes go through the tokens
 - `PhotoStorageService` — label photo storage, on local disk or R2 (`STORAGE_DRIVER`). The browser resizes the photo to a 1200px JPEG, asks
   `/api/photos/sign` for a key, PUTs it (to `/api/photos/upload` on local disk, straight to a
   private R2 bucket on `r2`), then saves the tasting with the key; the save route checks the file

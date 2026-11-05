@@ -45,7 +45,7 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 		// is the safe choice ("Keep it", "Keep tasting"), not the destructive one.
 		const inner = innerRef.current;
 		const first =
-			inner?.querySelector('.body')?.querySelector<HTMLElement>(FOCUSABLE) ??
+			inner?.querySelector('.modal__body')?.querySelector<HTMLElement>(FOCUSABLE) ??
 			inner?.querySelector<HTMLElement>(FOCUSABLE);
 		(first ?? inner)?.focus();
 		return () => previous?.focus?.();
@@ -53,7 +53,7 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 
 	const closeModal = useCallback(() => {
 		if (elRef.current) {
-			elRef.current.classList.add('closing');
+			elRef.current.classList.add('modal--closing');
 			setTimeout(() => {
 				onClose?.(modalId);
 			}, 60);
@@ -113,25 +113,31 @@ export default forwardRef<ModalImperativeRef, ModalProps>(function Modal(props, 
 		<div
 			ref={elRef}
 			id={modalId}
-			className={`Modal ${className ?? ''}`}
+			className={`modal ${className ?? ''}`}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={title ? titleId : undefined}
 		>
-			<div className="overlay" onClick={handleOverlayClicked}></div>
-			<div className="inner" ref={innerRef} tabIndex={-1}>
-				<div className="content">
+			<div className="modal__overlay" onClick={handleOverlayClicked}></div>
+			<div className="modal__inner" ref={innerRef} tabIndex={-1}>
+				<div className="modal__content">
 					{(title || showClose) && (
-						<div className="header">
-							<h4 id={titleId}>{title}</h4>
+						<div className="modal__header">
+							<h4 className="modal__title" id={titleId}>
+								{title}
+							</h4>
 							{showClose && (
-								<button className="close-btn" onClick={handleCloseButtonClicked} aria-label={tc.close}>
+								<button
+									className="modal__close"
+									onClick={handleCloseButtonClicked}
+									aria-label={tc.close}
+								>
 									<IconX stroke={1.5} aria-hidden="true" />
 								</button>
 							)}
 						</div>
 					)}
-					{children ? <div className="body">{children}</div> : null}
+					{children ? <div className="modal__body">{children}</div> : null}
 				</div>
 			</div>
 		</div>

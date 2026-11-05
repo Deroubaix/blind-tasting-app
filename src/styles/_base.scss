@@ -1,5 +1,129 @@
-// Global element and document rules.
+// Global element and document rules: headings, body copy and links first; the scale is in
+// abstracts/_font-scale.scss.
 @use 'abstracts' as *;
+
+// Headings (Manrope; Lora is the `em` accent only)
+// Everything a heading always wants lives here — family, weight, colour, tracking, the
+// accent `em` — so a page-level class only ever restates what it genuinely differs on.
+// Sizes are fluid, which is also why there is no mobile override for h1/h2 below.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $font-display-normal-family;
+	color: $color-white;
+	margin: 0;
+
+	// `<em>` inside a heading is the Lora italic flourish. It keeps the heading's own
+	// colour — only the marketing page pays the accent on top.
+	em {
+		@include serif-italic;
+	}
+}
+
+h1,
+h2 {
+	font-family: $font-display-normal-family;
+}
+
+// One size for every screen title in the app — auth, start, archives, a saved tasting,
+// each tasting phase. Capped at the top of the scale (≈49px); bold rather than extrabold,
+// which is what lets it run this large without shouting. The marketing hero is the sole
+// h1 that scales past this, and it says so itself in home-page.scss.
+h1 {
+	font-size: clamp(2rem, 4.5vw, #{$font-size-xxxxl});
+	font-weight: $font-weight-bold;
+	letter-spacing: -0.035em;
+	line-height: 1.05;
+}
+
+h2 {
+	font-size: clamp(1.56rem, 3.5vw, 1.95rem);
+	font-weight: $font-weight-bold;
+	letter-spacing: -0.025em;
+	line-height: 1.08;
+}
+
+h3 {
+	font-size: $font-size-lg; // 20px
+	font-weight: $font-weight-semibold;
+	line-height: 1.25;
+}
+
+h4 {
+	font-size: $font-size-md; // 16px
+	font-weight: $font-weight-semibold;
+}
+
+h5 {
+	font-size: $font-size-md;
+	font-weight: $font-weight-medium;
+}
+
+h6 {
+	font-size: $font-size-sm;
+	font-weight: $font-weight-medium;
+}
+
+@include responsive($breakpoint-mobile) {
+	h3 {
+		font-size: $font-size-md;
+	}
+}
+
+// Body text
+p,
+li,
+td {
+	font-weight: $font-weight-medium;
+	line-height: 1.75; // relaxed
+}
+
+p,
+td {
+	font-size: 0.95rem;
+}
+
+p {
+	margin-bottom: 1.75em;
+}
+
+li,
+ol {
+	margin-bottom: 0.4em;
+	font-size: 0.9rem;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	p {
+		font-size: 0.9rem;
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	ul,
+	ol {
+		margin-bottom: 0.25em;
+	}
+}
+
+// Links take their colour from the text around them; a link that should look like one
+// uses the ledger-link mixin or its own class.
+a {
+	color: inherit;
+	text-decoration: none;
+	overflow-wrap: normal;
+	word-break: auto-phrase;
+	cursor: pointer;
+}
 
 * {
 	box-sizing: border-box;
@@ -12,7 +136,7 @@ html {
 body,
 html {
 	background-color: $color-black;
-	color: $color-text-light;
+	color: $color-white;
 	padding: 0;
 	margin: 0;
 	height: 100%;
@@ -20,7 +144,7 @@ html {
 	// 100%, not 16px: the same for most people, but it respects a larger default text size set in
 	// the browser, which every rem in the app then scales with.
 	font-size: 100%;
-	font-family: $font-display-bold-family;
+	font-family: $font-display-normal-family;
 }
 
 :focus-visible {
@@ -34,9 +158,9 @@ html {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: 9999;
+	z-index: $index-toast;
 	padding: 8px 16px;
-	background-color: $tasting-accent;
+	background-color: $color-accent;
 	color: $color-white;
 	font-size: $font-size-sm;
 	font-family: $font-display-normal-family;
@@ -55,37 +179,6 @@ html {
 	}
 }
 
-.navbar + * {
-	flex-grow: 1;
-	flex-shrink: 0;
-}
-
 a {
 	text-decoration: none;
-}
-
-.dark-bg {
-	background-color: $color-black;
-	color: $color-text-light;
-
-	a {
-		color: inherit;
-	}
-}
-
-.light-bg {
-	background-color: $color-secondary;
-	color: $color-text-dark;
-
-	a {
-		color: inherit;
-
-		&.button:not(.outline):not(.subtle):not(.quiet):not(.inline) {
-			color: var(--text-color);
-		}
-	}
-
-	.emphasised-text {
-		color: $color-accent-1;
-	}
 }

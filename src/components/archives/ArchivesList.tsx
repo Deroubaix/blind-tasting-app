@@ -61,19 +61,19 @@ export default function ArchivesList() {
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
-				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">{t.confirmLead(tasting.number, title, !!tasting.photoKey)}</p>
+				<div className="dialog">
+					<p className="dialog__lead">{t.confirmLead(tasting.number, title, !!tasting.photoKey)}</p>
 					{tasting.flight && (
-						<p className="confirm-dialog__note">
+						<p className="dialog__note">
 							{t.confirmFlight(tasting.flight.wineNumber, tasting.flight.name)}
 						</p>
 					)}
-					<p className="confirm-dialog__note">{t.cannotUndo}</p>
-					<div className="confirm-dialog__actions">
-						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(DELETE_MODAL)}>
+					<p className="dialog__note">{t.cannotUndo}</p>
+					<div className="dialog__actions">
+						<button className="btn-quiet" onClick={() => closeModal(DELETE_MODAL)}>
 							{t.keep}
 						</button>
-						<button className="btn-primary confirm-dialog__confirm" onClick={() => deleteTasting(tasting)}>
+						<button className="btn-primary" onClick={() => deleteTasting(tasting)}>
 							<IconTrash size={16} />
 							{t.deleteTasting}
 						</button>
@@ -98,18 +98,18 @@ export default function ArchivesList() {
 	}, [user, isInitialLoading, router]);
 
 	if (isInitialLoading || isLoading) {
-		return <div className="archives-loading">{t.loading}</div>;
+		return <div className="empty-state">{t.loading}</div>;
 	}
 
 	if (loadFailed) {
-		return <div className="archives-error">{t.loadFailed}</div>;
+		return <div className="empty-state">{t.loadFailed}</div>;
 	}
 
 	if (tastings.length === 0) {
 		return (
-			<div className="archives-empty">
+			<div className="empty-state archives-empty">
 				<p>{t.empty}</p>
-				<Link href="/tastings/start" className="btn-primary no-underline">
+				<Link href="/tastings/start" className="btn-primary">
 					{t.startFirst}
 				</Link>
 			</div>
@@ -120,7 +120,7 @@ export default function ArchivesList() {
 		<div className="archives-grid">
 			{/* First, not last: the list runs newest first, so a card at the end sank further out of
 			    sight with every tasting saved. */}
-			<Link href="/tastings/start" className="archive-card archive-card--new no-underline">
+			<Link href="/tastings/start" className="archive-card archive-card--new">
 				<span className="archive-card__new-icon">+</span>
 				<span className="archive-card__new-label">{t.newTasting}</span>
 			</Link>
@@ -157,7 +157,7 @@ export default function ArchivesList() {
 								{grid === 'wset' && <span className="grid-badge">{common.grid.wset.short}</span>}
 								{comparison ? (
 									<span
-										className="archive-card__score"
+										className="score-tag"
 										title={t.score(comparison.score, comparison.outOf)}
 										aria-label={t.score(comparison.score, comparison.outOf)}
 									>
@@ -169,7 +169,7 @@ export default function ArchivesList() {
 								) : (
 									<Link
 										href={`/archives/${tasting.id}?reveal=1`}
-										className="archive-card__reveal no-underline"
+										className="archive-card__reveal"
 										aria-label={t.revealFor(title)}
 									>
 										{t.reveal}
@@ -211,7 +211,7 @@ export default function ArchivesList() {
 								</button>
 								<Link
 									href={`/archives/${tasting.id}`}
-									className="archive-card__details archive-card__link no-underline"
+									className="archive-card__details archive-card__link"
 									aria-label={t.viewDetails(title)}
 								>
 									{t.details}

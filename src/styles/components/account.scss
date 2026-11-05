@@ -16,13 +16,10 @@
 }
 
 .account-card {
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
-	padding: $spacing-lg $spacing-xl;
+	@include ledger-panel($spacing-lg $spacing-xl);
 
 	&--danger {
-		border-color: rgba($color-error, 0.35);
+		border-color: rgba($color-error, 0.4);
 	}
 
 	&__heading {
@@ -45,9 +42,7 @@
 		font-size: $text-13;
 
 		a {
-			color: $tasting-accent-light;
-			text-decoration: underline;
-			text-underline-offset: 2px;
+			@include ledger-link;
 		}
 	}
 }
@@ -95,13 +90,16 @@
 	}
 }
 
-// Lines the heading up with the cards.
-.archives-hero.account-hero {
+// Lines the .page-head up with the cards.
+.account-head {
 	max-width: 720px;
 	box-sizing: content-box;
+	margin: 0 auto;
+	padding-top: $spacing-xxl;
+	padding-inline: $spacing-xxl;
 
 	@include responsive($breakpoint-mobile) {
-		padding-left: $spacing-md;
-		padding-right: $spacing-md;
+		padding-top: $spacing-lg;
+		padding-inline: $spacing-md;
 	}
 }

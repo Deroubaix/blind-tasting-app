@@ -47,7 +47,7 @@ export default forwardRef<HTMLInputElement, TextInputProps>(function TextInput(p
 	return (
 		<input
 			ref={ref}
-			className={`TextInput ${className ?? ''}`}
+			className={`text-input ${className ?? ''}`}
 			type={type}
 			placeholder={placeholder}
 			id={formControl?.fieldId}

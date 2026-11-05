@@ -47,12 +47,12 @@ export default function FormControl(props: FormControlProps) {
 	const isPristine = !isTouched;
 
 	const classNames = [
-		'FormControl',
-		isValid ? 'valid' : 'invalid',
-		isDirty ? 'dirty' : '',
-		isTouched ? 'touched' : '',
-		isPristine ? 'pristine' : '',
-		hasSubmitted ? 'submitted' : '',
+		'form-control',
+		isValid ? 'form-control--valid' : 'form-control--invalid',
+		isDirty ? 'form-control--dirty' : '',
+		isTouched ? 'form-control--touched' : '',
+		isPristine ? 'form-control--pristine' : '',
+		hasSubmitted ? 'form-control--submitted' : '',
 		className,
 	]
 		.filter(Boolean)
@@ -63,7 +63,7 @@ export default function FormControl(props: FormControlProps) {
 			<div className={classNames} data-control-name={name}>
 				{label && <Label htmlFor={fieldId}>{label}</Label>}
 				{children}
-				{error && <div className="error">{error}</div>}
+				{error && <div className="form-control__error">{error}</div>}
 			</div>
 		</FormControlContext.Provider>
 	);

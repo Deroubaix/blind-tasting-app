@@ -31,7 +31,7 @@ describe('Modal', () => {
 
 	it('keeps Tab inside the dialog', () => {
 		renderConfirm();
-		screen.getByText('Delete', { selector: '.body button' }).focus();
+		screen.getByText('Delete', { selector: '.modal__body button' }).focus();
 		fireEvent.keyDown(document, { key: 'Tab' });
 		expect(document.activeElement?.getAttribute('aria-label')).toBe('Close');
 	});

@@ -38,7 +38,7 @@ function PhaseSection({ label, data }: { label: string; data: Record<string, str
 
 	return (
 		<div className="tasting-detail__section">
-			<div className="tasting-detail__section-label">{label}</div>
+			<div className="accent-label tasting-detail__section-label">{label}</div>
 			<div className="tasting-detail__grid">
 				{entries.map(([key, value]) => (
 					<div key={key} className="tasting-detail__field">
@@ -73,7 +73,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	if (isLoading) {
 		return (
 			<div className="tasting-detail__container">
-				<div className="archives-loading">{common.loading}</div>
+				<div className="empty-state">{common.loading}</div>
 			</div>
 		);
 	}
@@ -81,10 +81,10 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	if (error || !tasting) {
 		return (
 			<div className="tasting-detail__container">
-				<Link href="/archives" className="tasting-detail__back no-underline">
+				<Link href="/archives" className="back-link tasting-detail__back">
 					{t.back}
 				</Link>
-				<div className="archives-error">{t[error ?? 'notFound']}</div>
+				<div className="empty-state">{t[error ?? 'notFound']}</div>
 			</div>
 		);
 	}
@@ -151,7 +151,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 	return (
 		<div className="tasting-detail__container">
-			<Link href="/archives" className="tasting-detail__back no-underline">
+			<Link href="/archives" className="back-link tasting-detail__back">
 				{t.back}
 			</Link>
 
@@ -165,7 +165,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 						<span className="tasting-detail__id">{shared.number(tasting.number)}</span>
 					)}
 					{tasting.flight && (
-						<Link href={`/flights/${tasting.flight.code}`} className="tasting-detail__flight no-underline">
+						<Link href={`/flights/${tasting.flight.code}`} className="text-link">
 							{t.flight(tasting.flight.name, tasting.flight.wineNumber)}
 						</Link>
 					)}
@@ -179,7 +179,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 			<div className="tasting-detail__title-row">
 				<div className="tasting-detail__title-text">
 					<h1>{title}</h1>
-					{subtitle && <p className="tasting-detail__subtitle">{subtitle}</p>}
+					{subtitle && <p className="page-head__sub tasting-detail__subtitle">{subtitle}</p>}
 					{revealed && callSummary && (
 						<p className="tasting-detail__call">
 							<span className="tasting-detail__call-label">{shared.yourCall}</span>
@@ -193,7 +193,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 						href={ClientPhotoService.url(tasting.photoKey)}
 						target="_blank"
 						rel="noopener"
-						className="tasting-detail__photo-link no-underline"
+						className="tasting-detail__photo-link"
 						aria-label={t.openPhoto}
 					>
 						{/* Served by an authenticated route with its own caching; next/image's optimiser
@@ -224,14 +224,16 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{tasting.confirmNose && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">{t.confirmNose}</div>
+					<div className="accent-label tasting-detail__section-label">{t.confirmNose}</div>
 					<p className="tasting-detail__notes">&ldquo;{tasting.confirmNose}&rdquo;</p>
 				</div>
 			)}
 
 			{Object.keys(initialFields).length > 0 && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">{common.phase[grid].initialConclusion}</div>
+					<div className="accent-label tasting-detail__section-label">
+						{common.phase[grid].initialConclusion}
+					</div>
 					<div className="tasting-detail__grid">
 						{Object.entries(initialFields).map(([label, value]) => (
 							<div key={label} className="tasting-detail__field">
@@ -245,7 +247,9 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{Object.keys(finalConclusionFields).length > 0 && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">{common.phase[grid].finalConclusion}</div>
+					<div className="accent-label tasting-detail__section-label">
+						{common.phase[grid].finalConclusion}
+					</div>
 					<div className="tasting-detail__grid">
 						{Object.entries(finalConclusionFields).map(([label, value]) => (
 							<div key={label} className="tasting-detail__field">
@@ -259,7 +263,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 			{tasting.notes && (
 				<div className="tasting-detail__section">
-					<div className="tasting-detail__section-label">{t.notes}</div>
+					<div className="accent-label tasting-detail__section-label">{t.notes}</div>
 					<p className="tasting-detail__notes">&ldquo;{tasting.notes}&rdquo;</p>
 				</div>
 			)}

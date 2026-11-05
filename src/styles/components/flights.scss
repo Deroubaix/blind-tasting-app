@@ -2,8 +2,6 @@
 @use '../abstracts' as *;
 // Flights: study groups tasting together
 
-$flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
-
 // ── Shell ─────────────────────────────────────────────────────────────────────
 .flight-page {
 	min-height: 100dvh;
@@ -50,103 +48,11 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	color: $color-text-muted;
 }
 
-.flight-link {
-	color: $tasting-accent-light;
-	font-size: $text-13;
-	font-weight: $font-weight-semibold;
-	white-space: nowrap;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
-}
-
-// Inline actions ("Results →", a taster's name) still need a thumb-sized target on phone.
-@include responsive($breakpoint-mobile) {
-	.flight-link,
-	.flight-link-button {
-		display: inline-flex;
-		align-items: center;
-		min-height: 44px;
-	}
-}
-
-.flight-link-button {
-	@include bare-button;
-
-	color: $color-white;
-	font-weight: $font-weight-semibold;
-	text-align: left;
-
-	&:hover,
-	&:focus-visible {
-		color: $tasting-accent-light;
-	}
-}
-
-.flight-back {
-	font-size: $text-14;
-	color: $color-text-secondary;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover {
-		color: $color-white;
-	}
-}
-
-// The shared .outline defaults to near-black on this ground; flights name their own, as the modal does.
-.flight-page .outline {
-	--color: #{$color-text-secondary};
-
-	@include action-label;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
-	background: transparent;
-	border: 1px solid var(--color);
-	border-radius: 6px;
-	color: var(--color);
-	padding: 0.9rem 1.4rem;
-	cursor: pointer;
-
-	&:after {
-		display: none;
-	}
-
-	&:hover,
-	&:focus-visible {
-		--color: #{$color-white};
-		background: transparent;
-	}
-}
-
-.flight-page .flight-btn-small {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	min-height: 40px;
-	padding: 0 16px;
-	font-size: $text-12;
-
-	@include responsive($breakpoint-mobile) {
-		min-height: 44px;
-	}
-}
-
+// A full-page message, as .empty-state, with room for a link beneath.
 .flight-message {
 	max-width: 560px;
-	margin: 4rem auto;
-	padding: 0 $spacing-md;
-	text-align: center;
-	color: $color-text-secondary;
+	margin: 4rem auto 0;
+	padding-inline: $spacing-md;
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;
@@ -154,10 +60,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 }
 
 .flight-card {
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
-	padding: $spacing-lg;
+	@include ledger-panel($spacing-lg);
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;
@@ -177,64 +80,32 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	margin: 0;
 }
 
+// Inside a .empty-state--boxed.
 .flight-empty {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	padding: $spacing-lg;
-	border: 1px dashed $tasting-border-mid;
-	border-radius: 8px;
-	text-align: center;
-	font-size: $text-14;
-	color: $color-text-secondary;
+	padding-inline: $spacing-md;
 
 	strong {
 		color: $color-white;
 	}
 }
 
-// ── Page heading ──────────────────────────────────────────────────────────────
-.flight-head {
-	display: flex;
-	align-items: flex-end;
-	justify-content: space-between;
-	gap: $spacing-lg;
-	flex-wrap: wrap;
+// A status line in a tinted box. Colour it with `--tone`.
+.flight-notice {
+	--tone: #{$color-status-ok};
+	@include ledger-panel($spacing-md);
+	border-color: color-mix(in srgb, var(--tone) 40%, transparent);
+	background-color: color-mix(in srgb, var(--tone) 6%, $color-darkGrey);
 
-	> div:first-child {
-		display: flex;
-		flex-direction: column;
-		gap: $spacing-sm;
-		min-width: 0;
+	&--warning {
+		--tone: #{$color-warning};
 	}
 
-	&__title {
-		margin: 0;
-		overflow-wrap: anywhere;
-	}
-
-	&__sub {
-		margin: 0;
-		color: $color-text-secondary;
-		font-size: $text-15;
-		line-height: 1.5;
-	}
-
-	&__actions {
-		display: flex;
-		gap: $spacing-sm;
-		flex-wrap: wrap;
-
-		> * {
-			display: inline-flex;
-			align-items: center;
-			gap: 6px;
-		}
-	}
-
-	&__people {
-		display: flex;
-		gap: 4px;
+	> svg {
+		flex-shrink: 0;
+		color: var(--tone);
 	}
 }
 
@@ -250,9 +121,9 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	box-sizing: border-box;
 	--tint: #{$color-white};
 
-	@for $i from 1 through list.length($flight-tints) {
+	@for $i from 1 through list.length($taster-tints) {
 		&--t#{$i - 1} {
-			--tint: #{list.nth($flight-tints, $i)};
+			--tint: #{list.nth($taster-tints, $i)};
 		}
 	}
 
@@ -285,40 +156,34 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&--faint {
-		border: 1px solid rgba(228, 228, 204, 0.18);
+		border: 1px solid $rule-mid;
 		color: $color-text-muted;
 	}
 }
 
-.flight-status {
-	display: inline-flex;
+// A row of avatars.
+.flight-people {
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: 4px;
-	padding: 2px 8px;
-	border-radius: 4px;
-	border: 1px solid rgba(228, 228, 204, 0.2);
-	font-size: $text-11;
-	font-weight: $font-weight-bold;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: $color-text-secondary;
-	white-space: nowrap;
+}
+
+.flight-status {
+	@include ledger-tag;
 	width: fit-content;
 
 	&--tasting {
-		color: $tasting-accent-light;
-		border-color: rgba($tasting-accent-light, 0.4);
+		--tone: #{$color-accent-light};
 	}
 
 	&--submitted,
 	&--allsubmitted {
-		color: $color-white;
-		border-color: rgba(228, 228, 204, 0.3);
+		--tone: #{$color-white};
 	}
 
 	&--revealed {
-		color: $color-status-ok;
-		border-color: rgba($color-status-ok, 0.35);
+		--tone: #{$color-status-ok};
 	}
 
 	&--notsubmitted {
@@ -326,45 +191,32 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 }
 
-.flight-score {
-	display: inline-flex;
-	align-items: center;
-	padding: 2px 8px;
-	border-radius: 4px;
-	border: 1px solid rgba(228, 228, 204, 0.22);
-	font-size: $text-12;
-	font-weight: $font-weight-bold;
-	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
-	width: fit-content;
-}
-
 .flight-clock {
 	font-family: $font-mono-family;
 	font-size: $text-14;
-	font-variant-numeric: tabular-nums;
 	color: $color-white;
 }
 
 // ── Create ────────────────────────────────────────────────────────────────────
 .flight-stepper {
+	@include ledger-panel($spacing-md);
 	display: flex;
 	align-items: center;
 	gap: $spacing-lg;
 	flex-wrap: wrap;
-	padding: $spacing-md;
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 8px;
 
 	&__btn {
 		@include bare-button;
-
 		width: 44px;
 		height: 44px;
-		border: 1px solid $tasting-border-mid;
-		border-radius: 8px;
+		border: 1px solid $rule;
+		border-radius: $radius;
 		color: $color-white;
+		transition: border-color 0.15s ease;
+
+		&:hover:not(:disabled) {
+			border-color: $rule-mid;
+		}
 
 		&:disabled {
 			opacity: 0.35;
@@ -373,10 +225,11 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&__value {
-		font-size: 2rem;
-		font-weight: $font-weight-bold;
+		@include figures;
 		min-width: 5.5rem;
 		text-align: center;
+		font-size: $text-32;
+		font-weight: $font-weight-medium;
 
 		span {
 			font-size: $text-13;
@@ -411,7 +264,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		grid-template-columns: 1fr;
 	}
 
-	@include responsive(56rem) {
+	@include responsive($breakpoint-laptop) {
 		grid-template-columns: 1fr;
 	}
 }
@@ -420,9 +273,10 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	&__code {
 		margin: 0;
 		font-family: $font-mono-family;
-		font-size: clamp(2.5rem, 6vw, 3.75rem);
+		// Read from across the room, so it runs past the type scale on a wide screen.
+		font-size: clamp($text-40, 6vw, 3.75rem);
 		font-weight: $font-weight-bold;
-		letter-spacing: 0.08em;
+		letter-spacing: $tracking-action;
 		line-height: 1;
 		color: $color-white;
 	}
@@ -437,7 +291,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		flex-shrink: 0;
 		width: 96px;
 		height: 96px;
-		border-radius: 6px;
+		border-radius: $radius;
 		overflow: hidden;
 
 		svg {
@@ -467,11 +321,10 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	flex-direction: column;
 
 	&__row {
+		@include ledger-row($spacing-sm);
 		display: flex;
 		align-items: center;
 		gap: $spacing-sm;
-		padding: $spacing-sm 0;
-		border-top: 1px solid $tasting-border;
 
 		&:first-child {
 			border-top: none;
@@ -496,14 +349,8 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	align-items: center;
 	gap: $spacing-sm;
 	flex-wrap: wrap;
-	padding: $spacing-md $spacing-lg;
-	border: 1px solid rgba($color-status-ok, 0.35);
-	border-radius: 10px;
+	padding-inline: $spacing-lg;
 	font-size: $text-14;
-
-	svg {
-		color: $color-status-ok;
-	}
 }
 
 .flight-wines {
@@ -513,16 +360,13 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 }
 
 .flight-wine {
+	@include ledger-panel($spacing-md);
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-sm;
-	padding: $spacing-md;
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
 
 	&--ready {
-		border-color: rgba($tasting-accent-light, 0.35);
+		border-color: $rule-accent;
 	}
 
 	&__top {
@@ -533,14 +377,16 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&__label {
-		@include eyebrow-label($text-11, $color-text-muted);
+		@include ledger-label;
 		display: flex;
 		align-items: baseline;
 		gap: 6px;
 	}
 
 	&__number {
-		font-size: 1.75rem;
+		@include figures;
+		font-size: $text-28;
+		font-weight: $font-weight-medium;
 		letter-spacing: 0;
 		color: $color-white;
 	}
@@ -549,12 +395,6 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		margin: 0;
 		font-size: $text-15;
 		font-weight: $font-weight-semibold;
-	}
-
-	&__people {
-		display: flex;
-		gap: 4px;
-		flex-wrap: wrap;
 	}
 
 	&__foot {
@@ -567,14 +407,12 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 
 	&__reveal {
 		margin-top: auto;
-		text-align: center;
-		justify-content: center;
 	}
 
 	&__locked {
+		@include serif-italic;
 		margin-top: auto;
 		font-size: $text-12;
-		font-style: italic;
 		color: $color-text-muted;
 	}
 }
@@ -609,7 +447,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		}
 
 		&--faint::before {
-			border: 1px solid rgba(228, 228, 204, 0.25);
+			border: 1px solid $rule-mid;
 		}
 	}
 }
@@ -621,21 +459,13 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 
 	&__title {
 		margin: 0;
-		font-size: 2rem;
+		font-size: $text-32;
 	}
 
 	&__me {
 		margin: 0;
 		font-size: $text-14;
 		color: $color-text-secondary;
-	}
-
-	&__join {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		width: 100%;
 	}
 }
 
@@ -649,24 +479,22 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	div {
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 6px;
 	}
 
 	dt {
-		font-size: $text-12;
-		color: $color-text-muted;
+		@include ledger-label;
 	}
 
 	dd {
+		@include figures;
 		margin: 0;
-		font-size: $text-16;
-		font-weight: $font-weight-semibold;
+		font-size: $text-18;
+		font-weight: $font-weight-medium;
 	}
 
 	&__people {
-		display: flex;
-		gap: 4px;
-		align-items: center;
+		font-family: $font-display-normal-family;
 		font-size: $text-13;
 	}
 }
@@ -676,22 +504,23 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	box-sizing: border-box;
 	padding: 14px 16px;
 	background-color: $color-black;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 8px;
+	border: 1px solid $rule;
+	border-radius: $radius;
 	font-family: $font-mono-family;
-	font-size: 2rem !important;
+	// Above 16px, so it may beat the coarse-pointer rule; it has to be !important to.
+	font-size: $text-32 !important;
 	letter-spacing: 0.35em;
 	text-transform: uppercase;
 	text-align: center;
 	color: $color-white;
+	transition: border-color 0.15s ease;
 
 	&:focus {
-		border-color: $tasting-accent-light;
+		border-color: $color-accent-light;
 	}
 
 	&__label {
-		font-size: $text-13;
-		color: $color-text-secondary;
+		@include ledger-label($text-11, $color-text-secondary);
 	}
 
 	&__error {
@@ -705,24 +534,10 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	padding: $spacing-md;
-	border: 1px solid rgba($color-status-ok, 0.35);
-	border-radius: 8px;
 
 	&__ok {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font-size: $text-12;
-		font-weight: $font-weight-bold;
-		color: $color-status-ok;
-	}
-
-	&__people {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		margin-top: 4px;
+		@include ledger-label($text-11, $color-status-ok);
+		@include icon-label(4px);
 	}
 }
 
@@ -736,26 +551,24 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	gap: $spacing-sm;
 
 	&__row {
+		@include ledger-panel($spacing-md);
 		display: flex;
 		align-items: center;
 		gap: $spacing-md;
-		padding: $spacing-md;
-		background-color: $color-darkGrey;
-		border: 1px solid $tasting-border-mid;
-		border-radius: 10px;
 
 		&--active {
-			border-color: rgba($tasting-accent-light, 0.35);
+			border-color: $rule-accent;
 		}
 	}
 
 	&__number {
-		width: 2rem;
+		@include folio-number($text-24);
+		width: 2.5rem;
 		flex-shrink: 0;
-		font-size: 1.5rem;
-		font-weight: $font-weight-bold;
-		color: $color-text-secondary;
-		text-align: center;
+		align-self: stretch;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
 	}
 
 	&__text {
@@ -777,8 +590,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	grid-template-columns: 1fr 1fr;
 	gap: $spacing-md;
 
-	// Compounded with the element: the global button rules paint a solid burgundy pill.
-	button#{&}__btn {
+	&__btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -786,19 +598,16 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		min-height: 56px;
 		padding: 0 $spacing-md;
 		background: $color-surface-variant;
-		border: 1px solid $tasting-border-mid;
-		border-radius: 8px;
+		border: 1px solid $rule;
+		border-radius: $radius;
 		color: $color-white;
 		font-size: $text-15;
 		font-weight: $font-weight-semibold;
-		text-transform: none;
-		letter-spacing: normal;
+		transition: border-color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
-			background: $color-surface-variant;
-			border-color: $tasting-accent-light;
-			color: $color-white;
+			border-color: $color-accent-light;
 		}
 	}
 }
@@ -814,26 +623,20 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 }
 
 .flight-action {
+	@include ledger-panel($spacing-lg);
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	padding: $spacing-lg;
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
 	color: $color-white;
-
-	&:after {
-		display: none;
-	}
+	transition: border-color 0.15s ease;
 
 	svg {
-		color: $tasting-accent-light;
+		color: $color-accent-light;
 	}
 
 	&:hover,
 	&:focus-visible {
-		border-color: rgba($tasting-accent-light, 0.45);
+		border-color: $rule-accent;
 	}
 }
 
@@ -841,16 +644,10 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 .flight-warning {
 	display: flex;
 	gap: $spacing-sm;
-	padding: $spacing-md;
 	margin-bottom: $spacing-lg;
-	border: 1px solid rgba($color-warning, 0.4);
-	background-color: rgba($color-warning, 0.07);
-	border-radius: 8px;
 
 	> svg {
-		flex-shrink: 0;
 		margin-top: 2px;
-		color: $color-warning;
 	}
 
 	> div {
@@ -861,7 +658,6 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&__lead {
-		margin: 0;
 		font-weight: $font-weight-semibold;
 	}
 
@@ -884,32 +680,17 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		gap: $spacing-sm;
 	}
 
-	&__head {
-		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: $spacing-lg;
-		flex-wrap: wrap;
-
-		> div:first-child {
-			display: flex;
-			flex-direction: column;
-			gap: $spacing-sm;
-			flex: 1 1 26rem;
-			min-width: 0;
-		}
-	}
-
+	// The wine-type tag and the eyebrow, on the eyebrow's line.
 	&__kicker {
 		display: flex;
 		align-items: center;
 		gap: $spacing-sm;
 		flex-wrap: wrap;
-	}
+		margin-bottom: 14px;
 
-	&__title {
-		margin: 0;
-		overflow-wrap: anywhere;
+		@include responsive($breakpoint-mobile) {
+			margin-bottom: 8px;
+		}
 	}
 
 	&__legend {
@@ -919,57 +700,71 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 }
 
+// Figures under a double rule, as Progress's totals.
 .flight-stats {
 	display: grid;
 	grid-template-columns: repeat(3, auto);
 	margin: 0;
-	background-color: $color-darkGrey;
-	border: 1px solid $tasting-border-mid;
-	border-radius: 10px;
+	border-top: $rule-double;
+	border-bottom: 1px solid $rule;
 
 	> div {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		padding: $spacing-md $spacing-lg;
+		min-width: 0;
+		padding: 20px 24px 18px;
+
+		&:first-child {
+			padding-left: 0;
+		}
 
 		& + div {
-			border-left: 1px solid $tasting-border-mid;
+			border-left: 1px solid $rule;
 		}
 	}
 
 	dt {
-		@include eyebrow-label($text-11, $color-text-muted);
-		letter-spacing: 0.12em;
+		@include ledger-label;
+		margin-bottom: 8px;
 	}
 
-	dd {
+	&__value {
+		@include figures;
 		margin: 0;
-		font-size: 2rem;
-		font-weight: $font-weight-bold;
-		line-height: 1.1;
+		font-size: $text-40;
+		font-weight: $font-weight-medium;
+		line-height: 1;
 
 		span {
-			font-size: $text-15;
-			font-weight: $font-weight-regular;
+			font-size: $text-20;
 			color: $color-text-muted;
 		}
+	}
 
-		&.flight-muted {
-			font-size: $text-12;
-			font-weight: $font-weight-regular;
-		}
+	&__sub {
+		margin: 8px 0 0;
+		font-size: $text-13;
+		color: $color-text-secondary;
+		overflow-wrap: anywhere;
 	}
 
 	@include responsive($breakpoint-mobile) {
-		width: 100%;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 
 		> div {
-			padding: $spacing-sm $spacing-md;
+			padding: 14px 12px 12px;
 		}
 
-		dd {
-			font-size: 1.5rem;
+		&__value {
+			font-size: $text-28;
+
+			span {
+				font-size: $text-15;
+			}
+		}
+
+		&__sub {
+			margin-top: 6px;
+			font-size: $text-12;
+			line-height: 1.35;
 		}
 	}
 }
@@ -979,29 +774,24 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	flex-direction: column;
 
 	&__row {
+		@include ledger-row($spacing-md);
 		display: grid;
 		// One column per scored field: five on the CMS grid, six on the WSET grid (set by the table).
 		grid-template-columns: minmax(170px, 1.3fr) repeat(var(--fields, 5), minmax(0, 1fr));
 		gap: $spacing-md;
 		align-items: start;
-		padding: $spacing-md $spacing-sm;
-		border-top: 1px solid $tasting-border;
+		padding-inline: $spacing-sm;
 
 		&--head {
-			@include eyebrow-label($text-11, $color-text-muted);
-			letter-spacing: 0.12em;
+			@include ledger-label;
 			border-top: none;
 			padding-top: 0;
 		}
 
 		&--label {
 			background-color: $color-surface-variant;
-			border-radius: 8px;
+			border-radius: $radius;
 			border-top: none;
-		}
-
-		&--group {
-			align-items: start;
 		}
 	}
 
@@ -1015,15 +805,16 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	&__label-mark {
 		width: 32px;
 		height: 32px;
-		border-radius: 6px;
-		border: 1px solid $tasting-border-mid;
-		background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(228, 228, 204, 0.08) 4px 6px);
+		border-radius: $radius-sm;
+		border: 1px solid $rule;
+		background: repeating-linear-gradient(45deg, transparent 0 4px, $rule-soft 4px 6px);
 		flex-shrink: 0;
 	}
 
 	&__name {
 		display: flex;
 		flex-direction: column;
+		align-items: flex-start;
 		gap: 4px;
 		min-width: 0;
 		font-size: $text-14;
@@ -1040,9 +831,9 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&__note {
+		@include serif-italic;
 		grid-column: 2 / -1;
 		font-size: $text-13;
-		font-style: italic;
 		color: $color-text-muted;
 	}
 
@@ -1050,11 +841,30 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		display: flex;
 		gap: 2px;
 		height: 4px;
+	}
 
-		span {
-			flex: 1;
-			border-radius: 2px;
-			background-color: var(--status, rgba(228, 228, 204, 0.2));
+	// One segment per taster, coloured by how their call scored.
+	&__seg {
+		--tone: #{$rule-mid};
+		flex: 1;
+		border-radius: $radius-sm;
+		background-color: var(--tone);
+
+		&--correct {
+			--tone: #{$color-status-ok};
+		}
+
+		&--close {
+			--tone: #{$color-warning};
+		}
+
+		&--wrong {
+			--tone: #{$color-error};
+		}
+
+		&--notcalled,
+		&--na {
+			--tone: #{$color-text-secondary};
 		}
 	}
 
@@ -1076,8 +886,7 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 
 		&__cell::before {
 			content: attr(data-col);
-			font-size: $text-11;
-			color: $color-text-muted;
+			@include ledger-label;
 		}
 
 		&__row--group {
@@ -1098,100 +907,6 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-}
-
-.flight-scale {
-	display: grid;
-	grid-template-columns: 120px minmax(0, 1fr) 220px;
-	align-items: center;
-	gap: $spacing-lg;
-	padding: $spacing-md 0;
-	border-top: 1px solid $tasting-border;
-	--range: rgba(228, 228, 204, 0.12);
-	--verdict: #{$color-text-secondary};
-
-	&--split {
-		--range: rgba(255, 183, 77, 0.28);
-		--verdict: #{$color-warning};
-	}
-
-	&__name {
-		font-size: $text-14;
-		font-weight: $font-weight-semibold;
-	}
-
-	&__track {
-		position: relative;
-		height: 64px;
-		margin: 0 16px;
-	}
-
-	&__line {
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 30px;
-		height: 2px;
-		background-color: rgba(228, 228, 204, 0.12);
-	}
-
-	&__range {
-		position: absolute;
-		top: 26px;
-		height: 10px;
-		border-radius: 5px;
-		background-color: var(--range);
-	}
-
-	&__stop {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		transform: translateX(-50%);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	&__dots {
-		display: flex;
-		gap: 2px;
-		min-height: 24px;
-		margin-top: 19px;
-	}
-
-	&__tick {
-		font-size: $text-11;
-		color: $color-text-muted;
-		white-space: nowrap;
-
-		&--on {
-			color: $color-white;
-		}
-	}
-
-	&__verdict {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-
-	&__word {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font-size: $text-11;
-		font-weight: $font-weight-bold;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--verdict);
-	}
-
-	@include responsive(56rem) {
-		grid-template-columns: 1fr;
-		gap: $spacing-sm;
-	}
 }
 
 // ── A taster's sheet ──────────────────────────────────────────────────────────
@@ -1223,13 +938,13 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	}
 
 	&__big {
-		font-size: 3rem;
-		font-weight: $font-weight-bold;
+		@include figures;
+		font-size: $text-40;
+		font-weight: $font-weight-medium;
 		line-height: 1;
 
 		span {
 			font-size: $text-16;
-			font-weight: $font-weight-regular;
 			color: $color-text-muted;
 		}
 	}
@@ -1240,11 +955,10 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		flex-direction: column;
 
 		div {
+			@include ledger-row(6px);
 			display: grid;
 			grid-template-columns: 1fr auto auto;
 			gap: $spacing-md;
-			padding: 6px 0;
-			border-top: 1px solid $tasting-border;
 			font-size: $text-13;
 		}
 
@@ -1271,22 +985,22 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 	overflow-x: auto;
 
 	&__row {
+		@include ledger-row($spacing-sm);
 		display: grid;
 		grid-template-columns: minmax(220px, 2fr) repeat(var(--cols), minmax(90px, 1fr)) minmax(90px, 1fr);
 		gap: $spacing-md;
 		align-items: center;
-		padding: $spacing-sm 0;
-		border-top: 1px solid $tasting-border;
 		min-width: max-content;
 
 		&--head {
+			@include ledger-label;
 			border-top: none;
-			font-size: $text-12;
-			color: $color-text-muted;
+			padding-top: 0;
 		}
 
+		// A total under a double rule, as in an account book.
 		&--total {
-			border-top: 1px solid $tasting-border-mid;
+			border-top: $rule-double;
 			font-size: $text-14;
 		}
 	}
@@ -1305,25 +1019,36 @@ $flight-tints: (#d9a3ad, #a8c49f, #d6bf8e, #a6b8d2);
 		> span:last-child {
 			display: flex;
 			flex-direction: column;
+			align-items: flex-start;
 		}
 	}
 
 	&__n {
+		@include figures;
 		width: 1.5rem;
-		font-weight: $font-weight-bold;
-		color: $color-text-secondary;
+		flex-shrink: 0;
+		text-align: right;
+		font-size: $text-14;
+		color: $color-text-muted;
 	}
 
 	&__cell {
+		@include figures;
 		display: flex;
 		flex-direction: column;
+		align-items: flex-start;
 		font-size: $text-14;
-		font-variant-numeric: tabular-nums;
 
 		svg {
 			color: $color-status-ok;
 			margin-right: 3px;
 		}
+	}
+
+	// The words under each total read as text, not figures.
+	&__row--total &__cell > .flight-muted {
+		font-family: $font-display-normal-family;
+		font-size: $text-12;
 	}
 
 	&__archive {

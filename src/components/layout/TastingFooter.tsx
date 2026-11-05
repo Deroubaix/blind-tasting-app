@@ -45,15 +45,15 @@ export default function TastingFooter({
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
-				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">{t.clears(!!tastingData.flight)}</p>
-					<p className="confirm-dialog__note">{t.nothingSaved}</p>
-					<div className="confirm-dialog__actions">
-						<button className="outline confirm-dialog__cancel" onClick={() => closeModal(START_OVER_MODAL)}>
+				<div className="dialog">
+					<p className="dialog__lead">{t.clears(!!tastingData.flight)}</p>
+					<p className="dialog__note">{t.nothingSaved}</p>
+					<div className="dialog__actions">
+						<button className="btn-quiet" onClick={() => closeModal(START_OVER_MODAL)}>
 							{t.keepTasting}
 						</button>
 						<button
-							className="btn-primary confirm-dialog__confirm"
+							className="btn-primary"
 							onClick={() => {
 								closeModal(START_OVER_MODAL);
 								const flight = tastingData.flight;
@@ -73,7 +73,11 @@ export default function TastingFooter({
 	return (
 		<footer className="tasting-footer">
 			<div className="tasting-footer__left">
-				<button className="tasting-footer__start-over" onClick={handleStartOver} aria-label={t.startOver}>
+				<button
+					className="btn-quiet btn-quiet--sm tasting-footer__start-over"
+					onClick={handleStartOver}
+					aria-label={t.startOver}
+				>
 					<span className="tasting-footer__start-over-icon" aria-hidden="true">
 						<IconRefresh size={18} />
 					</span>

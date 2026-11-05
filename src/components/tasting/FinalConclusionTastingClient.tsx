@@ -137,7 +137,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 			<div className="fc-layout">
 				{/* ── Left: the declaration ── */}
 				<div className="fc-form">
-					<div className="fc-grid">
+					<div className="tasting-grid">
 						<ChipSearchField
 							id="fc-grape"
 							className="fc-field"

@@ -70,7 +70,7 @@ export default function Form<
 			{/* noValidate: validation is owned by the form's schema. Without it the browser's native
 			    constraint check (type="email", minLength) blocks submit first and the form's own
 			    error messages never render. */}
-			<form className={`Form ${className ?? ''}`} id={formContext.formId} onSubmit={handleSubmit} noValidate>
+			<form className={`form ${className ?? ''}`} id={formContext.formId} onSubmit={handleSubmit} noValidate>
 				{children}
 			</form>
 		</FormContext.Provider>

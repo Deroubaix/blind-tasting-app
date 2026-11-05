@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Wordmark from './Wordmark';
 import { useRouter } from 'next/navigation';
 import { IconPlayerPauseFilled, IconPlayerPlayFilled } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
@@ -59,10 +60,10 @@ export default function TastingPageHeader({
 			closeOnEsc: true,
 			onClose: () => updateTastingData((current) => resumeClock(current, Date.now())),
 			children: (
-				<div className="timeup">
-					<p className="timeup__lead">{t.tastingHeader.clockStopped}</p>
-					<p className="timeup__note">{t.tastingHeader.carriesOn}</p>
-					<button className="btn-primary timeup__action" onClick={() => closeModal(modalId)}>
+				<div className="dialog">
+					<p className="dialog__lead">{t.tastingHeader.clockStopped}</p>
+					<p className="dialog__note">{t.tastingHeader.carriesOn}</p>
+					<button className="btn-primary dialog__action" onClick={() => closeModal(modalId)}>
 						{t.tastingHeader.resume}
 						<IconPlayerPlayFilled size={14} aria-hidden="true" />
 					</button>
@@ -108,7 +109,7 @@ export default function TastingPageHeader({
 	return (
 		<header className={`tasting-page-header${showTimer ? '' : ' tasting-page-header--no-timer'}`}>
 			<Link href="/" className="tasting-page-header__logo">
-				The Sommelier<em className="logo-serif">&apos;s</em> Ledger
+				<Wordmark size="sm" />
 			</Link>
 
 			{title && (
@@ -175,8 +176,8 @@ export default function TastingPageHeader({
 								{dropdownOpen && (
 									<div className="nav-dropdown" role="menu">
 										<div className="nav-dropdown__profile">
-											<span className="nav-dropdown__name">{user.displayName}</span>
-											<span className="nav-dropdown__email">{user.email}</span>
+											<span className="nav-profile__name">{user.displayName}</span>
+											<span className="nav-profile__email">{user.email}</span>
 										</div>
 										<div className="nav-dropdown__divider" />
 										<Link

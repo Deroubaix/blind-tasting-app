@@ -14,10 +14,12 @@ export default async function ArchivesPage() {
 			<div className="tasting-phase-body">
 				<LeftSidebar />
 				<main className="tasting-phase-main">
-					<div className="archives-hero">
-						<h1>{t.title}</h1>
-						<p className="archives-hero__description">{t.description}</p>
-					</div>
+					<header className="page-head archives-head">
+						<div>
+							<h1 className="page-head__title">{t.title}</h1>
+							<p className="page-head__sub">{t.description}</p>
+						</div>
+					</header>
 					<ArchivesList />
 				</main>
 			</div>

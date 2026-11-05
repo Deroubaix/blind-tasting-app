@@ -33,7 +33,7 @@ export function OptionCard({
 			<div className="tasting-card__label">
 				{label}
 				{required && (
-					<span className="palate-card__required" aria-label={t.required}>
+					<span className="tasting-card__required" aria-label={t.required}>
 						*
 					</span>
 				)}
@@ -104,25 +104,25 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 		<>
 			{AROMA_GROUPS.map((group) => (
 				<div key={group} className="wset-group">
-					<div className="nose-section-divider">
+					<div className="tasting-divider">
 						<span className="section-label">{t.groups[group]}</span>
 					</div>
-					<div className="nose-grid nose-grid--two-col">
+					<div className="tasting-grid tasting-grid--2">
 						{clusters
 							.filter((cluster) => cluster.group === group)
 							.map((cluster) => {
 								const chosen = selected(cluster);
 								const own = custom(cluster);
 								return (
-									<div key={cluster.name} className="nose-fruit-category">
-										<div className="nose-fruit-category__label">{cluster.name}</div>
+									<div key={cluster.name} className="tasting-group">
+										<div className="tasting-group__label">{cluster.name}</div>
 										<div className="tasting-options" role="group" aria-label={cluster.name}>
 											{cluster.terms.map((term) => {
 												const on = chosen.includes(term);
 												return (
 													<button
 														key={term}
-														className={`tasting-option tasting-option--pill${on ? ' tasting-option--selected' : ''}`}
+														className={`tasting-option tasting-option--compact${on ? ' tasting-option--selected' : ''}`}
 														aria-pressed={on}
 														onClick={() => onToggle(cluster, term)}
 													>
@@ -133,7 +133,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 											{own.map((term) => (
 												<button
 													key={term}
-													className="tasting-option tasting-option--pill tasting-option--selected tasting-option--custom"
+													className="tasting-option tasting-option--compact tasting-option--selected tasting-option--custom"
 													title={t.clickToRemove}
 													onClick={() => onRemove(cluster, term)}
 												>
@@ -141,7 +141,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 												</button>
 											))}
 											{open[cluster.name] ? (
-												<span className="nose-other-input">
+												<span className="tasting-other-input">
 													<input
 														type="text"
 														className="tasting-input"
@@ -161,13 +161,13 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 														autoFocus
 													/>
 													<button
-														className="tasting-confirm-btn"
+														className="btn-primary btn-primary--sm"
 														onClick={() => add(cluster)}
 													>
 														{t.add}
 													</button>
 													<button
-														className="tasting-dismiss-btn"
+														className="btn-quiet btn-quiet--sm"
 														aria-label={tc.cancel}
 														onClick={() =>
 															setOpen((o) => ({ ...o, [cluster.name]: false }))
@@ -178,7 +178,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 												</span>
 											) : (
 												<button
-													className="tasting-option tasting-option--pill tasting-option--ghost"
+													className="tasting-option tasting-option--compact tasting-option--ghost"
 													onClick={() => setOpen((o) => ({ ...o, [cluster.name]: true }))}
 												>
 													{t.other}

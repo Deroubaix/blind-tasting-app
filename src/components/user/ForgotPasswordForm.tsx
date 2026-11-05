@@ -12,8 +12,7 @@ import { JsonApiError } from '../../utils/ErrorUtils';
 import { forgotPasswordSchema, type ForgotPasswordFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
-import AuthHeader from '../layout/AuthHeader';
-import Footer from '../layout/Footer';
+import AuthShell from './AuthShell';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { translatedResolver } from '../../utils/FormUtils';
@@ -50,83 +49,75 @@ export default function ForgotPasswordForm() {
 	};
 
 	return (
-		<div className="auth-page">
-			<AuthHeader contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }} />
+		<AuthShell contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }}>
+			{submittedEmail ? (
+				<>
+					<header className="auth-card-head">
+						<span className="page-eyebrow">{t.sentEyebrow}</span>
+						<h1>
+							{t.sentBefore}
+							<em>{t.sentEm}</em>
+							{t.sentAfter}
+						</h1>
+						<p className="body-copy">
+							{t.sentLedeBefore}
+							<strong>{submittedEmail}</strong>
+							{t.sentLedeAfter}
+						</p>
+					</header>
 
-			<main className="auth-main">
-				<div className="auth-container">
-					{submittedEmail ? (
-						<>
-							<header className="auth-card-head">
-								<span className="page-eyebrow">{t.sentEyebrow}</span>
-								<h1>
-									{t.sentBefore}
-									<em>{t.sentEm}</em>
-									{t.sentAfter}
-								</h1>
-								<p className="auth-subheading">
-									{t.sentLedeBefore}
-									<strong>{submittedEmail}</strong>
-									{t.sentLedeAfter}
-								</p>
-							</header>
+					<div className="auth-success-icon">
+						<IconCheck size={20} strokeWidth={2.5} />
+					</div>
 
-							<div className="auth-success-icon">
-								<IconCheck size={20} strokeWidth={2.5} />
-							</div>
+					<p className="auth-switch">
+						<Link href="/login" className="auth-switch__link">
+							{shared.backToLogIn}
+						</Link>
+					</p>
+				</>
+			) : (
+				<>
+					<header className="auth-card-head">
+						<span className="page-eyebrow">{t.eyebrow}</span>
+						<h1>
+							{t.headingBefore}
+							<em>{t.headingEm}</em>
+							{t.headingAfter}
+						</h1>
+						<p className="body-copy">{t.subheading}</p>
+					</header>
 
-							<p className="auth-switch">
-								<Link href="/login" className="auth-switch-link">
-									{shared.backToLogIn}
-								</Link>
-							</p>
-						</>
-					) : (
-						<>
-							<header className="auth-card-head">
-								<span className="page-eyebrow">{t.eyebrow}</span>
-								<h1>
-									{t.headingBefore}
-									<em>{t.headingEm}</em>
-									{t.headingAfter}
-								</h1>
-								<p className="auth-subheading">{t.subheading}</p>
-							</header>
+					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
+						{error && <p className="auth-error">{error}</p>}
 
-							<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
-								{error && <p className="auth-error">{error}</p>}
+						<FormControl className="auth-field" name="email">
+							<Label className="item-label">{shared.email}</Label>
+							<TextInput
+								className="ledger-field"
+								type="email"
+								autoComplete="email"
+								placeholder={shared.emailPlaceholder}
+							/>
+						</FormControl>
 
-								<FormControl className="auth-field" name="email">
-									<Label className="item-label">{shared.email}</Label>
-									<TextInput
-										className="auth-input"
-										type="email"
-										autoComplete="email"
-										placeholder={shared.emailPlaceholder}
-									/>
-								</FormControl>
+						<button
+							className="btn-primary btn-primary--block auth-submit"
+							type="submit"
+							disabled={isLoading}
+						>
+							{isLoading ? t.sending : t.send}
+							<IconArrowRight size={15} />
+						</button>
+					</Form>
 
-								<button
-									className="auth-submit btn-primary btn-primary--auth"
-									type="submit"
-									disabled={isLoading}
-								>
-									{isLoading ? t.sending : t.send}
-									<IconArrowRight size={15} />
-								</button>
-							</Form>
-
-							<p className="auth-switch">
-								<Link href="/login" className="auth-switch-link">
-									{shared.backToLogIn}
-								</Link>
-							</p>
-						</>
-					)}
-				</div>
-			</main>
-
-			<Footer />
-		</div>
+					<p className="auth-switch">
+						<Link href="/login" className="auth-switch__link">
+							{shared.backToLogIn}
+						</Link>
+					</p>
+				</>
+			)}
+		</AuthShell>
 	);
 }

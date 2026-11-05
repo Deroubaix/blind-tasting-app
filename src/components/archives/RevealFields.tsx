@@ -41,7 +41,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 			{wset && (
 				<>
 					<div className="reveal-field">
-						<span className="reveal-field__label" id={ids.assessment}>
+						<span className="accent-label" id={ids.assessment}>
 							{t.quality}
 						</span>
 						<TastingCustomSelect
@@ -54,7 +54,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 						/>
 					</div>
 					<div className="reveal-field">
-						<span className="reveal-field__label" id={ids.readiness}>
+						<span className="accent-label" id={ids.readiness}>
 							{t.readiness}
 						</span>
 						<TastingCustomSelect
@@ -72,7 +72,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 			<ChipSearchField
 				id={ids.grape}
 				className="reveal-field"
-				labelClassName="reveal-field__label"
+				labelClassName="accent-label"
 				label={t.grape}
 				value={value.grapeVariety}
 				onChange={(grapeVariety) => onChange({ grapeVariety })}
@@ -83,7 +83,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 			<ChipSearchField
 				id={ids.country}
 				className="reveal-field"
-				labelClassName="reveal-field__label"
+				labelClassName="accent-label"
 				label={t.country}
 				value={value.countryOfOrigin}
 				onChange={(countryOfOrigin) => onChange({ countryOfOrigin })}
@@ -95,7 +95,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 				<ChipSearchField
 					id={ids.region}
 					className="reveal-field"
-					labelClassName="reveal-field__label"
+					labelClassName="accent-label"
 					label={t.region}
 					value={value.regionAppellation}
 					onChange={(regionAppellation) => onChange({ regionAppellation })}
@@ -106,7 +106,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 			</div>
 			{!wset && (
 				<div className="reveal-field">
-					<span className="reveal-field__label" id={ids.quality}>
+					<span className="accent-label" id={ids.quality}>
 						{t.qualityLevel}
 					</span>
 					<QualityLevelSelect
@@ -118,7 +118,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 				</div>
 			)}
 			<div className="reveal-field">
-				<label className="reveal-field__label" htmlFor={ids.vintage}>
+				<label className="accent-label" htmlFor={ids.vintage}>
 					{t.vintage}
 				</label>
 				<VintageInput
@@ -128,7 +128,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 				/>
 			</div>
 			<div className="reveal-field reveal-fields__wide">
-				<label className="reveal-field__label" htmlFor={ids.name}>
+				<label className="accent-label" htmlFor={ids.name}>
 					{t.wineName} <span className="reveal-field__hint">{t.wineNameHint}</span>
 				</label>
 				<input

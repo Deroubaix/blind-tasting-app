@@ -63,7 +63,7 @@ export default function AccountPanel() {
 	const errorText = error === null ? null : typeof error === 'string' ? t[error] : error.message;
 
 	if (isInitialLoading || !user) {
-		return <div className="archives-loading">{common.loading}</div>;
+		return <div className="empty-state">{common.loading}</div>;
 	}
 
 	const remove = async (typed: string) => {
@@ -95,18 +95,15 @@ export default function AccountPanel() {
 			closeOnClickOutside: true,
 			closeOnEsc: true,
 			children: (
-				<div className="confirm-dialog">
-					<p className="confirm-dialog__lead">{t.deletionLead(tastingCount)}</p>
-					{flightsNote && <p className="confirm-dialog__note">{flightsNote}</p>}
-					<p className="confirm-dialog__note">{t.cannotUndo}</p>
-					<div className="confirm-dialog__actions">
-						<button
-							className="outline confirm-dialog__cancel"
-							onClick={() => closeModal(DELETE_ACCOUNT_MODAL)}
-						>
+				<div className="dialog">
+					<p className="dialog__lead">{t.deletionLead(tastingCount)}</p>
+					{flightsNote && <p className="dialog__note">{flightsNote}</p>}
+					<p className="dialog__note">{t.cannotUndo}</p>
+					<div className="dialog__actions">
+						<button className="btn-quiet" onClick={() => closeModal(DELETE_ACCOUNT_MODAL)}>
 							{t.keep}
 						</button>
-						<button className="btn-primary confirm-dialog__confirm" onClick={() => remove(typed)}>
+						<button className="btn-primary" onClick={() => remove(typed)}>
 							<IconTrash size={16} aria-hidden="true" />
 							{t.deleteEverything}
 						</button>

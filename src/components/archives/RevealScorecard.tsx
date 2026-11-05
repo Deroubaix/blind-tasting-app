@@ -89,7 +89,7 @@ export default function RevealScorecard({
 	return (
 		<section className="reveal-card reveal-scorecard" aria-labelledby="reveal-score-heading">
 			<div className="reveal-scorecard__summary">
-				<span className="reveal-eyebrow" id="reveal-score-heading">
+				<span className="accent-label" id="reveal-score-heading">
 					{panel.eyebrow}
 				</span>
 				<p className="reveal-score" aria-label={t.scoreLabel(score, outOf)}>
@@ -139,12 +139,12 @@ export default function RevealScorecard({
 				<div className="reveal-scorecard__fields-head">
 					<span className="reveal-scorecard__fields-title">{t.fieldByField}</span>
 					{onEdit ? (
-						<button type="button" className="reveal-btn-quiet" onClick={onEdit}>
+						<button type="button" className="btn-quiet btn-quiet--sm" onClick={onEdit}>
 							{t.editReveal}
 						</button>
 					) : (
 						flightHref && (
-							<Link href={flightHref} className="reveal-btn-quiet no-underline">
+							<Link href={flightHref} className="btn-quiet btn-quiet--sm">
 								{t.flightResults}
 							</Link>
 						)
