@@ -10,7 +10,7 @@ import { PHASE_ORDER } from '../tasting/phaseCompletion';
 import { unlockAudio } from '../../utils/beep';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightView, type MyWineView } from '../../types/Flight';
-import { Avatar, StatusPill, clockText, flightService, formatTimer, useNow } from './FlightBits';
+import { Avatar, FlightHead, StatusPill, clockText, flightService, formatTimer, useNow } from './FlightBits';
 import { formatTime } from '../../utils/DateUtils';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';
@@ -102,24 +102,28 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 
 	return (
 		<main className="flight-main flight-main--narrow">
-			<header className="page-head">
-				<div>
-					<span className="page-head__eyebrow">{`${text.bits.flight}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
-					<h1 className="page-head__title">{flight.name}</h1>
-					<p className="page-head__sub">
-						{text.bits.hostedBy(flight.host.name)} · {common.grid[flight.grid].short} ·{' '}
-						{common.wines(flight.wineCount)} · {formatTimer(flight.timerSeconds, lang)} ·{' '}
-						{text.bits.revealedOf(revealed, flight.wineCount)}
-					</p>
+			<FlightHead
+				crumb={`${text.bits.flight}${flight.ended ? ` · ${text.bits.ended}` : ''}`}
+				title={flight.name}
+				sub={[
+					text.bits.hostedBy(flight.host.name),
+					common.grid[flight.grid].short,
+					common.wines(flight.wineCount),
+					formatTimer(flight.timerSeconds, lang),
+					text.bits.revealedOf(revealed, flight.wineCount),
+				].join(' · ')}
+			>
+				<div className="flight-head__people">
+					<span className="flight-people flight-people--stack" aria-hidden="true">
+						{flight.members.map((member) => (
+							<Avatar key={member.id} person={member} size="sm" />
+						))}
+					</span>
+					<span>{t.whoPours(flight.members.length, hostFirst)}</span>
 				</div>
-				<div className="flight-people" aria-label={text.bits.tastersHeading}>
-					{flight.members.map((member) => (
-						<Avatar key={member.id} person={member} size="sm" />
-					))}
-				</div>
-			</header>
+			</FlightHead>
 
-			<ol className="flight-list">
+			<ol className="flight-wines">
 				{mine.map((wine) => {
 					const info = flight.wines.find((w) => w.number === wine.number);
 					let title: string;
@@ -142,47 +146,57 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 					return (
 						<li
 							key={wine.number}
-							className={`flight-list__row${wine.status === 'tasting' ? ' flight-list__row--active' : ''}`}
+							className={`flight-wine${wine.status === 'tasting' && !info?.revealed ? ' flight-wine--active' : ''}`}
 						>
-							<span className="flight-list__number">{wine.number}</span>
-							<div className="flight-list__text">
-								<StatusPill
-									status={
-										info?.revealed
-											? wine.status === 'submitted'
-												? 'revealed'
-												: 'notsubmitted'
-											: wine.status
-									}
-								/>
-								<span className="flight-list__title">{title}</span>
-								<span className="flight-muted">{detail}</span>
+							<span className="flight-wine__n">{wine.number}</span>
+							<div className="flight-wine__body">
+								<div className="flight-wine__row">
+									<strong>{title}</strong>
+									<StatusPill
+										status={
+											info?.revealed
+												? wine.status === 'submitted'
+													? 'revealed'
+													: 'notsubmitted'
+												: wine.status
+										}
+									/>
+								</div>
+								<div className="flight-wine__row">
+									{wine.score !== null && (
+										<span className="figure">
+											{wine.score}
+											<span className="figure__of"> / {wine.outOf}</span>
+										</span>
+									)}
+									<span className="flight-wine__detail">{detail}</span>
+									{info?.revealed && (
+										<Link
+											href={`/flights/${flight.code}/wines/${wine.number}`}
+											className="flight-wine__link"
+										>
+											{text.bits.results}
+										</Link>
+									)}
+								</div>
+								{!info?.revealed && wine.status === 'tasting' ? (
+									<button
+										type="button"
+										className="btn-primary flight-wine__action"
+										onClick={() => open(wine)}
+									>
+										{t.continue(wine.number)}
+									</button>
+								) : !info?.revealed && wine.status === 'notstarted' && !flight.ended ? (
+									<button
+										type="button"
+										className="btn-quiet flight-wine__action"
+										onClick={() => open(wine)}
+									>
+										{t.start(wine.number)}
+									</button>
+								) : null}
 							</div>
-							{wine.score !== null && (
-								<span className="score-tag">
-									{wine.score} / {wine.outOf}
-								</span>
-							)}
-							{info?.revealed ? (
-								<Link
-									href={`/flights/${flight.code}/wines/${wine.number}`}
-									className="text-link text-link--sm"
-								>
-									{text.bits.results}
-								</Link>
-							) : wine.status === 'tasting' ? (
-								<button
-									type="button"
-									className="btn-primary btn-primary--sm"
-									onClick={() => open(wine)}
-								>
-									{t.continue}
-								</button>
-							) : wine.status === 'notstarted' && !flight.ended ? (
-								<button type="button" className="btn-quiet btn-quiet--sm" onClick={() => open(wine)}>
-									{t.start}
-								</button>
-							) : null}
 						</li>
 					);
 				})}

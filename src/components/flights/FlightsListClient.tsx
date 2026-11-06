@@ -28,11 +28,10 @@ export default function FlightsListClient() {
 
 	return (
 		<main className="flight-main">
-			<header className="page-head">
-				<div>
-					<span className="page-head__eyebrow">{t.eyebrow}</span>
-					<h1 className="page-head__title">{t.title}</h1>
-					<p className="page-head__sub">{t.sub}</p>
+			<header className="flight-head">
+				<div className="flight-head__text">
+					<h1>{t.title}</h1>
+					<p className="flight-head__sub">{t.sub}</p>
 				</div>
 			</header>
 
@@ -52,23 +51,20 @@ export default function FlightsListClient() {
 			{error && <p className="empty-state">{t.loadFailed}</p>}
 			{flights && flights.length > 0 && (
 				<section aria-labelledby="your-flights">
-					<h2 className="tasting-card__label" id="your-flights">
+					<h2 className="flight-section-label" id="your-flights">
 						{t.yours}
 					</h2>
-					<ul className="flight-list">
+					<ul className="flight-rows">
 						{flights.map((flight) => (
-							<li key={flight.code} className="flight-list__row">
-								<div className="flight-list__text">
-									<span className="flight-list__title">{flight.name}</span>
-									<span className="flight-muted">
+							<li key={flight.code}>
+								<Link href={`/flights/${flight.code}`} className="flight-row">
+									<strong>{flight.name}</strong>
+									<span className="flight-row__end">{flight.ended ? text.bits.ended : t.open}</span>
+									<span className="flight-row__meta">
 										{flight.role === 'host' ? t.hostedByYou : t.joined} ·{' '}
 										{formatDate(flight.createdAt, lang)} · {text.bits.tasters(flight.memberCount)} ·{' '}
 										{text.bits.revealedOf(flight.revealed, flight.wineCount)}
-										{flight.ended ? ` · ${text.bits.ended}` : ''}
 									</span>
-								</div>
-								<Link href={`/flights/${flight.code}`} className="text-link text-link--sm">
-									{t.open}
 								</Link>
 							</li>
 						))}

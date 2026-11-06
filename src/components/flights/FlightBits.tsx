@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IconCheck, IconChecks, IconMinus, IconPointFilled } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
@@ -134,6 +135,36 @@ export function StatusPill({ status, word }: { status: keyof typeof STATUS_ICONS
 			<Icon size={12} stroke={2.2} aria-hidden="true" />
 			{word ?? fallback}
 		</span>
+	);
+}
+
+/** A flight page's head: the way back to the list, the flight's name and facts, and its actions. */
+export function FlightHead({
+	crumb,
+	title,
+	sub,
+	actions,
+	children,
+}: {
+	crumb: string;
+	title: string;
+	sub: string;
+	actions?: React.ReactNode;
+	children?: React.ReactNode;
+}) {
+	const t = useText(flightsText).bits;
+	return (
+		<header className="flight-head">
+			<div className="flight-head__text">
+				<p className="flight-head__crumb">
+					<Link href="/flights">{t.yourFlights}</Link> › {crumb}
+				</p>
+				<h1>{title}</h1>
+				<p className="flight-head__sub">{sub}</p>
+				{children}
+			</div>
+			{actions && <div className="flight-head__actions">{actions}</div>}
+		</header>
 	);
 }
 

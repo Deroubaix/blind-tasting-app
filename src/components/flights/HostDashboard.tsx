@@ -9,7 +9,16 @@ import { useToastProvider } from '../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightMemberView, type FlightView, type FlightWineView } from '../../types/Flight';
 import { formatCode } from '../../utils/flightLogic';
-import { Avatar, StatusPill, avatarState, clockText, flightService, formatTimer, useNow } from './FlightBits';
+import {
+	Avatar,
+	FlightHead,
+	StatusPill,
+	avatarState,
+	clockText,
+	flightService,
+	formatTimer,
+	useNow,
+} from './FlightBits';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';
 import { useLang, useText } from '../../i18n/LanguageProvider';
@@ -147,71 +156,74 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 	const allSubmitted = flight.members.length > 0 && statuses.every((s) => s === 'submitted');
 	const started = statuses.some((s) => s !== 'notstarted');
 
-	return (
-		<article className={`flight-wine${wine.submitted && !wine.revealed ? ' flight-wine--ready' : ''}`}>
-			<div className="flight-wine__top">
-				<span className="flight-wine__label">
-					{text.bits.wine} <span className="flight-wine__number">{wine.number}</span>
-				</span>
-				{wine.revealed ? (
-					<StatusPill status="revealed" />
-				) : allSubmitted ? (
-					<StatusPill status="allsubmitted" />
-				) : started ? (
-					<StatusPill status="tasting" />
-				) : (
-					<StatusPill status="notstarted" />
-				)}
-			</div>
+	const pill = wine.revealed ? (
+		<StatusPill status="revealed" />
+	) : allSubmitted ? (
+		<StatusPill status="allsubmitted" />
+	) : started ? (
+		<StatusPill status="tasting" />
+	) : (
+		<StatusPill status="notstarted" />
+	);
 
-			{wine.revealed ? (
-				<>
-					<p className="flight-wine__title">{wine.title}</p>
-					<p className="flight-muted">
-						{t.average(
-							formatAverage(wine.average, lang),
-							wine.outOf,
-							wine.submitted,
-							flight.members.length,
-						)}
-					</p>
-					<div className="flight-wine__foot">
-						<span className="flight-muted">{t.best(String(wine.best ?? '—'), wine.outOf)}</span>
-						<Link href={`/flights/${flight.code}/wines/${wine.number}`} className="text-link text-link--sm">
+	return (
+		<li className={`flight-wine${wine.submitted && !wine.revealed ? ' flight-wine--active' : ''}`}>
+			<span className="flight-wine__n">{wine.number}</span>
+			<div className="flight-wine__body">
+				<div className="flight-wine__row">
+					<strong>{wine.revealed ? wine.title : text.bits.wineN(wine.number)}</strong>
+					{pill}
+				</div>
+				{wine.revealed ? (
+					<div className="flight-wine__row">
+						<span className="flight-wine__detail">
+							{t.average(
+								formatAverage(wine.average, lang),
+								wine.outOf,
+								wine.submitted,
+								flight.members.length,
+							)}{' '}
+							· {t.best(String(wine.best ?? '—'), wine.outOf)}
+						</span>
+						<Link href={`/flights/${flight.code}/wines/${wine.number}`} className="flight-wine__link">
 							{text.bits.results}
 						</Link>
 					</div>
-				</>
-			) : (
-				<>
-					<div className="flight-people">
-						{flight.members.map((member) => {
-							const status = wine.statuses[member.id] ?? 'notstarted';
-							return (
-								<Avatar
-									key={member.id}
-									person={member}
-									size="sm"
-									state={avatarState(status)}
-									title={`${member.name}: ${text.bits.statusLower[status]}`}
-								/>
-							);
-						})}
-					</div>
-					<p className="flight-muted">{counts.length ? counts.join(' · ') : t.waitingForTasters}</p>
-					{wine.submitted ? (
-						<Link
-							href={`/flights/${flight.code}/wines/${wine.number}/reveal`}
-							className="btn-primary flight-wine__reveal"
-						>
-							{text.bits.revealWine(wine.number)}
-						</Link>
-					) : (
-						<span className="flight-wine__locked">{t.locked}</span>
-					)}
-				</>
-			)}
-		</article>
+				) : (
+					<>
+						<div className="flight-wine__row">
+							<span className="flight-people">
+								{flight.members.map((member) => {
+									const status = wine.statuses[member.id] ?? 'notstarted';
+									return (
+										<Avatar
+											key={member.id}
+											person={member}
+											size="sm"
+											state={avatarState(status)}
+											title={`${member.name}: ${text.bits.statusLower[status]}`}
+										/>
+									);
+								})}
+							</span>
+							<span className="flight-wine__detail">
+								{counts.length ? counts.join(' · ') : t.waitingForTasters}
+							</span>
+						</div>
+						{wine.submitted ? (
+							<Link
+								href={`/flights/${flight.code}/wines/${wine.number}/reveal`}
+								className="btn-primary flight-wine__action"
+							>
+								{text.bits.revealWine(wine.number)}
+							</Link>
+						) : (
+							started && <span className="flight-wine__locked">{t.locked}</span>
+						)}
+					</>
+				)}
+			</div>
+		</li>
 	);
 }
 
@@ -264,28 +276,30 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 
 	return (
 		<main className="flight-main">
-			<header className="page-head">
-				<div>
-					<span className="page-head__eyebrow">{`${text.bits.flight} · ${t.hosting}${flight.ended ? ` · ${text.bits.ended}` : ''}`}</span>
-					<h1 className="page-head__title">{flight.name}</h1>
-					<p className="page-head__sub">
-						{common.grid[flight.grid].short} · {common.wines(flight.wineCount)} ·{' '}
-						{formatTimer(flight.timerSeconds, lang)} · {progressText(flight, text)}
-					</p>
-				</div>
-				<div className="page-head__actions">
-					{anyRevealed && (
-						<Link href={`/flights/${flight.code}/summary`} className="btn-primary">
-							{text.bits.summary} <IconArrowRight size={16} aria-hidden="true" />
-						</Link>
-					)}
-					{!flight.ended && (
-						<button type="button" className="btn-quiet" onClick={confirmEnd}>
-							{t.end}
-						</button>
-					)}
-				</div>
-			</header>
+			<FlightHead
+				crumb={`${text.bits.flight} · ${t.hosting}${flight.ended ? ` · ${text.bits.ended}` : ''}`}
+				title={flight.name}
+				sub={[
+					common.grid[flight.grid].short,
+					common.wines(flight.wineCount),
+					formatTimer(flight.timerSeconds, lang),
+					progressText(flight, text),
+				].join(' · ')}
+				actions={
+					<>
+						{anyRevealed && (
+							<Link href={`/flights/${flight.code}/summary`} className="btn-primary">
+								{text.bits.summary} <IconArrowRight size={16} aria-hidden="true" />
+							</Link>
+						)}
+						{!flight.ended && (
+							<button type="button" className="btn-quiet" onClick={confirmEnd}>
+								{t.end}
+							</button>
+						)}
+					</>
+				}
+			/>
 
 			<div className="flight-dashboard">
 				<div className="flight-dashboard__side">
@@ -303,11 +317,15 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 							<span className="flight-muted">{t.inArchive}</span>
 						</div>
 					)}
-					<div className="flight-wines">
+					<div className="flight-dashboard__wines-head">
+						<h2>{t.winesHeading}</h2>
+						<span>{t.revealHint}</span>
+					</div>
+					<ol className="flight-wines">
 						{flight.wines.map((wine) => (
 							<WineCard key={wine.number} wine={wine} flight={flight} />
 						))}
-					</div>
+					</ol>
 					<p className="flight-legend" aria-hidden="true">
 						<span className="flight-legend__item flight-legend__item--filled">
 							{text.bits.status.submitted}
