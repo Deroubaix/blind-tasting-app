@@ -19,14 +19,14 @@
 	@include ledger-panel($spacing-lg $spacing-xl);
 
 	&--danger {
-		border-color: rgba($color-error, 0.4);
+		border-color: fade($color-error, 40%);
 	}
 
 	&__heading {
 		margin: 0 0 $spacing-md;
 		font-size: $text-16;
-		font-weight: $font-weight-bold;
-		color: $color-white;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
 	}
 
 	&__text,
@@ -60,7 +60,7 @@
 
 	dd {
 		margin: 0;
-		color: $color-white;
+		color: $color-ink;
 		overflow-wrap: anywhere;
 	}
 }
@@ -74,7 +74,7 @@
 	&__label {
 		flex-basis: 100%;
 		font-size: $text-13;
-		font-weight: $font-weight-medium;
+		font-weight: $font-weight-regular;
 		color: $color-text-secondary;
 	}
 

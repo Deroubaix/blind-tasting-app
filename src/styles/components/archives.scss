@@ -45,7 +45,7 @@
 	flex-direction: column;
 	gap: $spacing-sm;
 	cursor: pointer;
-	color: $color-white;
+	color: $color-ink;
 	transition: border-color 0.15s ease;
 
 	&:hover {
@@ -75,7 +75,7 @@
 	// Not yet revealed: the tag is the way in, raised above the card's stretched Details link.
 	&__reveal {
 		@include ledger-tag;
-		--tone: #{$color-accent-light};
+		--tone: #{$color-link};
 		position: relative;
 		z-index: 1;
 		border-style: dashed;
@@ -85,7 +85,7 @@
 
 		&:hover,
 		&:focus-visible {
-			--tone: #{$color-white};
+			--tone: #{$color-ink};
 			border-style: solid;
 		}
 	}
@@ -110,7 +110,7 @@
 
 	&__title {
 		font-size: $text-24;
-		font-weight: $font-weight-bold;
+		font-weight: $font-weight-semibold;
 		line-height: 1.2;
 		letter-spacing: -0.01em;
 	}
@@ -135,7 +135,6 @@
 	}
 
 	&__conclusions-text {
-		@include serif-italic;
 		font-size: $text-13;
 		color: $color-text-secondary;
 		line-height: 1.55;
@@ -161,12 +160,12 @@
 	}
 
 	&__details {
-		@include ledger-label($text-10, $color-accent-light);
+		@include ledger-label($text-10, $color-link);
 		transition: color 0.15s ease;
 	}
 
 	&:hover &__details {
-		color: $color-white;
+		color: $color-ink;
 	}
 
 	&__actions {
@@ -186,7 +185,7 @@
 
 	// The card is the link visually, so it takes the keyboard focus ring too.
 	&:has(&__link:focus-visible) {
-		outline: 2px solid $color-accent-light;
+		outline: 2px solid $color-link;
 		outline-offset: 2px;
 	}
 
@@ -212,7 +211,7 @@
 		&:hover:not(:disabled),
 		&:focus-visible {
 			color: $color-error;
-			border-color: rgba($color-error, 0.4);
+			border-color: fade($color-error, 40%);
 		}
 
 		&:disabled {
@@ -240,7 +239,7 @@
 
 		&:hover {
 			border-color: $rule-mid;
-			background-color: $color-darkGrey;
+			background-color: $color-card;
 		}
 	}
 
@@ -267,11 +266,11 @@
 	@include ledger-tag;
 
 	&--red {
-		--tone: #{$color-accent-light};
+		--tone: #{$color-link};
 	}
 
 	&--white {
-		--tone: #{$color-status-ok};
+		--tone: #{$color-ok};
 	}
 }
 
@@ -395,12 +394,11 @@
 
 .tasting-detail__field-value {
 	font-size: $text-13-5;
-	color: $color-white;
+	color: $color-ink;
 	line-height: 1.4;
 }
 
 .tasting-detail__notes {
-	@include serif-italic;
 	font-size: $text-14;
 	color: $color-text-secondary;
 	line-height: 1.65;
@@ -417,7 +415,7 @@
 
 	&:hover,
 	&:focus-visible {
-		border-color: $color-accent-light;
+		border-color: $color-link;
 	}
 }
 

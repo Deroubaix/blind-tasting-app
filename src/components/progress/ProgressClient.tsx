@@ -151,15 +151,8 @@ function Totals({ tiles, className = '' }: { tiles: Tile[]; className?: string }
 	);
 }
 
-function Folio({ n, children, className = '' }: { n: number; children: React.ReactNode; className?: string }) {
-	return (
-		<section className={`progress-section ${className}`.trim()}>
-			<div className="progress-section__folio" aria-hidden="true">
-				§ {n}
-			</div>
-			<div className="progress-section__body">{children}</div>
-		</section>
-	);
+function Section({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+	return <section className={`progress-section ${className}`.trim()}>{children}</section>;
 }
 
 function ProgressBody({
@@ -226,7 +219,7 @@ function ProgressBody({
 			<Trend revealed={revealed} grid={grid} t={t} lang={lang} />
 
 			<div className="progress-pair">
-				<Folio n={2}>
+				<Section>
 					<h2 className="progress-section__title">
 						{t.confuse.title} <em>{t.confuse.titleEm}</em>
 					</h2>
@@ -236,7 +229,7 @@ function ProgressBody({
 					</p>
 					<ConfusionList title={t.confuse.grapes} pairs={confusions(list, 'grape', type)} t={t} />
 					<ConfusionList title={t.confuse.countries} pairs={confusions(list, 'country', type)} t={t} />
-				</Folio>
+				</Section>
 				<PalateSection samples={palate} grid={grid} type={type} t={t} lang={lang} />
 			</div>
 		</>
@@ -292,7 +285,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 		`${t.trend.markNo(x.number, shortDate(x.date))} · ${x.title}${x.wineType ? ` · ${typeWord(x)}` : ''} · ${x.score} / ${x.outOf}`;
 
 	return (
-		<Folio n={1} className="progress-section--trend">
+		<Section className="progress-section--trend">
 			<div className="progress-trend__head">
 				<div>
 					<h2 className="progress-section__title">
@@ -483,7 +476,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 					</button>
 				)}
 			</div>
-		</Folio>
+		</Section>
 	);
 }
 
@@ -565,7 +558,7 @@ function PalateSection({
 	};
 
 	return (
-		<Folio n={3} className="progress-section--palate">
+		<Section className="progress-section--palate">
 			<h2 className="progress-section__title">
 				{t.palate.title} <em>{t.palate.titleEm}</em>
 			</h2>
@@ -619,7 +612,7 @@ function PalateSection({
 					<p className="progress-summary">{t.palate.summary(words.high, words.low, words.inline)}</p>
 				</>
 			)}
-		</Folio>
+		</Section>
 	);
 }
 

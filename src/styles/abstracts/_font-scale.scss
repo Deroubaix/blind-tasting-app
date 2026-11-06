@@ -1,8 +1,7 @@
 // Type scale, weights and family aliases. Separate from `typography.scss` to break a cycle:
 // typography needs `active-state` from `mixins.scss`, which needs `$font-size-sm` from here.
 @use 'sass:math';
-@use '../fonts/manrope' as *;
-// Lora is loaded via next/font/google in layout.tsx as --font-lora
+// Both families are loaded via next/font/google in layout.tsx, as --font-source-sans and --font-newsreader.
 
 $text-base-size: 16px;
 $text-scale-ratio: 1.25;
@@ -17,20 +16,17 @@ $font-size-xxl: $text-base-size * math.pow($text-scale-ratio, 3);
 $font-size-xxxl: $text-base-size * math.pow($text-scale-ratio, 4);
 $font-size-xxxxl: $text-base-size * math.pow($text-scale-ratio, 5);
 
+// Body text is regular; 600 is the most any text gets, kept for the word that matters.
 $font-weight-regular: 400;
-$font-weight-medium: 500;
 $font-weight-semibold: 600;
-$font-weight-bold: 700;
-$font-weight-extrabold: 800;
+// Newsreader headings and figures.
+$font-weight-heading: 500;
 
-// Manrope — primary font for all headings, body, UI
-$font-display-normal-family: $font-primary; // var(--font-manrope)
+// Source Sans 3 — body text, labels and controls.
+$font-sans: var(--font-source-sans), system-ui, sans-serif;
 
-// Monospace — numeric readouts: the timer, step and phase numbers, durations, counters.
-$font-mono-family: ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
-
-// Lora — serif, for the italic accent and the ledger's figures
-$font-body-normal-family: var(--font-lora), serif;
+// Newsreader — headings and figures: the timer, scores, counts.
+$font-serif: var(--font-newsreader), Georgia, serif;
 
 // ── Small-text sizes ──────────────────────────────────────────────────────────
 // The interface's labels, chips and captions, named by their approximate pixel size. Before these,

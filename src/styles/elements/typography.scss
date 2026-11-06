@@ -1,10 +1,11 @@
 @use '../abstracts' as *;
-// ── Serif italic accent ────────────────────────────────────────────────────────
-// A step heavier than _base's, so it holds beside bold Manrope. (0,0,2) and later than _base, so it wins.
+// ── One voice ──────────────────────────────────────────────────────────────────
+// An `<em>` in a heading or the wordmark no longer changes face. (0,0,2), so it beats page rules.
 :is(h1, h2, h3, h4, h5, h6) em,
 .wordmark em {
-	@include serif-italic;
-	font-weight: $font-weight-medium;
+	font-family: inherit;
+	font-style: normal;
+	font-weight: inherit;
 }
 
 // ── Page eyebrow ───────────────────────────────────────────────────────────────
@@ -77,7 +78,7 @@
 	}
 
 	strong {
-		color: $color-white;
+		color: $color-ink;
 		font-weight: $font-weight-semibold;
 	}
 
@@ -113,14 +114,14 @@
 // Conclusion, and both kinds of Nose section header. One step above the accent
 // .tasting-card__label that sits on the cards themselves.
 .section-label {
-	@include ledger-label($text-10-5, $color-white);
+	@include ledger-label($text-10-5, $color-ink);
 }
 
 // Names one thing in a list or form: an auth field, a numbered step on the start
 // page, a phase in the home page preview. Brighter and a step larger than
 // .section-label, which names a whole group.
 .item-label {
-	@include ledger-label($text-13, $color-white);
+	@include ledger-label($text-13, $color-ink);
 }
 
 // ── Links, labels and score tags shared by several pages ─────────────────────────
@@ -155,7 +156,7 @@
 
 	&:hover,
 	&:focus-visible {
-		color: $color-white;
+		color: $color-ink;
 	}
 
 	@include responsive($breakpoint-mobile) {
@@ -177,12 +178,12 @@
 	white-space: nowrap;
 
 	svg {
-		color: $color-status-ok;
+		color: $color-ok;
 	}
 }
 
 // The accent label over a field, a form or a section.
 .accent-label {
-	@include ledger-label($text-10, $color-accent-light);
+	@include ledger-label($text-10, $color-link);
 	display: block;
 }

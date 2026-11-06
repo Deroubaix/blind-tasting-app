@@ -2,105 +2,93 @@
 // abstracts/_font-scale.scss.
 @use 'abstracts' as *;
 
-// Headings (Manrope; Lora is the `em` accent only)
-// Everything a heading always wants lives here — family, weight, colour, tracking, the
-// accent `em` — so a page-level class only ever restates what it genuinely differs on.
-// Sizes are fluid, which is also why there is no mobile override for h1/h2 below.
+// Headings: Newsreader 500, fluid sizes, so h1/h2 need no mobile override.
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-	font-family: $font-display-normal-family;
-	color: $color-white;
+	font-family: $font-serif;
+	font-weight: $font-weight-heading;
+	color: $color-ink;
+	letter-spacing: -0.01em;
 	margin: 0;
 
-	// `<em>` inside a heading is the Lora italic flourish. It keeps the heading's own
-	// colour — only the marketing page pays the accent on top.
+	// One voice: an `<em>` in a heading no longer changes face.
 	em {
-		@include serif-italic;
+		font-style: normal;
 	}
 }
 
-h1,
-h2 {
-	font-family: $font-display-normal-family;
-}
-
-// One size for every screen title in the app — auth, start, archives, a saved tasting,
-// each tasting phase. Capped at the top of the scale (≈49px); bold rather than extrabold,
-// which is what lets it run this large without shouting. The marketing hero is the sole
-// h1 that scales past this, and it says so itself in home-page.scss.
+// Every screen title; only the home hero scales past it (home-page.scss).
 h1 {
-	font-size: clamp(2rem, 4.5vw, #{$font-size-xxxxl});
-	font-weight: $font-weight-bold;
-	letter-spacing: -0.035em;
-	line-height: 1.05;
+	font-size: clamp(2rem, 4vw, 2.75rem);
+	line-height: 1.1;
 }
 
 h2 {
-	font-size: clamp(1.56rem, 3.5vw, 1.95rem);
-	font-weight: $font-weight-bold;
-	letter-spacing: -0.025em;
-	line-height: 1.08;
+	font-size: clamp(1.5rem, 2.8vw, 1.75rem);
+	line-height: 1.15;
 }
 
 h3 {
-	font-size: $font-size-lg; // 20px
-	font-weight: $font-weight-semibold;
+	font-size: $text-20;
 	line-height: 1.25;
 }
 
-h4 {
-	font-size: $font-size-md; // 16px
-	font-weight: $font-weight-semibold;
-}
-
-h5 {
-	font-size: $font-size-md;
-	font-weight: $font-weight-medium;
-}
-
+// The small headings are sans: card titles and list heads, not display type.
+h4,
+h5,
 h6 {
-	font-size: $font-size-sm;
-	font-weight: $font-weight-medium;
+	font-family: $font-sans;
+	font-weight: $font-weight-semibold;
+	letter-spacing: normal;
+}
+
+h4 {
+	font-size: $text-16;
+}
+
+h5,
+h6 {
+	font-size: $text-15;
 }
 
 @include responsive($breakpoint-mobile) {
 	h3 {
-		font-size: $font-size-md;
+		font-size: $text-18;
 	}
 }
 
-// Body text
+// Body text: regular weight at full ink. 17px on a phone, 16px on a desktop.
 p,
 li,
 td {
-	font-weight: $font-weight-medium;
-	line-height: 1.75; // relaxed
+	font-weight: $font-weight-regular;
+	line-height: 1.55;
 }
 
 p,
 td {
-	font-size: 0.95rem;
+	font-size: $text-16;
 }
 
 p {
-	margin-bottom: 1.75em;
+	margin-bottom: 1.25em;
 }
 
 li,
 ol {
 	margin-bottom: 0.4em;
-	font-size: 0.9rem;
+	font-size: $text-16;
 
 	&:last-child {
 		margin-bottom: 0;
 	}
 
 	p {
-		font-size: 0.9rem;
+		font-size: $text-16;
 		&:last-of-type {
 			margin-bottom: 0;
 		}
@@ -112,6 +100,13 @@ ol {
 	ul,
 	ol {
 		margin-bottom: 0.25em;
+	}
+}
+
+@include responsive($breakpoint-mobile) {
+	p,
+	li {
+		font-size: 1.0625rem;
 	}
 }
 
@@ -133,10 +128,12 @@ html {
 	scroll-behavior: smooth;
 }
 
+@include theme-properties;
+
 body,
 html {
-	background-color: $color-black;
-	color: $color-white;
+	background-color: $color-ground;
+	color: $color-ink;
 	padding: 0;
 	margin: 0;
 	height: 100%;
@@ -144,13 +141,14 @@ html {
 	// 100%, not 16px: the same for most people, but it respects a larger default text size set in
 	// the browser, which every rem in the app then scales with.
 	font-size: 100%;
-	font-family: $font-display-normal-family;
+	font-family: $font-sans;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
 }
 
 :focus-visible {
-	// The light accent: the base accent measures 2.7:1 on the dark ground, under the 3:1 a focus
-	// indicator needs. This one is 7.7:1. Every custom focus style below uses it too.
-	outline: 2px solid $color-accent-light;
+	// The link colour clears 3:1 against ground and card in both themes.
+	outline: 2px solid $color-link;
 	outline-offset: 2px;
 }
 
@@ -160,10 +158,10 @@ html {
 	left: 0;
 	z-index: $index-toast;
 	padding: 8px 16px;
-	background-color: $color-accent;
-	color: $color-white;
+	background-color: $color-wine;
+	color: $color-on-wine;
 	font-size: $font-size-sm;
-	font-family: $font-display-normal-family;
+	font-family: $font-sans;
 	text-decoration: none;
 	border-radius: 0 0 6px 0;
 	translate: 0 -100%;

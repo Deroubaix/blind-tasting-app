@@ -1,89 +1,78 @@
-// The ledger look every page shares: hairline rules, square corners, serif figures, tracked
-// uppercase labels. Reach for these before writing a card, tag, label, row or link by hand.
+// The shared look: reach for these before writing a card, tag, label, row or link by hand.
 @use 'theme-only' as *;
 @use 'font-scale' as *;
 
 // ── Rules ────────────────────────────────────────────────────────────────────
-$rule-faint: rgba($color-white, 0.06);
-$rule-soft: rgba($color-white, 0.08);
-$rule: rgba($color-white, 0.12);
-$rule-folio: rgba($color-white, 0.14);
-$rule-mid: rgba($color-white, 0.22);
-$rule-double: 3px double rgba($color-white, 0.24);
+$rule-faint: fade($color-rule, 55%);
+$rule-soft: fade($color-rule, 75%);
+$rule: $color-rule;
+$rule-folio: $color-rule;
+$rule-mid: $color-rule-strong;
+$rule-double: 3px double $color-rule-strong;
 // The border of a panel or row that is current, selected or needs attention.
-$rule-accent: rgba($color-accent-light, 0.45);
+$rule-accent: fade($color-link, 45%);
 
 // ── Corners ──────────────────────────────────────────────────────────────────
-// Square, as in an account book: marks and tags at 2px, everything else at 4px.
+// Bars and marks at 2px, controls at 8px, panels and dialogs at 12px.
 $radius-sm: 2px;
-$radius: 4px;
+$radius: 8px;
+$radius-lg: 12px;
 // Large enough that the corners always meet, so a chip reads as a pill at any height.
 $radius-pill: 100px;
 
-// ── Tracking for uppercase text ──────────────────────────────────────────────
-$tracking-eyebrow: 0.16em; // page and section eyebrows
-$tracking-label: 0.12em; // field labels, column heads, tags
-$tracking-action: 0.08em; // button and quiet-action labels
-
 // ── Tasters ──────────────────────────────────────────────────────────────────
 // One tint per taster in a flight, in join order: avatars, dots and their marks on scales.
-$taster-tints: ($color-accent-light, #a8c49f, #d6bf8e, #a6b8d2);
+$taster-tints: ($color-link, var(--c-taster-2), var(--c-taster-3), var(--c-taster-4));
 
 // ── Depth ────────────────────────────────────────────────────────────────────
-$shadow-lift: 0 20px 40px rgba($color-black, 0.5); // dropdowns, popovers, dialogs
+$shadow-lift: 0 12px 32px $color-shadow; // dropdowns, popovers, dialogs
 
 @mixin figures {
-	font-family: $font-body-normal-family;
+	font-family: $font-serif;
 	font-variant-numeric: lining-nums tabular-nums;
 }
 
-// The one small uppercase label.
-@mixin ledger-label($size: $text-11, $color: $color-text-muted) {
-	font-family: $font-display-normal-family;
-	font-size: $size;
-	font-weight: $font-weight-bold;
-	letter-spacing: $tracking-label;
-	line-height: 1.2;
-	text-transform: uppercase;
+// The one small label: sentence case, floored at 13px, the design's smallest text.
+@mixin ledger-label($size: $text-13, $color: $color-text-secondary) {
+	font-family: $font-sans;
+	font-size: max(#{$size}, #{$text-13});
+	font-weight: $font-weight-regular;
+	line-height: 1.3;
 	color: $color;
 }
 
-// A page or section eyebrow: a label with a square mark before it.
-@mixin ledger-eyebrow($color: $color-text-secondary, $mark: $color-text-muted) {
-	@include ledger-label($text-11, $color);
+// A page or section eyebrow: the label at a step larger.
+@mixin ledger-eyebrow($color: $color-text-secondary, $mark: null) {
+	@include ledger-label($text-14, $color);
 	display: inline-flex;
 	align-items: center;
-	gap: 10px;
-	letter-spacing: $tracking-eyebrow;
-
-	&::before {
-		content: '';
-		width: 6px;
-		height: 6px;
-		flex-shrink: 0;
-		background: $mark;
-	}
+	gap: 8px;
 }
 
 // A raised panel on the page ground.
 @mixin ledger-panel($padding: 20px 22px) {
-	background: $color-darkGrey;
+	background: $color-card;
 	border: 1px solid $rule;
-	border-radius: $radius;
+	border-radius: $radius-lg;
 	padding: $padding;
 }
 
-// A small status tag. Colour it with `--tone`; it defaults to the muted text level.
+// A small status tag. Colour it with `--tone`; it defaults to the secondary text level.
 @mixin ledger-tag {
 	--tone: #{$color-text-secondary};
-	@include ledger-label($text-10, var(--tone));
+	font-family: $font-sans;
+	font-size: $text-13;
+	font-weight: $font-weight-semibold;
+	line-height: 1.2;
+	color: var(--tone);
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
-	padding: 3px 7px;
-	border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent);
-	border-radius: $radius-sm;
-	background: color-mix(in srgb, var(--tone) 10%, transparent);
+	gap: 6px;
+	min-height: 26px;
+	padding: 0 10px;
+	border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent);
+	border-radius: $radius-pill;
+	background: color-mix(in srgb, var(--tone) 8%, transparent);
 	white-space: nowrap;
 }
 
@@ -103,17 +92,18 @@ $shadow-lift: 0 20px 40px rgba($color-black, 0.5); // dropdowns, popovers, dialo
 	color: $color-text-muted;
 }
 
-// An inline text link: accent, a quiet rule under it, white on hover.
+// An inline text link: wine, semibold, ink on hover.
 @mixin ledger-link {
-	color: $color-accent-light;
+	color: $color-link;
 	font-weight: $font-weight-semibold;
-	border-bottom: 1px solid $rule-folio;
 	text-decoration: none;
 	transition: color 0.15s ease;
 
 	&:hover,
 	&:focus-visible {
-		color: $color-white;
+		color: $color-ink;
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 }
 
@@ -121,7 +111,7 @@ $shadow-lift: 0 20px 40px rgba($color-black, 0.5); // dropdowns, popovers, dialo
 @mixin ledger-empty {
 	padding: 40px 0;
 	text-align: center;
-	font-size: $text-14;
+	font-size: $text-16;
 	line-height: 1.5;
 	color: $color-text-secondary;
 }

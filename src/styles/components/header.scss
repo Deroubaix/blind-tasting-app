@@ -33,7 +33,7 @@ $bar-padding-phone: 0 4px 0 16px;
 
 	&:hover,
 	&:focus-visible {
-		color: $color-white;
+		color: $color-ink;
 	}
 
 	&--logout {
@@ -57,11 +57,11 @@ $bar-padding-phone: 0 4px 0 16px;
 	align-items: center;
 	justify-content: center;
 	border-radius: $radius-sm;
-	background: $color-surface-variant;
+	background: $color-raised;
 	border: 1px solid $rule-folio;
-	font-family: $font-body-normal-family;
+	font-family: $font-serif;
 	font-size: $text-14;
-	color: $color-white;
+	color: $color-ink;
 	pointer-events: none;
 
 	&--lg {
@@ -87,7 +87,7 @@ $bar-padding-phone: 0 4px 0 16px;
 .nav-profile__name {
 	font-size: $text-14;
 	font-weight: $font-weight-semibold;
-	color: $color-white;
+	color: $color-ink;
 }
 
 .nav-profile__email {
@@ -133,7 +133,7 @@ $bar-padding-phone: 0 4px 0 16px;
 
 		&:hover,
 		&:focus-visible {
-			background: $color-surface-variant;
+			background: $color-raised;
 		}
 
 		// Inside the panel's overflow: hidden, an outset ring would be clipped.
@@ -149,18 +149,18 @@ $bar-padding-phone: 0 4px 0 16px;
 	width: 44px;
 	height: 44px;
 	flex-shrink: 0;
-	color: $color-white;
+	color: $color-ink;
 }
 
 // ── Wordmark: the name, with one italic serif accent and a double underline ───
 .wordmark {
 	font-size: $text-16;
-	font-weight: $font-weight-bold;
+	font-weight: $font-weight-semibold;
 	letter-spacing: -0.02em;
 	white-space: nowrap;
 	padding-bottom: 3px;
 	border-bottom: $rule-double;
-	color: $color-white;
+	color: $color-ink;
 
 	&--sm {
 		font-size: $text-15;
@@ -178,9 +178,9 @@ $bar-padding-phone: 0 4px 0 16px;
 	gap: 32px;
 	padding: 0 56px;
 	box-sizing: border-box;
-	background-color: rgba($color-black, 0.94);
+	background-color: fade($color-ground, 94%);
 	backdrop-filter: blur(8px);
-	font-family: $font-display-normal-family;
+	font-family: $font-sans;
 
 	&__nav {
 		display: flex;
@@ -191,17 +191,17 @@ $bar-padding-phone: 0 4px 0 16px;
 
 	&__link {
 		font-size: $text-14;
-		font-weight: $font-weight-medium;
+		font-weight: $font-weight-regular;
 		color: $color-text-secondary;
 		transition: color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
-			color: $color-white;
+			color: $color-ink;
 		}
 
 		&--accent {
-			color: $color-accent-light;
+			color: $color-link;
 			font-weight: $font-weight-semibold;
 		}
 	}
@@ -225,12 +225,12 @@ $bar-padding-phone: 0 4px 0 16px;
 	}
 
 	&__context-action {
-		color: $color-white;
+		color: $color-ink;
 	}
 
 	&__context-arrow {
 		display: flex;
-		color: $color-accent-light;
+		color: $color-link;
 	}
 
 	&__cta-short,
@@ -242,7 +242,7 @@ $bar-padding-phone: 0 4px 0 16px;
 		@include bare-button;
 		gap: 10px;
 		padding: 6px 10px 6px 6px;
-		background: $color-darkGrey;
+		background: $color-card;
 		border: 1px solid $rule;
 		border-radius: $radius;
 		font-size: $text-14;
@@ -291,7 +291,7 @@ $bar-padding-phone: 0 4px 0 16px;
 			align-items: center;
 			padding: 0 6px;
 			font-size: $text-12;
-			color: $color-white;
+			color: $color-ink;
 		}
 
 		// A compact .btn-primary that still meets the 44px target.
@@ -331,7 +331,7 @@ $bar-padding-phone: 0 4px 0 16px;
 	z-index: $index-navbar + 1;
 	display: flex;
 	flex-direction: column;
-	background: $color-black;
+	background: $color-ground;
 	overflow-y: auto;
 
 	&__head {
@@ -385,7 +385,7 @@ $bar-padding-phone: 0 4px 0 16px;
 	}
 
 	&__link {
-		@include menu-row($color-white);
+		@include menu-row($color-ink);
 		min-height: 52px;
 		justify-content: space-between;
 		border-bottom: 1px solid $rule-soft;
@@ -419,8 +419,8 @@ $bar-padding-phone: 0 4px 0 16px;
 // ── Footer ────────────────────────────────────────────────────────────────────
 .site-footer {
 	border-top: $rule-double;
-	background-color: $color-black;
-	font-family: $font-display-normal-family;
+	background-color: $color-ground;
+	font-family: $font-sans;
 
 	&__inner {
 		padding-block: 36px 44px;
@@ -446,7 +446,7 @@ $bar-padding-phone: 0 4px 0 16px;
 
 			&:hover,
 			&:focus-visible {
-				color: $color-white;
+				color: $color-ink;
 			}
 		}
 	}

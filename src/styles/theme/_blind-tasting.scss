@@ -1,34 +1,110 @@
-// The palette — the single source of truth for colour. Forwarded first by `abstracts/_index.scss`,
-// so every stylesheet (including those inside `abstracts/`) sees these values and not a placeholder.
+// The palette as CSS variables, so the theme can change at runtime; _base.scss emits theme-properties.
 
-// Core palette — backgrounds & surfaces
-$color-black: #141313;
-$color-darkGrey: #1c1b1b;
-$color-surface-variant: #211f1f;
+// Paper is the default; Cellar applies when the reader picks Dark, or picks Auto on a dark system.
+$paper: (
+	'ground': #f5efe4,
+	'card': #fffbf4,
+	'raised': #ede5d6,
+	'ink': #27201d,
+	'text-secondary': #655a54,
+	'text-muted': #6e625b,
+	'wine': #7a2434,
+	'wine-hover': #5e1a28,
+	'on-wine': #fff8ee,
+	'link': #7a2434,
+	'rule': #dacfbf,
+	'rule-strong': #c4b7a5,
+	'ok': #2e6b40,
+	'close': #8a5a0b,
+	'bad': #a12a3b,
+	'taster-2': #466d3e,
+	'taster-3': #7a5c17,
+	'taster-4': #44628a,
+	'shadow': rgba(39, 32, 29, 0.14),
+	'scrim': rgba(39, 32, 29, 0.45),
+);
 
-// Brand & accents
-$color-burgundy: #4a0e0e;
-$color-accent: #8b4557; // promoted from $tasting-accent
-$color-accent-light: #d4a0ab; // promoted from $tasting-accent-light
-$color-display-accent: #ffb3ad; // landing page hero/decorative peach — not part of the burgundy system
+$cellar: (
+	'ground': #1c1816,
+	'card': #262120,
+	'raised': #2e2826,
+	'ink': #efe6d8,
+	'text-secondary': #b8aca0,
+	'text-muted': #a2958a,
+	'wine': #8e2f42,
+	'wine-hover': #a33a4f,
+	'on-wine': #fff4ea,
+	'link': #e39aa6,
+	'rule': #3a3330,
+	'rule-strong': #544a45,
+	'ok': #9ccfa5,
+	'close': #e6bc6a,
+	'bad': #f09aa6,
+	'taster-2': #a8c49f,
+	'taster-3': #d6bf8e,
+	'taster-4': #a6b8d2,
+	'shadow': rgba(0, 0, 0, 0.5),
+	'scrim': rgba(0, 0, 0, 0.66),
+);
+
+@mixin -declare($palette, $scheme) {
+	@each $name, $value in $palette {
+		--c-#{$name}: #{$value};
+	}
+	color-scheme: $scheme;
+}
+
+@mixin theme-properties {
+	:root {
+		@include -declare($paper, light);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root[data-theme='auto'] {
+			@include -declare($cellar, dark);
+		}
+	}
+
+	:root[data-theme='dark'] {
+		@include -declare($cellar, dark);
+	}
+}
+
+// A colour at part strength: Sass's rgba() cannot read a CSS variable.
+@function fade($color, $amount) {
+	@return color-mix(in srgb, #{$color} $amount, transparent);
+}
+
+// Surfaces
+$color-ground: var(--c-ground); // the page
+$color-card: var(--c-card); // panels, chips at rest
+$color-raised: var(--c-raised); // hover wells, avatars, unselected controls
+
+// Text — three levels, each AA on ground and card in both themes
+$color-ink: var(--c-ink);
+$color-text-secondary: var(--c-text-secondary);
+$color-text-muted: var(--c-text-muted);
+
+// Wine red: spent on actions and selection only
+$color-wine: var(--c-wine);
+$color-wine-hover: var(--c-wine-hover);
+$color-on-wine: var(--c-on-wine); // text on a wine fill
+$color-link: var(--c-link); // links, focus rings, selected text
+
+// Rules
+$color-rule: var(--c-rule);
+$color-rule-strong: var(--c-rule-strong);
+
+// Scoring and status
+$color-ok: var(--c-ok);
+$color-close: var(--c-close);
+$color-error: var(--c-bad);
+$color-warning: var(--c-close);
 
 // Wine hues — depict role only (swatches, and icons that depict wine).
-// Glyph tints are lighter than the swatch fills they stand for: a 2px stroke
-// needs more lightness than a 74px block to clear 3:1.
-$color-wine-red-tint: #c8455c;
-$color-wine-gold-tint: #e0c840; // matches the "Gold" hue in sightData
+$color-wine-red-tint: #b8475c;
+$color-wine-gold-tint: #c9a227;
 
-// Status / semantic ok — success toasts, completed phases, archive badges.
-$color-status-ok: #8ebc8e;
-
-// Typography — three text levels, every one AA-verified on the app's dark grounds
-// (worst case #2a2727). A fourth level is what made 0.60 and 0.65 indistinguishable;
-// if you need another shade, reach for weight or size instead.
-$color-white: #e4e4cc; // primary   — 16.2:1
-$color-text-secondary: rgba(228, 228, 204, 0.65); // secondary —  5.74:1
-$color-text-muted: rgba(228, 228, 204, 0.55); // muted     —  4.54:1
-
-// Status
-$color-success: $color-status-ok; // alias — used by toast color="success"
-$color-error: #e57373;
-$color-warning: #ffb74d;
+// Overlays and depth
+$color-shadow: var(--c-shadow);
+$color-scrim: var(--c-scrim);

@@ -4,12 +4,12 @@
 // The unfilled segment and the not-visited dot: track marks, deliberately below text contrast.
 $sidebar-track: $rule-mid;
 // "Done" is a status report, so it takes the status green rather than the accent.
-$sidebar-done: $color-status-ok;
+$sidebar-done: $color-ok;
 
 .tasting-sidebar {
 	width: 300px;
 	flex-shrink: 0;
-	background-color: $color-darkGrey;
+	background-color: $color-card;
 	border-right: 1px solid $rule-soft;
 	display: flex;
 	flex-direction: column;
@@ -23,14 +23,14 @@ $sidebar-done: $color-status-ok;
 	}
 
 	&__title {
-		@include ledger-label($text-11-5, $color-white);
+		@include ledger-label($text-11-5, $color-ink);
 		margin-bottom: $spacing-xs;
 	}
 
 	&__username {
 		font-size: $text-13;
 		font-weight: $font-weight-semibold;
-		color: $color-white;
+		color: $color-ink;
 		margin-bottom: 2px;
 	}
 
@@ -61,7 +61,7 @@ $sidebar-done: $color-status-ok;
 	&__exam-count,
 	&__progress-pct {
 		@include figures;
-		color: $color-accent-light;
+		color: $color-link;
 		font-size: $text-12;
 	}
 
@@ -78,7 +78,7 @@ $sidebar-done: $color-status-ok;
 		transition: background-color 0.25s ease;
 
 		&--active {
-			background-color: $color-accent;
+			background-color: $color-wine;
 		}
 
 		&--done {
@@ -101,7 +101,7 @@ $sidebar-done: $color-status-ok;
 
 	&__progress-fill {
 		height: 100%;
-		background-color: $color-accent;
+		background-color: $color-wine;
 		transition: width 0.3s ease;
 		// width set inline (dynamic %)
 	}
@@ -129,12 +129,15 @@ $sidebar-done: $color-status-ok;
 		border-color 0.15s ease;
 
 	&:hover {
-		color: $color-white;
-		background-color: $color-surface-variant;
+		color: $color-ink;
+		background-color: $color-raised;
 	}
 
-	&--active {
-		@include selected-outline;
+	&--active,
+	&--active:hover {
+		border-left-color: $color-wine;
+		background-color: $color-raised;
+		color: $color-ink;
 		font-weight: $font-weight-semibold;
 	}
 
@@ -241,11 +244,11 @@ $sidebar-done: $color-status-ok;
 		}
 
 		&--active::before {
-			background-color: $color-accent;
+			background-color: $color-wine;
 		}
 
 		&--active .tasting-nav-item__short {
-			color: $color-accent-light;
+			color: $color-link;
 		}
 	}
 }

@@ -1,5 +1,4 @@
 @use '../abstracts' as *;
-@use 'sass:color';
 
 // A bare <button> is neutral: each control styles itself, or takes .btn-primary / .btn-quiet.
 button {
@@ -27,7 +26,7 @@ button {
 	justify-content: center;
 	gap: 0.6rem;
 	min-height: 48px;
-	padding: 0 24px;
+	padding: 0 20px;
 	border-radius: $radius;
 	text-align: center;
 	cursor: pointer;
@@ -37,7 +36,7 @@ button {
 		color 0.2s ease;
 
 	&:focus-visible {
-		outline: 2px solid $color-accent-light;
+		outline: 2px solid $color-link;
 		outline-offset: 2px;
 	}
 
@@ -65,13 +64,13 @@ button {
 
 .btn-primary {
 	@include button-base;
-	background-color: $color-accent;
-	border: 1px solid $color-accent;
-	color: $color-white;
+	background-color: $color-wine;
+	border: 1px solid $color-wine;
+	color: $color-on-wine;
 
 	&:hover:not(:disabled) {
-		background-color: color.scale($color-accent, $lightness: 8%);
-		border-color: color.scale($color-accent, $lightness: 8%);
+		background-color: $color-wine-hover;
+		border-color: $color-wine-hover;
 	}
 }
 
@@ -80,7 +79,7 @@ button {
 	@include button-base;
 	background: transparent;
 	border: 1px solid $rule-mid;
-	color: $color-white;
+	color: $color-ink;
 
 	&:hover:not(:disabled) {
 		border-color: $color-text-secondary;
@@ -95,12 +94,12 @@ button {
 	justify-content: center;
 	text-align: center;
 	// Horizontal stays wider: these hug their labels in a wrapping row.
-	padding: 12px 14px;
-	border: 1px solid $rule;
-	border-radius: $radius;
-	background-color: $color-surface-variant;
-	color: $color-text-secondary;
-	font-size: $text-13;
+	padding: 9px 16px;
+	border: 1px solid $rule-mid;
+	border-radius: $radius-pill;
+	background-color: $color-card;
+	color: $color-ink;
+	font-size: $text-15;
 	transition:
 		background-color 0.15s ease,
 		border-color 0.15s ease,
@@ -108,8 +107,7 @@ button {
 		transform 0.15s ease;
 
 	&:hover {
-		border-color: $rule-mid;
-		color: $color-white;
+		border-color: $color-text-secondary;
 	}
 
 	&:active {
@@ -124,8 +122,8 @@ button {
 
 	// Free-flowing descriptor chips (Nose and WSET aromas) sit tighter than single-choice rows.
 	&--compact {
-		padding: 7px 11px;
-		font-size: $text-11-5;
+		padding: 7px 14px;
+		font-size: $text-14;
 	}
 
 	// "Other": adds an answer rather than being one. A typed answer keeps the dashed edge once chosen.
@@ -140,17 +138,13 @@ button {
 }
 
 // ── Phone: option targets ────────────────────────────────────────────────────
-// The desktop option stands ~38px, under the 44px minimum; on a phone it is 46px on a lifted ground.
+// The desktop option stands ~40px, under the 44px minimum; on a phone it is 46px.
 @include responsive($breakpoint-mobile) {
 	.tasting-option {
 		min-width: 84px;
 		min-height: 46px;
 		padding: 8px 12px;
-		font-size: $text-14;
+		font-size: $text-16;
 		line-height: 1.25;
-
-		&:not(.tasting-option--selected) {
-			background-color: $tasting-m-control;
-		}
 	}
 }

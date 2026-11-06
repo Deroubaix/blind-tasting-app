@@ -20,7 +20,7 @@
 	min-width: 260px;
 	max-width: 360px;
 	box-shadow: $shadow-lift;
-	color: $color-white;
+	color: $color-ink;
 	font-size: $text-14;
 
 	// The 60ms is what the component's closing hand-off is timed against.
@@ -58,7 +58,7 @@
 		}
 
 		&:hover {
-			color: $color-white;
+			color: $color-ink;
 		}
 	}
 
@@ -68,7 +68,7 @@
 		left: 0;
 		height: 2px;
 		width: 100%;
-		background-color: $color-accent;
+		background-color: $color-wine;
 		transform-origin: left;
 		transform: scaleX(1);
 		transition: transform linear;
@@ -79,7 +79,7 @@
 	}
 
 	&--success &__timer {
-		background-color: $color-status-ok;
+		background-color: $color-ok;
 	}
 
 	&--error &__timer {

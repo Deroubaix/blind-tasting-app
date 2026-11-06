@@ -49,7 +49,7 @@
 	&__overlay {
 		position: absolute;
 		inset: 0;
-		background: rgba($color-black, 0.72);
+		background: $color-scrim;
 		backdrop-filter: blur(2px);
 		animation: modal-overlay-in 120ms ease-out 1;
 	}
@@ -101,7 +101,7 @@
 
 	&__title {
 		flex-grow: 1;
-		font-weight: $font-weight-bold;
+		font-weight: $font-weight-semibold;
 		font-size: $text-24;
 		letter-spacing: -0.01em;
 	}
@@ -113,7 +113,7 @@
 		transition: color 0.15s ease;
 
 		&:hover {
-			color: $color-white;
+			color: $color-ink;
 		}
 	}
 
@@ -122,7 +122,7 @@
 		min-height: 36px;
 		color: $color-text-secondary;
 
-		@include scrollbar(5px, $color-accent, $color-surface-variant);
+		@include scrollbar(5px, $color-wine, $color-raised);
 	}
 
 	&--closing {
@@ -148,7 +148,7 @@
 
 .dialog__lead {
 	margin: 0;
-	color: $color-white;
+	color: $color-ink;
 	font-size: $text-16;
 	line-height: 1.5;
 }

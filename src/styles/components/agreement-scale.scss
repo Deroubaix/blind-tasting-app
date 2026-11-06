@@ -11,7 +11,7 @@
 	--verdict: #{$color-text-secondary};
 
 	&--split {
-		--range: #{rgba($color-warning, 0.3)};
+		--range: #{fade($color-warning, 30%)};
 		--verdict: #{$color-warning};
 	}
 
@@ -66,7 +66,7 @@
 		white-space: nowrap;
 
 		&--on {
-			color: $color-white;
+			color: $color-ink;
 		}
 	}
 

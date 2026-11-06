@@ -4,7 +4,7 @@
 // ── Page shell ────────────────────────────────────────────────────────────────
 .tasting-start-page {
 	min-height: 100dvh;
-	background-color: $color-black;
+	background-color: $color-ground;
 	display: flex;
 	flex-direction: column;
 }
@@ -57,8 +57,8 @@
 	&__heading {
 		margin: 0 $spacing-xxxl $spacing-md 0;
 		font-size: $text-16;
-		font-weight: $font-weight-bold;
-		color: $color-white;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
 	}
 
 	&__steps {
@@ -72,7 +72,7 @@
 		color: $color-text-secondary;
 
 		strong {
-			color: $color-white;
+			color: $color-ink;
 			font-weight: $font-weight-semibold;
 		}
 	}
@@ -89,7 +89,7 @@
 
 		&:hover,
 		&:focus-visible {
-			color: $color-white;
+			color: $color-ink;
 		}
 	}
 }
@@ -113,7 +113,7 @@
 .start-step-num {
 	@include figures;
 	font-size: $text-13;
-	color: $color-accent-light;
+	color: $color-link;
 }
 
 // The look is .tasting-aside's; here it only pushes to the end of the row.
@@ -145,7 +145,7 @@
 		border-color 0.15s ease;
 
 	&:hover {
-		background-color: $color-surface-variant;
+		background-color: $color-raised;
 		border-color: $rule-mid;
 	}
 
@@ -153,10 +153,12 @@
 		outline-offset: 3px;
 	}
 
-	// The ring doubles the border rather than thickening it, so selecting does not resize the card.
-	&--selected {
-		@include selected-outline;
-		box-shadow: 0 0 0 1px $color-accent;
+	// A ring, not a fill, so the card's text keeps its colours; a shadow, so it doesn't resize.
+	&--selected,
+	&--selected:hover {
+		background-color: $color-card;
+		border-color: $color-wine;
+		box-shadow: 0 0 0 1px $color-wine;
 	}
 }
 
@@ -184,7 +186,7 @@
 
 .start-wine-name {
 	font-size: $text-18;
-	font-weight: $font-weight-bold;
+	font-weight: $font-weight-semibold;
 	letter-spacing: -0.01em;
 	line-height: 1.1;
 }
@@ -227,7 +229,7 @@
 	width: 36px;
 	height: 36px;
 	border-radius: $radius;
-	background-color: $color-surface-variant;
+	background-color: $color-raised;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -243,7 +245,7 @@
 .start-setting-name {
 	font-size: $text-15;
 	font-weight: $font-weight-semibold;
-	color: $color-white;
+	color: $color-ink;
 	line-height: 1.2;
 }
 
@@ -262,7 +264,7 @@
 	height: 28px;
 	flex-shrink: 0;
 	border: 1px solid $rule-mid;
-	border-radius: $radius;
+	border-radius: $radius-pill;
 	transition:
 		background-color 0.15s ease,
 		border-color 0.15s ease;
@@ -272,12 +274,12 @@
 	}
 
 	&[aria-pressed='true'] {
-		background-color: $color-accent;
-		border-color: $color-accent;
+		background-color: $color-wine;
+		border-color: $color-wine;
 
 		.start-switch__knob {
 			transform: translateX(20px);
-			background-color: $color-white;
+			background-color: $color-on-wine;
 		}
 	}
 
@@ -292,7 +294,7 @@
 	left: 2px;
 	width: 22px;
 	height: 22px;
-	border-radius: $radius-sm;
+	border-radius: 50%;
 	background-color: $color-text-secondary;
 	transition:
 		transform 0.15s ease,
@@ -324,24 +326,26 @@
 	border-radius: $radius-sm;
 	text-align: center;
 	font-size: $text-13;
-	font-weight: $font-weight-medium;
+	font-weight: $font-weight-regular;
 	color: $color-text-secondary;
 	transition:
 		border-color 0.15s ease,
 		color 0.15s ease;
 
 	&:hover {
-		color: $color-white;
+		color: $color-ink;
 		border-color: $rule-mid;
 	}
 
-	&--on {
-		// Cream, not the mixin's rosegold: the duration is a value you read, not an accent.
-		@include selected-outline($text: $color-white);
+	&--on,
+	&--on:hover {
+		border-color: $color-wine;
+		box-shadow: 0 0 0 1px $color-wine;
+		color: $color-ink;
 
 		// The label sets its own muted colour, so it has to be named to take the accent.
 		.start-duration-pill__label {
-			color: $color-accent-light;
+			color: $color-link;
 		}
 	}
 }
@@ -403,7 +407,7 @@
 	svg {
 		flex-shrink: 0;
 		margin-top: 2px;
-		color: $color-accent-light;
+		color: $color-link;
 	}
 }
 
@@ -427,7 +431,7 @@
 }
 
 .start-hint__accent {
-	color: $color-accent-light;
+	color: $color-link;
 }
 
 // ── Grid credit and disclaimer ────────────────────────────────────────────────
@@ -470,13 +474,13 @@
 .start-phase-chip__num {
 	@include figures;
 	font-size: $text-12;
-	color: $color-accent-light;
+	color: $color-link;
 }
 
 .start-phase-chip__name {
 	font-size: $text-11-5;
 	font-weight: $font-weight-semibold;
-	color: $color-white;
+	color: $color-ink;
 	line-height: 1.2;
 
 	@include responsive($breakpoint-mobile) {

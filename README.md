@@ -108,7 +108,7 @@ Next's own route handlers.
 - **Zod** for request validation, **@mantine/form** for form state — but the form _components_ are
   local, in `src/components/form/`
 - **Resend** for password-reset email
-- **Manrope + Lora** via `next/font/google`; Tabler for icons
+- **Source Sans 3 + Newsreader** via `next/font/google`; Tabler for icons
 
 Conventions: pnpm, node 24, tabs at 4, single quotes, 120 columns. It is deliberately **not** a
 monorepo — one app, one database, one port.
@@ -165,8 +165,12 @@ pnpm start                     # http://localhost:3002
   and rate-limit rules
 - `src/services/client/` — the browser's side of the same calls, through `FetchUtils`
 - `src/styles/abstracts/` — tokens, mixins and the type scale, forwarded through `_index.scss`
-- `src/styles/abstracts/_ledger.scss` — the one look every page shares: square-ish corners
-  (`$radius`), hairline rules (`$rule-*`), Lora figures, tracked uppercase labels. Reach for its
+- `src/styles/theme/_blind-tasting.scss` — the palette as CSS variables: Paper by default, Cellar
+  under `data-theme="dark"` (or `"auto"` on a dark system). Colours are named by role
+  (`$color-ink`, `$color-ground`, `$color-wine`, `$color-link`); use `fade()` for a part-strength
+  colour, since Sass's `rgba()` cannot read a CSS variable
+- `src/styles/abstracts/_ledger.scss` — the one look every page shares: soft corners (`$radius`),
+  ruled lists (`$rule-*`), Newsreader figures, sentence-case labels. Reach for its
   mixins (`ledger-panel`, `ledger-label`, `ledger-row`, `ledger-tag`, `figures`) and the shared
   classes in `elements/` (`.btn-primary`, `.btn-quiet`, `.page-head`, `.empty-state`,
   `.text-link`) before writing a new card, label or button. A bare `<button>` and `<a>` are

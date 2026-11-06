@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use 'sass:list';
 @use 'theme-only' as *;
 @use 'font-scale' as *;
@@ -6,14 +5,12 @@
 @use 'spacing' as *;
 @use 'ledger' as *;
 
-// Low-emphasis text action beside a .btn-primary; tracking matches it so the pair reads as one set.
-@mixin quiet-link($size: $text-11-5, $color: $color-text-secondary, $hover: $color-white) {
-	font-size: $size;
+// Low-emphasis text action beside a .btn-primary. The size argument is floored at 14px.
+@mixin quiet-link($size: $text-15, $color: $color-text-secondary, $hover: $color-ink) {
+	font-size: max(#{$size}, #{$text-14});
 	font-weight: $font-weight-semibold;
-	letter-spacing: $tracking-label;
-	text-transform: uppercase;
 	color: $color;
-	font-family: $font-display-normal-family;
+	font-family: $font-sans;
 	transition: color 0.2s ease;
 
 	&:hover,
@@ -22,41 +19,25 @@
 	}
 }
 
-// Lora italic flourish; type only, colour is inherited.
-@mixin serif-italic {
-	font-family: $font-body-normal-family;
-	font-style: italic;
-	font-weight: $font-weight-regular;
-}
-
-// serif-italic in the display accent. Marketing surfaces only, never inside a tasting.
-@mixin serif-italic-accent($color: $color-display-accent) {
-	@include serif-italic;
-
-	color: $color;
-}
-
-// The action-button type — uppercase, tracked, 13px bold. Shared by .btn-primary and the
-// quieter actions that sit beside it, so one button row never mixes two label treatments.
+// Shared by .btn-primary and the actions beside it, so a button row has one label style.
 @mixin action-label {
-	font-size: $text-13;
-	font-weight: $font-weight-bold;
-	font-family: $font-display-normal-family;
-	letter-spacing: $tracking-action;
-	text-transform: uppercase;
+	font-size: $text-16;
+	font-weight: $font-weight-semibold;
+	font-family: $font-sans;
 }
 
-// Chosen option/pill: tinted outline, not the solid fill actions get.
-@mixin selected-outline($accent: $color-accent, $text: $color-accent-light) {
+// Chosen option/pill: the solid wine fill.
+@mixin selected-outline($accent: $color-wine, $text: $color-on-wine) {
 	border-color: $accent;
-	background-color: rgba($accent, 0.15);
+	background-color: $accent;
 	color: $text;
+	font-weight: $font-weight-semibold;
 
 	&:hover,
 	&:focus,
 	&:active {
 		border-color: $accent;
-		background-color: rgba($accent, 0.15);
+		background-color: $accent;
 		color: $text;
 	}
 }
@@ -64,8 +45,8 @@
 // Glyph at full hue on a 10% wash of it — a thin stroke needs the extra lightness to clear 3:1.
 // Pass only wine hues or status colours.
 @mixin icon-tile($hue) {
-	background: rgba($hue, 0.1);
-	border: 1px solid rgba($hue, 0.28);
+	background: fade($hue, 10%);
+	border: 1px solid fade($hue, 28%);
 	color: $hue;
 }
 
@@ -102,7 +83,7 @@
 	transition: $list;
 }
 
-@mixin scrollbar($size, $foreground-color, $background-color: color.mix($foreground-color, white, 50%)) {
+@mixin scrollbar($size, $foreground-color, $background-color: transparent) {
 	// For Google Chrome
 	&::-webkit-scrollbar {
 		width: $size;
@@ -122,8 +103,4 @@
 		scrollbar-face-color: $foreground-color;
 		scrollbar-track-color: $background-color;
 	}
-}
-
-@function get-transparent-color($color, $opacity) {
-	@return color-mix(in srgb, $color $opacity, transparent);
 }

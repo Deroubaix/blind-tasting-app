@@ -10,7 +10,6 @@
 }
 
 .reveal-muted-italic {
-	@include serif-italic;
 	color: $color-text-secondary;
 }
 
@@ -22,7 +21,7 @@
 // ── Status palette ────────────────────────────────────────────────────────────
 // One colour per status, always paired with an icon and a word (see RevealScorecard).
 $reveal-statuses: (
-	correct: $color-status-ok,
+	correct: $color-ok,
 	close: $color-warning,
 	wrong: $color-error,
 	notcalled: $color-text-secondary,
@@ -155,13 +154,9 @@ $reveal-statuses: (
 	flex-direction: column;
 	gap: $spacing-xxs;
 
-	// Inside the uppercase label, so it undoes the label's case and tracking.
 	&__hint {
-		@include serif-italic;
 		margin-left: $spacing-xxs;
-		letter-spacing: 0;
-		text-transform: none;
-		font-size: $text-12;
+		font-size: $text-13;
 		color: $color-text-muted;
 	}
 
@@ -188,7 +183,7 @@ $reveal-statuses: (
 	&__headline {
 		margin: 0 0 4px;
 		font-size: $text-15;
-		font-weight: $font-weight-bold;
+		font-weight: $font-weight-semibold;
 		line-height: 1.35;
 	}
 
@@ -225,7 +220,7 @@ $reveal-statuses: (
 	// The one hero figure: past the type scale on purpose.
 	&__value {
 		font-size: 6.5rem;
-		font-weight: $font-weight-medium;
+		font-weight: $font-weight-regular;
 		letter-spacing: -0.04em;
 		line-height: 0.9;
 	}
@@ -288,7 +283,7 @@ $reveal-statuses: (
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: $color-white;
+		color: $color-ink;
 	}
 
 	&__answer {
@@ -296,7 +291,7 @@ $reveal-statuses: (
 		@include icon-label(4px);
 
 		&--yes {
-			color: $color-status-ok;
+			color: $color-ok;
 		}
 
 		&--no {
@@ -336,7 +331,6 @@ $reveal-statuses: (
 
 	// Why an interchangeable call scored.
 	&__note {
-		@include serif-italic;
 		display: block;
 		margin-top: 2px;
 		font-size: $text-12;
@@ -353,7 +347,7 @@ $reveal-statuses: (
 .reveal-miss {
 	@include ledger-panel(14px $spacing-md);
 	margin: $spacing-xxs 0;
-	background-color: $color-surface-variant;
+	background-color: $color-raised;
 
 	&__head {
 		display: flex;
@@ -395,7 +389,7 @@ $reveal-statuses: (
 	}
 
 	&__actual span {
-		font-weight: $font-weight-bold;
+		font-weight: $font-weight-semibold;
 		text-decoration: underline;
 		text-decoration-thickness: 1.5px;
 		text-underline-offset: 3px;
@@ -484,7 +478,7 @@ $reveal-statuses: (
 		border-radius: 0;
 		display: flex;
 		flex-direction: column;
-		background-color: $color-black;
+		background-color: $color-ground;
 
 		&__sheet-head {
 			display: grid;
@@ -500,7 +494,7 @@ $reveal-statuses: (
 			@include bare-button;
 			width: 44px;
 			height: 44px;
-			color: $color-white;
+			color: $color-ink;
 		}
 
 		&__sheet-title {
@@ -508,7 +502,7 @@ $reveal-statuses: (
 			flex-direction: column;
 			align-items: center;
 			font-size: $text-16;
-			font-weight: $font-weight-bold;
+			font-weight: $font-weight-semibold;
 		}
 
 		&__sheet-sub {

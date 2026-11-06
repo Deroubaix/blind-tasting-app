@@ -43,8 +43,8 @@
 		box-shadow 0.15s ease;
 
 	&--selected {
-		border-color: $color-accent-light;
-		box-shadow: 0 0 0 1px $color-accent-light;
+		border-color: $color-link;
+		box-shadow: 0 0 0 1px $color-link;
 	}
 }
 
@@ -56,7 +56,7 @@
 	color: $color-text-secondary;
 
 	&--selected {
-		color: $color-accent-light;
+		color: $color-link;
 	}
 }
 
@@ -74,7 +74,7 @@
 	margin: $spacing-sm 0 0;
 	padding-top: $spacing-sm;
 	// The $rule tokens are cream, invisible on the light tile.
-	border-top: 1px solid rgba($color-black, 0.1);
+	border-top: 1px solid rgba(20, 19, 19, 0.1);
 	font-size: $text-11-5;
 	line-height: 1.5;
 	color: $tasting-on-light-muted;
@@ -103,7 +103,7 @@
 
 		&--selected {
 			color: $tasting-on-light-strong;
-			font-weight: $font-weight-bold;
+			font-weight: $font-weight-semibold;
 		}
 	}
 

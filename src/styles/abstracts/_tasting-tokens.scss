@@ -4,22 +4,20 @@
 @use 'theme-only' as *;
 
 // ── Phone layout surfaces ────────────────────────────────────────────────────
-// Scoped to the phone layout; desktop still uses $color-black / $color-darkGrey, so
-// the two can be reconciled in one deliberate step later.
-$tasting-m-page: #121111; // page behind everything
-$tasting-m-chrome: #1a1818; // sticky header strip and action bar
-$tasting-m-control: #2a2727; // unselected option / icon squares
+$tasting-m-page: $color-ground; // page behind everything
+$tasting-m-chrome: $color-card; // sticky header strip and action bar
+$tasting-m-control: $color-raised; // unselected option / icon squares
 // Neutral on purpose: the design's warm #f2f0e6 pushes adjacent hues cooler by
 // simultaneous contrast, and garnet-vs-ruby is exactly the call that biases. Dimmed
 // 3 points of L* off paper-white for glare; #dedede is the next safe step down.
 $tasting-swatch-tile: #e8e8e8;
 
 // ── Text on the light swatch tile ────────────────────────────────────────────
-// The only light ground in the app, so it needs its own ramp off the page black.
+// A fixed light ground in both themes, so it keeps its own ramp off a fixed near-black.
 // Alphas floor at 0.62, where 4.5:1 is cleared here; the design's 0.55 and 0.4
 // measure 3.87:1 and 2.51:1 and fail AA at the sizes they are set in.
-$tasting-on-light-strong: $color-black; // selected swatch name, selected ring — 15.1:1
-$tasting-on-light: rgba($color-black, 0.7); // swatch name — 6.26:1
-$tasting-on-light-muted: rgba($color-black, 0.66); // swatch description — 5.45:1
-$tasting-on-light-faint: rgba($color-black, 0.62); // right-hand caption — 4.81:1
+$tasting-on-light-strong: #141313; // selected swatch name, selected ring — 15.1:1
+$tasting-on-light: rgba(20, 19, 19, 0.7); // swatch name — 6.26:1
+$tasting-on-light-muted: rgba(20, 19, 19, 0.66); // swatch description — 5.45:1
+$tasting-on-light-faint: rgba(20, 19, 19, 0.62); // right-hand caption — 4.81:1
 $tasting-on-light-accent: #6b3444; // the tile's own label — burgundy, darkened for contrast — 7.79:1

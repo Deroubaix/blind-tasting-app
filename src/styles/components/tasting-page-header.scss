@@ -7,7 +7,7 @@
 	align-items: center;
 	padding: 0 $page-spacing;
 	height: 52px;
-	background-color: $color-black;
+	background-color: $color-ground;
 	border-bottom: 1px solid $rule-faint;
 	flex-shrink: 0;
 
@@ -50,12 +50,12 @@
 	}
 
 	&__timer-display {
-		font-family: $font-mono-family;
+		@include figures;
 		font-size: $text-timer-live;
 		font-weight: $font-weight-semibold;
 		letter-spacing: 0.06em;
 		line-height: 1;
-		color: $color-white;
+		color: $color-ink;
 
 		// `<Timer>` renders its own .timer-display inside, so the states are matched as descendants.
 		.timer-display {
@@ -67,7 +67,7 @@
 			}
 
 			&.timer-display--expired {
-				color: $color-accent-light;
+				color: $color-link;
 			}
 		}
 	}
@@ -85,8 +85,8 @@
 
 		&:hover,
 		&:focus-visible {
-			border-color: $color-accent-light;
-			color: $color-white;
+			border-color: $color-link;
+			color: $color-ink;
 		}
 
 		&:disabled {
@@ -117,9 +117,9 @@
 		width: 32px;
 		height: 32px;
 		border-radius: 50%;
-		background-color: $color-surface-variant;
+		background-color: $color-raised;
 		border: 1px solid $rule-folio;
-		color: $color-accent-light;
+		color: $color-link;
 		font-size: $text-11;
 		font-weight: $font-weight-semibold;
 		letter-spacing: 0.04em;
@@ -172,14 +172,14 @@
 
 		&__phase-num {
 			@include figures;
-			color: $color-accent-light;
+			color: $color-link;
 		}
 
 		&__phase-title {
 			font-size: $text-16;
-			font-weight: $font-weight-bold;
+			font-weight: $font-weight-semibold;
 			letter-spacing: -0.01em;
-			color: $color-white;
+			color: $color-ink;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -203,7 +203,7 @@
 
 		// Bold on the strip: glanced at from arm's length mid-tasting.
 		&__timer-display {
-			font-weight: $font-weight-bold;
+			font-weight: $font-weight-semibold;
 			letter-spacing: 0.02em;
 			text-align: right;
 		}

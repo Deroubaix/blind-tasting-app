@@ -1,7 +1,7 @@
 import '../styles/main.scss';
 import React, { type ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { Manrope, Lora } from 'next/font/google';
+import { Newsreader, Source_Sans_3 } from 'next/font/google';
 import { BRAND } from '../data/brand';
 import { AuthProvider } from '../components/auth/AuthProvider';
 import ToastProvider from '../components/toast/ToastProvider';
@@ -14,16 +14,18 @@ import { getLang } from '../i18n/server';
 
 export const dynamic = 'force-dynamic';
 
-const manrope = Manrope({
+const sourceSans = Source_Sans_3({
 	subsets: ['latin'],
-	variable: '--font-manrope',
-	weight: ['400', '500', '600', '700', '800'],
+	variable: '--font-source-sans',
+	weight: ['400', '600'],
+	style: ['normal', 'italic'],
 	display: 'swap',
 });
 
-const lora = Lora({
+const newsreader = Newsreader({
 	subsets: ['latin'],
-	variable: '--font-lora',
+	variable: '--font-newsreader',
+	weight: ['400', '500', '600'],
 	style: ['normal', 'italic'],
 	display: 'swap',
 });
@@ -44,12 +46,12 @@ export type RootLayoutProps = {
 export default async function RootLayout({ children }: RootLayoutProps) {
 	const lang = await getLang();
 	return (
-		<html lang={LOCALES[lang]} className={`${manrope.variable} ${lora.variable}`}>
+		<html lang={LOCALES[lang]} className={`${sourceSans.variable} ${newsreader.variable}`}>
 			<head>
 				<meta charSet="utf-8" />
 				<link rel="icon" href="/favicon.ico" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<meta name="theme-color" content="#141313" />
+				<meta name="theme-color" content="#f5efe4" />
 			</head>
 			<body>
 				<LanguageProvider lang={lang}>

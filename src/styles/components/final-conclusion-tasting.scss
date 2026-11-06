@@ -43,7 +43,7 @@
 	}
 
 	&__row-label {
-		@include ledger-label($text-11, $color-accent-light);
+		@include ledger-label($text-11, $color-link);
 	}
 
 	&__row-value {
@@ -53,7 +53,7 @@
 
 		&--identity {
 			font-style: italic;
-			color: $color-accent-light;
+			color: $color-link;
 		}
 	}
 

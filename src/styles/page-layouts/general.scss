@@ -31,10 +31,10 @@
 	min-width: 0;
 	height: 52px;
 	padding: 0 16px;
-	background-color: $color-surface-variant;
+	background-color: $color-raised;
 	border: 1px solid $rule-mid;
 	border-radius: $radius;
-	color: $color-white;
+	color: $color-ink;
 	font-size: $text-15;
 	transition: border-color 0.15s ease;
 
@@ -44,11 +44,11 @@
 
 	&:focus {
 		outline: none;
-		border-color: $color-accent-light;
+		border-color: $color-link;
 	}
 
 	&:focus-visible {
-		box-shadow: 0 0 0 1px $color-accent-light;
+		box-shadow: 0 0 0 1px $color-link;
 	}
 
 	// Autofill would repaint the field in the browser's colours.
@@ -56,9 +56,9 @@
 	&:-webkit-autofill:hover,
 	&:-webkit-autofill:focus,
 	&:-webkit-autofill:active {
-		-webkit-box-shadow: 0 0 0 1000px $color-surface-variant inset;
-		-webkit-text-fill-color: $color-white;
-		caret-color: $color-white;
+		-webkit-box-shadow: 0 0 0 1000px $color-raised inset;
+		-webkit-text-fill-color: $color-ink;
+		caret-color: $color-ink;
 		transition:
 			background-color 9999s ease-in-out,
 			color 9999s ease-in-out;
@@ -66,7 +66,7 @@
 
 	// A flight code: large mono capitals. !important to beat the coarse-pointer 16px rule, which is !important too.
 	&--code {
-		font-family: $font-mono-family;
+		@include figures;
 		font-size: $text-24 !important;
 		font-weight: $font-weight-semibold;
 		letter-spacing: 0.18em;

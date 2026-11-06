@@ -77,7 +77,7 @@
 
 // The accent label tier: one per card, above its controls.
 .tasting-card__label {
-	@include ledger-label($text-12, $color-accent-light);
+	@include ledger-label($text-12, $color-link);
 	margin-bottom: $spacing-sm;
 }
 
@@ -97,7 +97,7 @@
 
 .tasting-card__required {
 	// The light accent: the base accent measured 2.5:1 on the card, too faint to read.
-	color: $color-accent-light;
+	color: $color-link;
 	margin-left: 3px;
 	font-size: $text-11;
 	line-height: 1;
@@ -109,7 +109,7 @@
 	padding: $spacing-xs 0;
 
 	&__label {
-		@include ledger-label($text-11, $color-accent-light);
+		@include ledger-label($text-11, $color-link);
 		display: flex;
 		align-items: center;
 		gap: $spacing-xs;
@@ -129,13 +129,10 @@
 }
 
 // ── Aside: the muted italic note beside a label ───────────────────────────────
-// Often sits inside an uppercase label, so it sets its own case and tracking.
+// A quiet aside, often inside a label.
 .tasting-aside,
 .start-step-hint {
-	@include serif-italic;
-	font-size: $text-12;
-	letter-spacing: normal;
-	text-transform: none;
+	font-size: $text-13;
 	color: $color-text-muted;
 }
 
@@ -145,10 +142,10 @@
 .tasting-input,
 .tasting-search-input-wrap,
 .start-identity-wrap {
-	background-color: $color-surface-variant;
+	background-color: $color-raised;
 	border: 1px solid $rule;
 	border-radius: $radius;
-	color: $color-white;
+	color: $color-ink;
 	font-size: $text-13;
 	transition: border-color 0.15s ease;
 
@@ -162,7 +159,7 @@
 
 	&:focus,
 	&:focus-within {
-		border-color: $color-accent-light;
+		border-color: $color-link;
 	}
 
 	// The accent border is the focus edge; the global ring 2px out would read as a second one.
@@ -297,19 +294,20 @@
 	@include icon-label;
 	padding: 4px 10px;
 	border: 1px solid;
-	border-radius: $radius-sm;
-	font-size: $text-13;
+	border-radius: $radius-pill;
+	font-size: $text-14;
 	@include selected-outline;
 
 	&__remove {
 		@include bare-button;
-		color: $color-text-muted;
+		color: inherit;
+		opacity: 0.75;
 		font-size: $text-16;
 		line-height: 1;
-		transition: color 0.15s ease;
+		transition: opacity 0.15s ease;
 
 		&:hover {
-			color: $color-white;
+			opacity: 1;
 		}
 	}
 }
@@ -370,9 +368,9 @@
 	// The light rule marks the keyboard row; a wash alone is too faint on the panel.
 	&:hover,
 	&--active {
-		background-color: $color-surface-variant;
-		box-shadow: inset 2px 0 0 $color-accent-light;
-		color: $color-white;
+		background-color: $color-raised;
+		box-shadow: inset 2px 0 0 $color-link;
+		color: $color-ink;
 	}
 
 	// "Not applicable": clears the answer, so it reads as a different kind of entry.
