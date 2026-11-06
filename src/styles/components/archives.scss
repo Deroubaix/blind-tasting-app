@@ -24,11 +24,11 @@
 	max-width: 1200px;
 	margin: 0 auto;
 
-	@container tasting-main (max-width: 900px) {
+	@container main (max-width: 900px) {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	@container tasting-main (max-width: 600px) {
+	@container main (max-width: 600px) {
 		grid-template-columns: minmax(0, 1fr);
 	}
 

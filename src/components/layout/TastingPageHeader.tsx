@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import Link from 'next/link';
 import Wordmark from './Wordmark';
-import LanguageSwitch from '../../i18n/LanguageSwitch';
-import ThemeSwitch from '../../theme/ThemeSwitch';
+import Prefs from './Prefs';
+import useDismiss from '../../hooks/useDismiss';
 import { useRouter } from 'next/navigation';
 import { IconPlayerPauseFilled, IconPlayerPlayFilled } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
@@ -43,6 +43,7 @@ export default function TastingPageHeader({
 	const { openModal, closeModal } = useModalProvider();
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	const avatarRef = useRef<HTMLButtonElement>(null);
 	const router = useRouter();
 	const isLoggedIn = !isInitialLoading && !!user;
 	const showTimer = !!timerPage && !!timerDestination && !!tastingData.timerEnabled;
@@ -74,18 +75,8 @@ export default function TastingPageHeader({
 		});
 	};
 
-	useEffect(() => {
-		if (!dropdownOpen) {
-			return;
-		}
-		const handler = (e: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-				setDropdownOpen(false);
-			}
-		};
-		document.addEventListener('mousedown', handler);
-		return () => document.removeEventListener('mousedown', handler);
-	}, [dropdownOpen]);
+	const closeDropdown = useCallback(() => setDropdownOpen(false), []);
+	useDismiss(dropdownOpen, closeDropdown, dropdownRef, avatarRef);
 
 	const handleLogout = async () => {
 		setDropdownOpen(false);
@@ -165,8 +156,10 @@ export default function TastingPageHeader({
 					<>
 						{wineLabel && <span className="tasting-page-header__wine-label">{wineLabel}</span>}
 						{isLoggedIn && (
-							<div className="nav-user" ref={dropdownRef}>
+							<div className="nav-pop" ref={dropdownRef}>
 								<button
+									ref={avatarRef}
+									type="button"
 									className="tasting-page-header__avatar"
 									onClick={() => setDropdownOpen((o) => !o)}
 									aria-label={t.header.accountMenu}
@@ -175,48 +168,30 @@ export default function TastingPageHeader({
 									{initials}
 								</button>
 								{dropdownOpen && (
-									<div className="nav-dropdown">
-										<div className="nav-dropdown__profile">
+									<div className="nav-menu nav-menu--account">
+										<div className="nav-menu__profile">
 											<span className="nav-profile__name">{user.displayName}</span>
 											<span className="nav-profile__email">{user.email}</span>
 										</div>
-										<div className="nav-dropdown__divider" />
-										<Link
-											href="/archives"
-											className="nav-dropdown__item"
-											onClick={() => setDropdownOpen(false)}
-										>
+										<div className="nav-menu__sep" />
+										<Link href="/archives" className="nav-menu__item" onClick={closeDropdown}>
 											{t.header.archive}
 										</Link>
-										<Link
-											href="/progress"
-											className="nav-dropdown__item"
-											onClick={() => setDropdownOpen(false)}
-										>
+										<Link href="/progress" className="nav-menu__item" onClick={closeDropdown}>
 											{t.header.progress}
 										</Link>
-										<Link
-											href="/flights"
-											className="nav-dropdown__item"
-											onClick={() => setDropdownOpen(false)}
-										>
+										<Link href="/flights" className="nav-menu__item" onClick={closeDropdown}>
 											{t.header.flights}
 										</Link>
-										<Link
-											href="/account"
-											className="nav-dropdown__item"
-											onClick={() => setDropdownOpen(false)}
-										>
+										<Link href="/account" className="nav-menu__item" onClick={closeDropdown}>
 											{t.header.account}
 										</Link>
-										<div className="nav-dropdown__divider" />
-										<div className="nav-dropdown__prefs">
-											<LanguageSwitch />
-											<ThemeSwitch />
-										</div>
-										<div className="nav-dropdown__divider nav-dropdown__divider--double" />
+										<div className="nav-menu__sep" />
+										<Prefs />
+										<div className="nav-menu__sep" />
 										<button
-											className="nav-dropdown__item nav-dropdown__item--logout"
+											type="button"
+											className="nav-menu__item nav-menu__item--quiet"
 											onClick={handleLogout}
 										>
 											{t.header.logOut}

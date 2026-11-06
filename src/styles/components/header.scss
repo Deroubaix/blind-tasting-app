@@ -9,144 +9,237 @@ body.menu-open {
 	}
 }
 
-// The bar the site header and the open phone menu both start with.
-@mixin header-bar {
-	height: var(--navbar-height_approx);
-	display: flex;
-	align-items: center;
-	border-bottom: 1px solid $rule-soft;
-}
-
-// The right edge is 4px: the 44px icon button at the end carries its own space.
-$bar-padding-phone: 0 4px 0 16px;
-
-// One row of a menu: dropdown items, phone-menu links, log in/out.
-@mixin menu-row($color: $color-text-secondary) {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	color: $color;
-	text-align: left;
-	transition:
-		color 0.15s ease,
-		background-color 0.15s ease;
-
-	&:hover,
-	&:focus-visible {
-		color: $color-ink;
-	}
-
-	&--logout {
-		color: $color-error;
+@keyframes nav-in {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
 	}
 }
 
-// ── Account: avatar, profile, dropdown — shared with the tasting header ──────
-.nav-user {
-	position: relative;
-	display: flex;
-	align-items: center;
+@keyframes sheet-in {
+	from {
+		transform: translateY(100%);
+	}
 }
 
-// The initial in a square, set in the ledger's serif.
+@keyframes scrim-in {
+	from {
+		opacity: 0;
+	}
+}
+
+// ── Account: avatar and profile ──────────────────────────────────────────────
 .nav-avatar {
-	width: 28px;
-	height: 28px;
+	width: 34px;
+	height: 34px;
 	flex-shrink: 0;
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: $radius-sm;
+	border-radius: 50%;
 	background: $color-raised;
-	border: 1px solid $rule-folio;
-	font-family: $font-serif;
-	font-size: $text-14;
-	color: $color-ink;
+	color: $color-link;
+	font-size: $text-15;
+	font-weight: $font-weight-semibold;
 	pointer-events: none;
-
-	&--lg {
-		width: 40px;
-		height: 40px;
-		font-size: $text-18;
-	}
 }
 
 .nav-profile {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
+	min-width: 0;
 
 	&__text {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
 		min-width: 0;
 	}
 }
 
 .nav-profile__name {
-	font-size: $text-14;
+	font-size: $text-16;
 	font-weight: $font-weight-semibold;
+	line-height: 1.25;
 	color: $color-ink;
 }
 
 .nav-profile__email {
-	font-size: $text-12;
+	font-size: $text-13;
 	color: $color-text-secondary;
 	overflow-wrap: anywhere;
 }
 
-.nav-dropdown {
-	@include ledger-panel(0);
+// ── A button and the menu it opens ───────────────────────────────────────────
+.nav-pop {
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	&__chevron {
+		transition: rotate 0.15s ease;
+	}
+
+	[aria-expanded='true'] > &__chevron {
+		rotate: 180deg;
+	}
+}
+
+.nav-menu {
 	position: absolute;
-	top: calc(100% + 12px);
+	top: calc(100% + 10px);
 	right: 0;
-	width: 240px;
-	box-shadow: $shadow-lift;
 	z-index: $index-navbar + 1;
-	overflow: hidden;
+	min-width: 240px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	padding: 8px;
+	background: $color-card;
+	border: 1px solid $rule;
+	border-radius: $radius-lg;
+	box-shadow: $shadow-lift;
+	text-align: left;
+	animation: nav-in 0.15s ease-out;
+
+	&--start {
+		width: 320px;
+	}
+
+	// Room for the Light · Dark · Auto row beside its label.
+	&--account {
+		width: 290px;
+	}
+
+	// In the phone's Start sheet: the sheet is the panel.
+	&--sheet {
+		position: static;
+		width: auto;
+		padding: 0;
+		border: none;
+		box-shadow: none;
+		background: none;
+		animation: none;
+	}
+
+	&__item {
+		@include bare-button;
+		display: block;
+		width: 100%;
+		padding: 10px 12px;
+		border-radius: $radius;
+		color: $color-ink;
+		font-size: $text-16;
+		text-align: left;
+		transition: background-color 0.15s ease;
+
+		&:hover {
+			background: $color-ground;
+			color: $color-ink;
+		}
+
+		small {
+			display: block;
+			margin-top: 2px;
+			font-size: $text-13;
+			color: $color-text-secondary;
+		}
+
+		&--quiet {
+			color: $color-text-secondary;
+		}
+	}
+
+	&__sep {
+		height: 1px;
+		margin: 6px 4px;
+		background: $rule;
+	}
 
 	&__profile {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
-		padding: 16px 16px 14px;
+		padding: 10px 12px;
 	}
 
-	&__divider {
-		height: 1px;
-		background: $rule-soft;
-
-		&--double {
-			height: 0;
-			margin-top: 6px;
-			background: none;
-			border-top: $rule-double;
-		}
+	&__code {
+		padding: 4px 12px 8px;
 	}
 
-	// The words carry their own 5px padding, so 11px here lines them up with the 16px items.
-	&__prefs {
+	.prefs {
+		padding: 0 7px 0 12px;
+	}
+}
+
+.prefs {
+	display: flex;
+	flex-direction: column;
+
+	&__row {
 		display: flex;
-		flex-direction: column;
-		padding: 2px 11px;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		font-size: $text-13;
+		color: $color-text-secondary;
 	}
 
-	&__item {
-		@include menu-row;
-		min-height: 40px;
-		padding: 0.6rem 1rem;
-		font-size: $text-14;
+	.word-switch {
+		font-size: $text-13;
+	}
+}
 
-		&:hover,
-		&:focus-visible {
-			background: $color-raised;
+// ── The flight-code box: Start menu, Start sheet and the home page ───────────
+.code-form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	&__label {
+		font-size: $text-16;
+		color: $color-ink;
+	}
+
+	&__row {
+		display: flex;
+		gap: 8px;
+	}
+
+	&__input {
+		flex: 1;
+		min-width: 0;
+		height: 46px;
+		padding: 0 14px;
+		box-sizing: border-box;
+		background: $color-ground;
+		border: 1px solid $rule-mid;
+		border-radius: $radius;
+		color: $color-ink;
+		font-family: $font-serif;
+		// Above 16px, so it may beat the coarse-pointer rule; it has to be !important to.
+		font-size: $text-20 !important;
+		font-weight: $font-weight-heading;
+		letter-spacing: 0.22em;
+		text-transform: uppercase;
+
+		&::placeholder {
+			color: $color-text-muted;
 		}
 
-		// Inside the panel's overflow: hidden, an outset ring would be clipped.
-		&:focus-visible {
-			outline-offset: -2px;
+		&:focus {
+			outline: none;
+			border-color: $color-link;
+			box-shadow: 0 0 0 1px $color-link;
 		}
+	}
+
+	&__btn {
+		min-height: 46px;
+	}
+
+	&__hint {
+		font-size: $text-13;
+		color: $color-text-secondary;
 	}
 }
 
@@ -156,61 +249,99 @@ $bar-padding-phone: 0 4px 0 16px;
 	width: 44px;
 	height: 44px;
 	flex-shrink: 0;
+	border-radius: $radius;
 	color: $color-ink;
 }
 
-// ── Wordmark: the name, with one italic serif accent and a double underline ───
+// ── Wordmark ─────────────────────────────────────────────────────────────────
 .wordmark {
-	font-size: $text-16;
-	font-weight: $font-weight-semibold;
-	letter-spacing: -0.02em;
+	font-family: $font-serif;
+	font-size: 1.375rem;
+	font-weight: $font-weight-heading;
+	letter-spacing: -0.01em;
 	white-space: nowrap;
-	padding-bottom: 3px;
-	border-bottom: $rule-double;
 	color: $color-ink;
 
 	&--sm {
-		font-size: $text-15;
+		font-size: 1.1875rem;
 	}
 }
 
-// ── Site header ───────────────────────────────────────────────────────────────
+// ── Site header ──────────────────────────────────────────────────────────────
 .site-header {
-	@include header-bar;
 	position: fixed;
 	z-index: $index-navbar;
 	top: 0;
 	left: 0;
 	right: 0;
-	gap: 32px;
-	padding: 0 56px;
+	height: var(--navbar-height_approx);
+	display: flex;
+	align-items: center;
+	gap: 22px;
+	// The bar's content lines up with the page column.
+	padding-inline: max(32px, calc((100% - 1120px) / 2));
 	box-sizing: border-box;
+	border-bottom: 1px solid $rule;
 	background-color: fade($color-ground, 94%);
 	backdrop-filter: blur(8px);
 	font-family: $font-sans;
 
-	&__nav {
+	&__logo {
+		margin-right: 4px;
+	}
+
+	&__links {
 		display: flex;
 		align-items: center;
-		gap: 28px;
-		margin-left: auto;
+		gap: 22px;
 	}
 
 	&__link {
-		font-size: $text-14;
-		font-weight: $font-weight-regular;
-		color: $color-text-secondary;
+		@include bare-button;
+		gap: 4px;
+		white-space: nowrap;
+		color: $color-ink;
+		font-size: $text-16;
 		transition: color 0.15s ease;
 
 		&:hover,
-		&:focus-visible {
-			color: $color-ink;
-		}
-
-		&--accent {
+		&.is-open {
 			color: $color-link;
-			font-weight: $font-weight-semibold;
 		}
+	}
+
+	&__links .nav-menu {
+		left: -12px;
+		right: auto;
+	}
+
+	&__right {
+		margin-left: auto;
+		display: flex;
+		align-items: center;
+		gap: 18px;
+	}
+
+	&__start {
+		min-height: 42px;
+		padding: 0 16px;
+		gap: 8px;
+
+		&.is-open {
+			background-color: $color-wine-hover;
+			border-color: $color-wine-hover;
+		}
+	}
+
+	&__account {
+		@include bare-button;
+		gap: 8px;
+		min-height: 44px;
+		color: $color-ink;
+	}
+
+	&__narrow {
+		display: none;
 	}
 
 	// The auth pages' one link: "New here? Sign up →".
@@ -240,217 +371,226 @@ $bar-padding-phone: 0 4px 0 16px;
 		color: $color-link;
 	}
 
-	&__cta-short,
-	&__cta--phone {
-		display: none;
-	}
-
-	&__account {
-		@include bare-button;
+	// Below it: the wordmark, Start, and the menu or the avatar.
+	@include responsive($breakpoint-nav) {
 		gap: 10px;
-		padding: 6px 10px 6px 6px;
-		background: $color-card;
-		border: 1px solid $rule;
-		border-radius: $radius;
-		font-size: $text-14;
-		font-weight: $font-weight-semibold;
-		transition: border-color 0.15s ease;
-
-		&:hover,
-		&:focus-visible {
-			border-color: $rule-mid;
-		}
-
-		svg {
-			color: $color-text-secondary;
-		}
-	}
-
-	&__menu-btn {
-		display: none;
-	}
-
-	@include responsive($breakpoint-laptop) {
-		padding: 0 24px;
-		gap: 16px;
-	}
-
-	// Phone: wordmark, Join, Start, menu.
-	@include responsive($breakpoint-mobile) {
-		padding: $bar-padding-phone;
-		gap: 6px;
+		padding-inline: 16px 8px;
 
 		.wordmark {
-			font-size: $text-13;
+			font-size: 1.1875rem;
 		}
 
-		&__nav {
-			gap: 0;
-
-			.site-header__link:not(.site-header__link--accent) {
-				display: none;
-			}
-		}
-
-		&__link--accent {
-			min-height: 44px;
-			display: flex;
-			align-items: center;
-			padding: 0 6px;
-			font-size: $text-12;
-			color: $color-ink;
-		}
-
-		// A compact .btn-primary that still meets the 44px target.
-		&__cta,
-		&__cta--phone {
-			display: inline-flex;
-			min-height: 44px;
-			padding: 0 12px;
-		}
-
-		&__cta-long {
+		// Doubled, to beat the display a hidden child (the language switch) sets itself.
+		&__links,
+		& &__wide {
 			display: none;
+		}
+
+		&__right {
+			gap: 4px;
+		}
+
+		&__narrow {
+			display: inline-flex;
+		}
+
+		&__start {
+			min-height: 40px;
+			padding: 0 14px;
+			font-size: $text-15;
 		}
 
 		&__context {
-			padding-right: 12px;
-		}
-
-		&__cta-short {
-			display: inline;
-		}
-
-		&__user {
-			display: none;
-		}
-
-		&__menu-btn {
-			display: inline-flex;
+			padding-right: 8px;
 		}
 	}
 }
 
-// ── Phone menu ────────────────────────────────────────────────────────────────
-.site-menu {
+// ── Phone: the Start sheet and the full menu ─────────────────────────────────
+.phone-scrim {
 	position: fixed;
 	inset: 0;
 	z-index: $index-navbar + 1;
+	background: $color-scrim;
+	animation: scrim-in 0.2s ease-out;
+}
+
+.start-sheet {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: $index-navbar + 2;
+	max-height: calc(100dvh - 40px);
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	padding: 8px 8px calc(18px + env(safe-area-inset-bottom));
+	background: $color-card;
+	border-top: 1px solid $rule;
+	border-radius: 20px 20px 0 0;
+	box-shadow: 0 -10px 30px $color-shadow;
+	animation: sheet-in 0.25s ease-out;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 0 4px 12px;
+	}
+
+	&__title {
+		font-weight: $font-weight-semibold;
+	}
+
+	.nav-menu__item {
+		padding: 12px;
+		font-size: 1.0625rem;
+
+		small {
+			font-size: $text-14;
+		}
+	}
+
+	.nav-menu__sep {
+		display: none;
+	}
+
+	.code-form__label {
+		padding-top: 6px;
+		font-size: 1.0625rem;
+	}
+}
+
+.site-menu {
+	position: fixed;
+	inset: 0;
+	z-index: $index-navbar + 2;
 	display: flex;
 	flex-direction: column;
 	background: $color-ground;
 	overflow-y: auto;
 
 	&__head {
-		@include header-bar;
-		justify-content: space-between;
-		padding: $bar-padding-phone;
 		flex-shrink: 0;
+		height: var(--navbar-height_approx);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		padding-inline: 16px 8px;
+		border-bottom: 1px solid $rule;
 	}
 
 	&__body {
 		flex: 1;
-		padding: 20px;
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 18px;
+		padding: 16px;
 	}
 
-	&__join {
-		@include ledger-panel(14px);
+	&__group {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
+		gap: 2px;
 	}
 
-	&__join-label {
-		@include ledger-label($text-11, $color-text-secondary);
-	}
-
-	&__join-row {
-		display: flex;
-		gap: 8px;
-	}
-
-	&__join-input {
-		flex: 1;
-	}
-
-	&__join-btn {
-		min-width: 72px;
-	}
-
-	&__join-hint {
-		font-size: $text-12;
-		color: $color-text-muted;
-	}
-
-	&__links {
-		display: flex;
-		flex-direction: column;
-		border-top: 1px solid $rule-soft;
+	&__group-title {
+		padding: 0 12px 6px;
+		font-size: $text-14;
+		color: $color-text-secondary;
 	}
 
 	&__link {
-		@include menu-row($color-ink);
-		min-height: 52px;
+		@include bare-button;
 		justify-content: space-between;
-		border-bottom: 1px solid $rule-soft;
-		font-size: $text-16;
-		font-weight: $font-weight-semibold;
+		width: 100%;
+		min-height: 44px;
+		padding: 0 12px;
+		border-radius: $radius;
+		color: $color-ink;
+		font-size: 1.0625rem;
+		text-align: left;
+		transition: background-color 0.15s ease;
+
+		&:hover {
+			background: $color-raised;
+			color: $color-ink;
+		}
 
 		svg {
-			color: $color-text-muted;
+			color: $color-text-secondary;
+		}
+
+		&--quiet {
+			font-size: $text-15;
+			color: $color-text-secondary;
 		}
 	}
 
 	&__foot {
 		margin-top: auto;
-		border-top: $rule-double;
 		padding-top: 6px;
-		display: flex;
-		flex-direction: column;
-	}
+		border-top: 1px solid $rule;
 
-	&__foot-link {
-		@include menu-row;
-		min-height: 48px;
-		font-size: $text-15;
-	}
+		.prefs {
+			padding: 0 7px 0 12px;
+		}
 
-	&__prefs {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px 20px;
-		margin-top: 6px;
+		.prefs__row,
+		.word-switch {
+			font-size: $text-14;
+		}
 	}
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+	.nav-menu,
+	.start-sheet,
+	.phone-scrim {
+		animation: none;
+	}
+
+	.nav-pop__chevron {
+		transition: none;
+	}
+}
+
+// ── Footer ───────────────────────────────────────────────────────────────────
 .site-footer {
-	border-top: $rule-double;
-	background-color: $color-ground;
+	background-color: $color-card;
+	border-top: 1px solid $rule;
 	font-family: $font-sans;
 
 	&__inner {
-		padding-block: 36px 44px;
+		padding-block: 48px 56px;
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 24px 40px;
-		align-items: center;
+		grid-template-columns: 1.4fr 1fr 1fr 1fr;
+		gap: 28px;
+		font-size: $text-15;
+		color: $color-text-secondary;
+	}
+
+	&__brand {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		max-width: 300px;
+		line-height: 1.45;
 	}
 
 	&__logo {
-		justify-self: start;
+		align-self: flex-start;
 	}
 
-	&__nav {
+	&__col {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 12px 28px;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
 
 		a {
-			font-size: $text-14;
 			color: $color-text-secondary;
 			transition: color 0.15s ease;
 
@@ -461,13 +601,22 @@ $bar-padding-phone: 0 4px 0 16px;
 		}
 	}
 
-	&__prefs {
+	&__col-title {
+		margin-bottom: 2px;
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
+	}
+
+	&__fine {
 		grid-column: 1 / -1;
 		display: flex;
 		flex-wrap: wrap;
+		align-items: center;
 		gap: 0 20px;
-		// The words carry 5px of padding; this lines the first up with the logo.
-		margin-left: -5px;
+		padding-top: 10px;
+		border-top: 1px solid $rule;
+		font-size: $text-13;
 
 		.word-switch {
 			font-size: $text-13;
@@ -475,25 +624,27 @@ $bar-padding-phone: 0 4px 0 16px;
 	}
 
 	&__legal {
-		grid-column: 1 / -1;
+		flex: 1 1 320px;
 		margin: 0;
-		padding-top: 20px;
-		border-top: 1px solid $rule-soft;
-		font-size: $text-12;
-		line-height: 1.6;
-		color: $color-text-muted;
+		padding: 8px 0;
+		line-height: 1.5;
 	}
 
-	@include responsive($breakpoint-laptop) {
+	@include responsive(45rem) {
 		&__inner {
 			grid-template-columns: 1fr;
-			padding-block: 32px 40px;
+			padding-block: 40px 48px;
 		}
 
-		&__nav a {
-			min-height: 44px;
-			display: inline-flex;
-			align-items: center;
+		// Spaced as 44px targets for a thumb.
+		&__col {
+			gap: 0;
+
+			a {
+				min-height: 44px;
+				display: inline-flex;
+				align-items: center;
+			}
 		}
 	}
 }

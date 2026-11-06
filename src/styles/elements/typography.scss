@@ -1,8 +1,7 @@
 @use '../abstracts' as *;
 // ── One voice ──────────────────────────────────────────────────────────────────
-// An `<em>` in a heading or the wordmark no longer changes face. (0,0,2), so it beats page rules.
-:is(h1, h2, h3, h4, h5, h6) em,
-.wordmark em {
+// An `<em>` in a heading no longer changes face. (0,0,2), so it beats page rules.
+:is(h1, h2, h3, h4, h5, h6) em {
 	font-family: inherit;
 	font-style: normal;
 	font-weight: inherit;

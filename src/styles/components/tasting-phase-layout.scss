@@ -7,7 +7,7 @@ $narrow: 720px;
 
 // Sized against the main area, not the viewport: beside the sidebar on a tablet the viewport is wide but the room is not.
 @mixin narrow {
-	@container tasting-main (max-width: #{$narrow}) {
+	@container main (max-width: #{$narrow}) {
 		@content;
 	}
 }
@@ -29,7 +29,7 @@ $narrow: 720px;
 
 .tasting-phase-main {
 	// Inline-size only, so the height still comes from the flex layout.
-	container: tasting-main / inline-size;
+	container: main / inline-size;
 	flex: 1;
 	overflow: auto;
 	background-color: $color-ground;

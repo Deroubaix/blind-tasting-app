@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import TastingPageHeader from '../../components/layout/TastingPageHeader';
-import LeftSidebar from '../../components/tasting/LeftSideBar';
+import Header from '../../components/layout/Header';
+import Footer from '../../components/layout/Footer';
 import ProgressClient from '../../components/progress/ProgressClient';
 import { toProgressTasting } from '../../utils/progressStats';
 import ServerServices from '../../services/server/ServerServices';
@@ -38,19 +38,17 @@ export default async function ProgressPage() {
 	);
 
 	return (
-		<div className="tasting-phase-page">
-			<TastingPageHeader />
-			<div className="tasting-phase-body">
-				<LeftSidebar />
-				<main className="tasting-phase-main">
-					<ProgressClient
-						list={list}
-						palate={palate}
-						name={user?.displayName ?? ''}
-						memberSince={user?.created_at?.toISOString() ?? null}
-					/>
-				</main>
-			</div>
+		<div className="site-page">
+			<Header />
+			<main className="site-main page-container">
+				<ProgressClient
+					list={list}
+					palate={palate}
+					name={user?.displayName ?? ''}
+					memberSince={user?.created_at?.toISOString() ?? null}
+				/>
+			</main>
+			<Footer />
 		</div>
 	);
 }

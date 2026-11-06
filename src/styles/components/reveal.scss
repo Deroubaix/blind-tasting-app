@@ -404,7 +404,7 @@ $reveal-statuses: (
 }
 
 // ── Narrow main area (tablet beside the sidebar, and phone): stack ────────────
-@container tasting-main (max-width: 700px) {
+@container main (max-width: 700px) {
 	.reveal-scorecard {
 		grid-template-columns: minmax(0, 1fr);
 

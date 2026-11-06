@@ -1,31 +1,45 @@
 @use '../abstracts' as *;
 :root {
-	--navbar-height_approx: 4.75rem;
-	@include responsive($breakpoint-tablet) {
-		--navbar-height_approx: 5rem;
-	}
-	@include responsive(45rem, max, height) {
-		--navbar-height_approx: 4.3rem;
+	--navbar-height_approx: 68px;
+	@include responsive($breakpoint-nav) {
+		--navbar-height_approx: 64px;
 	}
 }
 
-// The page column: home sections, the footer. Elements on it set only padding-block.
+// The page column: the home sections, the footer and the signed-in pages. Elements on it set only padding-block.
 .page-container {
-	max-width: 1300px;
+	max-width: 1184px;
 	margin-inline: auto;
-	padding-inline: 56px;
+	padding-inline: 32px;
 	box-sizing: border-box;
 
-	@include responsive($breakpoint-laptop) {
-		padding-inline: 40px;
-	}
-
-	@include responsive($breakpoint-mobile) {
-		padding-inline: 20px;
+	@include responsive(45rem) {
+		padding-inline: 16px;
 	}
 }
 
-// The one text field style outside the tasting grid: auth forms and the phone menu's join code.
+// The signed-in pages under the site header: Archive, Progress, Account and the flights.
+.site-page {
+	min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	padding-top: var(--navbar-height_approx);
+	background-color: $color-ground;
+	color: $color-ink;
+}
+
+.site-main {
+	container: main / inline-size;
+	flex: 1;
+	width: 100%;
+	padding-block: 40px 72px;
+
+	@include responsive($breakpoint-mobile) {
+		padding-block: 24px 56px;
+	}
+}
+
+// The one text field style outside the tasting grid: the auth forms.
 .ledger-field {
 	width: 100%;
 	min-width: 0;
@@ -62,14 +76,5 @@
 		transition:
 			background-color 9999s ease-in-out,
 			color 9999s ease-in-out;
-	}
-
-	// A flight code: large mono capitals. !important to beat the coarse-pointer 16px rule, which is !important too.
-	&--code {
-		@include figures;
-		font-size: $text-24 !important;
-		font-weight: $font-weight-semibold;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
 	}
 }

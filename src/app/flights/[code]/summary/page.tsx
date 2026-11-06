@@ -1,5 +1,6 @@
 import { pageTitle } from '../../../../i18n/server';
-import TastingPageHeader from '../../../../components/layout/TastingPageHeader';
+import Header from '../../../../components/layout/Header';
+import Footer from '../../../../components/layout/Footer';
 import FlightSummaryClient from '../../../../components/flights/FlightSummaryClient';
 
 export const generateMetadata = pageTitle({ en: 'Flight Summary', pt: 'Resumo do flight' });
@@ -7,9 +8,10 @@ export const generateMetadata = pageTitle({ en: 'Flight Summary', pt: 'Resumo do
 export default async function FlightSummaryPage({ params }: { params: Promise<{ code: string }> }) {
 	const { code } = await params;
 	return (
-		<div className="flight-page">
-			<TastingPageHeader />
+		<div className="site-page">
+			<Header />
 			<FlightSummaryClient code={code.toUpperCase()} />
+			<Footer />
 		</div>
 	);
 }

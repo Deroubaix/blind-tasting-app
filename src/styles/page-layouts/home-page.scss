@@ -1,951 +1,620 @@
-@use 'sass:list';
 @use '../abstracts' as *;
-// Home page: the ledger look (abstracts/_ledger) with square corners.
 
+// The home page: the logged-out introduction (HomeIntro) and the logged-in overview (HomeDashboard).
 .home {
 	padding-top: var(--navbar-height_approx);
 	background-color: $color-ground;
 	color: $color-ink;
-	font-family: $font-sans;
+	font-size: 1.0625rem;
+
+	@include responsive($breakpoint-nav, min) {
+		font-size: $text-16;
+	}
+
+	p {
+		margin: 0;
+	}
 }
 
-// ── Shared pieces ─────────────────────────────────────────────────────────────
-// Labels and eyebrows are the shared .muted-label and .page-eyebrow; copy is .body-copy.
 .home-muted {
 	color: $color-text-secondary;
-	font-size: $text-13;
 }
 
-.home-no {
-	@include figures;
+.home-eyebrow {
 	font-size: $text-14;
-	color: $color-text-muted;
-}
-
-.home-figure {
-	@include figures;
-	font-weight: $font-weight-regular;
-	color: $color-ink;
-	line-height: 1;
-	white-space: nowrap;
-
-	span {
-		color: $color-text-muted;
-	}
-
-	&--sm {
-		font-size: $text-16;
-	}
-
-	&--md {
-		font-size: $text-20;
-	}
-
-	&--lg {
-		font-size: $text-32;
-	}
-
-	&--warn {
-		color: $color-warning;
-	}
-
-	&--pending {
-		font-style: italic;
-		color: $color-text-secondary;
-		font-size: $text-16;
-	}
+	color: $color-text-secondary;
 }
 
 .home-link {
-	@include ledger-link;
-	font-size: $text-15;
-	padding-bottom: 2px;
-}
+	font-weight: $font-weight-semibold;
+	color: $color-link;
 
-.home-ctas {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 16px 24px;
-
-	&--tight {
-		gap: 12px;
-	}
-}
-
-.home-note {
-	margin: 18px 0 0;
-	font-size: $text-13;
-	color: $color-text-secondary;
-
-	&--quiet {
-		margin-top: 36px;
-		font-size: $text-12;
-		color: $color-text-muted;
-	}
-}
-
-.home-card {
-	@include ledger-panel(20px 22px 16px);
-
-	&__top {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 12px;
-		margin-bottom: 6px;
-	}
-
-	&__title {
-		margin: 0 0 12px;
-		font-size: $text-16;
-		font-weight: $font-weight-semibold;
-		letter-spacing: -0.01em;
-		line-height: 1.3;
-	}
-}
-
-// Numbered rows with a folio rule between the number and the text.
-.home-rows {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.home-row {
-	@include ledger-row(8px);
-	display: grid;
-	grid-template-columns: 34px minmax(0, 1fr) auto;
-	column-gap: 12px;
-	align-items: center;
-
-	&__n {
-		@include folio-number;
-		align-self: stretch;
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-	}
-
-	&__text {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		font-size: $text-14;
+	&:hover {
 		color: $color-ink;
 	}
 }
 
-// A total under a double rule, as in an account book.
-.home-total {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 12px;
-	margin-top: 2px;
-	padding-top: 12px;
-	border-top: $rule-double;
-	font-size: $text-13;
+.home-note {
+	margin-top: 4px;
+	font-size: $text-14;
 	color: $color-text-secondary;
-
-	&--card {
-		margin-top: auto;
-	}
-
-	&--quiet {
-		border-top-color: $rule;
-	}
 }
 
-.home-dot {
-	width: 24px;
-	height: 24px;
-	border-radius: 50%;
-	flex-shrink: 0;
-	display: inline-flex;
+.home-ctas {
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	justify-content: center;
-	font-size: $text-11;
-	font-weight: $font-weight-semibold;
-	color: $color-ground;
-
-	@for $i from 1 through list.length($taster-tints) {
-		&--t#{$i - 1} {
-			background: list.nth($taster-tints, $i);
-		}
-	}
+	gap: 10px 14px;
 }
 
-// ── Hero ──────────────────────────────────────────────────────────────────────
-// Width and side padding come from .page-container, here and on every section.
-.home-hero {
-	padding-block: 88px 96px;
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 600px);
-	gap: 48px;
-	align-items: center;
-
-	// The one h1 that runs past the global cap: one step further up the scale.
-	&__title {
-		margin: 0 0 26px;
-		font-size: clamp(#{$text-40}, 5vw, #{$font-size-xxxxl * $text-scale-ratio});
-		font-weight: $font-weight-semibold;
-		letter-spacing: -0.045em;
-		line-height: 1;
-		text-wrap: balance;
-	}
-
-	&__lede {
-		margin: 0 0 36px;
-		max-width: 50ch;
-	}
-
-	&__visual {
-		display: grid;
-		grid-template-columns: 250px minmax(0, 1fr);
-		gap: 24px;
-		align-items: end;
-
-		&--recent {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	&__moment {
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	// Logged in: the recent tastings list is narrower than the two sample moments.
-	&--recent {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
-		gap: 56px;
-	}
-
-	@include responsive($breakpoint-laptop) {
-		grid-template-columns: 1fr;
-		padding-block: 56px 72px;
-
-		&__visual {
-			max-width: 640px;
-		}
-	}
-
-	@include responsive($breakpoint-mobile) {
-		padding-block: 40px 56px;
-
-		// The phone shows the scorecard alone.
-		&__visual {
-			grid-template-columns: 1fr;
-		}
-
-		&__moment--taste {
-			display: none;
-		}
-
-		// Logged in on the phone: the title, the two buttons and the list. Nothing else.
-		&--recent &__lede,
-		&--recent .home-link,
-		&--recent .home-note {
-			display: none;
-		}
-	}
+.home-pill {
+	@include ledger-tag;
 }
 
-.home-reveal {
-	box-shadow: $shadow-lift;
-}
+.home-fig {
+	font-family: $font-serif;
+	font-weight: $font-weight-heading;
+	font-variant-numeric: tabular-nums lining-nums;
+	font-size: $text-20;
+	white-space: nowrap;
 
-// A drawing of a phone, so its corners are a phone's, not the ledger's.
-.home-phone {
-	height: 460px;
-	border-radius: 32px;
-	border: 1px solid $rule;
-	background: $color-ground;
-	box-shadow: $shadow-lift;
-	overflow: hidden;
-	padding-top: 24px;
-
-	&__bar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 8px 14px 12px;
-		background: $color-card;
-		border-bottom: 1px solid $rule-soft;
-
-		> span:first-child {
-			display: flex;
-			flex-direction: column;
-			gap: 2px;
-			font-size: $text-15;
-		}
+	&--sm {
+		font-size: $text-18;
 	}
-
-	&__clock {
-		@include figures;
-		font-size: $text-15;
-		font-weight: $font-weight-semibold;
-		padding: 6px 9px;
-		border: 1px solid $rule;
-		border-radius: $radius;
-	}
-
-	&__steps {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 3px;
-		padding: 10px 14px;
-
-		span {
-			height: 3px;
-			background: $rule;
-
-			&.is-done {
-				background: $color-text-muted;
-			}
-
-			&.is-on {
-				background: $color-link;
-			}
-		}
-	}
-
-	&__card {
-		@include ledger-panel(11px 10px);
-		margin: 0 12px 10px;
-		display: flex;
-		flex-direction: column;
-		gap: 9px;
-	}
-
-	&__opts {
-		display: grid;
-		grid-template-columns: repeat(5, minmax(0, 1fr));
-		gap: 3px;
-
-		span {
-			height: 30px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: $radius-sm;
-			font-size: $text-11;
-			background: $color-raised;
-			border: 1px solid $rule-soft;
-			color: $color-text-secondary;
-
-			&.is-on {
-				@include selected-outline;
-			}
-		}
-	}
-}
-
-.home-recent .home-row {
-	@include ledger-row;
-
-	&__text strong {
-		font-size: $text-14;
-		font-weight: $font-weight-semibold;
-	}
-}
-
-// ── Sections with a folio margin ──────────────────────────────────────────────
-.home-section {
-	border-top: 1px solid $rule-soft;
-
-	&--tint {
-		background: $color-card;
-
-		.home-card {
-			background: $color-raised;
-		}
-	}
-
-	&__inner {
-		padding-block: 104px;
-		display: grid;
-		grid-template-columns: 72px minmax(0, 1fr);
-		column-gap: 36px;
-	}
-
-	&__body {
-		min-width: 0;
-	}
-
-	@include responsive($breakpoint-laptop) {
-		&__inner {
-			padding-block: 72px;
-			grid-template-columns: 48px minmax(0, 1fr);
-			column-gap: 24px;
-		}
-	}
-
-	// On phone the folio sits above the section, not in a margin.
-	@include responsive($breakpoint-mobile) {
-		&__inner {
-			padding-block: 56px;
-			grid-template-columns: 1fr;
-			row-gap: 12px;
-		}
-	}
-}
-
-.home-folio {
-	@include folio-number($text-16);
-	align-self: start;
-	padding-right: 20px;
-
-	@include responsive($breakpoint-mobile) {
-		text-align: left;
-		border-right: none;
-		padding-right: 0;
-	}
-}
-
-// Marketing section titles, a size above the global h2. `--lg` opens § 2 and the closing.
-.home-h2 {
-	margin: 0 0 20px;
-	font-size: clamp(#{$text-32}, 3.5vw, #{$font-size-xxxl});
-	letter-spacing: -0.035em;
-	line-height: 1.05;
 
 	&--lg {
+		font-size: 1.625rem;
+	}
+
+	&--xl {
+		font-size: 2.125rem;
+		line-height: 1.1;
+	}
+
+	&__of {
+		font-family: $font-sans;
+		font-size: 0.6em;
+		color: $color-text-secondary;
+	}
+}
+
+// A rule across the top of the text column, not the column's padding.
+@mixin column-rule {
+	background: linear-gradient($color-rule, $color-rule) top center / calc(100% - 64px) 1px no-repeat;
+
+	@include responsive(45rem) {
+		background-size: calc(100% - 32px) 1px;
+	}
+}
+
+// ── Cards ────────────────────────────────────────────────────────────────────
+.home-card {
+	box-sizing: border-box;
+	padding: 22px;
+	background: $color-card;
+	border: 1px solid $rule;
+	border-radius: 14px;
+	transition:
+		border-color 0.15s ease,
+		box-shadow 0.2s ease,
+		transform 0.2s ease;
+
+	h3 {
 		margin: 0;
-		font-size: clamp(#{$text-32}, 4.5vw, #{$font-size-xxxxl});
-		letter-spacing: -0.045em;
-		line-height: 1;
 	}
 }
 
-.home-flights__note {
-	margin-top: 18px;
-	max-width: 70ch;
+.home-door:hover,
+.home-mode:hover,
+.home-after__card:hover {
+	border-color: $rule-mid;
+	box-shadow: 0 10px 26px fade($color-shadow, 60%);
+	transform: translateY(-2px);
 }
 
-.home-split {
+.home-rows {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.home-row {
 	display: grid;
-	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-	gap: 56px;
-	align-items: start;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 10px;
+	padding: 9px 0;
+	border-top: 1px solid $rule;
+	font-size: $text-15;
 
-	&--even {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		align-items: center;
-	}
-
-	&--end {
-		align-items: end;
-		margin-bottom: 36px;
-	}
-
-	@include responsive($breakpoint-laptop) {
-		grid-template-columns: 1fr;
-		gap: 32px;
-	}
-}
-
-// A row of the § 1 and § 2 tables; each table sets its own columns.
-.home-trow {
-	@include ledger-row;
-	display: grid;
-	align-items: start;
-	font-size: $text-14;
-
-	&--head {
-		@include ledger-label;
+	&:first-child,
+	&--first {
 		border-top: none;
-		padding-top: 0;
 	}
-}
 
-// § 1 table
-.home-table {
-	padding: 22px 24px 18px;
-
-	&__row {
-		// Fixed result column: every row is its own grid, so auto widths would misalign them.
-		grid-template-columns: 34px 90px minmax(0, 1fr) minmax(0, 1fr) 124px;
-		column-gap: 14px;
+	&--total {
+		padding-top: 12px;
+		border-top: 2px solid $rule-mid;
 	}
 
 	&__field {
+		display: block;
 		font-size: $text-13;
-		font-weight: $font-weight-semibold;
 		color: $color-text-secondary;
 	}
 
-	&__label {
+	&__main {
 		display: flex;
 		flex-direction: column;
-		gap: 3px;
-	}
-
-	&__result {
-		justify-self: end;
-	}
-
-	.home-total {
-		margin-top: 0;
-	}
-
-	@include responsive($breakpoint-mobile) {
-		padding: 16px;
-
-		&__row {
-			grid-template-columns: 30px minmax(0, 1fr) auto;
-			row-gap: 4px;
-		}
-
-		.home-trow--head {
-			display: none;
-		}
-
-		&__field {
-			grid-column: 2;
-		}
-
-		.home-muted:not(.home-table__label .home-muted) {
-			grid-column: 2;
-		}
-
-		&__label {
-			grid-column: 2;
-		}
-
-		&__result {
-			grid-column: 3;
-			grid-row: 1;
-		}
-	}
-}
-
-.home-legend {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px 12px;
-	margin-top: 16px;
-	padding-top: 12px;
-	border-top: 1px solid $rule-soft;
-}
-
-// ── § 2 Flights ───────────────────────────────────────────────────────────────
-.home-flights__head {
-	display: flex;
-	align-items: flex-end;
-	justify-content: space-between;
-	gap: 24px 40px;
-	flex-wrap: wrap;
-	margin-bottom: 40px;
-}
-
-.home-steps {
-	list-style: none;
-	margin: 0 0 40px;
-	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	border-top: 1px solid $rule;
-	border-bottom: 1px solid $rule;
-
-	&__item {
-		display: grid;
-		grid-template-columns: 52px minmax(0, 1fr);
-		gap: 16px;
-		padding: 24px 24px 24px 0;
-
-		& + & {
-			border-left: 1px solid $rule-soft;
-			padding-left: 24px;
-		}
-
-		> .home-figure {
-			text-align: right;
-		}
-
-		> span:last-child {
-			display: flex;
-			flex-direction: column;
-			gap: 6px;
-
-			strong {
-				font-size: $text-16;
-				letter-spacing: -0.01em;
-			}
-		}
-	}
-
-	@include responsive($breakpoint-laptop) {
-		grid-template-columns: 1fr;
-
-		&__item + &__item {
-			border-left: none;
-			border-top: 1px solid $rule-soft;
-			padding-left: 0;
-		}
-	}
-}
-
-.home-flight {
-	padding: 0;
-	box-shadow: $shadow-lift;
-
-	&__head {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 6px 14px;
-		padding: 18px 24px;
-		border-bottom: 1px solid $rule-soft;
+		min-width: 0;
+		color: $color-ink;
 
 		strong {
-			font-size: $text-16;
+			font-weight: $font-weight-semibold;
+		}
+
+		&:hover strong {
+			color: $color-link;
 		}
 	}
+}
 
-	&__stat {
-		font-size: $text-13;
+.home-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 24px;
+	padding: 0 9px;
+	border: 1px solid currentColor;
+	border-radius: $radius-pill;
+	font-size: $text-13;
+	font-weight: $font-weight-semibold;
+	white-space: nowrap;
+
+	i {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: currentColor;
+	}
+
+	&--correct {
+		color: $color-ok;
+	}
+
+	&--close {
+		color: $color-close;
+	}
+
+	&--wrong,
+	&--notcalled {
+		color: $color-error;
+	}
+
+	&--na {
 		color: $color-text-secondary;
-
-		.home-figure {
-			margin-left: 6px;
-		}
-
-		&:first-of-type {
-			margin-left: auto;
-		}
 	}
 }
 
-.home-ftable {
-	padding: 18px 24px 16px;
+// ── Hero and the three ways in ───────────────────────────────────────────────
+.home-hero {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding-block: 40px 36px;
 
-	&__row {
-		grid-template-columns: 140px repeat(5, minmax(0, 1fr)) 64px;
-		column-gap: 16px;
-
-		&--label {
-			border-top-color: $rule;
-		}
-
-		&--group {
-			align-items: baseline;
-			border-top: $rule-double;
-			padding-bottom: 2px;
-		}
+	&__title {
+		max-width: 760px;
+		margin: 0;
+		font-size: 2.5rem;
+		line-height: 1.1;
 	}
 
-	&__who {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-weight: $font-weight-semibold;
-	}
-
-	&__cell {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 4px;
-		min-width: 0;
-		overflow-wrap: anywhere;
-	}
-
-	&__score,
-	&__score-col {
-		text-align: right;
-	}
-
-	// Tablet: one card per taster; the cells label themselves.
-	@include responsive(62.5rem) {
-		&__row {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 10px 16px;
-		}
-
-		.home-trow--head {
-			display: none;
-		}
-
-		&__who {
-			grid-column: 1 / -1;
-		}
-
-		&__cell::before {
-			content: attr(data-col);
-			@include ledger-label;
-		}
-
-		&__score {
-			grid-column: 1 / -1;
-			text-align: left;
-			order: -1;
-		}
-
-		&__row--group {
-			display: none;
-		}
-	}
-
-	@include responsive($breakpoint-mobile) {
-		display: none;
+	&__lede {
+		max-width: 640px;
+		font-size: 1.1875rem;
+		color: $color-text-secondary;
 	}
 }
 
-// Phone: one line per taster.
-.home-fcompact {
-	display: none;
-	list-style: none;
-	margin: 0;
-	padding: 8px 16px;
+.home-doors {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 10px;
+}
 
-	&__row {
-		@include ledger-row;
+.home-door {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	&__top {
 		display: flex;
 		align-items: center;
 		gap: 12px;
-
-		&:first-child {
-			border-top: none;
-		}
 	}
 
-	&__text {
-		flex: 1;
+	&__icon {
+		width: 40px;
+		height: 40px;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 10px;
+		background: $color-raised;
+		color: $color-wine;
+	}
+
+	&__title {
+		margin: 0;
+		font-family: $font-sans;
+		font-size: 1.1875rem;
+		font-weight: $font-weight-semibold;
+		line-height: 1.3;
+		letter-spacing: 0;
+	}
+
+	p {
+		font-size: $text-15;
+		color: $color-text-secondary;
+	}
+
+	&__cta {
+		margin-top: auto;
+	}
+
+	.btn-primary,
+	.btn-quiet {
+		align-self: flex-start;
+	}
+}
+
+// ── Sections ─────────────────────────────────────────────────────────────────
+.home-section {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding-block: 60px;
+	@include column-rule;
+	scroll-margin-top: var(--navbar-height_approx);
+
+	&__head {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
-		min-width: 0;
-	}
+		gap: 8px;
 
-	@include responsive($breakpoint-mobile) {
-		display: block;
-	}
-}
+		h2 {
+			margin: 0;
+			font-size: 2.25rem;
+		}
 
-.home-structure {
-	padding: 18px 24px 14px;
-	border-top: 1px solid $rule-soft;
-
-	@include responsive($breakpoint-mobile) {
-		padding: 16px;
+		p {
+			max-width: 620px;
+			color: $color-text-secondary;
+		}
 	}
 }
 
-.home-scales {
-	list-style: none;
+.home-modes {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.home-mode {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	padding: 26px;
+	scroll-margin-top: calc(var(--navbar-height_approx) + 16px);
+
+	&__kicker {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	h3 {
+		font-size: 1.625rem;
+	}
+
+	&__cta {
+		align-self: flex-start;
+	}
+}
+
+.home-steps {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
 	margin: 0;
 	padding: 0;
-
-	&--one {
-		display: none;
-	}
-
-	@include responsive($breakpoint-mobile) {
-		&--all {
-			display: none;
-		}
-
-		&--one {
-			display: block;
-		}
-	}
-}
-
-.home-scale .home-dot {
-	// Overlapping taster dots stay apart on the track.
-	box-shadow: 0 0 0 2px $color-raised;
-}
-
-// ── § 3 Exam pace ─────────────────────────────────────────────────────────────
-.home-pace {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	border: 1px solid $rule;
-	border-radius: $radius;
-
-	&__cell {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		padding: 28px 28px 24px;
-
-		& + & {
-			border-left: 1px solid $rule;
-		}
-
-		.home-figure {
-			font-size: clamp(#{$font-size-xxxxl}, 5vw, #{$font-size-xxxxl * $text-scale-ratio});
-			letter-spacing: -0.02em;
-		}
-	}
-
-	&__label {
-		@include ledger-label;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		padding-top: 12px;
-		border-top: $rule-double;
-		color: $color-text-secondary;
-
-		// The sub-line under the label reads as a sentence.
-		span {
-			font-weight: $font-weight-regular;
-			letter-spacing: normal;
-			text-transform: none;
-			font-size: $text-13;
-			color: $color-text-muted;
-		}
-	}
-
-	@include responsive($breakpoint-mobile) {
-		&__cell {
-			padding: 20px 16px;
-		}
-	}
-}
-
-// ── § 4 The grid ──────────────────────────────────────────────────────────────
-.home-phases {
 	list-style: none;
-	margin: 16px 0 0;
-	padding: 0;
-	border-top: 1px solid $rule;
 
-	&__row {
+	&__item {
 		display: grid;
-		grid-template-columns: 48px 240px minmax(0, 1fr);
-		column-gap: 24px;
-		align-items: baseline;
-		padding: 20px 0;
-		border-bottom: 1px solid $rule-soft;
+		grid-template-columns: 34px 1fr;
+		gap: 12px;
+		align-items: start;
 
-		.home-muted {
+		strong {
+			display: block;
+			font-size: 1.0625rem;
+			font-weight: $font-weight-semibold;
+			line-height: 1.35;
+		}
+
+		span span {
+			display: block;
+			margin-top: 2px;
 			font-size: $text-15;
-			line-height: 1.55;
+			line-height: 1.45;
+			color: $color-text-secondary;
 		}
 	}
 
 	&__n {
-		font-size: $text-24;
-		text-align: right;
-		color: $color-text-muted;
-	}
-
-	&__name {
-		font-size: $text-18;
-		font-weight: $font-weight-semibold;
-		letter-spacing: -0.015em;
-	}
-
-	@include responsive($breakpoint-laptop) {
-		&__row {
-			grid-template-columns: 40px minmax(0, 1fr);
-			row-gap: 6px;
-
-			.home-muted {
-				grid-column: 2;
-			}
-		}
+		font-family: $font-serif;
+		font-size: 1.375rem;
+		font-weight: $font-weight-heading;
+		line-height: 1.2;
+		color: $color-wine;
+		font-variant-numeric: tabular-nums;
 	}
 }
 
-// ── § 5 Archive ───────────────────────────────────────────────────────────────
-.home-archive {
+.home-after {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 20px;
+	gap: 16px;
 
 	&__card {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
-		padding: 22px;
+		gap: 14px;
 
-		p {
-			margin: 0;
+		h3 {
+			font-size: 1.375rem;
+		}
+
+		> p {
+			font-size: $text-15;
+			color: $color-text-secondary;
 		}
 	}
+}
 
-	&__title {
-		margin: 6px 0 0;
-		font-size: $text-24;
-		font-weight: $font-weight-semibold;
-		letter-spacing: -0.015em;
-		line-height: 1.2;
-	}
+.home-trend {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: $text-15;
+}
 
-	@include responsive($breakpoint-laptop) {
-		grid-template-columns: 1fr;
+.home-bars {
+	display: flex;
+	align-items: flex-end;
+	gap: 5px;
+	height: 56px;
+
+	i {
+		flex: 1;
+		background: $color-raised;
+		border-radius: 3px 3px 0 0;
+
+		&.is-on {
+			background: $color-wine;
+		}
 	}
 }
 
-.home-type {
-	@include ledger-tag;
-
-	&--red {
-		--tone: #{$color-link};
-	}
-
-	&--white {
-		--tone: #{$color-ok};
-	}
-}
-
-// ── § 6 Who it's for ──────────────────────────────────────────────────────────
-.home-who {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+.home-pace {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	border-top: 1px solid $rule;
+	gap: 12px;
 
-	li {
+	&__card {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
-		padding: 20px 24px 4px 0;
-	}
+		gap: 4px;
+		padding: 18px;
 
-	strong {
-		font-size: $text-18;
-		letter-spacing: -0.015em;
-	}
+		strong {
+			font-weight: $font-weight-semibold;
+		}
 
-	.home-muted {
-		font-size: $text-14;
-		line-height: 1.6;
+		.home-muted {
+			font-size: $text-14;
+		}
 	}
-
-	@include responsive($breakpoint-laptop) {
-		grid-template-columns: 1fr;
-	}
-}
-
-// ── Closing ───────────────────────────────────────────────────────────────────
-.home-closing-wrap {
-	border-top: 1px solid $rule-soft;
 }
 
 .home-closing {
-	padding-block: 112px 104px;
-	text-align: center;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	gap: 14px;
+	align-items: flex-start;
+	gap: 18px;
+	margin-top: 24px;
+	padding-block: 112px 104px;
+	@include column-rule;
 
-	.home-ctas {
-		justify-content: center;
-		margin-top: 10px;
+	h2 {
+		margin: 0;
+		font-size: 2.375rem;
 	}
 
-	@include responsive($breakpoint-mobile) {
+	p {
+		max-width: 560px;
+		font-size: $text-18;
+		color: $color-text-secondary;
+	}
+
+	.home-ctas {
+		margin-top: 6px;
+	}
+}
+
+// ── Logged in ────────────────────────────────────────────────────────────────
+.home-dash {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding-block: 40px 48px;
+
+	&__title {
+		margin: 0;
+		font-size: 2.5rem;
+		line-height: 1.1;
+	}
+
+	&__cards {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 16px;
+		margin-top: 10px;
+		align-items: start;
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 16px 18px;
+
+		> .home-muted {
+			font-size: $text-15;
+		}
+	}
+
+	&__head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+
+		h2 {
+			margin: 0;
+			font-family: $font-sans;
+			font-size: $text-16;
+			font-weight: $font-weight-semibold;
+			letter-spacing: 0;
+		}
+
+		.home-link {
+			font-size: $text-14;
+		}
+	}
+}
+
+// ── Motion ───────────────────────────────────────────────────────────────────
+// Sections below the fold fade up as they arrive; the sample scorecard fills in row by row.
+.rv {
+	transition:
+		opacity 0.55s ease,
+		transform 0.55s ease;
+
+	&--waiting {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+
+	.home-tag,
+	.home-reveal-late {
+		transition:
+			opacity 0.4s ease,
+			transform 0.4s ease;
+	}
+
+	&--waiting .home-tag,
+	&--waiting .home-reveal-late {
+		opacity: 0;
+		transform: translateX(10px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rv,
+	.rv .home-tag,
+	.rv .home-reveal-late,
+	.home-card {
+		transition: none;
+	}
+
+	.rv--waiting,
+	.rv--waiting .home-tag,
+	.rv--waiting .home-reveal-late {
+		opacity: 1;
+		transform: none;
+	}
+
+	.home-door:hover,
+	.home-mode:hover,
+	.home-after__card:hover {
+		transform: none;
+	}
+}
+
+// ── Narrower ─────────────────────────────────────────────────────────────────
+@include responsive($breakpoint-nav) {
+	.home-after,
+	.home-dash__cards {
+		grid-template-columns: 1fr;
+	}
+}
+
+@include responsive(45rem) {
+	.home-hero {
+		padding-block: 28px 32px;
+
+		&__title {
+			font-size: 2.25rem;
+		}
+
+		&__lede {
+			font-size: 1.0625rem;
+		}
+	}
+
+	.home-doors,
+	.home-modes {
+		grid-template-columns: 1fr;
+	}
+
+	.home-section {
+		padding-block: 44px;
+
+		&__head h2 {
+			font-size: 1.875rem;
+		}
+	}
+
+	.home-pace {
+		gap: 8px;
+
+		&__card {
+			padding: 14px 12px;
+		}
+
+		.home-fig--xl {
+			font-size: 1.625rem;
+		}
+	}
+
+	.home-closing {
 		padding-block: 72px;
+
+		h2 {
+			font-size: 2rem;
+		}
+	}
+
+	.home-dash__title {
+		font-size: 1.875rem;
 	}
 }

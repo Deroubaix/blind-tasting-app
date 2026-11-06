@@ -3,16 +3,8 @@
 // Flights: study groups tasting together
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
-.flight-page {
-	min-height: 100dvh;
-	background-color: $color-ground;
-	color: $color-ink;
-	display: flex;
-	flex-direction: column;
-	font-family: $font-sans;
-}
-
 .flight-main {
+	flex: 1 0 auto;
 	width: 100%;
 	max-width: 1200px;
 	margin: 0 auto;
@@ -260,7 +252,7 @@
 		min-width: 0;
 	}
 
-	@container tasting-main (max-width: 760px) {
+	@container main (max-width: 760px) {
 		grid-template-columns: 1fr;
 	}
 
