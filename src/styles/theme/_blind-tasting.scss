@@ -20,6 +20,8 @@ $paper: (
 	'taster-2': #466d3e,
 	'taster-3': #7a5c17,
 	'taster-4': #44628a,
+	'bar-red': #ded3c1,
+	'bar-white': #d9b48f,
 	'shadow': rgba(39, 32, 29, 0.14),
 	'scrim': rgba(39, 32, 29, 0.45),
 );
@@ -43,6 +45,8 @@ $cellar: (
 	'taster-2': #a8c49f,
 	'taster-3': #d6bf8e,
 	'taster-4': #a6b8d2,
+	'bar-red': #3b3330,
+	'bar-white': #a98a5e,
 	'shadow': rgba(0, 0, 0, 0.5),
 	'scrim': rgba(0, 0, 0, 0.66),
 );
@@ -108,3 +112,5 @@ $color-wine-gold-tint: #c9a227;
 // Overlays and depth
 $color-shadow: var(--c-shadow);
 $color-scrim: var(--c-scrim);
+$color-bar-red: var(--c-bar-red); // Progress chart: one tasting of a red
+$color-bar-white: var(--c-bar-white);
