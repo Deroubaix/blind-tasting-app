@@ -1,5 +1,5 @@
 @use '../abstracts' as *;
-// Start page, and the flight-create page that borrows its pieces. Fields and the aside come from tasting-inputs.
+// Start page, and the flight-create page that shares its questions and footer.
 
 // ── Page shell ────────────────────────────────────────────────────────────────
 .tasting-start-page {
@@ -12,431 +12,192 @@
 .start-main {
 	flex: 1;
 	width: 100%;
-	max-width: 760px;
+	max-width: 640px;
 	margin: 0 auto;
-	padding: 64px 48px 96px;
+	padding: 56px 24px 0;
 
 	@include responsive($breakpoint-mobile) {
-		padding: $spacing-xxxl 16px 64px;
+		padding: 32px 16px 0;
 	}
 }
 
-// ── Page head ─────────────────────────────────────────────────────────────────
 .start-head {
+	margin-bottom: 36px;
+
+	h1 {
+		margin: 0 0 8px;
+	}
+
+	p {
+		margin: 0;
+		max-width: 52ch;
+		font-size: $text-15;
+		line-height: 1.6;
+		color: $color-text-secondary;
+	}
+}
+
+// ── Questions ─────────────────────────────────────────────────────────────────
+.start-form {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	gap: $spacing-md;
-	margin-bottom: 56px;
-
-	@include responsive($breakpoint-mobile) {
-		margin-bottom: $spacing-xxxl;
-	}
+	gap: 32px;
 }
 
-.start-sub {
-	font-size: $text-15;
-	color: $color-text-secondary;
-	line-height: 1.65;
-	max-width: 48ch;
-	margin: 0;
-}
+.start-q {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 
-// ── First-visit intro ─────────────────────────────────────────────────────────
-.start-intro {
-	@include ledger-panel($spacing-lg $spacing-xl);
-	position: relative;
-	margin-bottom: 48px;
-	border-color: $rule-accent;
-
-	@include responsive($breakpoint-mobile) {
-		margin-bottom: $spacing-xxxl;
-		padding: $spacing-md $spacing-lg;
-	}
-
-	&__heading {
-		margin: 0 $spacing-xxxl $spacing-md 0;
+	&__label {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		margin: 0;
+		font-family: $font-sans;
 		font-size: $text-16;
 		font-weight: $font-weight-semibold;
 		color: $color-ink;
-	}
 
-	&__steps {
-		display: flex;
-		flex-direction: column;
-		gap: $spacing-sm;
-		margin: 0;
-		padding-left: $spacing-lg;
-		font-size: $text-14;
-		line-height: 1.6;
-		color: $color-text-secondary;
-
-		strong {
-			color: $color-ink;
-			font-weight: $font-weight-semibold;
+		small {
+			font-family: $font-sans;
+			font-size: $text-13;
+			font-weight: $font-weight-regular;
+			color: $color-text-muted;
 		}
 	}
 
-	&__close {
-		@include bare-button;
-		position: absolute;
-		top: 4px;
-		right: 4px;
-		width: 44px;
-		height: 44px;
-		color: $color-text-muted;
-		transition: color 0.15s ease;
+	h3.start-q__label {
+		font-size: $text-15;
+	}
 
-		&:hover,
-		&:focus-visible {
-			color: $color-ink;
-		}
+	&__options {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 8px;
 	}
 }
 
-// ── Steps ─────────────────────────────────────────────────────────────────────
-.start-step {
+.start-option {
+	@include bare-button;
 	display: flex;
 	flex-direction: column;
-	gap: $spacing-lg;
-	margin-bottom: 48px;
-}
-
-.start-step-label {
-	display: flex;
-	align-items: baseline;
-	gap: $spacing-sm;
-	padding-bottom: $spacing-sm;
-	border-bottom: 1px solid $rule;
-}
-
-.start-step-num {
-	@include figures;
-	font-size: $text-13;
-	color: $color-link;
-}
-
-// The look is .tasting-aside's; here it only pushes to the end of the row.
-.start-step-hint {
-	margin-left: auto;
-}
-
-// ── Choice cards (grid, wine type) ────────────────────────────────────────────
-.start-wine-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: $spacing-md;
-
-	// Two-up on a phone too: stacked, the cards fill the screen and push the settings out of sight.
-	@include responsive($breakpoint-mobile) {
-		gap: 12px;
-	}
-}
-
-.start-wine-card {
-	@include ledger-panel($spacing-lg);
-	text-align: left;
-	display: flex;
-	flex-direction: column;
-	gap: $spacing-md;
-	overflow: hidden;
-	transition:
-		background-color 0.15s ease,
-		border-color 0.15s ease;
-
-	&:hover {
-		background-color: $color-raised;
-		border-color: $rule-mid;
-	}
-
-	&:focus-visible {
-		outline-offset: 3px;
-	}
-
-	// A ring, not a fill, so the card's text keeps its colours; a shadow, so it doesn't resize.
-	&--selected,
-	&--selected:hover {
-		background-color: $color-card;
-		border-color: $color-wine;
-		box-shadow: 0 0 0 1px $color-wine;
-	}
-}
-
-// The grid cards carry no icon, so the text sits on its own.
-.start-grid-card {
-	gap: 0;
-}
-
-.start-wine-icon {
-	width: 44px;
-	height: 44px;
-	border-radius: $radius;
-	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-shrink: 0;
-
-	&--red {
-		@include icon-tile($color-wine-red-tint);
-	}
-	&--white {
-		@include icon-tile($color-wine-gold-tint);
-	}
-}
-
-.start-wine-name {
-	font-size: $text-18;
-	font-weight: $font-weight-semibold;
-	letter-spacing: -0.01em;
-	line-height: 1.1;
-}
-
-.start-wine-tags {
-	@include ledger-label($text-10, $color-text-muted);
-
-	// Two-up, the card is 168px wide; at full size the tracking wraps this to three lines.
-	@include responsive($breakpoint-mobile) {
-		font-size: $text-9;
-	}
-}
-
-// ── Settings panel ────────────────────────────────────────────────────────────
-.start-settings {
-	@include ledger-panel($spacing-xxxs $spacing-lg);
-}
-
-.start-setting-row {
-	@include ledger-row(18px);
-	display: flex;
-	align-items: center;
-	gap: $spacing-md;
-
-	&:first-child {
-		border-top: none;
-	}
-
-	&--duration {
-		padding-bottom: $spacing-lg;
-	}
-
-	&--disabled {
-		opacity: 0.4;
-		pointer-events: none;
-	}
-}
-
-.start-setting-icon {
-	width: 36px;
-	height: 36px;
-	border-radius: $radius;
-	background-color: $color-raised;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: $color-text-secondary;
-	flex-shrink: 0;
-}
-
-.start-setting-text {
-	flex: 1;
-	min-width: 0;
-}
-
-.start-setting-name {
-	font-size: $text-15;
-	font-weight: $font-weight-semibold;
-	color: $color-ink;
-	line-height: 1.2;
-}
-
-.start-setting-desc {
-	font-size: $text-13;
-	color: $color-text-secondary;
-	margin-top: 3px;
-	line-height: 1.45;
-}
-
-// ── On/off switch ─────────────────────────────────────────────────────────────
-// The one true on/off control, so the one solid accent fill.
-.start-switch {
-	position: relative;
-	width: 48px;
-	height: 28px;
-	flex-shrink: 0;
+	gap: 2px;
+	min-height: 44px;
+	padding: 8px 16px;
 	border: 1px solid $rule-mid;
 	border-radius: $radius-pill;
+	background: $color-card;
+	color: $color-ink;
+	font-size: $text-15;
+	text-align: center;
 	transition:
 		background-color 0.15s ease,
 		border-color 0.15s ease;
+
+	small {
+		font-size: $text-12;
+		color: $color-text-muted;
+	}
 
 	&:hover {
 		border-color: $color-text-secondary;
 	}
 
-	&[aria-pressed='true'] {
-		background-color: $color-wine;
+	&[aria-checked='true'] {
+		background: $color-wine;
 		border-color: $color-wine;
+		color: $color-on-wine;
+		font-weight: $font-weight-semibold;
 
-		.start-switch__knob {
-			transform: translateX(20px);
-			background-color: $color-on-wine;
+		small {
+			font-weight: $font-weight-regular;
+			color: inherit;
+			opacity: 0.85;
 		}
 	}
-
-	&:focus-visible {
-		outline-offset: 3px;
-	}
 }
 
-.start-switch__knob {
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	width: 22px;
-	height: 22px;
-	border-radius: 50%;
-	background-color: $color-text-secondary;
-	transition:
-		transform 0.15s ease,
-		background-color 0.15s ease;
-	display: block;
-	pointer-events: none;
+// Two-line pills read as cards, not capsules.
+.start-option:has(small) {
+	border-radius: 14px;
 }
 
-// ── Duration segmented control ────────────────────────────────────────────────
-.start-duration {
-	width: 100%;
-	padding: 4px;
-	border: 1px solid $rule;
-	border-radius: $radius;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 4px;
-}
-
-.start-duration-pill {
+.start-timer {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 3px;
-	min-height: 44px;
-	padding: 10px 14px;
-	border: 1px solid transparent;
-	border-radius: $radius-sm;
-	text-align: center;
-	font-size: $text-13;
-	font-weight: $font-weight-regular;
-	color: $color-text-secondary;
-	transition:
-		border-color 0.15s ease,
-		color 0.15s ease;
+	gap: 20px;
 
-	&:hover {
-		color: $color-ink;
-		border-color: $rule-mid;
-	}
-
-	&--on,
-	&--on:hover {
-		border-color: $color-wine;
-		box-shadow: 0 0 0 1px $color-wine;
-		color: $color-ink;
-
-		// The label sets its own muted colour, so it has to be named to take the accent.
-		.start-duration-pill__label {
-			color: $color-link;
-		}
+	&__settings {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding-left: 18px;
+		border-left: 2px solid $rule;
 	}
 }
 
-.start-duration-pill__time {
-	@include figures;
-	display: block;
-	font-size: $text-15;
-	font-weight: $font-weight-semibold;
-}
-
-.start-duration-pill__label {
-	@include ledger-label($text-10, $color-text-muted);
-	display: block;
-}
-
-// ── Wine identity input ───────────────────────────────────────────────────────
-.start-identity-wrap {
-	display: flex;
-	align-items: center;
-	gap: $spacing-xs;
-	padding: 0 $spacing-md;
-}
-
-.start-identity-input {
-	flex: 1;
-	min-width: 0;
-	padding: $spacing-md 0;
-	font-size: $text-15;
-	line-height: 1.3;
+.start-input {
+	width: 100%;
+	min-height: 48px;
+	box-sizing: border-box;
+	padding: 0 14px;
+	border: 1px solid $rule-mid;
+	border-radius: $radius;
+	background: $color-card;
+	color: $color-ink;
+	font-size: $text-16;
 
 	&::placeholder {
 		color: $color-text-muted;
 	}
 
-	// The wrap's border shows focus.
-	&:focus-visible {
-		outline: none;
+	&:focus {
+		border-color: $color-link;
 	}
 }
 
-.start-identity-counter {
-	@include figures;
-	font-size: $text-11;
-	color: $color-text-muted;
-	flex-shrink: 0;
-}
-
-// The reason the label is not the wine, under the field.
-.start-identity-hint {
-	display: flex;
-	align-items: flex-start;
-	gap: $spacing-xxs;
-	margin: $spacing-xs 0 0;
+.start-note {
+	margin: 0;
 	font-size: $text-13;
 	line-height: 1.5;
-	color: $color-text-secondary;
+	color: $color-text-muted;
+}
 
-	svg {
-		flex-shrink: 0;
-		margin-top: 2px;
-		color: $color-link;
+.start-how {
+	padding: 20px 22px;
+	border: 1px solid $rule;
+	border-radius: 12px;
+	background: $color-card;
+
+	h2 {
+		margin: 0 0 10px;
+		font-family: $font-sans;
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+	}
+
+	ol {
+		margin: 0;
+		padding-left: 1.25em;
+		font-size: $text-14;
+		line-height: 1.55;
+		color: $color-text-secondary;
+
+		> li {
+			margin: 0;
+		}
+
+		> li + li {
+			margin-top: 6px;
+		}
 	}
 }
 
-// ── CTA ───────────────────────────────────────────────────────────────────────
-.start-cta {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: $spacing-md;
-	margin-top: $spacing-xxl;
-}
-
-// Width only; the rest is .btn-primary.
-.start-cta__btn {
-	min-width: min(280px, 100%);
-}
-
-.start-hint {
-	@include ledger-label($text-11, $color-text-muted);
-	text-align: center;
-}
-
-.start-hint__accent {
-	color: $color-link;
-}
-
-// ── Grid credit and disclaimer ────────────────────────────────────────────────
 .start-legal {
-	margin: $spacing-xxxl auto 0;
+	margin: 40px auto 0;
 	max-width: 36rem;
 	font-size: $text-11-5;
 	line-height: 1.6;
@@ -444,57 +205,38 @@
 	text-align: center;
 }
 
-// ── Phase preview rail ────────────────────────────────────────────────────────
-.start-phase-rail {
-	margin-top: 56px;
-	padding-top: $spacing-xxl;
+// ── Sticky footer: the one action, and what it will start ─────────────────────
+.start-foot {
+	position: sticky;
+	bottom: 0;
+	z-index: 1;
+	margin: 32px -24px 0;
+	padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
 	border-top: 1px solid $rule;
-	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	gap: $spacing-xxs;
+	background: $color-ground;
 
 	@include responsive($breakpoint-mobile) {
-		gap: 4px;
+		margin-inline: -16px;
+		padding-inline: 16px;
 	}
-}
 
-.start-phase-chip {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
-	text-align: center;
-	padding: 10px 6px;
-
-	@include responsive($breakpoint-mobile) {
-		padding: 8px 3px;
+	&__inner {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
-}
 
-.start-phase-chip__num {
-	@include figures;
-	font-size: $text-12;
-	color: $color-link;
-}
-
-.start-phase-chip__name {
-	font-size: $text-11-5;
-	font-weight: $font-weight-semibold;
-	color: $color-ink;
-	line-height: 1.2;
-
-	@include responsive($breakpoint-mobile) {
-		font-size: $text-10;
+	.btn-primary {
+		@include icon-label(8px);
+		justify-content: center;
+		width: 100%;
+		min-height: 50px;
 	}
-}
 
-.start-phase-chip__time {
-	@include figures;
-	font-size: $text-11;
-	color: $color-text-secondary;
-
-	// Exam mode: the split is only a pacing guide.
-	&--muted {
-		color: $color-text-muted;
+	&__summary {
+		margin: 0;
+		font-size: $text-13;
+		color: $color-text-secondary;
+		text-align: center;
 	}
 }

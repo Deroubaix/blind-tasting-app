@@ -130,8 +130,7 @@
 
 // ── Aside: the muted italic note beside a label ───────────────────────────────
 // A quiet aside, often inside a label.
-.tasting-aside,
-.start-step-hint {
+.tasting-aside {
 	font-size: $text-13;
 	color: $color-text-muted;
 }
@@ -140,8 +139,7 @@
 // One skin for every tasting field: the text fields and the shells that hold an icon and an input.
 .tasting-textarea,
 .tasting-input,
-.tasting-search-input-wrap,
-.start-identity-wrap {
+.tasting-search-input-wrap {
 	background-color: $color-raised;
 	border: 1px solid $rule;
 	border-radius: $radius;

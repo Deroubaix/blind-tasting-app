@@ -9,6 +9,7 @@ import { useToastProvider } from '../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { MAX_WINES } from '../../utils/flightLogic';
 import { flightService, useRequireLogin } from './FlightBits';
+import Choice from '../tasting/Choice';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';
 import { useText } from '../../i18n/LanguageProvider';
@@ -72,70 +73,43 @@ export default function FlightCreateClient() {
 	return (
 		<main className="start-main">
 			<header className="start-head">
-				<span className="page-eyebrow">{t.eyebrow}</span>
-				<h1>
-					{t.titleBefore}
-					<em>{t.titleEm}</em>
-					{t.titleAfter}
-				</h1>
-				<p className="start-sub">{t.sub}</p>
+				<h1>{t.title}</h1>
+				<p>{t.sub}</p>
 			</header>
 
-			<form onSubmit={create}>
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">01</span>
-						<label className="item-label" htmlFor="flight-name">
-							{t.name}
-						</label>
-						<span className="start-step-hint">{t.required}</span>
-					</header>
-					<div className="start-identity-wrap">
-						<input
-							id="flight-name"
-							className="start-identity-input"
-							placeholder={t.namePlaceholder}
-							maxLength={40}
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-						/>
-						<span className="start-identity-counter">{name.length} / 40</span>
-					</div>
-				</section>
+			<form id="flight-form" className="start-form" onSubmit={create}>
+				<div className="start-q">
+					<label htmlFor="flight-name" className="start-q__label">
+						{t.name}
+						<small>{t.required}</small>
+					</label>
+					<input
+						id="flight-name"
+						className="start-input"
+						placeholder={t.namePlaceholder}
+						maxLength={40}
+						autoComplete="off"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+					/>
+				</div>
 
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">02</span>
-						<span className="item-label">{t.grid}</span>
-						<span className="start-step-hint">{t.gridHint}</span>
-					</header>
-					<div className="start-setting-row start-setting-row--duration">
-						<div className="start-duration" role="radiogroup" aria-label={t.gridAria}>
-							{(Object.keys(GRIDS) as Grid[]).map((option) => (
-								<button
-									key={option}
-									type="button"
-									role="radio"
-									aria-checked={grid === option}
-									className={`start-duration-pill${grid === option ? ' start-duration-pill--on' : ''}`}
-									onClick={() => chooseGrid(option)}
-								>
-									<span className="start-duration-pill__time">{common.grid[option].short}</span>
-									<span className="start-duration-pill__label">{common.grid[option].name}</span>
-								</button>
-							))}
-						</div>
-					</div>
-				</section>
+				<Choice
+					label={t.grid}
+					hint={t.gridHint}
+					value={grid}
+					onChange={chooseGrid}
+					options={(Object.keys(GRIDS) as Grid[]).map((option) => ({
+						value: option,
+						text: common.grid[option].name,
+					}))}
+				/>
 
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">03</span>
-						<span className="item-label" id="flight-wines-label">
-							{t.wines}
-						</span>
-						<span className="start-step-hint">{t.winesHint(MAX_WINES)}</span>
-					</header>
+				<div className="start-q">
+					<h2 className="start-q__label" id="flight-wines-label">
+						{t.wines}
+						<small>{t.winesHint(MAX_WINES)}</small>
+					</h2>
 					<div className="flight-stepper" role="group" aria-labelledby="flight-wines-label">
 						<button
 							type="button"
@@ -160,42 +134,32 @@ export default function FlightCreateClient() {
 						</button>
 						<p className="flight-stepper__note">{t.numbered(wineCount)}</p>
 					</div>
-				</section>
+				</div>
 
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">04</span>
-						<span className="item-label">{t.timer}</span>
-						<span className="start-step-hint">{t.timerHint}</span>
-					</header>
-					<div className="start-setting-row start-setting-row--duration">
-						<div className="start-duration" role="radiogroup" aria-label={t.timerAria}>
-							{timers(grid, t, text.bits.untimed).map((option) => (
-								<button
-									key={option.time}
-									type="button"
-									role="radio"
-									aria-checked={timerSeconds === option.seconds}
-									className={`start-duration-pill${timerSeconds === option.seconds ? ' start-duration-pill--on' : ''}`}
-									onClick={() => setTimerSeconds(option.seconds)}
-								>
-									<span className="start-duration-pill__time">{option.time}</span>
-									<span className="start-duration-pill__label">{option.label}</span>
-								</button>
-							))}
-						</div>
-					</div>
-					<p className="flight-note">{t.timerNote}</p>
-				</section>
+				{/* Untimed is 0 here, as the pills need a value; it is saved as null. */}
+				<Choice
+					label={t.timer}
+					hint={t.timerHint}
+					value={timerSeconds ?? 0}
+					onChange={(seconds) => setTimerSeconds(seconds || null)}
+					options={timers(grid, t, text.bits.untimed).map((option) => ({
+						value: option.seconds ?? 0,
+						text: option.time,
+						note: option.label,
+					}))}
+				/>
+				<p className="start-note">{t.timerNote}</p>
+			</form>
 
-				<div className="start-cta">
-					<button type="submit" className="btn-primary start-cta__btn" disabled={!name.trim() || saving}>
+			<div className="start-foot">
+				<div className="start-foot__inner">
+					<button type="submit" form="flight-form" className="btn-primary" disabled={!name.trim() || saving}>
 						{saving ? t.creating : t.submit}
 						<IconArrowRight size={16} aria-hidden="true" />
 					</button>
-					<p className="start-hint">{t.hint}</p>
+					<p className="start-foot__summary">{t.hint}</p>
 				</div>
-			</form>
+			</div>
 		</main>
 	);
 }

@@ -2,26 +2,16 @@
 
 import React, { useMemo, useState, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-	IconGlassFull,
-	IconBottle,
-	IconVolume,
-	IconVolumeOff,
-	IconStopwatch,
-	IconX,
-	IconArrowRight,
-	IconInfoCircle,
-} from '@tabler/icons-react';
+import { IconArrowRight } from '@tabler/icons-react';
+import Choice from './Choice';
 import { useToastProvider } from '../toast/ToastProvider';
 import { useTastingContext } from '../../components/tasting/TastingContext';
 import { unlockAudio } from '../../utils/beep';
 import {
 	DEFAULT_TIMER_MODE,
 	type TimerMode,
-	type TimerPhase,
 	defaultTimerSeconds,
 	formatTimerSeconds,
-	phaseSeconds,
 	timerPresets,
 } from '../../data/timerData';
 import { DEFAULT_GRID, GRIDS, type Grid, gridOf } from '../../data/grids';
@@ -30,22 +20,6 @@ import { commonText } from '../../i18n/common';
 import { tastingText } from '../../i18n/tasting';
 
 const TIMER_MODES: TimerMode[] = ['guided', 'exam'];
-
-const PHASE_KEYS: Record<Grid, { num: string; key: TimerPhase }[]> = {
-	cms: [
-		{ num: '01', key: 'sight' },
-		{ num: '02', key: 'nose' },
-		{ num: '03', key: 'palate' },
-		{ num: '04', key: 'initialConclusion' },
-		{ num: '05', key: 'finalConclusion' },
-	],
-	wset: [
-		{ num: '01', key: 'sight' },
-		{ num: '02', key: 'nose' },
-		{ num: '03', key: 'palate' },
-		{ num: '04', key: 'finalConclusion' },
-	],
-};
 
 /**
  * The last settings a taster started with, so a flight of six wines is set up once, not six
@@ -119,7 +93,6 @@ export default function TastingStartClient() {
 	const [secondsChoice, setTimerSeconds] = useState<number | null>(null);
 	const [modeChoice, setTimerMode] = useState<TimerMode | null>(null);
 	const [wineName, setWineName] = useState('');
-	const [introHidden, setIntroHidden] = useState(false);
 
 	const grid = gridChoice ?? (saved ? gridOf(saved.grid) : DEFAULT_GRID);
 	const presets = timerPresets(grid);
@@ -131,7 +104,6 @@ export default function TastingStartClient() {
 	const timerEnabled = timerChoice ?? saved?.timerEnabled ?? !firstVisit;
 	const timerSeconds = chosenSeconds ?? savedSeconds ?? defaultTimerSeconds(grid);
 	const timerMode = modeChoice ?? savedMode ?? DEFAULT_TIMER_MODE;
-	const firstPhase = common.phase[grid].sight;
 	// Preset labels and notes by seconds, falling back to the data's English.
 	const presetCopy = (preset: (typeof presets)[number]) =>
 		(t.presets as Record<number, { label: string; note: string } | undefined>)[preset.seconds] ?? preset;
@@ -169,278 +141,146 @@ export default function TastingStartClient() {
 		router.push(`/tastings/sight?wineType=${wineType.toLowerCase()}`);
 	};
 
+	const summary = wineType
+		? [
+				wineType === 'Red' ? common.red : common.white,
+				common.grid[grid].short,
+				timerEnabled ? `${t.modes[timerMode].name}, ${formatTimerSeconds(timerSeconds)}` : t.untimed,
+				timerEnabled ? (soundEnabled ? t.soundOn : t.soundOff) : '',
+			]
+				.filter(Boolean)
+				.join(' · ')
+		: t.chooseWine;
+
 	return (
 		<main className="start-main">
-			{/* ── Page head ── */}
 			<header className="start-head">
-				<span className="page-eyebrow">{t.eyebrow}</span>
-				<h1>
-					{t.headingBefore}
-					<em>{t.headingEm}</em>
-					{t.headingAfter}
-				</h1>
-				<p className="start-sub">{t.sub}</p>
+				<h1>{t.title}</h1>
+				<p>{t.sub}</p>
 			</header>
 
-			{firstVisit && !introHidden && (
-				<section className="start-intro" aria-labelledby="start-intro-heading">
-					<button
-						type="button"
-						className="start-intro__close"
-						onClick={() => setIntroHidden(true)}
-						aria-label={t.hideIntro}
-					>
-						<IconX size={16} aria-hidden="true" />
-					</button>
-					<h2 className="start-intro__heading" id="start-intro-heading">
-						{t.introHeading}
-					</h2>
-					<ol className="start-intro__steps">
-						{t.introTitles.map((title, index) => (
-							<li key={title}>
-								<strong>{title}</strong> {t.introBodies[index]}
-							</li>
+			<form id="start-form" className="start-form" onSubmit={handleStart}>
+				{/* Remembered like the other settings, so a WSET student picks it once. */}
+				<Choice
+					label={t.grid}
+					value={grid}
+					onChange={setGrid}
+					options={(Object.keys(GRIDS) as Grid[]).map((option) => ({
+						value: option,
+						text: common.grid[option].name,
+					}))}
+				/>
+				<Choice
+					label={t.wineType}
+					hint={t.required}
+					value={wineType}
+					onChange={setWineType}
+					options={[
+						{ value: 'Red', text: common.red },
+						{ value: 'White', text: common.white },
+					]}
+				/>
+
+				<div className="start-timer">
+					<Choice
+						label={t.timer}
+						value={timerEnabled}
+						onChange={setTimerEnabled}
+						options={[
+							{ value: false, text: t.off },
+							{ value: true, text: t.on },
+						]}
+					/>
+					{timerEnabled && (
+						<div className="start-timer__settings">
+							<Choice
+								sub
+								label={t.clock}
+								value={timerMode}
+								onChange={setTimerMode}
+								options={TIMER_MODES.map((mode) => ({
+									value: mode,
+									text: t.modes[mode].name,
+									note: t.modes[mode].label,
+								}))}
+							/>
+							<Choice
+								sub
+								label={t.timePerWine}
+								value={timerSeconds}
+								onChange={setTimerSeconds}
+								options={presets.map((preset) => ({
+									value: preset.seconds,
+									text: formatTimerSeconds(preset.seconds),
+									note: `${presetCopy(preset).label} · ${presetCopy(preset).note}`,
+								}))}
+							/>
+							<Choice
+								sub
+								label={t.sound}
+								hint={t.soundHint}
+								value={soundEnabled}
+								onChange={setSoundEnabled}
+								options={[
+									{ value: false, text: t.off },
+									{ value: true, text: t.on },
+								]}
+							/>
+						</div>
+					)}
+					{firstVisit && !timerEnabled && <p className="start-note">{t.firstUntimed}</p>}
+				</div>
+
+				{/* A name for the taster's records, not the wine: typing the wine here gave the answer
+					    away before tasting. Still saved as `wineName`, so older tastings keep working. */}
+				<div className="start-q">
+					<label htmlFor="start-label" className="start-q__label">
+						{t.label}
+						<small>{text.optional}</small>
+					</label>
+					<input
+						id="start-label"
+						className="start-input"
+						type="text"
+						placeholder={t.labelPlaceholder}
+						maxLength={50}
+						autoComplete="off"
+						value={wineName}
+						onChange={(e) => setWineName(e.target.value)}
+						aria-describedby="start-label-hint"
+					/>
+					<p className="start-note" id="start-label-hint">
+						{t.labelNote}
+					</p>
+				</div>
+
+				<section className="start-how" aria-labelledby="start-how-heading">
+					<h2 id="start-how-heading">{t.howTitle}</h2>
+					<ol>
+						{t.how.map((step) => (
+							<li key={step}>{step}</li>
 						))}
 					</ol>
 				</section>
-			)}
-
-			<form onSubmit={handleStart}>
-				{/* ── Step 1: Grid ── Remembered like the other settings, so a WSET student picks it once. */}
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">01</span>
-						<span className="item-label">{t.grid}</span>
-						<span className="start-step-hint">{common.grid[grid].title}</span>
-					</header>
-
-					<div className="start-wine-grid" role="radiogroup" aria-label={t.gridAria}>
-						{(Object.keys(GRIDS) as Grid[]).map((option) => (
-							<button
-								key={option}
-								type="button"
-								role="radio"
-								aria-checked={grid === option}
-								className={`start-wine-card start-grid-card${grid === option ? ' start-wine-card--selected' : ''}`}
-								onClick={() => setGrid(option)}
-							>
-								<div>
-									<h3 className="start-wine-name">{common.grid[option].name}</h3>
-									<p className="start-wine-tags">{t.gridTags[option]}</p>
-								</div>
-							</button>
-						))}
-					</div>
-				</section>
-
-				{/* ── Step 2: Wine type ── */}
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">02</span>
-						<span className="item-label">{t.wineType}</span>
-						<span className="start-step-hint">{t.required}</span>
-					</header>
-
-					<div className="start-wine-grid" role="radiogroup" aria-label={t.wineType}>
-						<button
-							type="button"
-							role="radio"
-							aria-checked={wineType === 'Red'}
-							className={`start-wine-card start-wine-card--red${wineType === 'Red' ? ' start-wine-card--selected' : ''}`}
-							onClick={() => setWineType('Red')}
-						>
-							<div className="start-wine-icon start-wine-icon--red">
-								<IconGlassFull size={22} />
-							</div>
-							<div>
-								<h3 className="start-wine-name">
-									{t.redBefore}
-									<em>{t.redEm}</em>
-								</h3>
-								<p className="start-wine-tags">{t.redTags}</p>
-							</div>
-						</button>
-
-						<button
-							type="button"
-							role="radio"
-							aria-checked={wineType === 'White'}
-							className={`start-wine-card start-wine-card--white${wineType === 'White' ? ' start-wine-card--selected' : ''}`}
-							onClick={() => setWineType('White')}
-						>
-							<div className="start-wine-icon start-wine-icon--white">
-								<IconBottle size={22} />
-							</div>
-							<div>
-								<h3 className="start-wine-name">
-									{t.whiteBefore}
-									<em>{t.whiteEm}</em>
-								</h3>
-								<p className="start-wine-tags">{t.whiteTags}</p>
-							</div>
-						</button>
-					</div>
-				</section>
-
-				{/* ── Step 3: Session settings ── */}
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">03</span>
-						<span className="item-label">{t.settings}</span>
-						<span className="start-step-hint">{text.optional}</span>
-					</header>
-
-					<div className="start-settings">
-						<div className="start-setting-row">
-							<div className="start-setting-icon">
-								{soundEnabled ? <IconVolume size={18} /> : <IconVolumeOff size={18} />}
-							</div>
-							<div className="start-setting-text">
-								<div className="start-setting-name">{t.sound}</div>
-								<p className="start-setting-desc">{t.soundDesc}</p>
-							</div>
-							<button
-								type="button"
-								className="start-switch"
-								aria-pressed={soundEnabled}
-								aria-label={t.toggleSound}
-								onClick={() => setSoundEnabled(!soundEnabled)}
-							>
-								<span className="start-switch__knob" />
-							</button>
-						</div>
-
-						<div className="start-setting-row">
-							<div className="start-setting-icon">
-								<IconStopwatch size={18} />
-							</div>
-							<div className="start-setting-text">
-								<div className="start-setting-name">{t.timer}</div>
-								<p className="start-setting-desc">{t.timerDesc}</p>
-							</div>
-							<button
-								type="button"
-								className="start-switch"
-								aria-pressed={timerEnabled}
-								aria-label={t.toggleTimer}
-								onClick={() => setTimerEnabled(!timerEnabled)}
-							>
-								<span className="start-switch__knob" />
-							</button>
-						</div>
-
-						<div
-							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
-						>
-							<div className="start-duration" role="radiogroup" aria-label={t.timePerWine}>
-								{presets.map((preset) => (
-									<button
-										key={preset.seconds}
-										type="button"
-										role="radio"
-										aria-checked={timerSeconds === preset.seconds}
-										title={presetCopy(preset).note}
-										disabled={!timerEnabled}
-										className={`start-duration-pill${timerSeconds === preset.seconds ? ' start-duration-pill--on' : ''}`}
-										onClick={() => setTimerSeconds(preset.seconds)}
-									>
-										<span className="start-duration-pill__time">
-											{formatTimerSeconds(preset.seconds)}
-										</span>
-										<span className="start-duration-pill__label">{presetCopy(preset).label}</span>
-									</button>
-								))}
-							</div>
-						</div>
-
-						<div
-							className={`start-setting-row start-setting-row--duration${!timerEnabled ? ' start-setting-row--disabled' : ''}`}
-						>
-							<div className="start-duration" role="radiogroup" aria-label={t.clock}>
-								{TIMER_MODES.map((mode) => (
-									<button
-										key={mode}
-										type="button"
-										role="radio"
-										aria-checked={timerMode === mode}
-										disabled={!timerEnabled}
-										className={`start-duration-pill${timerMode === mode ? ' start-duration-pill--on' : ''}`}
-										onClick={() => setTimerMode(mode)}
-									>
-										<span className="start-duration-pill__time">{t.modes[mode].name}</span>
-										<span className="start-duration-pill__label">{t.modes[mode].label}</span>
-									</button>
-								))}
-							</div>
-						</div>
-					</div>
-				</section>
-
-				{/* ── Step 4: Label ── A name for the taster's records, not the wine: typing the wine here
-				    gave the answer away before tasting. The wine itself is entered at the reveal. Still
-				    saved as `wineName`, so older tastings keep working. */}
-				<section className="start-step">
-					<header className="start-step-label">
-						<span className="start-step-num">04</span>
-						<span className="item-label">{t.label}</span>
-						<span className="start-step-hint">{t.labelHint}</span>
-					</header>
-
-					<div className="start-identity-wrap">
-						<input
-							className="start-identity-input"
-							type="text"
-							placeholder={t.labelPlaceholder}
-							maxLength={50}
-							value={wineName}
-							onChange={(e) => setWineName(e.target.value)}
-							aria-label={t.labelAria}
-							aria-describedby="start-label-hint"
-						/>
-						<span className="start-identity-counter">{wineName.length} / 50</span>
-					</div>
-					<p className="start-identity-hint" id="start-label-hint">
-						<IconInfoCircle size={15} aria-hidden="true" />
-						{t.labelNote}
-					</p>
-				</section>
-
-				{/* ── CTA ── */}
-				<div className="start-cta">
-					<button type="submit" className="btn-primary start-cta__btn" disabled={!wineType}>
-						{t.startTasting}
-						<IconArrowRight size={16} />
-					</button>
-					<p className="start-hint">
-						<span className="start-hint__accent">{firstPhase}</span>
-						{t.beginsImmediately}
-					</p>
-				</div>
 			</form>
 
-			{/* ── Phase preview rail ── */}
-			<div className="start-phase-rail" aria-hidden="true">
-				{PHASE_KEYS[grid].map((p) => {
-					const seconds = phaseSeconds(timerSeconds, p.key, grid);
-					// In exam mode the split is only a pacing guide, so it is shown muted.
-					const muted = !timerEnabled || timerMode === 'exam';
-					return (
-						<div key={p.num} className="start-phase-chip">
-							<span className="start-phase-chip__num">{p.num}</span>
-							<span className="start-phase-chip__name">{t.railNames[grid][p.key]}</span>
-							<span className={`start-phase-chip__time${muted ? ' start-phase-chip__time--muted' : ''}`}>
-								{timerEnabled ? formatTimerSeconds(seconds) : '—'}
-							</span>
-						</div>
-					);
-				})}
-			</div>
-
 			{/* The tasting pages have no footer, and every tasting starts here, so the credit and
-			    disclaimer the footer carries elsewhere live on this page too. */}
+				    disclaimer the footer carries elsewhere live on this page too. */}
 			<p className="start-legal">
 				{common.grid.cms.credit} {common.grid.wset.credit} {t.ledgerNotAffiliated}
 			</p>
+
+			<div className="start-foot">
+				<div className="start-foot__inner">
+					<button type="submit" form="start-form" className="btn-primary" disabled={!wineType}>
+						{t.startTasting}
+						<IconArrowRight size={16} aria-hidden="true" />
+					</button>
+					<p className="start-foot__summary" aria-live="polite">
+						{summary}
+					</p>
+				</div>
+			</div>
 		</main>
 	);
 }
