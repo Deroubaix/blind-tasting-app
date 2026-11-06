@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { IconCheck } from '@tabler/icons-react';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightSummary } from '../../types/Flight';
-import { Avatar, FlightMessage, flightService, formatTimer, useRequireLogin } from './FlightBits';
+import { Avatar, FlightHead, FlightMessage, flightService, formatTimer, useRequireLogin } from './FlightBits';
 import { formatDate } from '../../utils/DateUtils';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';
@@ -44,25 +44,26 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 
 	return (
 		<main className="flight-main">
-			<Link href={`/flights/${code}`} className="back-link">
-				← {summary.name}
-			</Link>
-			<header className="page-head">
-				<div>
-					<span className="page-head__eyebrow">
-						{text.bits.summary} ·{' '}
-						{revealed === summary.wines.length
-							? text.bits.allRevealed(revealed)
-							: text.bits.revealedOf(revealed, summary.wines.length)}
-					</span>
-					<h1 className="page-head__title">{summary.name}</h1>
-					<p className="page-head__sub">
-						{date} · {text.bits.hostedBy(summary.hostName)} · {text.bits.tasters(summary.members.length)} ·{' '}
-						{formatTimer(summary.timerSeconds, lang)}
-					</p>
-				</div>
-				<p className="flight-note flight-summary__archive">{t.inArchive}</p>
-			</header>
+			<FlightHead
+				crumb={`${text.bits.summary} · ${
+					revealed === summary.wines.length
+						? text.bits.allRevealed(revealed)
+						: text.bits.revealedOf(revealed, summary.wines.length)
+				}`}
+				title={summary.name}
+				sub={[
+					date,
+					text.bits.hostedBy(summary.hostName),
+					text.bits.tasters(summary.members.length),
+					formatTimer(summary.timerSeconds, lang),
+				].join(' · ')}
+				actions={
+					<Link href={`/flights/${code}`} className="btn-quiet">
+						← {summary.name}
+					</Link>
+				}
+			/>
+			<p className="flight-note">{t.inArchive}</p>
 
 			<section className="flight-card flight-results__card">
 				<div className="flight-summary" role="table" aria-label={t.tableAria}>

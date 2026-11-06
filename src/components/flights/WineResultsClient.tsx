@@ -18,6 +18,7 @@ import {
 import { Avatar, FlightMessage, flightService, useFlight, useRequireLogin } from './FlightBits';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';
+import { archivesText } from '../../i18n/archives';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { formatAverage } from '../../utils/NumberUtils';
 
@@ -49,11 +50,11 @@ function structure(results: WineResults): StructureAttribute[] {
 
 function Legend() {
 	return (
-		<span className="flight-results__legend" aria-hidden="true">
+		<p className="flight-results__legend" aria-hidden="true">
 			{(['correct', 'close', 'wrong', 'notcalled'] as FieldStatus[]).map((status) => (
 				<StatusBadge key={status} status={status} />
 			))}
-		</span>
+		</p>
 	);
 }
 
@@ -206,6 +207,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 	const text = useText(flightsText);
 	const t = text.results;
 	const common = useText(commonText);
+	const { scorecard } = useText(archivesText);
 	const ready = useRequireLogin(`/flights/${code}/wines/${number}`);
 	const { flight } = useFlight(code, ready);
 	const [results, setResults] = useState<WineResults | null>(null);
@@ -256,19 +258,19 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 		});
 
 	const fields = scoredFields(results.grid);
-	const group = fields.map((field) => {
+	// A field the label doesn't carry is Not applicable for everyone, so it has no tally.
+	const group = fields.flatMap((field) => {
 		const statuses = submittedRows.map((row) => row.fields?.find((f) => f.key === field.key)?.status ?? 'na');
+		if (statuses.every((s) => s === 'na')) {
+			return [];
+		}
 		const right = statuses.filter((s) => s === 'correct').length;
 		const close = statuses.filter((s) => s === 'close').length;
-		return {
-			key: field.key,
-			statuses,
-			text: t.right(right, submittedRows.length, close),
-		};
+		return [{ key: field.key, text: t.right(right, submittedRows.length, close) }];
 	});
 
 	return (
-		<main className="flight-main">
+		<main className="flight-main flight-main--narrow">
 			<nav className="flight-results__nav" aria-label={t.winesAria}>
 				<Link href={`/flights/${code}`} className="back-link">
 					← {results.flightName}
@@ -287,8 +289,8 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 				</span>
 			</nav>
 
-			<header className="page-head">
-				<div>
+			<header className="flight-head">
+				<div className="flight-head__text">
 					<span className="flight-results__kicker">
 						{results.wineType && (
 							<span className={`wine-type-badge wine-type-badge--${results.wineType}`}>
@@ -299,149 +301,111 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 							{common.wineOf(results.number, results.wineCount)} · {t.revealed}
 						</span>
 					</span>
-					<h1 className="page-head__title">{results.title}</h1>
-					<p className="page-head__sub">{results.detail}</p>
+					<h1>{results.title}</h1>
+					<p className="flight-head__sub">{results.detail}</p>
 				</div>
-				<dl className="flight-stats">
-					<div>
-						<dt>{t.groupAverage}</dt>
-						<dd className="flight-stats__value">
-							{formatAverage(results.average, lang)}
-							<span> / {results.outOf}</span>
-						</dd>
-						<dd className="flight-stats__sub">{t.ofSubmitted(results.submitted)}</dd>
-					</div>
-					<div>
-						<dt>{t.best}</dt>
-						<dd className="flight-stats__value">
-							{results.best?.score ?? '—'}
-							<span> / {results.outOf}</span>
-						</dd>
-						<dd className="flight-stats__sub">{results.best?.name ?? '—'}</dd>
-					</div>
-					<div>
-						<dt>{t.submittedHeading}</dt>
-						<dd className="flight-stats__value">
-							{results.submitted}
-							<span>{t.ofTotal(results.memberCount)}</span>
-						</dd>
-						<dd className="flight-stats__sub">
-							{missing.length === 0
-								? t.everyone
-								: missing.length === 1
-									? t.oneMissing(missing[0].person.name.split(' ')[0])
-									: t.manyMissing(missing.length)}
-						</dd>
-					</div>
-				</dl>
 			</header>
+			<dl className="flight-stats">
+				<div>
+					<dt>{t.groupAverage}</dt>
+					<dd className="flight-stats__value">
+						{formatAverage(results.average, lang)}
+						<span> / {results.outOf}</span>
+					</dd>
+					<dd className="flight-stats__sub">{t.ofSubmitted(results.submitted)}</dd>
+				</div>
+				<div>
+					<dt>{t.best}</dt>
+					<dd className="flight-stats__value">
+						{results.best?.score ?? '—'}
+						<span> / {results.outOf}</span>
+					</dd>
+					<dd className="flight-stats__sub">{results.best?.name ?? '—'}</dd>
+				</div>
+				<div>
+					<dt>{t.submittedHeading}</dt>
+					<dd className="flight-stats__value">
+						{results.submitted}
+						<span>{t.ofTotal(results.memberCount)}</span>
+					</dd>
+					<dd className="flight-stats__sub">
+						{missing.length === 0
+							? t.everyone
+							: missing.length === 1
+								? t.oneMissing(missing[0].person.name.split(' ')[0])
+								: t.manyMissing(missing.length)}
+					</dd>
+				</div>
+			</dl>
 
 			<section className="flight-card flight-results__card" aria-labelledby="conclusions-heading">
-				<div className="flight-card__head">
-					<h2 className="tasting-card__label" id="conclusions-heading">
-						{t.conclusions}
-					</h2>
-					<Legend />
-				</div>
-
-				<div
-					className="flight-table"
-					role="table"
-					aria-label={t.tableAria}
-					// The column count is data, so this is the one inline style.
-					style={{ '--fields': fields.length } as React.CSSProperties}
-				>
-					<div className="flight-table__row flight-table__row--head" role="row">
-						<span role="columnheader">{t.taster}</span>
-						{fields.map((field) => (
-							<span key={field.key} role="columnheader">
-								{byKey(t.column, field.key, field.abbr)}
-							</span>
-						))}
-					</div>
-					<div className="flight-table__row flight-table__row--label" role="row">
-						<span role="rowheader" className="flight-table__who">
-							<span className="flight-table__label-mark" aria-hidden="true" />
-							<strong>{t.theLabel}</strong>
-						</span>
-						{fields.map((field) => (
-							<span
-								key={field.key}
-								role="cell"
-								className="flight-table__cell"
-								data-col={byKey(t.field, field.key, field.label)}
-							>
-								<strong>{results.reveal[field.key] || '—'}</strong>
-							</span>
-						))}
-					</div>
+				<h2 className="tasting-card__label" id="conclusions-heading">
+					{t.conclusions}
+				</h2>
+				<ul className="flight-calls" aria-label={t.tableAria}>
 					{results.rows.map((row) => (
-						<div
+						<li
 							key={row.person.id}
-							className={`flight-table__row${row.status === 'submitted' ? '' : ' flight-table__row--missing'}`}
-							role="row"
+							className={`flight-calls__row${row.status === 'submitted' ? '' : ' flight-calls__row--missing'}`}
 						>
-							<span role="rowheader" className="flight-table__who">
+							<div className="flight-calls__who">
 								<Avatar person={row.person} />
-								<span className="flight-table__name">
-									{row.status === 'submitted' ? (
-										<button type="button" className="text-link" onClick={() => openSheet(row)}>
-											{row.person.name} ›
-										</button>
-									) : (
-										<span>{row.person.name}</span>
-									)}
-									{row.status === 'submitted' ? (
-										<span className="score-tag">
-											{row.score} / {row.outOf}
-										</span>
-									) : (
-										<span className="flight-status flight-status--notsubmitted">
-											{text.bits.status.notsubmitted}
-										</span>
-									)}
-								</span>
-							</span>
+								{row.status === 'submitted' ? (
+									<button type="button" className="flight-calls__name" onClick={() => openSheet(row)}>
+										{row.person.name} ›
+									</button>
+								) : (
+									<span className="flight-calls__name">{row.person.name}</span>
+								)}
+								{row.status === 'submitted' ? (
+									<span className="figure">
+										{row.score}
+										<span className="figure__of"> / {row.outOf}</span>
+									</span>
+								) : (
+									<span className="flight-status flight-status--notsubmitted">
+										{text.bits.status.notsubmitted}
+									</span>
+								)}
+							</div>
 							{row.status === 'submitted' ? (
-								fields.map((field) => {
-									const cell = row.fields?.find((f) => f.key === field.key);
-									return (
-										<span
-											key={field.key}
-											role="cell"
-											className="flight-table__cell"
-											data-col={byKey(t.field, field.key, field.label)}
-										>
-											<span className={cell?.status === 'correct' ? '' : 'flight-muted'}>
+								<ul className="flight-calls__fields">
+									{fields.map((field) => {
+										const cell = row.fields?.find((f) => f.key === field.key);
+										const status = cell?.status ?? 'na';
+										const word = scorecard.status[status];
+										return (
+											<li
+												key={field.key}
+												className={`flight-calls__field flight-calls__field--${status}`}
+												title={`${byKey(t.field, field.key, field.label)}: ${word}`}
+											>
+												<span className="visually-hidden">
+													{byKey(t.field, field.key, field.label)}:{' '}
+												</span>
 												{cell?.call ?? '—'}
-											</span>
-											{cell && cell.status !== 'na' && <StatusBadge status={cell.status} />}
-										</span>
-									);
-								})
+												<span className="visually-hidden">, {word}</span>
+											</li>
+										);
+									})}
+								</ul>
 							) : (
-								<span role="cell" className="flight-table__note">
-									{t.missingNote}
-								</span>
+								<p className="flight-calls__note">{t.missingNote}</p>
 							)}
-						</div>
+						</li>
 					))}
-					<div className="flight-table__row flight-table__row--group" role="row">
-						<span role="rowheader" className="flight-muted">
-							{t.groupRow(submittedRows.length)}
-						</span>
+				</ul>
+				{submittedRows.length > 1 && (
+					<p className="flight-calls__group">
+						<span>{t.groupRow(submittedRows.length)}</span>
 						{group.map((g) => (
-							<span key={g.key} role="cell" className="flight-table__cell">
-								<span className="flight-muted">{g.text}</span>
-								<span className="flight-table__bar" aria-hidden="true">
-									{g.statuses.map((status, i) => (
-										<span key={i} className={`flight-table__seg flight-table__seg--${status}`} />
-									))}
-								</span>
+							<span key={g.key}>
+								{byKey(t.column, g.key, g.key)}: {g.text}
 							</span>
 						))}
-					</div>
-				</div>
+					</p>
+				)}
+				<Legend />
 			</section>
 
 			{attrs.length > 0 && (
@@ -455,7 +419,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 						</span>
 					</div>
 					<p className="flight-muted">{t.structureNote}</p>
-					<ul className="agreement-scales">
+					<ul className="agreement-scales agreement-scales--compact">
 						{attrs.map((attr) => (
 							<ScaleRow key={attr.name} attr={attr} results={results} />
 						))}

@@ -91,6 +91,10 @@
 			list-style: none;
 		}
 
+		li {
+			margin: 0;
+		}
+
 		li + li .archive-row {
 			border-top: 1px solid $rule;
 		}
