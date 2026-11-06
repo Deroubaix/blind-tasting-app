@@ -1,8 +1,13 @@
+import { redirect } from 'next/navigation';
 import Header from '../../../components/layout/Header';
 import Footer from '../../../components/layout/Footer';
 import TastingDetail from '../../../components/archives/TastingDetail';
 import { pageTitle } from '../../../i18n/server';
 import { archivesText } from '../../../i18n/archives';
+import ServerServices from '../../../services/server/ServerServices';
+import SessionService from '../../../services/server/SessionService';
+
+export const dynamic = 'force-dynamic';
 
 export const generateMetadata = pageTitle({
 	en: archivesText.en.page.detailTitle,
@@ -17,6 +22,9 @@ export default async function TastingDetailPage({
 	searchParams: Promise<{ reveal?: string }>;
 }) {
 	const { id } = await params;
+	if (!(await ServerServices.getClass(SessionService).currentUserId())) {
+		redirect(`/login?r=/archives/${id}`);
+	}
 	// `?reveal=1`: arrived from an archive card's Reveal button, so open straight onto the form.
 	const openReveal = (await searchParams).reveal === '1';
 

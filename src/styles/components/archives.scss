@@ -1,267 +1,6 @@
 @use '../abstracts' as *;
-// Archives page — card grid + tasting detail view
+// The archive: the list of saved tastings, and one tasting's page.
 
-// ── Head ──────────────────────────────────────────────────────────────────────
-// Lines the .page-head up with the card grid below it.
-.archives-head {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding-top: $spacing-xxl;
-	padding-inline: $spacing-xxl;
-
-	@include responsive($breakpoint-mobile) {
-		padding-top: $spacing-lg;
-		padding-inline: $spacing-md;
-	}
-}
-
-// ── Card grid ─────────────────────────────────────────────────────────────────
-.archives-grid {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: $spacing-lg;
-	padding: 0 $spacing-xxl $spacing-xxl;
-	max-width: 1200px;
-	margin: 0 auto;
-
-	@container main (max-width: 900px) {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	@container main (max-width: 600px) {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	@include responsive($breakpoint-mobile) {
-		padding: 0 $spacing-md $spacing-xl;
-	}
-}
-
-// ── Archive card ──────────────────────────────────────────────────────────────
-.archive-card {
-	@include ledger-panel($spacing-lg);
-	position: relative; // the box the Details link stretches over
-	display: flex;
-	flex-direction: column;
-	gap: $spacing-sm;
-	cursor: pointer;
-	color: $color-ink;
-	transition: border-color 0.15s ease;
-
-	&:hover {
-		border-color: $rule-mid;
-	}
-
-	&__top {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: $spacing-xxs;
-	}
-
-	&__badges {
-		display: flex;
-		align-items: center;
-		gap: $spacing-xxs;
-		flex-wrap: wrap;
-	}
-
-	// A flight wine waits for the host's reveal: a status, not a button. Dashed, so it reads as waiting.
-	&__waiting {
-		@include ledger-tag;
-		border-style: dashed;
-	}
-
-	// Not yet revealed: the tag is the way in, raised above the card's stretched Details link.
-	&__reveal {
-		@include ledger-tag;
-		--tone: #{$color-link};
-		position: relative;
-		z-index: 1;
-		border-style: dashed;
-		transition:
-			color 0.15s ease,
-			border-color 0.15s ease;
-
-		&:hover,
-		&:focus-visible {
-			--tone: #{$color-ink};
-			border-style: solid;
-		}
-	}
-
-	&__call {
-		margin: 0;
-		font-size: $text-12;
-		line-height: 1.4;
-		color: $color-text-muted;
-	}
-
-	&__call-label {
-		@include ledger-label($text-9);
-		margin-right: 6px;
-	}
-
-	&__id {
-		@include figures;
-		font-size: $text-12;
-		color: $color-text-muted;
-	}
-
-	&__title {
-		font-size: $text-24;
-		font-weight: $font-weight-semibold;
-		line-height: 1.2;
-		letter-spacing: -0.01em;
-	}
-
-	&__subtitle {
-		font-size: $text-13;
-		color: $color-text-secondary;
-		margin: 0;
-		line-height: 1.4;
-	}
-
-	&__conclusions {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: $spacing-xs;
-		margin-top: $spacing-xs;
-	}
-
-	&__conclusions-label {
-		@include ledger-label($text-9);
-	}
-
-	&__conclusions-text {
-		font-size: $text-13;
-		color: $color-text-secondary;
-		line-height: 1.55;
-		margin: 0;
-		display: -webkit-box;
-		-webkit-line-clamp: 4;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	&__footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-top: auto;
-		padding-top: $spacing-sm;
-		border-top: 1px solid $rule-soft;
-	}
-
-	&__date {
-		font-size: $text-12;
-		color: $color-text-muted;
-	}
-
-	&__details {
-		@include ledger-label($text-10, $color-link);
-		transition: color 0.15s ease;
-	}
-
-	&:hover &__details {
-		color: $color-ink;
-	}
-
-	&__actions {
-		display: flex;
-		align-items: center;
-		gap: $spacing-md;
-	}
-
-	// The whole card is the Details link's hit area: a pseudo-element covering the card, so the
-	// card stays one big target without being an <a> that the Delete button could not sit inside.
-	&__link::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-	}
-
-	// The card is the link visually, so it takes the keyboard focus ring too.
-	&:has(&__link:focus-visible) {
-		outline: 2px solid $color-link;
-		outline-offset: 2px;
-	}
-
-	&__link:focus-visible {
-		outline: none;
-	}
-
-	// Raised above the stretched link so it gets its own clicks. Quiet until hovered, so it is
-	// findable without competing with Details.
-	&__delete {
-		@include bare-button;
-		position: relative;
-		z-index: 1;
-		width: 28px;
-		height: 28px;
-		border: 1px solid transparent;
-		border-radius: $radius;
-		color: $color-text-muted;
-		transition:
-			color 0.15s ease,
-			border-color 0.15s ease;
-
-		&:hover:not(:disabled),
-		&:focus-visible {
-			color: $color-error;
-			border-color: fade($color-error, 40%);
-		}
-
-		&:disabled {
-			opacity: 0.5;
-			cursor: default;
-		}
-
-		@include responsive($breakpoint-mobile) {
-			width: 44px;
-			height: 44px;
-		}
-	}
-
-	// ── New tasting card ────────────────────────────────────────────────────────
-	&--new {
-		border-style: dashed;
-		background-color: transparent;
-		align-items: center;
-		justify-content: center;
-		min-height: 160px;
-		gap: $spacing-sm;
-		transition:
-			border-color 0.15s ease,
-			background-color 0.15s ease;
-
-		&:hover {
-			border-color: $rule-mid;
-			background-color: $color-card;
-		}
-	}
-
-	&__new-icon {
-		font-size: $text-24;
-		color: $color-text-secondary;
-		line-height: 1;
-		width: 40px;
-		height: 40px;
-		border: 1px solid $rule;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	&__new-label {
-		@include ledger-label($text-10, $color-text-secondary);
-	}
-}
-
-// ── Wine type badge ───────────────────────────────────────────────────────────
 .wine-type-badge {
 	@include ledger-tag;
 
@@ -274,159 +13,310 @@
 	}
 }
 
-// ── State: empty ──────────────────────────────────────────────────────────────
-// Inside .empty-state; lined up with the grid.
-.archives-empty {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding-inline: $spacing-xxl;
-
-	p {
-		margin: 0 0 $spacing-lg;
-	}
-}
-
-// Tasting detail page
-
-.tasting-detail__container {
-	max-width: 900px;
-	margin: 0 auto;
-	padding: $spacing-xxl $spacing-xxl $spacing-xxxl;
-
-	@include responsive($breakpoint-mobile) {
-		padding: $spacing-lg $spacing-md $spacing-xxl;
-	}
-}
-
-.tasting-detail__back {
-	margin-bottom: $spacing-xl;
-}
-
-.tasting-detail__hero-top {
-	display: flex;
-	align-items: center;
-	gap: $spacing-sm;
-	margin-bottom: $spacing-md;
-}
-
-.tasting-detail__hero-meta {
-	margin-left: auto;
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-	gap: $spacing-xxs $spacing-md;
-	font-size: $text-12;
-}
-
-.tasting-detail__id,
-.tasting-detail__date {
-	color: $color-text-muted;
-}
-
-.tasting-detail__id {
-	@include figures;
-}
-
-// Title and subtitle on the left, the photo thumbnail beside them.
-.tasting-detail__title-row {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: $spacing-lg;
-}
-
-.tasting-detail__title-text {
-	min-width: 0;
-}
-
-// The saved-tasting title sits tight to its subtitle.
-.tasting-detail__title-text > h1 {
-	margin-bottom: $spacing-xs;
-}
-
-// Spacing only; the type is .page-head__sub.
-.tasting-detail__subtitle {
-	margin: 0 0 $spacing-xl;
-}
-
-// Once revealed, the actual wine is the subtitle and the call sits beneath it.
-.tasting-detail__subtitle:has(+ .tasting-detail__call) {
-	margin-bottom: $spacing-xxs;
-}
-
-.tasting-detail__call {
-	margin: 0 0 $spacing-xl;
-	font-size: $text-13;
-	line-height: 1.4;
-	color: $color-text-muted;
-}
-
-.tasting-detail__call-label {
-	@include ledger-label($text-9);
-	margin-right: $spacing-xxs;
-}
-
-.tasting-detail__section {
-	@include ledger-panel($spacing-lg);
-	margin-bottom: $spacing-lg;
-}
-
-.tasting-detail__section-label {
-	margin-bottom: $spacing-md;
-}
-
-.tasting-detail__grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-	gap: $spacing-md $spacing-lg;
-}
-
-.tasting-detail__field {
+// ── The list ─────────────────────────────────────────────────────────────────
+.archive {
+	max-width: 860px;
+	margin-inline: auto;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-}
+	gap: 14px;
 
-.tasting-detail__field-label {
-	@include ledger-label($text-9);
-}
+	&__head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 12px;
+		flex-wrap: wrap;
 
-.tasting-detail__field-value {
-	font-size: $text-13-5;
-	color: $color-ink;
-	line-height: 1.4;
-}
+		h1 {
+			margin: 0;
+		}
 
-.tasting-detail__notes {
-	font-size: $text-14;
-	color: $color-text-secondary;
-	line-height: 1.65;
-	margin: 0;
-}
+		p {
+			margin: 4px 0 0;
+			font-size: $text-15;
+			color: $color-text-secondary;
+		}
+	}
 
-// A thumbnail; the link opens the full-size photo in a new tab.
-.tasting-detail__photo-link {
-	flex-shrink: 0;
-	border-radius: $radius;
-	border: 1px solid $rule;
-	overflow: hidden;
-	transition: border-color 0.15s ease;
+	&__search {
+		position: relative;
+		margin-top: 8px;
 
-	&:hover,
-	&:focus-visible {
-		border-color: $color-link;
+		svg {
+			position: absolute;
+			left: 13px;
+			top: 13px;
+			color: $color-text-secondary;
+			pointer-events: none;
+		}
+
+		input {
+			width: 100%;
+			height: 44px;
+			box-sizing: border-box;
+			padding: 0 14px 0 40px;
+			border: 1px solid $rule-mid;
+			border-radius: $radius;
+			background: $color-card;
+			color: $color-ink;
+			font-size: $text-16;
+
+			&::placeholder {
+				color: $color-text-muted;
+			}
+
+			&:focus {
+				outline: none;
+				border-color: $color-link;
+				box-shadow: 0 0 0 1px $color-link;
+			}
+		}
+	}
+
+	&__month {
+		h2 {
+			margin: 0;
+			padding: 18px 0 6px;
+			font-family: $font-sans;
+			font-size: $text-14;
+			font-weight: $font-weight-regular;
+			letter-spacing: 0;
+			color: $color-text-secondary;
+		}
+
+		ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		li + li .archive-row {
+			border-top: 1px solid $rule;
+		}
 	}
 }
 
-.tasting-detail__photo {
-	display: block;
-	width: 96px;
-	height: 96px;
-	object-fit: cover;
+.archive-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 4px 14px;
+	align-items: center;
+	padding: 14px 0;
+	color: $color-ink;
 
-	@include responsive($breakpoint-mobile) {
-		width: 64px;
-		height: 64px;
+	strong {
+		font-size: 1.0625rem;
+		font-weight: $font-weight-semibold;
+		line-height: 1.3;
+		transition: color 0.15s ease;
+	}
+
+	&:hover strong {
+		color: $color-link;
+	}
+
+	&__end {
+		grid-row: span 2;
+		text-align: right;
+	}
+
+	&__meta {
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	&__waiting {
+		font-size: $text-13;
+		color: $color-text-secondary;
+	}
+}
+
+.archives-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: $spacing-lg;
+
+	p {
+		margin: 0;
+	}
+}
+
+// ── One tasting ──────────────────────────────────────────────────────────────
+.tasting-detail {
+	max-width: 760px;
+	margin-inline: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+
+	&__top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding-bottom: 12px;
+		border-bottom: 1px solid $rule;
+		font-size: $text-14;
+		color: $color-text-secondary;
+
+		.back-link {
+			font-size: $text-15;
+			color: $color-link;
+		}
+	}
+
+	&__head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 16px;
+		padding-top: 4px;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 6px;
+			min-width: 0;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 1.875rem;
+			line-height: 1.15;
+		}
+
+		p {
+			margin: 0;
+			font-size: $text-15;
+			color: $color-text-secondary;
+		}
+
+		.figure {
+			flex-shrink: 0;
+		}
+	}
+
+	&__photo {
+		display: block;
+		border-radius: 10px;
+		overflow: hidden;
+		border: 1px solid $rule;
+
+		img {
+			display: block;
+			width: 100%;
+			max-height: 480px;
+			object-fit: cover;
+		}
+	}
+
+	&__notes {
+		margin: 0;
+		font-size: $text-16;
+		line-height: 1.55;
+		white-space: pre-line;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 4px;
+	}
+}
+
+// A card on a tasting's page: the scorecard, the sheet, the notes.
+.detail-card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px 18px;
+	background: $color-card;
+	border: 1px solid $rule;
+	border-radius: 14px;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	&__label {
+		margin: 0;
+		font-family: $font-sans;
+		font-size: $text-14;
+		font-weight: $font-weight-regular;
+		letter-spacing: 0;
+		line-height: 1.4;
+		color: $color-text-secondary;
+	}
+}
+
+// One phase of the sheet: its name, then its answers as label and value.
+.sheet-phase {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 14px 0 2px;
+	border-top: 1px solid $rule;
+
+	.detail-card__label + & {
+		padding-top: 2px;
+		border-top: none;
+	}
+
+	h3 {
+		margin: 0;
+		font-family: $font-sans;
+		font-size: 1.0625rem;
+		font-weight: $font-weight-semibold;
+		letter-spacing: 0;
+	}
+
+	&__kv {
+		display: grid;
+		grid-template-columns: minmax(96px, max-content) 1fr;
+		gap: 3px 14px;
+		margin: 0;
+		font-size: $text-15;
+
+		div {
+			display: contents;
+		}
+
+		dt {
+			color: $color-text-secondary;
+		}
+
+		dd {
+			margin: 0;
+		}
+	}
+
+	&__text dd {
+		grid-column: 1 / -1;
+	}
+}
+
+@include responsive($breakpoint-mobile) {
+	.tasting-detail__head {
+		flex-direction: column;
+		align-items: flex-start;
+
+		h1 {
+			font-size: 1.625rem;
+		}
+	}
+
+	.sheet-phase__kv {
+		grid-template-columns: 1fr;
+		gap: 0;
+
+		dd {
+			margin-bottom: 6px;
+		}
 	}
 }

@@ -12,13 +12,7 @@ export default async function ArchivesPage() {
 		<div className="site-page">
 			<Header />
 			<main className="site-main page-container">
-				<header className="page-head archives-head">
-					<div>
-						<h1 className="page-head__title">{t.title}</h1>
-						<p className="page-head__sub">{t.description}</p>
-					</div>
-				</header>
-				<ArchivesList />
+				<ArchivesList title={t.title} />
 			</main>
 			<Footer />
 		</div>

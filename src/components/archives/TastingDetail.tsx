@@ -2,20 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { IconArrowLeft, IconTrash } from '@tabler/icons-react';
 import { type TastingData } from '../../types/TastingData';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
 import RevealPanel from './RevealPanel';
+import { useModalProvider } from '../modal/ModalProvider';
+import { useToastProvider } from '../toast/ToastProvider';
 import { JsonApiError } from '../../utils/ErrorUtils';
-import { describeCall, describeWine, isRevealed, revealTitle } from '../../utils/revealScore';
+import { compareReveal, isRevealed, revealTitle } from '../../utils/revealScore';
 import { formatDate } from '../../utils/DateUtils';
 import { gridOf } from '../../data/grids';
+import { formatTimerSeconds } from '../../data/timerData';
 import { WSET_CONCLUSION_KEYS } from '../wset/wsetFields';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
 import { commonText } from '../../i18n/common';
 
 const service = new ClientTastingService();
+
+const DELETE_MODAL = 'tasting-delete';
 
 type SavedTasting = TastingData & { id: string; created_at: string };
 
@@ -25,30 +32,31 @@ function formatKey(key: string): string {
 	return key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (s) => s.toUpperCase());
 }
 
-function PhaseSection({ label, data }: { label: string; data: Record<string, string | string[]> | undefined | null }) {
-	if (!data) {
-		return null;
-	}
-	const entries = Object.entries(data).filter(([, v]) =>
-		Array.isArray(v) ? (v as string[]).length > 0 : Boolean(v),
-	);
+/** One phase of the sheet: its answers as label and value pairs. */
+function SheetPhase({
+	label,
+	data,
+}: {
+	label: string;
+	data: Record<string, string | string[] | null | undefined> | undefined | null;
+}) {
+	const entries = Object.entries(data ?? {})
+		.map(([key, value]) => [formatKey(key), Array.isArray(value) ? value.join(', ') : value] as const)
+		.filter(([, value]) => Boolean(value));
 	if (entries.length === 0) {
 		return null;
 	}
-
 	return (
-		<div className="tasting-detail__section">
-			<div className="accent-label tasting-detail__section-label">{label}</div>
-			<div className="tasting-detail__grid">
+		<div className="sheet-phase">
+			<h3>{label}</h3>
+			<dl className="sheet-phase__kv">
 				{entries.map(([key, value]) => (
-					<div key={key} className="tasting-detail__field">
-						<div className="tasting-detail__field-label">{formatKey(key)}</div>
-						<div className="tasting-detail__field-value">
-							{Array.isArray(value) ? value.join(', ') : value}
-						</div>
+					<div key={key} className={key ? undefined : 'sheet-phase__text'}>
+						{key && <dt>{key}</dt>}
+						<dd>{value}</dd>
 					</div>
 				))}
-			</div>
+			</dl>
 		</div>
 	);
 }
@@ -58,8 +66,12 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	const [isLoading, setIsLoading] = useState(true);
 	// The kind of failure, so its message follows a language switch.
 	const [error, setError] = useState<'notFound' | 'loadFailed' | null>(null);
+	const [deleting, setDeleting] = useState(false);
+	const router = useRouter();
+	const { openModal, closeModal } = useModalProvider();
+	const { showToast } = useToastProvider();
 	const { lang } = useLang();
-	const { detail: t, shared } = useText(archivesText);
+	const { detail: t, shared, list, scorecard } = useText(archivesText);
 	const common = useText(commonText);
 
 	useEffect(() => {
@@ -70,9 +82,16 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 			.finally(() => setIsLoading(false));
 	}, [id]);
 
+	const back = (
+		<Link href="/archives" className="back-link">
+			<IconArrowLeft size={18} aria-hidden="true" />
+			{t.back}
+		</Link>
+	);
+
 	if (isLoading) {
 		return (
-			<div className="tasting-detail__container">
+			<div className="tasting-detail">
 				<div className="empty-state">{common.loading}</div>
 			</div>
 		);
@@ -80,10 +99,8 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 
 	if (error || !tasting) {
 		return (
-			<div className="tasting-detail__container">
-				<Link href="/archives" className="back-link tasting-detail__back">
-					{t.back}
-				</Link>
+			<div className="tasting-detail">
+				{back}
 				<div className="empty-state">{t[error ?? 'notFound']}</div>
 			</div>
 		);
@@ -93,16 +110,61 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 	const grid = gridOf(tasting.grid);
 	const wset = grid === 'wset';
 
-	// Before the reveal the title is the taster's own label ("Flight 3, wine 2"); after it, the wine
-	// itself, with the call kept underneath so the two read against each other.
+	// Before the reveal the title is the taster's own label ("Flight 3, wine 2"); after it, the wine itself.
 	const revealed = isRevealed(tasting.reveal);
-	const callSummary = describeCall(final, grid) || null;
 	const title = revealed
 		? revealTitle(tasting.reveal!, lang)
 		: tasting.wineName || final.grapeVariety || shared.untitled;
-	const subtitle = revealed ? describeWine(tasting.reveal) || null : callSummary;
+	const result = revealed ? compareReveal(final, tasting.reveal!, tasting.conclusion?.initial, grid, lang) : null;
 
-	const date = formatDate(tasting.created_at, lang);
+	const meta = t.meta(
+		tasting.wineType === 'Red' ? common.red : tasting.wineType === 'White' ? common.white : '',
+		t.gridName[grid],
+		formatDate(tasting.created_at, lang),
+		tasting.flight ? '' : tasting.timerSeconds ? t.clock(formatTimerSeconds(tasting.timerSeconds)) : t.untimed,
+	);
+
+	const deleteTasting = async () => {
+		closeModal(DELETE_MODAL);
+		setDeleting(true);
+		try {
+			await service.deleteTasting(tasting.id);
+			showToast({ title: t.deletedTitle, children: t.deleted(tasting.number) });
+			router.push('/archives');
+		} catch {
+			showToast({ title: t.deleteFailed, children: shared.tryAgain, color: 'error' });
+			setDeleting(false);
+		}
+	};
+
+	// Deleting cannot be undone, so the dialog names what goes with it before it goes.
+	const confirmDelete = () =>
+		openModal({
+			modalId: DELETE_MODAL,
+			title: t.confirmTitle,
+			closeOnClickOutside: true,
+			closeOnEsc: true,
+			children: (
+				<div className="dialog">
+					<p className="dialog__lead">{t.confirmLead(tasting.number, title, !!tasting.photoKey)}</p>
+					{tasting.flight && (
+						<p className="dialog__note">
+							{t.confirmFlight(tasting.flight.wineNumber, tasting.flight.name)}
+						</p>
+					)}
+					<p className="dialog__note">{t.cannotUndo}</p>
+					<div className="dialog__actions">
+						<button className="btn-quiet" onClick={() => closeModal(DELETE_MODAL)}>
+							{t.keep}
+						</button>
+						<button className="btn-primary" onClick={deleteTasting}>
+							<IconTrash size={16} aria-hidden="true" />
+							{t.deleteTasting}
+						</button>
+					</div>
+				</div>
+			),
+		});
 
 	const initial = tasting.conclusion?.initial;
 
@@ -125,88 +187,42 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 				['styleCategory', t.final.styleCategory],
 				['vintage', t.final.vintage],
 			];
-	const finalConclusionFields: Record<string, string> = {};
-	for (const [key, label] of FINAL_LABELS) {
-		if (final[key]) {
-			finalConclusionFields[label] = final[key]!;
-		}
-	}
-
-	const initialFields: Record<string, string> = {};
-	if (initial?.worldOrigin) {
-		initialFields[t.initial.worldOrigin] = initial.worldOrigin;
-	}
-	if (initial?.climate) {
-		initialFields[t.initial.climate] = initial.climate;
-	}
-	if (initial?.ageRange) {
-		initialFields[t.initial.ageRange] = initial.ageRange;
-	}
-	if (initial?.grapeVarieties?.length) {
-		initialFields[t.initial.grapeVarieties] = initial.grapeVarieties.join(', ');
-	}
-	if (initial?.possibleCountries?.length) {
-		initialFields[t.initial.possibleCountries] = initial.possibleCountries.join(', ');
-	}
+	const finalFields = Object.fromEntries(
+		FINAL_LABELS.filter(([key]) => final[key]).map(([key, label]) => [label, final[key]!]),
+	);
+	const initialFields: Record<string, string | string[] | null | undefined> = {
+		[t.initial.grapeVarieties]: initial?.grapeVarieties,
+		[t.initial.climate]: initial?.climate,
+		[t.initial.possibleCountries]: initial?.possibleCountries,
+		[t.initial.ageRange]: initial?.ageRange,
+		[t.initial.worldOrigin]: initial?.worldOrigin,
+	};
+	const photoUrl = tasting.photoKey ? ClientPhotoService.url(tasting.photoKey) : null;
 
 	return (
-		<div className="tasting-detail__container">
-			<Link href="/archives" className="back-link tasting-detail__back">
-				{t.back}
-			</Link>
+		<div className="tasting-detail">
+			<div className="tasting-detail__top">
+				{back}
+				{tasting.number != null && <span>{list.tasting(tasting.number)}</span>}
+			</div>
 
-			<div className="tasting-detail__hero-top">
-				<span className={`wine-type-badge wine-type-badge--${tasting.wineType?.toLowerCase()}`}>
-					{tasting.wineType === 'Red' ? common.redWine : tasting.wineType === 'White' ? common.whiteWine : ''}
-				</span>
-				{wset && <span className="grid-badge">{common.grid.wset.short}</span>}
-				<div className="tasting-detail__hero-meta">
-					{tasting.number != null && (
-						<span className="tasting-detail__id">{shared.number(tasting.number)}</span>
-					)}
+			<header className="tasting-detail__head">
+				<div>
+					<h1>{title}</h1>
+					<p>{meta}</p>
 					{tasting.flight && (
 						<Link href={`/flights/${tasting.flight.code}`} className="text-link">
 							{t.flight(tasting.flight.name, tasting.flight.wineNumber)}
 						</Link>
 					)}
-					{revealed && tasting.wineName && !tasting.flight && (
-						<span className="tasting-detail__id">{tasting.wineName}</span>
-					)}
-					<span className="tasting-detail__date">{date}</span>
 				</div>
-			</div>
-
-			<div className="tasting-detail__title-row">
-				<div className="tasting-detail__title-text">
-					<h1>{title}</h1>
-					{subtitle && <p className="page-head__sub tasting-detail__subtitle">{subtitle}</p>}
-					{revealed && callSummary && (
-						<p className="tasting-detail__call">
-							<span className="tasting-detail__call-label">{shared.yourCall}</span>
-							{callSummary}
-						</p>
-					)}
-				</div>
-
-				{tasting.photoKey && (
-					<a
-						href={ClientPhotoService.url(tasting.photoKey)}
-						target="_blank"
-						rel="noopener"
-						className="tasting-detail__photo-link"
-						aria-label={t.openPhoto}
-					>
-						{/* Served by an authenticated route with its own caching; next/image's optimiser
-						    would fetch it without the taster's cookie and get a 401. */}
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src={ClientPhotoService.url(tasting.photoKey)}
-							alt={t.photoAlt(title)}
-							className="tasting-detail__photo"
-						/>
-					</a>
+				{result && result.outOf > 0 && (
+					<span className="figure figure--xl" aria-label={scorecard.scoreLabel(result.score, result.outOf)}>
+						{result.score}
+						<span className="figure__of"> / {result.outOf}</span>
+					</span>
 				)}
-			</div>
+			</header>
 
 			<RevealPanel
 				tasting={tasting}
@@ -215,58 +231,47 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 				onRevealed={(updated) => setTasting(updated)}
 			/>
 
-			<PhaseSection label={common.phase[grid].sight} data={tasting.sight as Record<string, string>} />
-			<PhaseSection label={common.phase[grid].nose} data={tasting.nose as Record<string, string[]>} />
-			<PhaseSection
-				label={common.phase[grid].palate}
-				data={tasting.palate as Record<string, string | string[]>}
-			/>
+			<section className="detail-card">
+				<h2 className="detail-card__label">{t.sheet}</h2>
+				<SheetPhase label={common.phase[grid].sight} data={tasting.sight} />
+				<SheetPhase label={common.phase[grid].nose} data={tasting.nose} />
+				<SheetPhase label={common.phase[grid].palate} data={tasting.palate} />
+				<SheetPhase label={t.confirmNose} data={tasting.confirmNose ? { '': tasting.confirmNose } : null} />
+				<SheetPhase label={common.phase[grid].initialConclusion} data={initialFields} />
+				<SheetPhase label={common.phase[grid].finalConclusion} data={finalFields} />
+			</section>
 
-			{tasting.confirmNose && (
-				<div className="tasting-detail__section">
-					<div className="accent-label tasting-detail__section-label">{t.confirmNose}</div>
-					<p className="tasting-detail__notes">&ldquo;{tasting.confirmNose}&rdquo;</p>
-				</div>
+			{(photoUrl || tasting.notes) && (
+				<section className="detail-card">
+					<h2 className="detail-card__label">{photoUrl ? t.labelAndNotes : t.notes}</h2>
+					{photoUrl && (
+						<a
+							href={photoUrl}
+							target="_blank"
+							rel="noopener"
+							className="tasting-detail__photo"
+							aria-label={t.openPhoto}
+						>
+							{/* Served by an authenticated route with its own caching; next/image's optimiser
+							    would fetch it without the taster's cookie and get a 401. */}
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img src={photoUrl} alt={t.photoAlt(title)} />
+						</a>
+					)}
+					{tasting.notes && <p className="tasting-detail__notes">{tasting.notes}</p>}
+				</section>
 			)}
 
-			{Object.keys(initialFields).length > 0 && (
-				<div className="tasting-detail__section">
-					<div className="accent-label tasting-detail__section-label">
-						{common.phase[grid].initialConclusion}
-					</div>
-					<div className="tasting-detail__grid">
-						{Object.entries(initialFields).map(([label, value]) => (
-							<div key={label} className="tasting-detail__field">
-								<div className="tasting-detail__field-label">{label}</div>
-								<div className="tasting-detail__field-value">{value}</div>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
-
-			{Object.keys(finalConclusionFields).length > 0 && (
-				<div className="tasting-detail__section">
-					<div className="accent-label tasting-detail__section-label">
-						{common.phase[grid].finalConclusion}
-					</div>
-					<div className="tasting-detail__grid">
-						{Object.entries(finalConclusionFields).map(([label, value]) => (
-							<div key={label} className="tasting-detail__field">
-								<div className="tasting-detail__field-label">{label}</div>
-								<div className="tasting-detail__field-value">{value}</div>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
-
-			{tasting.notes && (
-				<div className="tasting-detail__section">
-					<div className="accent-label tasting-detail__section-label">{t.notes}</div>
-					<p className="tasting-detail__notes">&ldquo;{tasting.notes}&rdquo;</p>
-				</div>
-			)}
+			<div className="tasting-detail__actions">
+				<button
+					type="button"
+					className="btn-quiet btn-quiet--plain"
+					onClick={confirmDelete}
+					disabled={deleting}
+				>
+					{t.deleteTasting}
+				</button>
+			</div>
 		</div>
 	);
 }

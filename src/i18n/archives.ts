@@ -7,8 +7,6 @@ export const archivesText = dict(
 	{
 		page: {
 			title: 'Archive',
-			description:
-				'Your personal collection of deductive tastings. Review historical notes and master your sensory analysis.',
 			detailTitle: 'Tasting Detail',
 		},
 		shared: {
@@ -18,35 +16,59 @@ export const archivesText = dict(
 			tryAgain: 'Something went wrong. Please try again.',
 		},
 		list: {
-			deletedTitle: 'Tasting deleted',
-			deleted: (n: number | undefined) => `No. ${n} has been deleted.`,
-			deleteFailed: 'Delete failed',
-			confirmTitle: 'Delete this tasting?',
-			confirmLead: (n: number | undefined, title: string, photo: boolean) =>
-				`No. ${n}, ${title}, will be deleted for good${photo ? ', along with its photo' : ''}.`,
-			confirmFlight: (wine: number, flight: string) =>
-				`It was your call for wine ${wine} of ${flight}, so it also leaves that flight’s results.`,
-			cannotUndo: 'This cannot be undone.',
-			keep: 'Keep it',
-			deleteTasting: 'Delete tasting',
+			counts: (tastings: number, revealed: number, flights: number) =>
+				[
+					`${tastings} ${tastings === 1 ? 'tasting' : 'tastings'}`,
+					`${revealed} revealed`,
+					flights ? `${flights} ${flights === 1 ? 'flight' : 'flights'}` : '',
+				]
+					.filter(Boolean)
+					.join(' · '),
+			startTasting: 'Start a tasting',
+			search: 'Search your tastings',
+			searchPlaceholder: 'Search by grape, region or note',
+			filterLabel: 'Show',
+			all: 'All',
+			cms: 'CMS',
+			wset: 'WSET',
+			notRevealed: (n: number) => `Not revealed · ${n}`,
+			flights: 'Flights',
+			noMatch: 'No tastings match.',
+			clear: 'Show all',
+			tasting: (n: number | undefined) => (n == null ? '' : `Tasting ${n}`),
+			untimed: 'untimed',
+			yourCall: (call: string) => `your call: ${call}`,
+			flightWine: (name: string, wine: number) => `${name}, wine ${wine}`,
 			loadFailed: 'Failed to load tastings.',
 			loading: 'Loading your tastings…',
 			empty: 'You have no saved tastings yet.',
-			startFirst: 'Start Your First Tasting',
-			newTasting: 'New Tasting',
+			startFirst: 'Start your first tasting',
 			score: (score: number, outOf: number) => `Score: ${score} of ${outOf}`,
 			awaitingHost: 'Awaiting host',
-			revealFor: (title: string) => `Reveal the wine for ${title}`,
-			reveal: 'Reveal →',
-			keyConclusions: 'Key Conclusions',
-			deleteLabel: (n: number | undefined, title: string) => `Delete No. ${n}, ${title}`,
-			viewDetails: (title: string) => `View details for ${title}`,
-			details: 'Details →',
+			reveal: 'Reveal',
 		},
 		detail: {
 			notFound: 'This tasting does not exist, or it was deleted.',
 			loadFailed: 'The tasting could not be loaded. Please try again.',
-			back: '← Back to Archive',
+			back: 'Archive',
+			meta: (wine: string, grid: string, date: string, clock: string) =>
+				[wine, grid, date, clock].filter(Boolean).join(' · '),
+			gridName: { cms: 'CMS grid', wset: 'WSET grid' },
+			clock: (time: string) => `${time} clock`,
+			untimed: 'untimed',
+			sheet: 'The sheet',
+			labelAndNotes: 'Label and notes',
+			deletedTitle: 'Tasting deleted',
+			deleted: (n: number | undefined) => `Tasting ${n} has been deleted.`,
+			deleteFailed: 'Delete failed',
+			confirmTitle: 'Delete this tasting?',
+			confirmLead: (n: number | undefined, title: string, photo: boolean) =>
+				`Tasting ${n}, ${title}, will be deleted for good${photo ? ', along with its photo' : ''}.`,
+			confirmFlight: (wine: number, flight: string) =>
+				`It was your call for wine ${wine} of ${flight}, so it also leaves that flight’s results.`,
+			cannotUndo: 'This cannot be undone.',
+			keep: 'Keep it',
+			deleteTasting: 'Delete this tasting',
 			flight: (name: string, wine: number) => `Flight · ${name} · Wine ${wine}`,
 			openPhoto: 'Open photo full size',
 			photoAlt: (title: string) => `Photo for ${title}`,
@@ -130,9 +152,12 @@ export const archivesText = dict(
 			theCountry: 'the country',
 			yes: 'Yes',
 			no: 'No',
-			fieldByField: 'Field by field',
+			againstLabel: 'Your call against the label',
+			label: 'label',
+			footnote:
+				"One point for each exact match. Close is a near miss and scores nothing, but it's worth knowing. A field the label doesn't carry drops out of the total.",
 			editReveal: 'Edit reveal',
-			flightResults: 'Revealed by the host · Flight results →',
+			flightResults: 'Flight results',
 		},
 		/** The words revealScore builds its sentences from. `list` is already joined, lowercase. */
 		score: {
@@ -174,8 +199,6 @@ export const archivesText = dict(
 	{
 		page: {
 			title: 'Arquivo',
-			description:
-				'A sua coleção pessoal de provas dedutivas. Reveja as notas anteriores e aperfeiçoe a sua análise sensorial.',
 			detailTitle: 'Detalhe da prova',
 		},
 		shared: {
@@ -185,35 +208,58 @@ export const archivesText = dict(
 			tryAgain: 'Algo correu mal. Tente novamente.',
 		},
 		list: {
-			deletedTitle: 'Prova eliminada',
-			deleted: (n) => `A prova n.º ${n} foi eliminada.`,
-			deleteFailed: 'Não foi possível eliminar',
-			confirmTitle: 'Eliminar esta prova?',
-			confirmLead: (n, title, photo) =>
-				`A prova n.º ${n}, ${title}, será eliminada definitivamente${photo ? ', juntamente com a fotografia' : ''}.`,
-			confirmFlight: (wine, flight) =>
-				`Era a sua resposta para o vinho ${wine} de ${flight}, por isso também sai dos resultados desse flight.`,
-			cannotUndo: 'Esta ação não pode ser anulada.',
-			keep: 'Manter',
-			deleteTasting: 'Eliminar prova',
+			counts: (tastings, revealed, flights) =>
+				[
+					`${tastings} ${tastings === 1 ? 'prova' : 'provas'}`,
+					`${revealed} ${revealed === 1 ? 'revelada' : 'reveladas'}`,
+					flights ? `${flights} ${flights === 1 ? 'flight' : 'flights'}` : '',
+				]
+					.filter(Boolean)
+					.join(' · '),
+			startTasting: 'Iniciar uma prova',
+			search: 'Pesquisar as suas provas',
+			searchPlaceholder: 'Pesquisar por casta, região ou nota',
+			filterLabel: 'Mostrar',
+			all: 'Todas',
+			cms: 'CMS',
+			wset: 'WSET',
+			notRevealed: (n) => `Por revelar · ${n}`,
+			flights: 'Flights',
+			noMatch: 'Nenhuma prova corresponde.',
+			clear: 'Mostrar todas',
+			tasting: (n) => (n == null ? '' : `Prova ${n}`),
+			untimed: 'sem cronómetro',
+			yourCall: (call) => `a sua resposta: ${call}`,
+			flightWine: (name, wine) => `${name}, vinho ${wine}`,
 			loadFailed: 'Não foi possível carregar as provas.',
 			loading: 'A carregar as suas provas…',
 			empty: 'Ainda não tem provas guardadas.',
 			startFirst: 'Iniciar a primeira prova',
-			newTasting: 'Nova prova',
 			score: (score, outOf) => `Pontuação: ${score} de ${outOf}`,
 			awaitingHost: 'À espera do anfitrião',
-			revealFor: (title) => `Revelar o vinho de ${title}`,
-			reveal: 'Revelar →',
-			keyConclusions: 'Conclusões principais',
-			deleteLabel: (n, title) => `Eliminar a prova n.º ${n}, ${title}`,
-			viewDetails: (title) => `Ver detalhes de ${title}`,
-			details: 'Detalhes →',
+			reveal: 'Revelar',
 		},
 		detail: {
 			notFound: 'Esta prova não existe ou foi eliminada.',
 			loadFailed: 'Não foi possível carregar a prova. Tente novamente.',
-			back: '← Voltar ao arquivo',
+			back: 'Arquivo',
+			meta: (wine, grid, date, clock) => [wine, grid, date, clock].filter(Boolean).join(' · '),
+			gridName: { cms: 'Grelha CMS', wset: 'Grelha WSET' },
+			clock: (time) => `cronómetro de ${time}`,
+			untimed: 'sem cronómetro',
+			sheet: 'A ficha',
+			labelAndNotes: 'Rótulo e notas',
+			deletedTitle: 'Prova eliminada',
+			deleted: (n) => `A prova ${n} foi eliminada.`,
+			deleteFailed: 'Não foi possível eliminar',
+			confirmTitle: 'Eliminar esta prova?',
+			confirmLead: (n, title, photo) =>
+				`A prova ${n}, ${title}, será eliminada definitivamente${photo ? ', juntamente com a fotografia' : ''}.`,
+			confirmFlight: (wine, flight) =>
+				`Era a sua resposta para o vinho ${wine} de ${flight}, por isso também sai dos resultados desse flight.`,
+			cannotUndo: 'Esta ação não pode ser anulada.',
+			keep: 'Manter',
+			deleteTasting: 'Eliminar esta prova',
 			flight: (name, wine) => `Flight · ${name} · Vinho ${wine}`,
 			openPhoto: 'Abrir a fotografia em tamanho real',
 			photoAlt: (title) => `Fotografia de ${title}`,
@@ -298,9 +344,12 @@ export const archivesText = dict(
 			theCountry: 'o país',
 			yes: 'Sim',
 			no: 'Não',
-			fieldByField: 'Campo a campo',
+			againstLabel: 'A sua resposta face ao rótulo',
+			label: 'rótulo',
+			footnote:
+				'Um ponto por cada acerto exato. Quase é um quase acerto e não pontua, mas vale a pena saber. Um campo que o rótulo não indica sai do total.',
 			editReveal: 'Editar revelação',
-			flightResults: 'Revelado pelo anfitrião · Resultados do flight →',
+			flightResults: 'Resultados do flight',
 		},
 		score: {
 			fields: {

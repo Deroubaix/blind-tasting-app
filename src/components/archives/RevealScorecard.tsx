@@ -15,8 +15,6 @@ const STATUS_ICON: Record<FieldStatus, typeof IconCheck> = {
 	na: IconBan,
 };
 
-const isHit = (field: ComparedField) => field.status === 'correct' || field.status === 'na';
-
 export function StatusBadge({ status }: { status: FieldStatus }) {
 	const word = useText(archivesText).scorecard.status[status];
 	const Icon = STATUS_ICON[status];
@@ -28,43 +26,28 @@ export function StatusBadge({ status }: { status: FieldStatus }) {
 	);
 }
 
-/** A correct or not-applicable field: one quiet line. */
-function HitRow({ field }: { field: ComparedField }) {
-	const word = useText(archivesText).scorecard.status[field.status];
-	const Icon = STATUS_ICON[field.status];
+/** One field: your call, the label where it differs, and the result. */
+function FieldRow({ field }: { field: ComparedField }) {
+	const { scorecard: t } = useText(archivesText);
+	const differs = field.status !== 'correct' && field.actual;
 	return (
-		<li className={`reveal-hit reveal-hit--${field.status}`}>
-			<Icon size={16} stroke={2} className="reveal-hit__icon" aria-hidden="true" />
-			<span className="reveal-hit__label">{field.label}</span>
-			<span className="reveal-hit__value">
-				{field.actual ?? <span className="reveal-muted-italic">{field.note}</span>}
-				{field.actual && field.note && <span className="reveal-hit__note">{field.note}</span>}
+		<li className="scorecard__row">
+			<span>
+				<span className="scorecard__field">{field.label}</span>
+				{field.call ?? <span className="scorecard__blank">{t.leftBlank}</span>}
+				{(differs || field.note) && (
+					<span className="scorecard__label">
+						{differs && (
+							<>
+								{t.label}: <b>{field.actual}</b>
+							</>
+						)}
+						{differs && field.note && ' · '}
+						{field.note}
+					</span>
+				)}
 			</span>
-			<span className="reveal-hit__word">{word}</span>
-		</li>
-	);
-}
-
-/** A miss (close, wrong, not called): opened out, your call struck through above the actual. */
-function MissRow({ field }: { field: ComparedField }) {
-	const { shared, scorecard: t } = useText(archivesText);
-	return (
-		<li className={`reveal-miss reveal-miss--${field.status}`}>
-			<div className="reveal-miss__head">
-				<span className="reveal-miss__label">{field.label}</span>
-				<StatusBadge status={field.status} />
-			</div>
-			<dl className="reveal-miss__pair">
-				<dt>{shared.yourCall}</dt>
-				<dd className="reveal-miss__call">
-					{field.call ? <s>{field.call}</s> : <span className="reveal-muted-italic">{t.leftBlank}</span>}
-				</dd>
-				<dt>{t.actual}</dt>
-				<dd className="reveal-miss__actual">
-					<span>{field.actual}</span>
-				</dd>
-			</dl>
-			{field.note && <p className="reveal-miss__note">{field.note}</p>}
+			<StatusBadge status={field.status} />
 		</li>
 	);
 }
@@ -79,87 +62,48 @@ export default function RevealScorecard({
 	onEdit?: () => void;
 	flightHref?: string;
 }) {
-	const { panel, scorecard: t } = useText(archivesText);
-	const { fields, score, outOf, headline, detail, shortlist } = comparison;
+	const { scorecard: t } = useText(archivesText);
+	const { fields, shortlist } = comparison;
 	const shortlistItems = [
 		{ text: t.theGrape, held: shortlist.grape },
 		{ text: t.theCountry, held: shortlist.country },
 	].filter((item) => item.held !== null);
 
 	return (
-		<section className="reveal-card reveal-scorecard" aria-labelledby="reveal-score-heading">
-			<div className="reveal-scorecard__summary">
-				<span className="accent-label" id="reveal-score-heading">
-					{panel.eyebrow}
-				</span>
-				<p className="reveal-score" aria-label={t.scoreLabel(score, outOf)}>
-					<span className="reveal-score__value">{score}</span>
-					<span className="reveal-score__of">/ {outOf}</span>
-				</p>
-				<div>
-					<p className="reveal-scorecard__headline">{headline}</p>
-					<p className="reveal-scorecard__detail">{detail}</p>
-				</div>
-				{/* Decorative: each row below states its result in words. */}
-				<ol className="reveal-strip" aria-hidden="true">
-					{fields.map((field) => {
-						const Icon = STATUS_ICON[field.status];
-						return (
-							<li key={field.key} className={`reveal-strip__item reveal-strip__item--${field.status}`}>
-								<span className="reveal-strip__bar" />
-								<Icon size={12} stroke={2.2} />
-								<span className="reveal-strip__abbr">{field.abbr}</span>
-							</li>
-						);
-					})}
-				</ol>
-				{shortlistItems.length > 0 && (
-					<div className="reveal-shortlist">
-						<span>{t.shortlistIncluded}</span>
-						{shortlistItems.map((item) => (
-							<span key={item.text} className="reveal-shortlist__item">
-								<span>{item.text}</span>
-								<span
-									className={`reveal-shortlist__answer reveal-shortlist__answer--${item.held ? 'yes' : 'no'}`}
-								>
-									{item.held ? (
-										<IconCheck size={12} stroke={2.2} aria-hidden="true" />
-									) : (
-										<IconX size={12} stroke={2.2} aria-hidden="true" />
-									)}
-									{item.held ? t.yes : t.no}
-								</span>
-							</span>
-						))}
-					</div>
+		<section className="detail-card scorecard" aria-labelledby="scorecard-heading">
+			<div className="detail-card__head">
+				<h2 className="detail-card__label" id="scorecard-heading">
+					{t.againstLabel}
+				</h2>
+				{onEdit ? (
+					<button type="button" className="btn-quiet btn-quiet--sm" onClick={onEdit}>
+						{t.editReveal}
+					</button>
+				) : (
+					flightHref && (
+						<Link href={flightHref} className="btn-quiet btn-quiet--sm">
+							{t.flightResults}
+						</Link>
+					)
 				)}
 			</div>
-
-			<div className="reveal-scorecard__fields">
-				<div className="reveal-scorecard__fields-head">
-					<span className="reveal-scorecard__fields-title">{t.fieldByField}</span>
-					{onEdit ? (
-						<button type="button" className="btn-quiet btn-quiet--sm" onClick={onEdit}>
-							{t.editReveal}
-						</button>
-					) : (
-						flightHref && (
-							<Link href={flightHref} className="btn-quiet btn-quiet--sm">
-								{t.flightResults}
-							</Link>
-						)
-					)}
-				</div>
-				<ul className="reveal-rows">
-					{fields.map((field) =>
-						isHit(field) ? (
-							<HitRow key={field.key} field={field} />
-						) : (
-							<MissRow key={field.key} field={field} />
-						),
-					)}
-				</ul>
-			</div>
+			<ul className="scorecard__rows">
+				{fields.map((field) => (
+					<FieldRow key={field.key} field={field} />
+				))}
+			</ul>
+			{shortlistItems.length > 0 && (
+				<p className="scorecard__shortlist">
+					{t.shortlistIncluded}{' '}
+					{shortlistItems.map((item, i) => (
+						<span key={item.text}>
+							{i > 0 && ' · '}
+							{item.text}: <b>{item.held ? t.yes : t.no}</b>
+						</span>
+					))}
+				</p>
+			)}
+			<p className="scorecard__foot">{t.footnote}</p>
 		</section>
 	);
 }

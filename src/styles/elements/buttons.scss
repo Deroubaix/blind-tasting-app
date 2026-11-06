@@ -84,6 +84,12 @@ button {
 	&:hover:not(:disabled) {
 		border-color: $color-text-secondary;
 	}
+
+	// No outline until hovered: an action that should not compete, such as Delete.
+	&--plain {
+		border-color: transparent;
+		color: $color-text-secondary;
+	}
 }
 
 // ── Tasting option ────────────────────────────────────────────────────────────

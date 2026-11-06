@@ -1,16 +1,11 @@
-@use 'sass:color';
 @use '../abstracts' as *;
-// Reveal & score — the invitation, the form, and the scorecard on a saved tasting.
-// Also the small pieces archives and flights share: links, the back link, the score tag.
+// Reveal & score: the invitation, the form, and the scorecard on a saved tasting.
 
 // ── Shared pieces ─────────────────────────────────────────────────────────────
 .reveal-card {
-	@include ledger-panel(0);
-	margin-bottom: $spacing-xl;
-}
-
-.reveal-muted-italic {
-	color: $color-text-secondary;
+	background: $color-card;
+	border: 1px solid $rule;
+	border-radius: 14px;
 }
 
 // Before the palette, so each status modifier's --tone wins.
@@ -22,31 +17,27 @@
 // One colour per status, always paired with an icon and a word (see RevealScorecard).
 $reveal-statuses: (
 	correct: $color-ok,
-	close: $color-warning,
+	close: $color-close,
 	wrong: $color-error,
 	notcalled: $color-text-secondary,
 	na: $color-text-secondary,
 );
 
 @each $status, $colour in $reveal-statuses {
-	.reveal-status--#{$status},
-	.reveal-hit--#{$status},
-	.reveal-miss--#{$status},
-	.reveal-strip__item--#{$status} {
+	.reveal-status--#{$status} {
 		--tone: #{$colour};
 	}
 }
 
 // The heading and lede of the invitation and the form.
 .reveal-heading {
-	margin: $spacing-xs 0 4px;
-	font-size: $text-18;
-	letter-spacing: -0.015em;
+	margin: 6px 0;
+	font-size: $text-24;
 }
 
 .reveal-lede {
 	margin: 0;
-	font-size: $text-13-5;
+	font-size: $text-15;
 	line-height: 1.5;
 	color: $color-text-secondary;
 }
@@ -168,278 +159,63 @@ $reveal-statuses: (
 }
 
 // ── 3. The scorecard ──────────────────────────────────────────────────────────
-.reveal-scorecard {
-	display: grid;
-	grid-template-columns: 250px minmax(0, 1fr);
-
-	&__summary {
-		display: flex;
-		flex-direction: column;
-		gap: $spacing-md;
-		padding: $spacing-xl;
-		border-right: 1px solid $rule-soft;
+.scorecard {
+	&__rows {
+		margin: 0;
+		padding: 0;
+		list-style: none;
 	}
 
-	&__headline {
-		margin: 0 0 4px;
-		font-size: $text-15;
-		font-weight: $font-weight-semibold;
-		line-height: 1.35;
+	&__row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 4px 12px;
+		align-items: center;
+		padding: 10px 0;
+		font-size: $text-16;
+
+		& + & {
+			border-top: 1px solid $rule;
+		}
 	}
 
-	&__detail {
+	&__field {
+		display: block;
+		font-size: $text-13;
+		color: $color-text-secondary;
+	}
+
+	&__blank {
+		color: $color-text-secondary;
+	}
+
+	&__label {
+		display: block;
+		font-size: $text-14;
+		color: $color-text-secondary;
+
+		b {
+			font-weight: $font-weight-semibold;
+			color: $color-ink;
+		}
+	}
+
+	&__shortlist,
+	&__foot {
 		margin: 0;
 		font-size: $text-13;
 		line-height: 1.45;
 		color: $color-text-secondary;
 	}
 
-	&__fields {
-		padding: 18px $spacing-xl $spacing-lg;
-	}
-
-	&__fields-head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 6px;
-	}
-
-	&__fields-title {
-		@include ledger-label($text-10);
-	}
-}
-
-.reveal-score {
-	display: flex;
-	align-items: baseline;
-	gap: 6px;
-	margin: 0;
-	@include figures;
-
-	// The one hero figure: past the type scale on purpose.
-	&__value {
-		font-size: 6.5rem;
-		font-weight: $font-weight-regular;
-		letter-spacing: -0.04em;
-		line-height: 0.9;
-	}
-
-	&__of {
-		font-size: $text-32;
-		color: $color-text-muted;
-	}
-}
-
-// One column per scored field: five on the CMS grid, six on the WSET grid.
-.reveal-strip {
-	display: grid;
-	grid-auto-flow: column;
-	grid-auto-columns: minmax(0, 1fr);
-	gap: 4px;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-
-	&__item {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 6px;
-		color: var(--tone);
-	}
-
-	&__bar {
-		width: 100%;
-		height: 6px;
-		border-radius: $radius-sm;
-		background-color: var(--tone);
-	}
-
-	// Nothing to fill: a dashed outline instead of a bar.
-	&__item--notcalled &__bar,
-	&__item--na &__bar {
-		background: none;
-		border: 1px dashed $rule-mid;
-		box-sizing: border-box;
-	}
-
-	&__abbr {
-		@include ledger-label($text-10);
-	}
-}
-
-.reveal-shortlist {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	margin-top: auto;
-	padding-top: 14px;
-	border-top: 1px solid $rule-soft;
-	font-size: $text-12;
-	color: $color-text-secondary;
-
-	&__item {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+	&__shortlist b {
+		font-weight: $font-weight-semibold;
 		color: $color-ink;
-	}
-
-	&__answer {
-		@include ledger-label($text-10);
-		@include icon-label(4px);
-
-		&--yes {
-			color: $color-ok;
-		}
-
-		&--no {
-			color: $color-error;
-		}
-	}
-}
-
-.reveal-rows {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-// A correct or not-applicable field: one line.
-.reveal-hit {
-	@include ledger-row($spacing-sm);
-	display: grid;
-	grid-template-columns: 20px 170px minmax(0, 1fr) auto;
-	align-items: center;
-	gap: $spacing-sm;
-
-	&__icon {
-		color: var(--tone);
-	}
-
-	&__label {
-		font-size: $text-13;
-		font-weight: $font-weight-semibold;
-		color: $color-text-secondary;
-	}
-
-	&__value {
-		font-size: $text-14;
-		font-weight: $font-weight-semibold;
-	}
-
-	// Why an interchangeable call scored.
-	&__note {
-		display: block;
-		margin-top: 2px;
-		font-size: $text-12;
-		color: $color-text-muted;
-	}
-
-	&__word {
-		@include ledger-label($text-10, var(--tone));
-	}
-}
-
-// A miss: opened out, what differs struck through in the call and underlined in the actual.
-// Raised off the card it sits in, so a step lighter than a panel.
-.reveal-miss {
-	@include ledger-panel(14px $spacing-md);
-	margin: $spacing-xxs 0;
-	background-color: $color-raised;
-
-	&__head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: $spacing-xs;
-		margin-bottom: $spacing-xxs;
-	}
-
-	&__label {
-		font-size: $text-13;
-		font-weight: $font-weight-semibold;
-	}
-
-	&__pair {
-		display: grid;
-		grid-template-columns: 70px minmax(0, 1fr);
-		gap: 4px $spacing-xs;
-		margin: 0;
-		font-size: $text-14;
-		line-height: 1.4;
-
-		dt {
-			font-size: $text-12;
-			color: $color-text-muted;
-		}
-
-		dd {
-			margin: 0;
-		}
-	}
-
-	&__call {
-		color: $color-text-secondary;
-
-		s {
-			text-decoration-color: $color-text-muted;
-		}
-	}
-
-	&__actual span {
-		font-weight: $font-weight-semibold;
-		text-decoration: underline;
-		text-decoration-thickness: 1.5px;
-		text-underline-offset: 3px;
-		text-decoration-color: var(--tone);
-	}
-
-	&__note {
-		margin: $spacing-xxs 0 0;
-		font-size: $text-12;
-		color: $color-text-secondary;
 	}
 }
 
 // ── Narrow main area (tablet beside the sidebar, and phone): stack ────────────
 @container main (max-width: 700px) {
-	.reveal-scorecard {
-		grid-template-columns: minmax(0, 1fr);
-
-		&__summary {
-			border-right: none;
-			border-bottom: 1px solid $rule-soft;
-		}
-	}
-
-	.reveal-score__value {
-		font-size: 4.5rem;
-	}
-
-	.reveal-hit {
-		grid-template-columns: 20px minmax(0, 1fr) auto;
-
-		&__label {
-			@include ledger-label($text-9);
-			grid-column: 2;
-		}
-
-		&__value {
-			grid-column: 2;
-		}
-
-		&__word {
-			grid-row: 1 / span 2;
-			grid-column: 3;
-		}
-
-		&__icon {
-			grid-row: 1 / span 2;
-		}
-	}
-
 	.reveal-invite {
 		flex-direction: column;
 		align-items: stretch;
