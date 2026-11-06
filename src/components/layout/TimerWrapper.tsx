@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { IconArrowRight } from '@tabler/icons-react';
 import Timer from '../layout/Timer';
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
@@ -81,14 +80,14 @@ export default function TimerWrapper({
 		const modalId = 'tasting-time-up';
 		openModal({
 			modalId,
-			title: t.time,
+			title: tastingData.timerMode === 'exam' ? t.wineOver : t.sequenceOver,
 			className: 'TimeUpModal',
 			closeOnClickOutside: false,
 			closeOnEsc: true,
 			children: (
 				<div className="dialog">
-					<p className="dialog__lead">{tastingData.timerMode === 'exam' ? t.wineOver : t.sequenceOver}</p>
-					<p className="dialog__note">{t.kept}</p>
+					<p className="dialog__lead">{t.kept}</p>
+					<p className="dialog__note">{t.thenSave}</p>
 					<button
 						className="btn-primary dialog__action"
 						onClick={() => {
@@ -97,7 +96,6 @@ export default function TimerWrapper({
 						}}
 					>
 						{t.reviewSave}
-						<IconArrowRight size={16} />
 					</button>
 				</div>
 			),

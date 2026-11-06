@@ -6,7 +6,7 @@ import Wordmark from './Wordmark';
 import Prefs from './Prefs';
 import useDismiss from '../../hooks/useDismiss';
 import { useRouter } from 'next/navigation';
-import { IconPlayerPauseFilled, IconPlayerPlayFilled } from '@tabler/icons-react';
+import { IconPlayerPauseFilled } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
 import { useModalProvider } from '../modal/ModalProvider';
 import { pauseClock, resumeClock } from '../../data/timerClock';
@@ -68,7 +68,6 @@ export default function TastingPageHeader({
 					<p className="dialog__note">{t.tastingHeader.carriesOn}</p>
 					<button className="btn-primary dialog__action" onClick={() => closeModal(modalId)}>
 						{t.tastingHeader.resume}
-						<IconPlayerPlayFilled size={14} aria-hidden="true" />
 					</button>
 				</div>
 			),
@@ -86,13 +85,6 @@ export default function TastingPageHeader({
 
 	const flight = tastingData.flight;
 	const flightLabel = flight && timerPage ? t.tastingHeader.flightWine(flight.wineNumber, flight.wineCount) : null;
-	const wineLabel =
-		flightLabel ??
-		(wineType === 'red'
-			? t.tastingHeader.redAssessment
-			: wineType === 'white'
-				? t.tastingHeader.whiteAssessment
-				: null);
 
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
 
@@ -100,7 +92,7 @@ export default function TastingPageHeader({
 	const { name: phaseName, number: phaseNumber } = splitPhaseLabel(phase ?? '');
 
 	return (
-		<header className={`tasting-page-header${showTimer ? '' : ' tasting-page-header--no-timer'}`}>
+		<header className="tasting-page-header">
 			<Link href="/" className="tasting-page-header__logo">
 				<Wordmark size="sm" />
 			</Link>
@@ -121,9 +113,14 @@ export default function TastingPageHeader({
 			)}
 
 			<div className="tasting-page-header__center">
+				{timerPage && !tastingData.timerEnabled && (
+					<span className="tasting-page-header__timer-label">{t.tastingHeader.untimed}</span>
+				)}
 				{showTimer && (
 					<>
-						<div className="tasting-page-header__clock">
+						<div
+							className={`tasting-page-header__clock${paused ? ' tasting-page-header__clock--paused' : ''}`}
+						>
 							<span className="tasting-page-header__timer-label">
 								{paused ? t.tastingHeader.paused : t.tastingHeader.timeRemaining}
 							</span>
@@ -154,7 +151,7 @@ export default function TastingPageHeader({
 					</Link>
 				) : (
 					<>
-						{wineLabel && <span className="tasting-page-header__wine-label">{wineLabel}</span>}
+						{flightLabel && <span className="tasting-page-header__wine-label">{flightLabel}</span>}
 						{isLoggedIn && (
 							<div className="nav-pop" ref={dropdownRef}>
 								<button

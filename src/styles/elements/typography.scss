@@ -109,11 +109,13 @@
 	@include ledger-label;
 }
 
-// The cream tier that names a group of cards within a phase — Initial and Final
-// Conclusion, and both kinds of Nose section header. One step above the accent
-// .tasting-card__label that sits on the cards themselves.
+// Names a group of questions within a phase (Fruit, Oak, the conclusions); a step above .tasting-card__label.
 .section-label {
-	@include ledger-label($text-10-5, $color-ink);
+	font-family: $font-serif;
+	font-size: $text-24;
+	font-weight: $font-weight-heading;
+	line-height: 1.15;
+	color: $color-ink;
 }
 
 // Names one thing in a list or form: an auth field, a numbered step on the start

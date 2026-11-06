@@ -51,11 +51,9 @@ export const tastingText = dict(
 				"The Sommelier's Ledger is not affiliated with or endorsed by the Court of Master Sommeliers or the Wine & Spirit Education Trust.",
 		},
 		sidebar: {
-			masterStudy: 'Master Level Study',
-			study: (short: string) => `${short} Study`,
-			appName: { cms: 'Deductive tasting practice', wset: 'Systematic tasting practice' },
-			progress: 'Progress',
-			phaseProgress: (phase: string) => `${phase} Progress:`,
+			wineGrid: (wine: string, grid: string) => `${wine} wine · ${grid}`,
+			phases: 'Phases',
+			phaseProgress: (phase: string, pct: number) => `${phase}: ${pct}% answered`,
 			/** What the phone stepper shows: five segments across 390px cannot carry "Initial Conclusion". */
 			short: {
 				cms: {
@@ -147,8 +145,9 @@ export const tastingText = dict(
 			qualityLevel: 'Official Quality Level',
 			styleCategory: 'Official Style Category',
 			vintage: 'Vintage',
-			yourAnalysis: 'Your Analysis',
-			whatYouRecorded: 'What you recorded',
+			yourAnalysis: 'Your notes so far',
+			showNotes: 'Show all your notes',
+			hideNotes: 'Hide your notes',
 			aromaDescriptors: 'Aroma Descriptors',
 			palateStructure: 'Palate Structure',
 			initialCall: 'Initial Call',
@@ -254,11 +253,9 @@ export const tastingText = dict(
 				"O The Sommelier's Ledger não tem afiliação nem aprovação do Court of Master Sommeliers ou do Wine & Spirit Education Trust.",
 		},
 		sidebar: {
-			masterStudy: 'Estudo de nível Master',
-			study: (short) => `Estudo ${short}`,
-			appName: { cms: 'Prática de prova dedutiva', wset: 'Prática de prova sistemática' },
-			progress: 'Progresso',
-			phaseProgress: (phase) => `Progresso — ${phase}:`,
+			wineGrid: (wine, grid) => `Vinho ${wine.toLowerCase()} · ${grid}`,
+			phases: 'Fases',
+			phaseProgress: (phase, pct) => `${phase}: ${pct}% respondido`,
 			short: {
 				cms: {
 					sight: 'Vista',
@@ -349,8 +346,9 @@ export const tastingText = dict(
 			qualityLevel: 'Nível de qualidade oficial',
 			styleCategory: 'Categoria de estilo oficial',
 			vintage: 'Colheita',
-			yourAnalysis: 'A sua análise',
-			whatYouRecorded: 'O que registou',
+			yourAnalysis: 'As suas notas até agora',
+			showNotes: 'Mostrar todas as notas',
+			hideNotes: 'Esconder as notas',
 			aromaDescriptors: 'Descritores de aroma',
 			palateStructure: 'Estrutura no paladar',
 			initialCall: 'Conclusão inicial',

@@ -33,48 +33,44 @@ $narrow: 720px;
 	flex: 1;
 	overflow: auto;
 	background-color: $color-ground;
-	padding-bottom: 80px; // clear the sticky footer
+	padding-bottom: 96px; // clear the fixed footer
 }
 
 .tasting-phase-content {
-	padding: $spacing-xxl $spacing-xxl 0;
+	display: flex;
+	flex-direction: column;
+	gap: 26px;
+	max-width: 860px;
+	padding: 32px 32px 0;
 }
 
-// ── Shared page heading elements (used on every phase page) ───────────────────
+// ── Page heading (every phase) ────────────────────────────────────────────────
+.phase-head {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 
-.phase-label {
-	@include ledger-label($text-10-5, $color-text-secondary);
-	margin-bottom: $spacing-xxxs;
-
-	// The number is the part worth reading; the word is just its frame.
-	&__num {
-		@include figures;
-		color: $color-link;
-		font-size: 1.15em;
+	h1 {
+		margin: 0;
+		font-size: 2.125rem;
 	}
 }
 
-// The phase title is a bare h1; all it needs is the gap down to its description.
-.phase-label + h1 {
-	margin-bottom: $spacing-sm;
-}
-
 .phase-description {
-	font-size: $text-13;
-	font-style: italic;
+	margin: 0;
+	max-width: 62ch;
+	font-size: $text-16;
+	line-height: 1.5;
 	color: $color-text-secondary;
-	margin: 0 0 $spacing-lg;
-	line-height: 1.6;
 }
 
 // ── Phone layout ─────────────────────────────────────────────────────────────
-// The desktop shell locks the viewport around a 300px sidebar; the phone layout scrolls normally instead.
+// The desktop shell locks the viewport beside the sidebar; the phone layout scrolls normally instead.
 @include responsive($breakpoint-mobile) {
 	.tasting-phase-page {
 		height: auto;
 		min-height: 100dvh;
 		overflow: visible;
-		background-color: $tasting-m-page;
 	}
 
 	.tasting-phase-body {
@@ -84,25 +80,17 @@ $narrow: 720px;
 
 	.tasting-phase-main {
 		overflow: visible;
-		background-color: $tasting-m-page;
-		padding-bottom: 116px; // clears the taller thumb-zone action bar
+		padding-bottom: 88px;
 	}
 
 	.tasting-phase-content {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		padding: 16px;
+		gap: 20px;
+		padding: 20px 16px;
 	}
 
-	// Both are in the header strip on this breakpoint; twice would push the first question below the fold.
-	.phase-label,
-	.phase-label + h1 {
-		display: none;
-	}
-
-	.phase-description {
-		line-height: 1.55;
-		margin-bottom: 0;
+	.phase-head {
+		h1 {
+			font-size: 1.75rem;
+		}
 	}
 }

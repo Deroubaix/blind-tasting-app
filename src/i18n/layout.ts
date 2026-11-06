@@ -72,9 +72,8 @@ export const layoutText = dict(
 			carriesOn: 'It carries on from where it was when you resume.',
 			resume: 'Resume',
 			flightWine: (n: number, total: number) => `Flight · Wine ${n} of ${total}`,
-			redAssessment: 'Red Wine Assessment',
-			whiteAssessment: 'White Wine Assessment',
-			timeRemaining: 'Time Remaining',
+			timeRemaining: 'Time left',
+			untimed: 'Untimed',
 			pauseTimer: 'Pause the timer',
 		},
 		timer: {
@@ -83,17 +82,20 @@ export const layoutText = dict(
 			movingOnTo: (phase: string) => `Moving on to ${phase}.`,
 			wineOver: 'Time is up for this wine.',
 			sequenceOver: 'That is the full deductive sequence — all five phases complete.',
-			kept: 'Your answers are kept as you go, so nothing is lost. Save the tasting on the next screen, with any closing notes and a photo.',
+			kept: 'Everything you chose is kept.',
+			thenSave: 'Look over your sheet, then save it and enter the label to be scored.',
 			reviewSave: 'Review & Save',
 		},
 		tastingFooter: {
 			startOver: 'Start over',
 			startOverQ: 'Start over?',
 			keepTasting: 'Keep tasting',
-			clears: (inFlight: boolean) =>
-				`This clears every answer in this tasting — sight, nose, palate and both conclusions — and takes you back to ${inFlight ? 'the flight. The wine’s clock keeps running' : 'setup'}.`,
-			nothingSaved:
-				'Nothing from this tasting has been saved to your archive yet, so there is nothing to come back to.',
+			clears: (wine: number | null) =>
+				wine
+					? `This clears every answer for wine ${wine} and takes you back to the flight.`
+					: 'This clears every answer in this tasting and takes you back to setup.',
+			nothingSaved: 'Nothing is saved until you save.',
+			clockRuns: 'The wine’s clock keeps running while you’re away.',
 		},
 		meta: {
 			description:
@@ -170,9 +172,8 @@ export const layoutText = dict(
 			carriesOn: 'Continua de onde ficou quando retomar.',
 			resume: 'Retomar',
 			flightWine: (n, total) => `Flight · Vinho ${n} de ${total}`,
-			redAssessment: 'Avaliação de vinho tinto',
-			whiteAssessment: 'Avaliação de vinho branco',
 			timeRemaining: 'Tempo restante',
+			untimed: 'Sem cronómetro',
 			pauseTimer: 'Pausar o cronómetro',
 		},
 		timer: {
@@ -181,16 +182,20 @@ export const layoutText = dict(
 			movingOnTo: (phase) => `A passar para ${phase}.`,
 			wineOver: 'Acabou o tempo para este vinho.',
 			sequenceOver: 'Está completa a sequência dedutiva: as cinco fases concluídas.',
-			kept: 'As suas respostas vão ficando guardadas, por isso nada se perde. Guarde a prova no ecrã seguinte, com notas finais e uma fotografia, se quiser.',
+			kept: 'Tudo o que escolheu fica guardado.',
+			thenSave: 'Reveja a ficha, depois guarde-a e introduza o rótulo para ser pontuada.',
 			reviewSave: 'Rever e guardar',
 		},
 		tastingFooter: {
 			startOver: 'Recomeçar',
 			startOverQ: 'Recomeçar?',
 			keepTasting: 'Continuar a prova',
-			clears: (inFlight) =>
-				`Isto apaga todas as respostas desta prova (vista, nariz, paladar e ambas as conclusões) e leva-o de volta ${inFlight ? 'ao flight. O cronómetro do vinho continua a contar' : 'à configuração'}.`,
-			nothingSaved: 'Nada desta prova foi ainda guardado no seu arquivo, por isso não há nada a que voltar.',
+			clears: (wine) =>
+				wine
+					? `Isto apaga todas as respostas do vinho ${wine} e leva-o de volta ao flight.`
+					: 'Isto apaga todas as respostas desta prova e leva-o de volta à configuração.',
+			nothingSaved: 'Nada fica guardado até guardar.',
+			clockRuns: 'O cronómetro do vinho continua a contar enquanto estiver fora.',
 		},
 		meta: {
 			description:

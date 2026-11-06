@@ -99,26 +99,27 @@ button {
 	align-items: center;
 	justify-content: center;
 	text-align: center;
+	min-height: 42px;
 	// Horizontal stays wider: these hug their labels in a wrapping row.
-	padding: 9px 16px;
+	padding: 6px 15px;
 	border: 1px solid $rule-mid;
 	border-radius: $radius-pill;
 	background-color: $color-card;
 	color: $color-ink;
-	font-size: $text-15;
+	font-size: $text-16;
+	line-height: 1.25;
 	transition:
 		background-color 0.15s ease,
 		border-color 0.15s ease,
 		color 0.15s ease,
-		transform 0.15s ease;
+		transform 0.1s ease;
 
 	&:hover {
 		border-color: $color-text-secondary;
 	}
 
 	&:active {
-		transform: scale(0.94);
-		transition-duration: 0s;
+		transform: scale(0.97);
 	}
 
 	// selected-outline restates itself under :hover, so the base hover never reaches a chosen option.
@@ -128,8 +129,7 @@ button {
 
 	// Free-flowing descriptor chips (Nose and WSET aromas) sit tighter than single-choice rows.
 	&--compact {
-		padding: 7px 14px;
-		font-size: $text-14;
+		font-size: $text-15;
 	}
 
 	// "Other": adds an answer rather than being one. A typed answer keeps the dashed edge once chosen.
@@ -144,13 +144,10 @@ button {
 }
 
 // ── Phone: option targets ────────────────────────────────────────────────────
-// The desktop option stands ~40px, under the 44px minimum; on a phone it is 46px.
+// 42px on desktop; a phone gets the full 44px touch target.
 @include responsive($breakpoint-mobile) {
 	.tasting-option {
-		min-width: 84px;
-		min-height: 46px;
-		padding: 8px 12px;
-		font-size: $text-16;
-		line-height: 1.25;
+		min-height: 44px;
+		padding: 6px 14px;
 	}
 }

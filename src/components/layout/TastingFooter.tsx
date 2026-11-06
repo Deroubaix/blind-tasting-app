@@ -46,8 +46,8 @@ export default function TastingFooter({
 			closeOnEsc: true,
 			children: (
 				<div className="dialog">
-					<p className="dialog__lead">{t.clears(!!tastingData.flight)}</p>
-					<p className="dialog__note">{t.nothingSaved}</p>
+					<p className="dialog__lead">{t.clears(tastingData.flight?.wineNumber ?? null)}</p>
+					<p className="dialog__note">{tastingData.flight ? t.clockRuns : t.nothingSaved}</p>
 					<div className="dialog__actions">
 						<button className="btn-quiet" onClick={() => closeModal(START_OVER_MODAL)}>
 							{t.keepTasting}
@@ -61,7 +61,6 @@ export default function TastingFooter({
 								router.push(flight ? `/flights/${flight.code}` : '/tastings/start');
 							}}
 						>
-							<IconRefresh size={16} />
 							{t.startOver}
 						</button>
 					</div>
@@ -72,24 +71,13 @@ export default function TastingFooter({
 
 	return (
 		<footer className="tasting-footer">
-			<div className="tasting-footer__left">
-				<button
-					className="btn-quiet btn-quiet--sm tasting-footer__start-over"
-					onClick={handleStartOver}
-					aria-label={t.startOver}
-				>
-					<span className="tasting-footer__start-over-icon" aria-hidden="true">
-						<IconRefresh size={18} />
-					</span>
-					<span className="tasting-footer__start-over-label">{t.startOver}</span>
-				</button>
-			</div>
+			<button className="btn-quiet tasting-footer__start-over" onClick={handleStartOver} aria-label={t.startOver}>
+				<IconRefresh size={18} aria-hidden="true" />
+			</button>
 
 			{onBack && (
-				<button className="tasting-footer__back-btn" onClick={onBack} aria-label={back}>
-					<span className="tasting-footer__back-icon" aria-hidden="true">
-						<IconArrowLeft size={18} />
-					</span>
+				<button className="btn-quiet tasting-footer__back" onClick={onBack} aria-label={back}>
+					<IconArrowLeft size={16} aria-hidden="true" />
 					<span className="tasting-footer__back-label">{back}</span>
 				</button>
 			)}
@@ -101,7 +89,7 @@ export default function TastingFooter({
 			>
 				{nextLoading && <Loading size={14} inline />}
 				{nextLabel}
-				<IconArrowRight size={16} />
+				<IconArrowRight size={16} aria-hidden="true" />
 			</button>
 		</footer>
 	);

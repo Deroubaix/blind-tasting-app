@@ -1,5 +1,4 @@
 @use '../abstracts' as *;
-@use 'tasting-phase-layout' as layout;
 // Nose Assessment page. Grid, cards, groups and dividers come from tasting-inputs.
 
 // The wine hues each fruit family is drawn in.
@@ -32,36 +31,11 @@ $fruit-hues: (
 	}
 }
 
-// ── Wood Exposure layout ──────────────────────────────────────────────────────
-// Oak descriptors (wide) on the left; new oak, intensity and type stacked on the right.
-.nose-wood-layout {
+// ── Oak: new oak, intensity and type side by side while there is room ─────────
+.nose-oak {
 	display: grid;
-	grid-template-columns: 2fr 3fr;
-	gap: $spacing-md;
-	align-items: start;
-
-	&__assessment {
-		display: flex;
-		flex-direction: column;
-		gap: $spacing-md;
-	}
-}
-
-// ── Collapsible section header (a .tasting-divider that toggles) ──────────────
-.nose-section-header {
-	padding-top: $spacing-sm;
-	transition: border-color 0.15s ease;
-
-	&:hover {
-		border-bottom-color: $rule-mid;
-	}
-
-	&__right {
-		display: flex;
-		align-items: center;
-		gap: $spacing-sm;
-		color: $color-text-secondary;
-	}
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 18px;
 }
 
 // ── Collapsible content wrapper ───────────────────────────────────────────────
@@ -78,17 +52,5 @@ $fruit-hues: (
 
 	&__inner {
 		overflow: hidden;
-	}
-}
-
-@include layout.narrow {
-	.nose-wood-layout {
-		grid-template-columns: 1fr;
-	}
-}
-
-@include responsive($breakpoint-mobile) {
-	.nose-wood-layout {
-		gap: 12px;
 	}
 }

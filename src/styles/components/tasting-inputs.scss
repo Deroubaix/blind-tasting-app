@@ -61,7 +61,10 @@
 
 // ── Card ──────────────────────────────────────────────────────────────────────
 .tasting-card {
-	@include ledger-panel($spacing-md);
+	padding: 18px;
+	background-color: $color-card;
+	border: 1px solid $rule;
+	border-radius: 14px;
 
 	// The light swatch tile: wine colour is judged against a neutral light ground.
 	&--light {
@@ -75,10 +78,13 @@
 	}
 }
 
-// The accent label tier: one per card, above its controls.
+// One question's name, above its options.
 .tasting-card__label {
-	@include ledger-label($text-12, $color-link);
-	margin-bottom: $spacing-sm;
+	margin-bottom: 10px;
+	font-size: 1.0625rem;
+	font-weight: $font-weight-semibold;
+	line-height: 1.3;
+	color: $color-ink;
 }
 
 // A label with a note beside it; the row carries the gap, so the label drops its own.
@@ -104,16 +110,57 @@
 	vertical-align: middle;
 }
 
-// ── Group without a card (fruit clusters, WSET aroma clusters) ────────────────
-.tasting-group {
-	padding: $spacing-xs 0;
+// ── Section card: a titled card holding several groups ────────────────────────
+.tasting-section {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
 
-	&__label {
-		@include ledger-label($text-11, $color-link);
+	&__head {
+		margin: 0;
+	}
+
+	// The whole heading toggles a collapsible section.
+	&__toggle {
 		display: flex;
 		align-items: center;
-		gap: $spacing-xs;
-		margin-bottom: $spacing-xs;
+		justify-content: space-between;
+		gap: 12px;
+		width: 100%;
+		min-height: 44px;
+		text-align: left;
+	}
+
+	&__right {
+		display: flex;
+		align-items: center;
+		gap: $spacing-sm;
+		color: $color-text-secondary;
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	// The question that rounds off a section (Fruit Condition, Oak Descriptors), set off by a rule.
+	&__sub {
+		padding-top: 18px;
+		border-top: 1px solid $rule;
+	}
+}
+
+// ── Group without a card (fruit clusters, WSET aroma clusters) ────────────────
+.tasting-group {
+	&__label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 10px;
+		font-size: 1.0625rem;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
 	}
 }
 
@@ -140,11 +187,11 @@
 .tasting-textarea,
 .tasting-input,
 .tasting-search-input-wrap {
-	background-color: $color-raised;
-	border: 1px solid $rule;
+	background-color: $color-card;
+	border: 1px solid $rule-mid;
 	border-radius: $radius;
 	color: $color-ink;
-	font-size: $text-13;
+	font-size: $text-16;
 	transition: border-color 0.15s ease;
 
 	&::placeholder {
@@ -152,12 +199,12 @@
 	}
 
 	&:hover {
-		border-color: $rule-mid;
+		border-color: $color-text-secondary;
 	}
 
 	&:focus,
 	&:focus-within {
-		border-color: $color-link;
+		border-color: $color-ink;
 	}
 
 	// The accent border is the focus edge; the global ring 2px out would read as a second one.
@@ -193,16 +240,15 @@
 
 // The shell's inner input carries no skin: the shell shows the focus.
 .tasting-search-input-wrap {
-	flex: 1;
+	// Basis auto, not 0: in a column parent (.fc-field) a zero basis collapsed the vintage field.
+	flex: 1 1 auto;
 	display: flex;
 	align-items: center;
 	gap: $spacing-xs;
-	padding: 0 10px;
-	height: 40px;
-
-	@include responsive($breakpoint-mobile) {
-		height: 46px;
-	}
+	min-width: 0;
+	padding: 0 14px;
+	min-height: 48px;
+	box-sizing: border-box;
 
 	// The custom select trigger.
 	&--select {
@@ -236,13 +282,13 @@
 	gap: $spacing-xs;
 	flex-wrap: wrap;
 
-	// Equal-width segments (Fruit Character, Condition, Climate).
+	// Equal-width segments (intensity, Condition, Climate). A grid, so five of them wrap on a phone instead of overflowing.
 	&--equal {
-		flex-wrap: nowrap;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(96px, 100%), 1fr));
 
 		.tasting-option {
-			flex: 1;
-			padding: 11px 10px;
+			padding: 6px;
 		}
 	}
 

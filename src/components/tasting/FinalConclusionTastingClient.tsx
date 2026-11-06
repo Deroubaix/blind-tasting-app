@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Fragment } from 'react';
-import { IconSearch, IconMapPin } from '@tabler/icons-react';
+import { Fragment, useState } from 'react';
+import { IconChevronDown, IconChevronUp, IconMapPin, IconSearch } from '@tabler/icons-react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { ChipSearchField, VintageInput } from './ConclusionInputs';
@@ -57,6 +57,8 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const text = useText(tastingText);
 	const t = text.final;
 	const phaseName = useText(commonText).phase.cms;
+	// Closed by default where it stacks above the form; beside the form it is always open.
+	const [notesOpen, setNotesOpen] = useState(false);
 
 	// The committed answers write straight through to the shared context. Local state would
 	// be lost when the phase timer expires. Only the search boxes' typing stays local.
@@ -108,6 +110,14 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 		.filter(([, value]) => Boolean(value))
 		.map(([key, value]) => [key, value as string] as [string, string]);
 	const possibleOriginSummary = (initial?.possibleCountries ?? []).join(' · ');
+	const initialLine = [
+		(initial?.grapeVarieties ?? []).join(' / '),
+		initial?.climate,
+		possibleOriginSummary,
+		initial?.ageRange,
+	]
+		.filter(Boolean)
+		.join(' · ');
 	const finalIdentity = [vintage, grapeVariety, qualityLevel, styleCategory, countryOfOrigin]
 		.filter(Boolean)
 		.join(' · ');
@@ -135,7 +145,52 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 			}}
 		>
 			<div className="fc-layout">
-				{/* ── Left: the declaration ── */}
+				{/* What you recorded: a reference beside the form, a closable summary above it when narrow. */}
+				<section className={`fc-notes${notesOpen ? ' fc-notes--open' : ''}`} aria-labelledby="fc-notes-title">
+					<h2 className="fc-notes__title" id="fc-notes-title">
+						{t.yourAnalysis}
+					</h2>
+					{initialLine && (
+						<p className="fc-notes__one">
+							<span>{t.initialCall}:</span> {initialLine}
+						</p>
+					)}
+					<button
+						type="button"
+						className="fc-notes__toggle"
+						aria-expanded={notesOpen}
+						aria-controls="fc-notes-full"
+						onClick={() => setNotesOpen((open) => !open)}
+					>
+						{notesOpen ? t.hideNotes : t.showNotes}
+						{notesOpen ? (
+							<IconChevronUp size={16} aria-hidden="true" />
+						) : (
+							<IconChevronDown size={16} aria-hidden="true" />
+						)}
+					</button>
+					<div className="fc-notes__full" id="fc-notes-full">
+						<AnalysisPairs label={phaseName.sight} pairs={sightPairs} />
+						<AnalysisPairs label={phaseName.nose} pairs={nosePairs} />
+						<AnalysisRow label={t.aromaDescriptors} value={noseDescriptors} />
+						<AnalysisPairs label={t.palateStructure} pairs={palatePairs} />
+						<AnalysisPairs label={t.initialCall} pairs={initialPairs} />
+						<AnalysisRow label={text.initial.countries} value={possibleOriginSummary} />
+
+						{finalIdentity && (
+							<>
+								<div className="fc-analysis__divider" />
+								<div className="fc-analysis__row">
+									<div className="fc-analysis__row-label">{t.finalIdentity}</div>
+									<div className="fc-analysis__row-value fc-analysis__row-value--identity">
+										{finalIdentity}
+									</div>
+								</div>
+							</>
+						)}
+					</div>
+				</section>
+
 				<div className="fc-form">
 					<div className="tasting-grid">
 						<ChipSearchField
@@ -206,32 +261,6 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							<VintageInput id="fc-vintage" value={vintage} onChange={(v) => updateFC({ vintage: v })} />
 						</div>
 					</div>
-				</div>
-				{/* ── Right: what you recorded. A reference, so it scrolls on its own ── */}
-				<div className="fc-analysis">
-					<div className="fc-analysis__header">
-						<span className="section-label">{t.yourAnalysis}</span>
-						<span className="fc-analysis__subtitle">{t.whatYouRecorded}</span>
-					</div>
-
-					<AnalysisPairs label={phaseName.sight} pairs={sightPairs} />
-					<AnalysisPairs label={phaseName.nose} pairs={nosePairs} />
-					<AnalysisRow label={t.aromaDescriptors} value={noseDescriptors} />
-					<AnalysisPairs label={t.palateStructure} pairs={palatePairs} />
-					<AnalysisPairs label={t.initialCall} pairs={initialPairs} />
-					<AnalysisRow label={text.initial.countries} value={possibleOriginSummary} />
-
-					{finalIdentity && (
-						<>
-							<div className="fc-analysis__divider" />
-							<div className="fc-analysis__row">
-								<div className="fc-analysis__row-label">{t.finalIdentity}</div>
-								<div className="fc-analysis__row-value fc-analysis__row-value--identity">
-									{finalIdentity}
-								</div>
-							</div>
-						</>
-					)}
 				</div>
 			</div>
 		</TastingPhaseLayout>

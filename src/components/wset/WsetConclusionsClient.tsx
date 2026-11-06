@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Fragment } from 'react';
-import { IconMapPin, IconSearch } from '@tabler/icons-react';
+import { Fragment, useState } from 'react';
+import { IconChevronDown, IconChevronUp, IconMapPin, IconSearch } from '@tabler/icons-react';
 import { commonText } from '../../i18n/common';
 import { useText } from '../../i18n/LanguageProvider';
 import { wsetText } from '../../i18n/wset';
@@ -52,6 +52,8 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 	const { tastingData, updateTastingData } = useTastingContext();
 	const final = tastingData.conclusion?.final ?? {};
 	const { quality, readiness, reasons } = WSET_CONCLUSION_KEYS;
+	// Closed by default where it stacks above the form; beside the form it is always open.
+	const [notesOpen, setNotesOpen] = useState(false);
 
 	const update = (patch: Record<string, string | null>) =>
 		updateTastingData({ conclusion: { ...tastingData.conclusion, final: { ...final, ...patch } } });
@@ -177,27 +179,42 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 					</div>
 				</div>
 
-				<div className="fc-analysis">
-					<div className="fc-analysis__header">
-						<span className="section-label">{t.analysis}</span>
-						<span className="fc-analysis__subtitle">{t.recorded}</span>
+				<section className={`fc-notes${notesOpen ? ' fc-notes--open' : ''}`} aria-labelledby="fc-notes-title">
+					<h2 className="fc-notes__title" id="fc-notes-title">
+						{t.analysis}
+					</h2>
+					<button
+						type="button"
+						className="fc-notes__toggle"
+						aria-expanded={notesOpen}
+						aria-controls="fc-notes-full"
+						onClick={() => setNotesOpen((open) => !open)}
+					>
+						{notesOpen ? t.hideNotes : t.showNotes}
+						{notesOpen ? (
+							<IconChevronUp size={16} aria-hidden="true" />
+						) : (
+							<IconChevronDown size={16} aria-hidden="true" />
+						)}
+					</button>
+					<div className="fc-notes__full" id="fc-notes-full">
+						<Recap label={phases.sight} pairs={sightPairs} />
+						<Recap label={phases.nose} pairs={nosePairs} />
+						{aromas && (
+							<div className="fc-analysis__row">
+								<div className="fc-analysis__row-label">{t.aromas}</div>
+								<div className="fc-analysis__row-value">{aromas}</div>
+							</div>
+						)}
+						<Recap label={phases.palate} pairs={palatePairs} />
+						{flavours && (
+							<div className="fc-analysis__row">
+								<div className="fc-analysis__row-label">{t.flavours}</div>
+								<div className="fc-analysis__row-value">{flavours}</div>
+							</div>
+						)}
 					</div>
-					<Recap label={phases.sight} pairs={sightPairs} />
-					<Recap label={phases.nose} pairs={nosePairs} />
-					{aromas && (
-						<div className="fc-analysis__row">
-							<div className="fc-analysis__row-label">{t.aromas}</div>
-							<div className="fc-analysis__row-value">{aromas}</div>
-						</div>
-					)}
-					<Recap label={phases.palate} pairs={palatePairs} />
-					{flavours && (
-						<div className="fc-analysis__row">
-							<div className="fc-analysis__row-label">{t.flavours}</div>
-							<div className="fc-analysis__row-value">{flavours}</div>
-						</div>
-					)}
-				</div>
+				</section>
 			</div>
 		</TastingPhaseLayout>
 	);

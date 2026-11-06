@@ -60,7 +60,7 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		min-width: min(340px, 100dvw);
-		max-width: min(560px, calc(100dvw - 32px));
+		max-width: min(440px, calc(100dvw - 32px));
 		max-height: 95dvh;
 		width: max-content;
 		overflow: auto;
@@ -69,30 +69,28 @@
 
 		@include responsive($breakpoint-mobile) {
 			min-width: 0;
-			max-width: calc(100dvw - 24px);
+			width: calc(100dvw - 32px);
+			max-width: calc(100dvw - 32px);
 			max-height: 90dvh;
 		}
 	}
 
 	&__content {
-		@include ledger-panel($spacing-xxxl $spacing-xxl);
+		padding: 20px;
+		background-color: $color-card;
+		border: 1px solid $rule;
+		border-radius: 14px;
 		box-shadow: $shadow-lift;
 		animation: modal-content-in 140ms ease-out 1;
 		scale: 1;
 		height: 100%;
 		display: grid;
 		grid-template-rows: auto 1fr;
+		gap: 10px;
 		overflow: auto;
-
-		@include responsive($breakpoint-mobile) {
-			padding: $spacing-xxl $spacing-lg;
-		}
 	}
 
 	&__header {
-		margin-bottom: $spacing-lg;
-		padding-bottom: $spacing-md;
-		border-bottom: 1px solid $rule-soft;
 		display: flex;
 		gap: $spacing-sm;
 		justify-content: space-between;
@@ -101,9 +99,13 @@
 
 	&__title {
 		flex-grow: 1;
-		font-weight: $font-weight-semibold;
+		margin: 0;
+		font-family: $font-serif;
+		font-weight: $font-weight-heading;
 		font-size: $text-24;
+		line-height: 1.15;
 		letter-spacing: -0.01em;
+		color: $color-ink;
 	}
 
 	&__close {
@@ -140,45 +142,43 @@
 }
 
 // ── Dialog body: time up, start over, delete ──────────────────────────────────
+// One sentence, a quieter line if there is more, then the actions: the safe one outlined, the committing one filled.
 .dialog {
 	display: flex;
 	flex-direction: column;
-	gap: $spacing-md;
+	gap: 10px;
 }
 
 .dialog__lead {
 	margin: 0;
 	color: $color-ink;
 	font-size: $text-16;
-	line-height: 1.5;
+	line-height: 1.45;
 }
 
 .dialog__note {
 	margin: 0;
 	color: $color-text-secondary;
-	font-size: $text-13-5;
-	line-height: 1.6;
+	font-size: $text-14;
+	line-height: 1.5;
 }
 
-// A lone action under the text.
+.dialog__action,
+.dialog__actions .btn-primary,
+.dialog__actions .btn-quiet {
+	min-height: 44px;
+	padding: 0 16px;
+}
+
 .dialog__action {
-	margin-top: $spacing-xs;
-	align-self: flex-start;
-
-	@include responsive($breakpoint-mobile) {
-		align-self: stretch;
-	}
+	margin-top: 6px;
+	align-self: flex-end;
 }
 
-// Cancel beside confirm: .btn-quiet and .btn-primary, so the two already stand the same height.
 .dialog__actions {
 	display: flex;
-	align-items: center;
-	gap: $spacing-md;
-	margin-top: $spacing-xs;
-
-	@include responsive($breakpoint-mobile) {
-		flex-direction: column-reverse;
-		align-items: stretch;
-	}
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 8px;
+	padding-top: 6px;
 }

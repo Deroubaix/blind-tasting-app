@@ -104,7 +104,6 @@ export default function AccountPanel() {
 							{t.keep}
 						</button>
 						<button className="btn-primary" onClick={() => remove(typed)}>
-							<IconTrash size={16} aria-hidden="true" />
 							{t.deleteEverything}
 						</button>
 					</div>

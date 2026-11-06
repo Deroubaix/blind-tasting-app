@@ -1,79 +1,57 @@
 @use '../abstracts' as *;
 // Tasting Footer — sticky bottom bar shared by all tasting phase pages.
-// Start over is a .btn-quiet--sm and Next a .btn-primary; only the layout lives here.
 
 .tasting-footer {
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: 60px;
-	background-color: $color-card;
-	border-top: 1px solid $rule;
+	z-index: $index-sticky;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	padding: 0 $page-spacing;
-	z-index: $index-sticky;
+	gap: 10px;
+	padding: 12px 32px calc(12px + env(safe-area-inset-bottom, 0px));
+	background-color: $color-ground;
+	border-top: 1px solid $rule;
 
-	&__left {
-		display: flex;
-		align-items: center;
-		gap: $spacing-md;
+	.btn-quiet,
+	.btn-primary {
+		min-height: 46px;
 	}
 
-	&__start-over-icon,
-	&__back-icon {
-		display: inline-flex;
-		line-height: 1;
+	&__start-over {
+		width: 46px;
+		padding: 0;
 	}
 
-	&__back-btn {
-		@include bare-button;
-		@include icon-label;
-		@include quiet-link($text-13);
+	&__back {
+		padding: 0 18px;
+	}
+
+	&__next {
+		margin-left: auto;
+		padding: 0 18px;
 	}
 }
 
-// ── Phone action bar ─────────────────────────────────────────────────────────
-// Thumb zone: Start over and Back become 54x52 icon squares, Next takes the rest.
 @include responsive($breakpoint-mobile) {
 	.tasting-footer {
-		height: auto;
-		gap: 10px;
-		justify-content: flex-start;
-		padding: 12px 16px calc(28px + env(safe-area-inset-bottom, 0px));
-		background-color: $tasting-m-chrome;
+		padding-inline: 16px;
 
-		&__left {
-			flex-shrink: 0;
-			gap: 10px;
-		}
-
-		&__start-over,
-		&__back-btn {
-			width: 54px;
-			height: 52px;
-			flex-shrink: 0;
-			gap: 0;
+		// "Back to Initial Conclusion" would crowd Next; the arrow and aria-label carry it here.
+		&__back {
+			width: 46px;
 			padding: 0;
-			border: 1px solid $rule;
-			border-radius: $radius;
-			background-color: $tasting-m-control;
-			color: $color-text-secondary;
 		}
 
-		// The words live on aria-label at this size; the square carries the icon.
-		&__start-over-label,
 		&__back-label {
 			display: none;
 		}
 
+		// Next takes what Start over and Back leave.
 		&__next {
 			flex: 1;
 			min-width: 0;
-			height: 52px;
-			padding: 0 $spacing-sm;
 		}
 	}
 }

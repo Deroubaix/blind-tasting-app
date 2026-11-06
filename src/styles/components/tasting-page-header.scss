@@ -2,26 +2,18 @@
 // Tasting session header — Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
 
 .tasting-page-header {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	display: flex;
 	align-items: center;
-	padding: 0 $page-spacing;
-	height: 52px;
+	gap: 12px;
+	padding: 0 32px;
+	min-height: 64px;
 	background-color: $color-ground;
-	border-bottom: 1px solid $rule-faint;
+	border-bottom: 1px solid $rule;
 	flex-shrink: 0;
 
 	&__logo {
-		justify-self: start;
-	}
-
-	&--no-timer {
-		display: flex;
-		justify-content: space-between;
-
-		.tasting-page-header__center {
-			display: none;
-		}
+		margin-right: auto;
+		text-decoration: none;
 	}
 
 	// The phone strip carries the phase and title; on desktop the page body does.
@@ -29,32 +21,45 @@
 		display: none;
 	}
 
-	// ── Center — timer block ────────────────────────────────────────────────────
+	// ── Clock ───────────────────────────────────────────────────────────────────
 	&__center {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: $spacing-md;
-		justify-self: center;
+		gap: 10px;
 	}
 
 	&__clock {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		gap: 6px;
+		align-items: flex-end;
+		line-height: 1.1;
 	}
 
 	&__timer-label {
-		@include ledger-label($text-10, $color-text-muted);
+		font-size: $text-12;
+		color: $color-text-secondary;
+	}
+
+	// The last quarter of a phase: the word turns with the figures.
+	&__clock:has(.timer-display--warning) &__timer-label {
+		color: $color-warning;
+	}
+
+	&__clock--paused &__timer-display {
+		color: $color-text-secondary;
+	}
+
+	// "Untimed" stands alone in place of the clock.
+	&__center > &__timer-label {
+		font-size: $text-14;
 	}
 
 	&__timer-display {
 		@include figures;
+		font-family: $font-serif;
 		font-size: $text-timer-live;
-		font-weight: $font-weight-semibold;
-		letter-spacing: 0.06em;
-		line-height: 1;
+		font-weight: $font-weight-heading;
+		line-height: 1.1;
 		color: $color-ink;
 
 		// `<Timer>` renders its own .timer-display inside, so the states are matched as descendants.
@@ -74,19 +79,16 @@
 
 	&__pause {
 		@include bare-button;
-		width: 32px;
-		height: 32px;
-		border-radius: 50%;
-		border: 1px solid $rule;
-		color: $color-text-secondary;
-		transition:
-			color 0.15s ease,
-			border-color 0.15s ease;
+		width: 44px;
+		height: 44px;
+		border: 1px solid $rule-mid;
+		border-radius: $radius;
+		color: $color-ink;
+		transition: border-color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
-			border-color: $color-link;
-			color: $color-ink;
+			border-color: $color-ink;
 		}
 
 		&:disabled {
@@ -95,38 +97,38 @@
 		}
 	}
 
-	// ── Right — wine label + avatar ─────────────────────────────────────────────
+	// ── Right — flight label + avatar ───────────────────────────────────────────
 	&__right {
 		display: flex;
 		align-items: center;
 		gap: $spacing-md;
-		justify-self: end;
 		position: relative;
+		margin-left: 8px;
 	}
 
 	&__wine-label {
-		@include ledger-label($text-10-5, $color-text-muted);
+		font-size: $text-14;
+		color: $color-text-secondary;
 	}
 
 	&__cancel {
-		@include quiet-link($text-11-5, $color-text-muted);
+		@include quiet-link($text-14, $color-text-secondary);
 	}
 
 	&__avatar {
 		@include bare-button;
-		width: 32px;
-		height: 32px;
+		width: 36px;
+		height: 36px;
 		border-radius: 50%;
 		background-color: $color-raised;
-		border: 1px solid $rule-folio;
+		border: 1px solid $rule;
 		color: $color-link;
-		font-size: $text-11;
+		font-size: $text-13;
 		font-weight: $font-weight-semibold;
-		letter-spacing: 0.04em;
-		transition: opacity 0.15s ease;
+		transition: border-color 0.15s ease;
 
 		&:hover {
-			opacity: 0.75;
+			border-color: $rule-mid;
 		}
 	}
 }
@@ -139,73 +141,50 @@
 		top: 0;
 		// Sticky chrome, with the footer: over the page, under menus and dialogs.
 		z-index: $index-sticky;
-		display: flex;
-		align-items: center;
-		gap: $spacing-sm;
 		height: 56px;
-		padding: 4px 16px 8px;
-		background-color: $tasting-m-chrome;
+		min-height: 0;
+		padding: 0 16px;
 		border-bottom: none;
 
 		&__logo,
-		&__wine-label,
 		&__right {
 			display: none;
-		}
-
-		&__timer-label {
-			order: 2; // under the clock, not above it
-			margin-top: 3px;
 		}
 
 		&__phase {
 			display: flex;
 			flex-direction: column;
-			gap: 2px;
 			flex: 1;
 			min-width: 0;
+			line-height: 1.2;
 		}
 
 		&__phase-label {
-			@include ledger-label($text-11, $color-text-muted);
+			font-size: $text-14;
+			color: $color-text-secondary;
 		}
 
 		&__phase-num {
 			@include figures;
-			color: $color-link;
 		}
 
 		&__phase-title {
 			font-size: $text-16;
 			font-weight: $font-weight-semibold;
-			letter-spacing: -0.01em;
 			color: $color-ink;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
+	}
 
-		&__center {
-			flex: 0 0 auto;
-			gap: $spacing-sm;
-		}
+	// The Start page has no phase: its strip keeps the wordmark and Cancel.
+	.tasting-page-header:not(:has(.tasting-page-header__phase)) {
+		border-bottom: 1px solid $rule;
 
-		&__clock {
-			align-items: flex-end;
-			gap: 0;
-		}
-
-		// A 40px target: as large as the 56px strip allows beside the clock.
-		&__pause {
-			width: 40px;
-			height: 40px;
-		}
-
-		// Bold on the strip: glanced at from arm's length mid-tasting.
-		&__timer-display {
-			font-weight: $font-weight-semibold;
-			letter-spacing: 0.02em;
-			text-align: right;
+		.tasting-page-header__logo,
+		.tasting-page-header__right {
+			display: flex;
 		}
 	}
 }

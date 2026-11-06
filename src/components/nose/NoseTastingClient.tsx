@@ -191,7 +191,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
-	// Into .tasting-card — top assessment, complex, wood.
+	// One question: its label, then its options.
 	const renderCategory = (category: string, equalWidth = false) => {
 		const options = presetOptions[category];
 		const selections = selectedOptions[category] || [];
@@ -206,7 +206,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
-	// Into .tasting-group — no background, coloured dot.
+	// A group inside a section card; fruit families carry a coloured dot.
 	const renderFruitCategory = (category: string) => {
 		const options = presetOptions[category];
 		const selections = selectedOptions[category] || [];
@@ -225,14 +225,21 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 		);
 	};
 
+	// The whole heading is the toggle; the count says what a closed section is holding.
 	const renderSectionHeader = (title: string, isOpen: boolean, onToggle: () => void, selectedCount: number) => (
-		<button className="tasting-divider nose-section-header" onClick={onToggle} aria-expanded={isOpen}>
-			<span className="section-label">{title}</span>
-			<span className="nose-section-header__right">
-				{!isOpen && selectedCount > 0 && <span className="tasting-aside">{t.selected(selectedCount)}</span>}
-				{isOpen ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
-			</span>
-		</button>
+		<h2 className="tasting-section__head">
+			<button type="button" className="tasting-section__toggle" onClick={onToggle} aria-expanded={isOpen}>
+				<span className="section-label">{title}</span>
+				<span className="tasting-section__right">
+					{!isOpen && selectedCount > 0 && <span className="tasting-aside">{t.selected(selectedCount)}</span>}
+					{isOpen ? (
+						<IconChevronUp size={20} aria-hidden="true" />
+					) : (
+						<IconChevronDown size={20} aria-hidden="true" />
+					)}
+				</span>
+			</button>
+		</h2>
 	);
 
 	// ── Markup ───────────────────────────────────────────────────────────────────
@@ -252,45 +259,36 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				onNext: handleNextPhase,
 			}}
 		>
-			{/* ── Faults, intensity and age (3 cols), in grid order ── */}
-			<div className="tasting-grid tasting-grid--3">
-				{NOSE_TOP.map((cat) => (
-					<div key={cat} className="tasting-card">
-						{renderCategory(cat)}
-					</div>
-				))}
-			</div>
+			{/* Faults, intensity and age, in grid order; the single-choice scales as equal segments. */}
+			{NOSE_TOP.map((cat) => (
+				<section key={cat} className="tasting-q">
+					{renderCategory(cat, SINGLE_SELECT.has(cat))}
+				</section>
+			))}
 
-			{/* ── Fruit ── */}
-			<div className="tasting-divider">
-				<span className="section-label">{t.fruit}</span>
-			</div>
-
-			{/* The grid's fruit groups — no card background */}
-			<div className="tasting-grid tasting-grid--2">
+			<section className="tasting-card tasting-section">
+				<h2 className="section-label">{t.fruit}</h2>
 				{FRUIT_FAMILIES[wineType].map((cat) => (
 					<div key={cat} className="tasting-group">
 						{renderFruitCategory(cat)}
 					</div>
 				))}
-			</div>
+				<div className="tasting-section__sub">{renderCategory('Fruit Condition')}</div>
+			</section>
 
-			<div className="tasting-card">{renderCategory('Fruit Condition')}</div>
-
-			{/* ── Non-Fruit, Earth & Mineral (collapsible) ── */}
-			{renderSectionHeader(
-				t.nonFruit,
-				complexOpen,
-				() => setComplexOpen((o) => !o),
-				countSelected(NOSE_NON_FRUIT),
-			)}
-			{/* `inert` takes the hidden chips out of the tab order and the accessibility tree. */}
-			<div
-				className={`nose-collapsible${complexOpen ? '' : ' nose-collapsible--collapsed'}`}
-				inert={!complexOpen}
-			>
-				<div className="nose-collapsible__inner">
-					<div className="tasting-grid tasting-grid--3">
+			<section className="tasting-card tasting-section">
+				{renderSectionHeader(
+					t.nonFruit,
+					complexOpen,
+					() => setComplexOpen((o) => !o),
+					countSelected(NOSE_NON_FRUIT),
+				)}
+				{/* `inert` takes the hidden chips out of the tab order and the accessibility tree. */}
+				<div
+					className={`nose-collapsible${complexOpen ? '' : ' nose-collapsible--collapsed'}`}
+					inert={!complexOpen}
+				>
+					<div className="nose-collapsible__inner tasting-section__body">
 						{NOSE_NON_FRUIT.map((cat) => (
 							<div key={cat} className="tasting-group">
 								{renderFruitCategory(cat)}
@@ -298,34 +296,29 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 						))}
 					</div>
 				</div>
-			</div>
+			</section>
 
-			{/* ── Oak (collapsible) ── */}
-			{renderSectionHeader(
-				t.oak,
-				woodOpen,
-				() => setWoodOpen((o) => !o),
-				countSelected(['Oak Descriptors', ...NOSE_OAK_ASSESSMENT]),
-			)}
-			<div className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`} inert={!woodOpen}>
-				<div className="nose-collapsible__inner">
-					<div className="nose-wood-layout">
+			<section className="tasting-card tasting-section">
+				{renderSectionHeader(
+					t.oak,
+					woodOpen,
+					() => setWoodOpen((o) => !o),
+					countSelected(['Oak Descriptors', ...NOSE_OAK_ASSESSMENT]),
+				)}
+				<div className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`} inert={!woodOpen}>
+					<div className="nose-collapsible__inner tasting-section__body">
 						{/* New oak first, as on the grid */}
-						<div className="nose-wood-layout__assessment">
+						<div className="nose-oak">
 							{NOSE_OAK_ASSESSMENT.map((cat) => (
-								<div key={cat} className="tasting-card">
+								<div key={cat} className="tasting-q">
 									{renderCategory(cat, true)}
 								</div>
 							))}
 						</div>
-
-						{/* Descriptors — right, no background */}
-						<div className="tasting-group nose-wood-layout__aromas">
-							{renderFruitCategory('Oak Descriptors')}
-						</div>
+						<div className="tasting-section__sub">{renderFruitCategory('Oak Descriptors')}</div>
 					</div>
 				</div>
-			</div>
+			</section>
 		</TastingPhaseLayout>
 	);
 }

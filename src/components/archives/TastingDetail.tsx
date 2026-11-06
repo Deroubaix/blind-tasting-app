@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { IconArrowLeft, IconTrash } from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { type TastingData } from '../../types/TastingData';
 import ClientTastingService from '../../services/client/ClientTastingService';
 import ClientPhotoService from '../../services/client/ClientPhotoService';
@@ -158,7 +158,6 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 							{t.keep}
 						</button>
 						<button className="btn-primary" onClick={deleteTasting}>
-							<IconTrash size={16} aria-hidden="true" />
 							{t.deleteTasting}
 						</button>
 					</div>

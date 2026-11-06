@@ -100,7 +100,7 @@ export default function TastingPhaseLayout({
 				<LeftSidebar wineType={wineType} progress={progress} />
 				<main id="main" className="tasting-phase-main">
 					<div className="tasting-phase-content">
-						<PhaseHeading phase={phase} title={title} description={description} />
+						<PhaseHeading title={title} description={description} />
 						{children}
 					</div>
 				</main>
