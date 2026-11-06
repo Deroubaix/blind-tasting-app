@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from '@mantine/form';
-import { IconArrowRight, IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
@@ -63,27 +63,16 @@ export default function LoginForm() {
 	};
 
 	return (
-		<AuthShell
-			contextLink={{
-				href: signupHref,
-				label: shared.signUp,
-				contextLabel: t.contextLabel,
-			}}
-		>
-			<header className="auth-card-head">
-				<span className="page-eyebrow">{t.eyebrow}</span>
-				<h1>
-					{t.headingBefore}
-					<em>{t.headingEm}</em>
-					{t.headingAfter}
-				</h1>
+		<AuthShell>
+			<header className="auth-head">
+				<h1>{t.heading}</h1>
 				{isSavingTasting(redirectTo) ? (
-					<p className="body-copy">
+					<p className="auth-head__sub">
 						<strong>{shared.waiting}</strong>
 						{t.waitingRest}
 					</p>
 				) : (
-					<p className="body-copy">{t.subheading}</p>
+					<p className="auth-head__sub">{t.subheading}</p>
 				)}
 			</header>
 
@@ -91,7 +80,7 @@ export default function LoginForm() {
 				{error && <p className="auth-error">{error}</p>}
 
 				<FormControl className="auth-field" name="email">
-					<Label className="item-label">{shared.email}</Label>
+					<Label>{shared.email}</Label>
 					<TextInput
 						className="ledger-field"
 						type="email"
@@ -102,7 +91,7 @@ export default function LoginForm() {
 
 				<FormControl className="auth-field" name="password">
 					<div className="auth-label-row">
-						<Label className="item-label">{shared.password}</Label>
+						<Label>{shared.password}</Label>
 						<Link href="/forgot-password" className="auth-forgot">
 							{t.forgot}
 						</Link>
@@ -112,7 +101,6 @@ export default function LoginForm() {
 							className="ledger-field"
 							type={showPassword ? 'text' : 'password'}
 							autoComplete="current-password"
-							placeholder="••••••••"
 						/>
 						<button
 							type="button"
@@ -120,22 +108,26 @@ export default function LoginForm() {
 							onClick={() => setShowPassword((v) => !v)}
 							aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 						>
-							{showPassword ? <IconEyeOff size={24} stroke={1} /> : <IconEye size={24} stroke={1} />}
+							{showPassword ? <IconEyeOff size={22} stroke={1.5} /> : <IconEye size={22} stroke={1.5} />}
 						</button>
 					</div>
 				</FormControl>
 
 				<button className="btn-primary btn-primary--block auth-submit" type="submit" disabled={isLoading}>
 					{isLoading ? t.loggingIn : shared.logIn}
-					<IconArrowRight size={15} />
 				</button>
 			</Form>
 
 			<p className="auth-switch">
 				{t.newHere}{' '}
 				<Link href={signupHref} className="auth-switch__link">
-					{shared.signUp}
+					{t.createFree}
 				</Link>
+			</p>
+			<p className="auth-note">
+				{t.soloBefore}
+				<Link href="/tastings/start">{t.soloLink}</Link>
+				{t.soloAfter}
 			</p>
 		</AuthShell>
 	);

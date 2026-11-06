@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { IconDownload, IconTrash } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
+import LanguageSwitch from '../../i18n/LanguageSwitch';
+import ThemeSwitch from '../../theme/ThemeSwitch';
 import { useModalProvider } from '../modal/ModalProvider';
 import { useToastProvider } from '../toast/ToastProvider';
 import ClientTastingService from '../../services/client/ClientTastingService';
@@ -14,6 +15,7 @@ import { formatDate } from '../../utils/DateUtils';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { userText } from '../../i18n/user';
 import { commonText } from '../../i18n/common';
+import { layoutText } from '../../i18n/layout';
 
 const service = new ClientTastingService();
 const flightService = new ClientFlightService();
@@ -27,6 +29,7 @@ export default function AccountPanel() {
 	const { lang } = useLang();
 	const { account: t, shared } = useText(userText);
 	const common = useText(commonText);
+	const layout = useText(layoutText);
 	const [tastingCount, setTastingCount] = useState<number | null>(null);
 	const [hostedFlights, setHostedFlights] = useState(0);
 	const [password, setPassword] = useState('');
@@ -140,22 +143,25 @@ export default function AccountPanel() {
 	return (
 		<div className="account">
 			<section className="account-card" aria-labelledby="account-details-heading">
-				<h2 className="account-card__heading" id="account-details-heading">
-					{t.detailsHeading}
-				</h2>
-				<dl className="account-details">
-					<dt>{t.name}</dt>
-					<dd>{user.displayName}</dd>
-					<dt>{t.email}</dt>
-					<dd>{user.email}</dd>
+				<h2 id="account-details-heading">{t.detailsHeading}</h2>
+				<dl className="account-lines">
+					<div className="account-line">
+						<dt>{t.name}</dt>
+						<dd>
+							{user.displayName}
+							<span className="account-line__note">{t.nameNote}</span>
+						</dd>
+					</div>
+					<div className="account-line">
+						<dt>{t.email}</dt>
+						<dd>{user.email}</dd>
+					</div>
 					{memberSince && (
-						<>
+						<div className="account-line">
 							<dt>{t.memberSince}</dt>
 							<dd>{memberSince}</dd>
-						</>
+						</div>
 					)}
-					<dt>{t.tastings}</dt>
-					<dd>{tastingCount ?? '—'}</dd>
 				</dl>
 				<p className="account-card__note">
 					{t.privacyBefore}
@@ -164,62 +170,75 @@ export default function AccountPanel() {
 				</p>
 			</section>
 
-			<section className="account-card" aria-labelledby="account-export-heading">
-				<h2 className="account-card__heading" id="account-export-heading">
-					{t.exportHeading}
-				</h2>
-				<p className="account-card__text">{t.exportText}</p>
-				<button
-					type="button"
-					className="btn-primary account-export__btn"
-					onClick={download}
-					disabled={exporting}
-				>
-					<IconDownload size={16} aria-hidden="true" />
-					{exporting ? t.exporting : t.download}
-				</button>
-				{exportError && (
-					<p className="account-delete__error" role="alert">
-						{exportError}
-					</p>
-				)}
+			<section className="account-card" aria-labelledby="account-prefs-heading">
+				<h2 id="account-prefs-heading">{t.prefsHeading}</h2>
+				<div className="account-lines">
+					<div className="account-line">
+						<span aria-hidden="true">{layout.appearance.label}</span>
+						<ThemeSwitch />
+					</div>
+					<div className="account-line">
+						<span aria-hidden="true">{layout.header.language}</span>
+						<LanguageSwitch />
+					</div>
+				</div>
+				<p className="account-card__note">{t.prefsNote}</p>
 			</section>
 
-			<section className="account-card account-card--danger" aria-labelledby="account-delete-heading">
-				<h2 className="account-card__heading" id="account-delete-heading">
-					{t.deleteHeading}
-				</h2>
-				<p className="account-card__text">{t.deleteText}</p>
-				{flightsNote && <p className="account-card__text">{flightsNote}</p>}
-				<div className="account-delete">
+			<section className="account-card" aria-labelledby="account-data-heading">
+				<h2 id="account-data-heading">{t.dataHeading}</h2>
+				<div className="account-block">
+					<div className="account-block__row">
+						<span className="account-block__title">{t.counts(tastingCount, hostedFlights)}</span>
+						<button type="button" className="btn-quiet" onClick={download} disabled={exporting}>
+							{exporting ? t.exporting : t.download}
+						</button>
+					</div>
+					<p className="account-card__note">{t.exportText}</p>
+					{exportError && (
+						<p className="account-error" role="alert">
+							{exportError}
+						</p>
+					)}
+				</div>
+
+				<div className="account-block account-block--delete">
+					<h3 className="account-block__title">{t.deleteHeading}</h3>
+					<p className="account-card__note">{t.deleteText}</p>
+					{flightsNote && <p className="account-card__note">{flightsNote}</p>}
 					<label className="account-delete__label" htmlFor="account-delete-password">
 						{shared.password}
 					</label>
-					<input
-						id="account-delete-password"
-						type="password"
-						autoComplete="current-password"
-						className="tasting-input account-delete__input"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						aria-describedby={errorText ? 'account-delete-error' : undefined}
-					/>
-					<button
-						type="button"
-						className="btn-primary account-delete__btn"
-						onClick={confirm}
-						disabled={deleting}
-					>
-						<IconTrash size={16} aria-hidden="true" />
-						{deleting ? t.deleting : t.deleteMine}
-					</button>
+					<div className="account-delete">
+						<input
+							id="account-delete-password"
+							type="password"
+							autoComplete="current-password"
+							className="ledger-field"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							aria-describedby={errorText ? 'account-delete-error' : undefined}
+						/>
+						<button
+							type="button"
+							className="btn-quiet account-delete__btn"
+							onClick={confirm}
+							disabled={deleting}
+						>
+							{deleting ? t.deleting : t.deleteMine}
+						</button>
+					</div>
+					{errorText && (
+						<p className="account-error" id="account-delete-error" role="alert">
+							{errorText}
+						</p>
+					)}
 				</div>
-				{errorText && (
-					<p className="account-delete__error" id="account-delete-error" role="alert">
-						{errorText}
-					</p>
-				)}
 			</section>
+
+			<Link href="/logout" className="account-logout">
+				{t.logOut}
+			</Link>
 		</div>
 	);
 }

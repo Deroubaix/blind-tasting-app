@@ -43,26 +43,30 @@
 .ledger-field {
 	width: 100%;
 	min-width: 0;
-	height: 52px;
-	padding: 0 16px;
-	background-color: $color-raised;
+	height: 50px;
+	padding: 0 14px;
+	background-color: $color-card;
 	border: 1px solid $rule-mid;
 	border-radius: $radius;
 	color: $color-ink;
-	font-size: $text-15;
+	font-size: 1.0625rem;
 	transition: border-color 0.15s ease;
 
 	&::placeholder {
 		color: $color-text-muted;
 	}
 
+	&:hover {
+		border-color: $color-text-secondary;
+	}
+
 	&:focus {
 		outline: none;
-		border-color: $color-link;
+		border-color: $color-ink;
 	}
 
 	&:focus-visible {
-		box-shadow: 0 0 0 1px $color-link;
+		box-shadow: 0 0 0 1px $color-ink;
 	}
 
 	// Autofill would repaint the field in the browser's colours.
@@ -70,7 +74,7 @@
 	&:-webkit-autofill:hover,
 	&:-webkit-autofill:focus,
 	&:-webkit-autofill:active {
-		-webkit-box-shadow: 0 0 0 1000px $color-raised inset;
+		-webkit-box-shadow: 0 0 0 1000px $color-card inset;
 		-webkit-text-fill-color: $color-ink;
 		caret-color: $color-ink;
 		transition:

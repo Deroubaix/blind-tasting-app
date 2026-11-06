@@ -12,8 +12,8 @@ export default async function AccountPage() {
 		<div className="site-page">
 			<Header />
 			<main className="site-main page-container">
-				<header className="page-head account-head">
-					<h1 className="page-head__title">{t.account}</h1>
+				<header className="account-head">
+					<h1>{t.account}</h1>
 				</header>
 				<AccountPanel />
 			</main>

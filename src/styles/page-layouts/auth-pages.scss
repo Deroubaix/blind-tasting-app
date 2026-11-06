@@ -7,72 +7,97 @@
 	flex-direction: column;
 	padding-top: var(--navbar-height_approx);
 	background-color: $color-ground;
+	color: $color-ink;
 }
 
 .auth-main {
 	flex: 1;
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	padding: 48px 56px;
-	position: relative;
-
-	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		pointer-events: none;
-		background: radial-gradient(700px 500px at 50% 0%, fade($color-wine, 10%), transparent 65%);
-	}
+	padding: 56px 16px 72px;
 
 	@include responsive($breakpoint-mobile) {
-		padding: 32px 20px;
+		padding: 40px 16px 56px;
 	}
 }
 
 .auth-container {
-	position: relative;
-	z-index: 1;
 	width: 100%;
-	max-width: 420px;
+	max-width: 408px;
 	display: flex;
 	flex-direction: column;
-	gap: 2.25rem;
+	gap: 22px;
 }
 
-// Eyebrow, heading, .body-copy.
-.auth-card-head {
+.auth-head {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: 8px;
+
+	h1 {
+		font-size: $text-32;
+	}
+
+	&__sub {
+		margin: 0;
+		font-size: 1.0625rem;
+		line-height: 1.5;
+		color: $color-text-secondary;
+
+		strong {
+			color: $color-ink;
+			font-weight: $font-weight-semibold;
+		}
+	}
 }
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 .auth-form {
 	display: flex;
 	flex-direction: column;
-	gap: $page-spacing;
+	gap: 16px;
 }
 
 .auth-field {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 6px;
+
+	label {
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
+	}
 }
 
 .auth-label-row {
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
-}
-
-.auth-input-hint {
-	font-size: $text-11;
-	color: $color-text-muted;
+	gap: 12px;
 }
 
 .auth-forgot {
-	@include quiet-link($text-10);
+	font-size: $text-14;
+	color: $color-link;
+	text-decoration: none;
+
+	&:hover {
+		color: $color-ink;
+	}
+}
+
+// Under a field; turns green with a tick once the password is long enough.
+.auth-hint {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: $text-14;
+	color: $color-text-secondary;
+
+	&--met {
+		color: $color-ok;
+	}
 }
 
 // The field with the show-password button inside its right edge.
@@ -87,7 +112,7 @@
 .auth-eye-btn {
 	@include bare-button;
 	position: absolute;
-	right: 4px;
+	right: 3px;
 	top: 50%;
 	transform: translateY(-50%);
 	width: 44px;
@@ -102,16 +127,18 @@
 }
 
 .auth-submit {
-	margin-top: 0.4rem;
+	margin-top: 4px;
+	min-height: 50px;
 }
 
 .auth-error {
-	font-size: $text-13;
-	color: $color-error;
 	margin: 0;
-	padding: 0.5rem 0.75rem;
-	background-color: fade($color-error, 10%);
-	border-left: 2px solid $color-error;
+	padding: 10px 14px;
+	font-size: $text-15;
+	color: $color-error;
+	background-color: fade($color-error, 8%);
+	border: 1px solid fade($color-error, 35%);
+	border-radius: $radius;
 
 	a {
 		@include ledger-link;
@@ -126,17 +153,46 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin: 0 auto;
 }
 
-// ── Cross-link ────────────────────────────────────────────────────────────────
+// ── Below the form ────────────────────────────────────────────────────────────
 .auth-switch {
-	font-size: $text-13-5;
+	margin: 0;
+	font-size: $text-15;
 	color: $color-text-secondary;
 	text-align: center;
-	margin: 0;
 
 	&__link {
-		@include ledger-link;
+		font-weight: $font-weight-semibold;
+		color: $color-link;
+		text-decoration: none;
+
+		&:hover {
+			color: $color-ink;
+		}
+	}
+}
+
+// The small print: tasting without an account, the privacy line under Create account.
+.auth-note {
+	margin: 0;
+	padding-top: 12px;
+	font-size: $text-14;
+	line-height: 1.5;
+	color: $color-text-secondary;
+	text-align: center;
+
+	&--left {
+		padding-top: 0;
+		text-align: left;
+	}
+
+	a {
+		color: $color-link;
+		text-decoration: none;
+
+		&:hover {
+			color: $color-ink;
+		}
 	}
 }

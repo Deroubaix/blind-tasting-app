@@ -12,10 +12,12 @@ export type TextInputProps = {
 	value?: string;
 	onChange?: (value: string) => void;
 	onBlur?: (value: string) => void;
+	'aria-describedby'?: string;
 };
 
 export default forwardRef<HTMLInputElement, TextInputProps>(function TextInput(props: TextInputProps, ref) {
 	const { className, type, placeholder, autoComplete, value, onChange, onBlur } = props;
+	const describedBy = props['aria-describedby'];
 
 	const [inputValue, setInputValue] = useState(value ?? '');
 
@@ -53,6 +55,7 @@ export default forwardRef<HTMLInputElement, TextInputProps>(function TextInput(p
 			id={formControl?.fieldId}
 			disabled={disabled}
 			autoComplete={autoComplete}
+			aria-describedby={describedBy}
 			{...formInputProps}
 		/>
 	);

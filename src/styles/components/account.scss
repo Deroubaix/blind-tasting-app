@@ -1,105 +1,169 @@
 @use '../abstracts' as *;
-// Account page: details and account deletion
+// Account page: details, preferences, export and deletion, in one 640px column.
+
+.account,
+.account-head {
+	width: 100%;
+	max-width: 640px;
+	margin-inline: auto;
+}
+
+.account-head {
+	padding-bottom: 16px;
+}
 
 .account {
 	display: flex;
 	flex-direction: column;
-	gap: $spacing-lg;
-	max-width: 720px;
-	padding: 0 $spacing-xxl $spacing-xxl;
-	margin: 0 auto;
-	box-sizing: content-box;
-
-	@include responsive($breakpoint-mobile) {
-		padding: 0 $spacing-md $spacing-xl;
-	}
+	gap: 16px;
 }
 
 .account-card {
-	@include ledger-panel($spacing-lg $spacing-xl);
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 20px;
+	background-color: $color-card;
+	border: 1px solid $rule;
+	border-radius: 14px;
 
-	&--danger {
-		border-color: fade($color-error, 40%);
+	h2 {
+		font-size: 1.375rem;
 	}
 
-	&__heading {
-		margin: 0 0 $spacing-md;
+	&__note {
+		margin: 0;
+		font-size: $text-14;
+		line-height: 1.5;
+		color: $color-text-secondary;
+
+		a {
+			color: $color-link;
+			text-decoration: none;
+
+			&:hover {
+				color: $color-ink;
+			}
+		}
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding: 16px;
+	}
+}
+
+// Label on the left, value or switch on the right, a rule between rows.
+.account-lines {
+	margin: 0;
+}
+
+.account-line {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 4px 16px;
+	min-height: 44px;
+	padding: 8px 0;
+	border-top: 1px solid $rule;
+	font-size: $text-16;
+
+	&:first-child {
+		border-top: 0;
+		padding-top: 0;
+	}
+
+	dt,
+	> span {
+		color: $color-text-secondary;
+	}
+
+	dd {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		text-align: right;
+		color: $color-ink;
+		overflow-wrap: anywhere;
+	}
+
+	&__note {
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+}
+
+// Export, then deletion below a rule.
+.account-block {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px 16px;
+	}
+
+	&__title {
+		margin: 0;
+		font-family: $font-sans;
 		font-size: $text-16;
 		font-weight: $font-weight-semibold;
 		color: $color-ink;
 	}
 
-	&__text,
-	&__note {
-		margin: 0 0 $spacing-md;
-		font-size: $text-14;
-		line-height: 1.6;
-		color: $color-text-secondary;
-	}
-
-	&__note {
-		margin: $spacing-md 0 0;
-		font-size: $text-13;
-
-		a {
-			@include ledger-link;
-		}
-	}
-}
-
-.account-details {
-	display: grid;
-	grid-template-columns: 8rem 1fr;
-	gap: $spacing-sm $spacing-md;
-	margin: 0;
-	font-size: $text-14;
-
-	dt {
-		color: $color-text-muted;
-	}
-
-	dd {
-		margin: 0;
-		color: $color-ink;
-		overflow-wrap: anywhere;
+	&--delete {
+		padding-top: 14px;
+		border-top: 1px solid $rule;
 	}
 }
 
 .account-delete {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
-	gap: $spacing-sm $spacing-md;
+	gap: 10px;
 
 	&__label {
-		flex-basis: 100%;
-		font-size: $text-13;
-		font-weight: $font-weight-regular;
-		color: $color-text-secondary;
+		margin-top: 6px;
+		font-size: $text-15;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
 	}
 
-	input.account-delete__input {
+	.ledger-field {
 		flex: 1 1 14rem;
-		min-height: 44px;
+		height: 48px;
 	}
 
-	&__error {
-		margin: $spacing-sm 0 0;
-		font-size: $text-13;
+	&__btn.btn-quiet {
 		color: $color-error;
+		border-color: fade($color-error, 45%);
+
+		&:hover:not(:disabled) {
+			border-color: $color-error;
+		}
 	}
 }
 
-// Lines the .page-head up with the cards.
-.account-head {
-	max-width: 720px;
-	box-sizing: content-box;
-	margin: 0 auto;
-	padding-top: $spacing-xxl;
-	padding-inline: $spacing-xxl;
+.account-error {
+	margin: 0;
+	font-size: $text-14;
+	color: $color-error;
+}
 
-	@include responsive($breakpoint-mobile) {
-		padding-top: $spacing-lg;
-		padding-inline: $spacing-md;
+.account-logout {
+	align-self: flex-start;
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	color: $color-text-secondary;
+	text-decoration: none;
+
+	&:hover {
+		color: $color-ink;
 	}
 }

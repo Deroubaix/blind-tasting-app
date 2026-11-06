@@ -118,13 +118,6 @@
 	color: $color-ink;
 }
 
-// Names one thing in a list or form: an auth field, a numbered step on the start
-// page, a phase in the home page preview. Brighter and a step larger than
-// .section-label, which names a whole group.
-.item-label {
-	@include ledger-label($text-13, $color-ink);
-}
-
 // ── Links, labels and score tags shared by several pages ─────────────────────────
 .text-link {
 	@include ledger-link;

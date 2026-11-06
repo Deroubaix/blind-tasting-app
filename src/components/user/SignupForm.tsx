@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from '@mantine/form';
-import { IconArrowRight, IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconCheck, IconEye, IconEyeOff } from '@tabler/icons-react';
 import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
@@ -63,31 +63,19 @@ export default function SignupForm() {
 		}
 	};
 
+	const longEnough = form.values.password.length >= PASSWORD_MIN_LENGTH;
+
 	return (
-		<AuthShell
-			contextLink={{
-				href: '/login',
-				label: shared.logIn,
-				contextLabel: t.contextLabel,
-			}}
-		>
-			<header className="auth-card-head">
-				<span className="page-eyebrow">{t.eyebrow}</span>
-				<h1>
-					{t.headingBefore}
-					<em>{t.headingEm}</em>
-					{t.headingAfter}
-				</h1>
+		<AuthShell>
+			<header className="auth-head">
+				<h1>{t.heading}</h1>
 				{isSavingTasting(redirectTo) ? (
-					<p className="body-copy">
+					<p className="auth-head__sub">
 						<strong>{shared.waiting}</strong>
 						{t.waitingRest}
 					</p>
 				) : (
-					<p className="body-copy">
-						<strong>{t.pitch}</strong>
-						{t.pitchRest}
-					</p>
+					<p className="auth-head__sub">{t.pitch}</p>
 				)}
 			</header>
 
@@ -95,17 +83,20 @@ export default function SignupForm() {
 				{error && <p className="auth-error">{error}</p>}
 
 				<FormControl className="auth-field" name="displayName">
-					<Label className="item-label">{t.displayName}</Label>
+					<Label>{t.displayName}</Label>
 					<TextInput
 						className="ledger-field"
 						type="text"
 						autoComplete="name"
-						placeholder={t.displayNamePlaceholder}
+						aria-describedby="signup-name-hint"
 					/>
+					<span className="auth-hint" id="signup-name-hint">
+						{t.displayNameHint}
+					</span>
 				</FormControl>
 
 				<FormControl className="auth-field" name="email">
-					<Label className="item-label">{shared.email}</Label>
+					<Label>{shared.email}</Label>
 					<TextInput
 						className="ledger-field"
 						type="email"
@@ -115,16 +106,13 @@ export default function SignupForm() {
 				</FormControl>
 
 				<FormControl className="auth-field" name="password">
-					<div className="auth-label-row">
-						<Label className="item-label">{shared.password}</Label>
-						<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
-					</div>
+					<Label>{shared.password}</Label>
 					<div className="auth-input-wrapper">
 						<TextInput
 							className="ledger-field"
 							type={showPassword ? 'text' : 'password'}
 							autoComplete="new-password"
-							placeholder="••••••••"
+							aria-describedby="signup-password-hint"
 						/>
 						<button
 							type="button"
@@ -132,15 +120,23 @@ export default function SignupForm() {
 							onClick={() => setShowPassword((v) => !v)}
 							aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 						>
-							{showPassword ? <IconEyeOff size={24} stroke={1} /> : <IconEye size={24} stroke={1} />}
+							{showPassword ? <IconEyeOff size={22} stroke={1.5} /> : <IconEye size={22} stroke={1.5} />}
 						</button>
 					</div>
+					<span className={`auth-hint${longEnough ? ' auth-hint--met' : ''}`} id="signup-password-hint">
+						{longEnough && <IconCheck size={16} stroke={2.4} aria-hidden="true" />}
+						{shared.minChars(PASSWORD_MIN_LENGTH)}
+					</span>
 				</FormControl>
 
 				<button className="btn-primary btn-primary--block auth-submit" type="submit" disabled={isLoading}>
 					{isLoading ? t.creating : shared.signUp}
-					<IconArrowRight size={15} />
 				</button>
+				<p className="auth-note auth-note--left">
+					{t.privacyBefore}
+					<Link href="/privacy">{t.privacyLink}</Link>
+					{t.privacyAfter}
+				</p>
 			</Form>
 
 			<p className="auth-switch">

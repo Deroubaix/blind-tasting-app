@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from '@mantine/form';
-import { IconArrowRight, IconCheck } from '@tabler/icons-react';
+import { IconCheck } from '@tabler/icons-react';
 import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
@@ -49,17 +49,12 @@ export default function ForgotPasswordForm() {
 	};
 
 	return (
-		<AuthShell contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }}>
+		<AuthShell>
 			{submittedEmail ? (
 				<>
-					<header className="auth-card-head">
-						<span className="page-eyebrow">{t.sentEyebrow}</span>
-						<h1>
-							{t.sentBefore}
-							<em>{t.sentEm}</em>
-							{t.sentAfter}
-						</h1>
-						<p className="body-copy">
+					<header className="auth-head">
+						<h1>{t.sentHeading}</h1>
+						<p className="auth-head__sub">
 							{t.sentLedeBefore}
 							<strong>{submittedEmail}</strong>
 							{t.sentLedeAfter}
@@ -78,21 +73,16 @@ export default function ForgotPasswordForm() {
 				</>
 			) : (
 				<>
-					<header className="auth-card-head">
-						<span className="page-eyebrow">{t.eyebrow}</span>
-						<h1>
-							{t.headingBefore}
-							<em>{t.headingEm}</em>
-							{t.headingAfter}
-						</h1>
-						<p className="body-copy">{t.subheading}</p>
+					<header className="auth-head">
+						<h1>{t.heading}</h1>
+						<p className="auth-head__sub">{t.subheading}</p>
 					</header>
 
 					<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
 						{error && <p className="auth-error">{error}</p>}
 
 						<FormControl className="auth-field" name="email">
-							<Label className="item-label">{shared.email}</Label>
+							<Label>{shared.email}</Label>
 							<TextInput
 								className="ledger-field"
 								type="email"
@@ -107,7 +97,6 @@ export default function ForgotPasswordForm() {
 							disabled={isLoading}
 						>
 							{isLoading ? t.sending : t.send}
-							<IconArrowRight size={15} />
 						</button>
 					</Form>
 

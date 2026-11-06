@@ -344,33 +344,6 @@ body.menu-open {
 		display: none;
 	}
 
-	// The auth pages' one link: "New here? Sign up →".
-	&__context {
-		@include quiet-link;
-		@include icon-label(8px);
-		margin-left: auto;
-		min-height: 44px;
-
-		&:hover .site-header__context-label,
-		&:focus-visible .site-header__context-label {
-			color: $color-text-secondary;
-		}
-	}
-
-	&__context-label {
-		color: $color-text-muted;
-		transition: color 0.15s ease;
-	}
-
-	&__context-action {
-		color: $color-ink;
-	}
-
-	&__context-arrow {
-		display: flex;
-		color: $color-link;
-	}
-
 	// Below it: the wordmark, Start, and the menu or the avatar.
 	@include responsive($breakpoint-nav) {
 		gap: 10px;
@@ -398,10 +371,6 @@ body.menu-open {
 			min-height: 40px;
 			padding: 0 14px;
 			font-size: $text-15;
-		}
-
-		&__context {
-			padding-right: 8px;
 		}
 	}
 }

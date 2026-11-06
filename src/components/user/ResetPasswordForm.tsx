@@ -4,7 +4,7 @@ import React, { type ReactNode, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from '@mantine/form';
-import { IconArrowRight, IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconCheck, IconEye, IconEyeOff } from '@tabler/icons-react';
 import Form from '../form/Form';
 import FormControl from '../form/FormControl';
 import Label from '../form/Label';
@@ -70,15 +70,10 @@ export default function ResetPasswordForm() {
 
 	if (isInvalidLink) {
 		return (
-			<AuthShell contextLink={{ href: '/login', label: shared.logIn, contextLabel: t.goBack }}>
-				<header className="auth-card-head">
-					<span className="page-eyebrow">{t.invalidEyebrow}</span>
-					<h1>
-						{t.invalidBefore}
-						<em>{t.invalidEm}</em>
-						{t.invalidAfter}
-					</h1>
-					<p className="body-copy">{t.invalidSubheading}</p>
+			<AuthShell>
+				<header className="auth-head">
+					<h1>{t.invalidHeading}</h1>
+					<p className="auth-head__sub">{t.invalidSubheading}</p>
 				</header>
 				<p className="auth-switch">
 					<Link href="/forgot-password" className="auth-switch__link">
@@ -89,32 +84,26 @@ export default function ResetPasswordForm() {
 		);
 	}
 
+	const longEnough = form.values.password.length >= PASSWORD_MIN_LENGTH;
+
 	return (
-		<AuthShell contextLink={{ href: '/login', label: shared.logIn, contextLabel: shared.rememberIt }}>
-			<header className="auth-card-head">
-				<span className="page-eyebrow">{t.eyebrow}</span>
-				<h1>
-					{t.headingBefore}
-					<em>{t.headingEm}</em>
-					{t.headingAfter}
-				</h1>
-				<p className="body-copy">{t.subheading(PASSWORD_MIN_LENGTH)}</p>
+		<AuthShell>
+			<header className="auth-head">
+				<h1>{t.heading}</h1>
+				<p className="auth-head__sub">{t.subheading(PASSWORD_MIN_LENGTH)}</p>
 			</header>
 
 			<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
 				{error && <p className="auth-error">{error}</p>}
 
 				<FormControl className="auth-field" name="password">
-					<div className="auth-label-row">
-						<Label className="item-label">{t.newPassword}</Label>
-						<span className="auth-input-hint">{shared.minChars(PASSWORD_MIN_LENGTH)}</span>
-					</div>
+					<Label>{t.newPassword}</Label>
 					<div className="auth-input-wrapper">
 						<TextInput
 							className="ledger-field"
 							type={showPassword ? 'text' : 'password'}
 							autoComplete="new-password"
-							placeholder="••••••••"
+							aria-describedby="reset-password-hint"
 						/>
 						<button
 							type="button"
@@ -122,24 +111,26 @@ export default function ResetPasswordForm() {
 							onClick={() => setShowPassword((v) => !v)}
 							aria-label={showPassword ? shared.hidePassword : shared.showPassword}
 						>
-							{showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+							{showPassword ? <IconEyeOff size={22} stroke={1.5} /> : <IconEye size={22} stroke={1.5} />}
 						</button>
 					</div>
+					<span className={`auth-hint${longEnough ? ' auth-hint--met' : ''}`} id="reset-password-hint">
+						{longEnough && <IconCheck size={16} stroke={2.4} aria-hidden="true" />}
+						{shared.minChars(PASSWORD_MIN_LENGTH)}
+					</span>
 				</FormControl>
 
 				<FormControl className="auth-field" name="confirmPassword">
-					<Label className="item-label">{t.confirmPassword}</Label>
+					<Label>{t.confirmPassword}</Label>
 					<TextInput
 						className="ledger-field"
 						type={showPassword ? 'text' : 'password'}
 						autoComplete="new-password"
-						placeholder="••••••••"
 					/>
 				</FormControl>
 
 				<button className="btn-primary btn-primary--block auth-submit" type="submit" disabled={isLoading}>
 					{isLoading ? t.saving : t.submit}
-					<IconArrowRight size={15} />
 				</button>
 			</Form>
 		</AuthShell>
