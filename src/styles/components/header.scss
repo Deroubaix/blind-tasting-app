@@ -125,6 +125,13 @@ $bar-padding-phone: 0 4px 0 16px;
 		}
 	}
 
+	// The words carry their own 5px padding, so 11px here lines them up with the 16px items.
+	&__prefs {
+		display: flex;
+		flex-direction: column;
+		padding: 2px 11px;
+	}
+
 	&__item {
 		@include menu-row;
 		min-height: 40px;
@@ -411,7 +418,10 @@ $bar-padding-phone: 0 4px 0 16px;
 		font-size: $text-15;
 	}
 
-	&__lang {
+	&__prefs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px 20px;
 		margin-top: 6px;
 	}
 }
@@ -448,6 +458,19 @@ $bar-padding-phone: 0 4px 0 16px;
 			&:focus-visible {
 				color: $color-ink;
 			}
+		}
+	}
+
+	&__prefs {
+		grid-column: 1 / -1;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 20px;
+		// The words carry 5px of padding; this lines the first up with the logo.
+		margin-left: -5px;
+
+		.word-switch {
+			font-size: $text-13;
 		}
 	}
 

@@ -8,6 +8,7 @@ import { useAuthProvider } from '../auth/AuthProvider';
 import { CODE_LENGTH, normalizeCode } from '../../utils/flightLogic';
 import Wordmark from './Wordmark';
 import LanguageSwitch from '../../i18n/LanguageSwitch';
+import ThemeSwitch from '../../theme/ThemeSwitch';
 import { useText } from '../../i18n/LanguageProvider';
 import { commonText } from '../../i18n/common';
 import { layoutText } from '../../i18n/layout';
@@ -143,7 +144,7 @@ export default function Header() {
 						{t.logIn}
 					</Link>
 				)}
-				<LanguageSwitch className="site-header__lang" />
+				{!isInitialLoading && !isLoggedIn && <LanguageSwitch className="site-header__lang" />}
 			</nav>
 
 			{/* Logged in, the Start button only shows on the phone; desktop has the account menu instead. */}
@@ -164,7 +165,6 @@ export default function Header() {
 						onClick={() => setDropdownOpen((o) => !o)}
 						aria-label={t.accountMenu}
 						aria-expanded={dropdownOpen}
-						aria-haspopup="true"
 					>
 						<span className="nav-avatar" aria-hidden="true">
 							{initials}
@@ -173,7 +173,7 @@ export default function Header() {
 						<IconChevronDown size={14} aria-hidden="true" />
 					</button>
 					{dropdownOpen && (
-						<div className="nav-dropdown" role="menu">
+						<div className="nav-dropdown">
 							<div className="nav-dropdown__profile">
 								<span className="nav-profile__name">{user.displayName}</span>
 								<span className="nav-profile__email">{user.email}</span>
@@ -189,18 +189,18 @@ export default function Header() {
 									key={href}
 									href={href}
 									className="nav-dropdown__item"
-									role="menuitem"
 									onClick={() => setDropdownOpen(false)}
 								>
 									{label}
 								</Link>
 							))}
+							<div className="nav-dropdown__divider" />
+							<div className="nav-dropdown__prefs">
+								<LanguageSwitch />
+								<ThemeSwitch />
+							</div>
 							<div className="nav-dropdown__divider nav-dropdown__divider--double" />
-							<button
-								className="nav-dropdown__item nav-dropdown__item--logout"
-								role="menuitem"
-								onClick={handleLogout}
-							>
+							<button className="nav-dropdown__item nav-dropdown__item--logout" onClick={handleLogout}>
 								{t.logOut}
 							</button>
 						</div>
@@ -279,7 +279,10 @@ export default function Header() {
 									</Link>
 								</>
 							)}
-							<LanguageSwitch className="lang-switch--lg site-menu__lang" />
+							<div className="site-menu__prefs">
+								<LanguageSwitch />
+								<ThemeSwitch />
+							</div>
 						</div>
 					</div>
 				</div>

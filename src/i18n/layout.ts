@@ -26,6 +26,12 @@ export const layoutText = dict(
 			codeHint: "It's on the host's screen.",
 			codeHintLoggedOut: " You'll be asked to log in or sign up.",
 		},
+		appearance: {
+			label: 'Appearance',
+			light: 'Light',
+			dark: 'Dark',
+			auto: 'Auto',
+		},
 		footer: {
 			navLabel: 'Footer',
 			startTasting: 'Start a tasting',
@@ -91,6 +97,12 @@ export const layoutText = dict(
 			join: 'Entrar',
 			codeHint: 'Está no ecrã do anfitrião.',
 			codeHintLoggedOut: ' Vai ser-lhe pedido para iniciar sessão ou criar conta.',
+		},
+		appearance: {
+			label: 'Aspeto',
+			light: 'Claro',
+			dark: 'Escuro',
+			auto: 'Automático',
 		},
 		footer: {
 			navLabel: 'Rodapé',

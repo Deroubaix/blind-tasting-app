@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Wordmark from './Wordmark';
+import LanguageSwitch from '../../i18n/LanguageSwitch';
+import ThemeSwitch from '../../theme/ThemeSwitch';
 import { useRouter } from 'next/navigation';
 import { IconPlayerPauseFilled, IconPlayerPlayFilled } from '@tabler/icons-react';
 import { useAuthProvider } from '../auth/AuthProvider';
@@ -169,12 +171,11 @@ export default function TastingPageHeader({
 									onClick={() => setDropdownOpen((o) => !o)}
 									aria-label={t.header.accountMenu}
 									aria-expanded={dropdownOpen}
-									aria-haspopup="true"
 								>
 									{initials}
 								</button>
 								{dropdownOpen && (
-									<div className="nav-dropdown" role="menu">
+									<div className="nav-dropdown">
 										<div className="nav-dropdown__profile">
 											<span className="nav-profile__name">{user.displayName}</span>
 											<span className="nav-profile__email">{user.email}</span>
@@ -183,7 +184,6 @@ export default function TastingPageHeader({
 										<Link
 											href="/archives"
 											className="nav-dropdown__item"
-											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
 											{t.header.archive}
@@ -191,7 +191,6 @@ export default function TastingPageHeader({
 										<Link
 											href="/progress"
 											className="nav-dropdown__item"
-											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
 											{t.header.progress}
@@ -199,7 +198,6 @@ export default function TastingPageHeader({
 										<Link
 											href="/flights"
 											className="nav-dropdown__item"
-											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
 											{t.header.flights}
@@ -207,14 +205,18 @@ export default function TastingPageHeader({
 										<Link
 											href="/account"
 											className="nav-dropdown__item"
-											role="menuitem"
 											onClick={() => setDropdownOpen(false)}
 										>
 											{t.header.account}
 										</Link>
+										<div className="nav-dropdown__divider" />
+										<div className="nav-dropdown__prefs">
+											<LanguageSwitch />
+											<ThemeSwitch />
+										</div>
+										<div className="nav-dropdown__divider nav-dropdown__divider--double" />
 										<button
 											className="nav-dropdown__item nav-dropdown__item--logout"
-											role="menuitem"
 											onClick={handleLogout}
 										>
 											{t.header.logOut}

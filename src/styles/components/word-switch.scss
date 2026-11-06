@@ -1,0 +1,39 @@
+@use '../abstracts' as *;
+
+// EN · PT and Light · Dark · Auto: plain words, the current one in ink and underlined.
+.word-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: $text-14;
+	color: $color-text-secondary;
+
+	&__btn {
+		@include bare-button;
+		min-height: 44px;
+		padding: 0 5px;
+		border-radius: $radius-sm;
+		color: $color-text-secondary;
+		transition: color 0.15s ease;
+
+		&:hover {
+			color: $color-ink;
+		}
+
+		&:focus-visible {
+			outline-offset: -2px;
+		}
+
+		&[aria-pressed='true'] {
+			color: $color-ink;
+			text-decoration: underline;
+			text-decoration-thickness: 1px;
+			text-underline-offset: 5px;
+		}
+	}
+
+	&__sep {
+		color: $color-rule-strong;
+		padding: 0 1px;
+	}
+}

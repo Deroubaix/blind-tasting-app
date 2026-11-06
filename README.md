@@ -248,9 +248,10 @@ tasting, the account row and every photo under `labels/<userId>/` (`DELETE /api/
 
 ## Languages (English and Portuguese)
 
-The interface runs in English or European Portuguese. The EN | PT switch in the header, phone menu
-and footer sets a `lang` cookie, so server components (`<html lang>`, page titles, the footer, the
-privacy notice) render in the chosen language on the first paint.
+The interface runs in English or European Portuguese. The EN · PT switch (in the header when logged
+out, and in the account menu, phone menu and footer) sets a `lang` cookie, so server components
+(`<html lang>`, page titles, the footer, the privacy notice) render in the chosen language on the
+first paint.
 
 - Strings live in one dictionary per area under `src/i18n/`, built with `dict(en, pt)`. The
   Portuguese half is typed from the English one, so a missing key fails the typecheck.
@@ -262,6 +263,13 @@ privacy notice) render in the chosen language on the first paint.
 - Tasting vocabulary stays in English in both languages: grid descriptors, scale terms, grape and
   country names. Saved tastings and scoring compare against those exact words.
 - The Portuguese is a draft awaiting review by a native speaker.
+
+## Appearance (Light, Dark, Auto)
+
+Paper (light) is the default. The Light · Dark · Auto switch, beside EN · PT in the account menu,
+phone menu and footer, sets a `theme` cookie, and the server renders it as `<html data-theme>`, so
+there is no flash. Auto follows the system setting through `prefers-color-scheme`. The code is in
+`src/theme/`; the colours for each theme are in `src/styles/theme/_blind-tasting.scss`.
 
 ## Commands
 

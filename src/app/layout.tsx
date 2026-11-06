@@ -11,6 +11,8 @@ import { LanguageProvider } from '../i18n/LanguageProvider';
 import { layoutText } from '../i18n/layout';
 import { LOCALES } from '../i18n';
 import { getLang } from '../i18n/server';
+import { getTheme } from '../theme/server';
+import { ThemeProvider } from '../theme/ThemeProvider';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,23 +47,25 @@ export type RootLayoutProps = {
 
 export default async function RootLayout({ children }: RootLayoutProps) {
 	const lang = await getLang();
+	const theme = await getTheme();
 	return (
-		<html lang={LOCALES[lang]} className={`${sourceSans.variable} ${newsreader.variable}`}>
+		<html lang={LOCALES[lang]} data-theme={theme} className={`${sourceSans.variable} ${newsreader.variable}`}>
 			<head>
 				<meta charSet="utf-8" />
 				<link rel="icon" href="/favicon.ico" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<meta name="theme-color" content="#f5efe4" />
 			</head>
 			<body>
 				<LanguageProvider lang={lang}>
-					<AuthProvider>
-						<ToastProvider>
-							<ModalProvider>
-								<TastingProvider>{children}</TastingProvider>
-							</ModalProvider>
-						</ToastProvider>
-					</AuthProvider>
+					<ThemeProvider theme={theme}>
+						<AuthProvider>
+							<ToastProvider>
+								<ModalProvider>
+									<TastingProvider>{children}</TastingProvider>
+								</ModalProvider>
+							</ToastProvider>
+						</AuthProvider>
+					</ThemeProvider>
 				</LanguageProvider>
 			</body>
 		</html>

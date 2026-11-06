@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Wordmark from './Wordmark';
 import LanguageSwitch from '../../i18n/LanguageSwitch';
+import ThemeSwitch from '../../theme/ThemeSwitch';
 import { commonText } from '../../i18n/common';
 import { layoutText } from '../../i18n/layout';
 import { useText } from '../../i18n/LanguageProvider';
@@ -24,8 +25,11 @@ export default function Footer() {
 					<Link href="/flights/join">{t.joinFlight}</Link>
 					<Link href="/login">{t.logInSignUp}</Link>
 					<Link href="/privacy">{t.privacy}</Link>
-					<LanguageSwitch />
 				</nav>
+				<div className="site-footer__prefs">
+					<LanguageSwitch />
+					<ThemeSwitch />
+				</div>
 				<p className="site-footer__legal">
 					{c.grid.cms.credit} {c.grid.wset.credit} {c.notAffiliated}
 				</p>
