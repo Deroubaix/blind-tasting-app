@@ -509,6 +509,7 @@
 		font-size: $text-15;
 		font-weight: $font-weight-semibold;
 		color: $color-link;
+		@include phone-hit-area;
 
 		&:hover {
 			color: $color-ink;
@@ -911,6 +912,7 @@
 
 	button.flight-calls__name {
 		cursor: pointer;
+		@include phone-hit-area(-10px, 0);
 
 		&:hover,
 		&:focus-visible {

@@ -204,17 +204,28 @@ export default function TastingStartClient() {
 									note: t.modes[mode].label,
 								}))}
 							/>
-							<Choice
-								sub
-								label={t.timePerWine}
-								value={timerSeconds}
-								onChange={setTimerSeconds}
-								options={presets.map((preset) => ({
-									value: preset.seconds,
-									text: formatTimerSeconds(preset.seconds),
-									note: `${presetCopy(preset).label} · ${presetCopy(preset).note}`,
-								}))}
-							/>
+							{/* WSET has one pace, so a note instead of a lone pill. */}
+							{presets.length > 1 ? (
+								<Choice
+									sub
+									label={t.timePerWine}
+									value={timerSeconds}
+									onChange={setTimerSeconds}
+									options={presets.map((preset) => ({
+										value: preset.seconds,
+										text: formatTimerSeconds(preset.seconds),
+										note: `${presetCopy(preset).label} · ${presetCopy(preset).note}`,
+									}))}
+								/>
+							) : (
+								<p className="start-note">
+									{t.onePreset(
+										formatTimerSeconds(presets[0].seconds),
+										presetCopy(presets[0]).label,
+										presetCopy(presets[0]).note,
+									)}
+								</p>
+							)}
 							<Choice
 								sub
 								label={t.sound}

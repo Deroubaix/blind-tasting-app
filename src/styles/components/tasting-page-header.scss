@@ -113,6 +113,7 @@
 
 	&__cancel {
 		@include quiet-link($text-14, $color-text-secondary);
+		@include phone-hit-area;
 	}
 
 	&__avatar {

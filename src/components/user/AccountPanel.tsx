@@ -139,6 +139,8 @@ export default function AccountPanel() {
 	};
 
 	const memberSince = user.created_at ? formatDate(user.created_at, lang) : null;
+	// Empty while the count loads (or if it fails and no flights are hosted).
+	const counts = t.counts(tastingCount, hostedFlights);
 
 	return (
 		<div className="account">
@@ -189,8 +191,13 @@ export default function AccountPanel() {
 				<h2 id="account-data-heading">{t.dataHeading}</h2>
 				<div className="account-block">
 					<div className="account-block__row">
-						<span className="account-block__title">{t.counts(tastingCount, hostedFlights)}</span>
-						<button type="button" className="btn-quiet" onClick={download} disabled={exporting}>
+						{counts && <span className="account-block__title">{counts}</span>}
+						<button
+							type="button"
+							className="btn-quiet account-block__action"
+							onClick={download}
+							disabled={exporting}
+						>
 							{exporting ? t.exporting : t.download}
 						</button>
 					</div>

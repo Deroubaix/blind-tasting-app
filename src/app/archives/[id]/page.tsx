@@ -25,7 +25,7 @@ export default async function TastingDetailPage({
 	if (!(await ServerServices.getClass(SessionService).currentUserId())) {
 		redirect(`/login?r=/archives/${id}`);
 	}
-	// `?reveal=1`: arrived from an archive card's Reveal button, so open straight onto the form.
+	// `?reveal=1`: arrived from the home dashboard's Reveal link, so open straight onto the form.
 	const openReveal = (await searchParams).reveal === '1';
 
 	return (

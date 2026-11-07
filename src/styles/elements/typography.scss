@@ -122,16 +122,7 @@
 .text-link {
 	@include ledger-link;
 
-	// A thumb-sized target on phones without moving the text.
-	@include responsive($breakpoint-mobile) {
-		position: relative;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: -12px -4px;
-		}
-	}
+	@include phone-hit-area;
 
 	&--sm {
 		font-size: $text-13;

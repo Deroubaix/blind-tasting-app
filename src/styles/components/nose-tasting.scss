@@ -1,12 +1,12 @@
 @use '../abstracts' as *;
 // Nose Assessment page. Grid, cards, groups and dividers come from tasting-inputs.
 
-// The wine hues each fruit family is drawn in.
+// The hue each fruit family is drawn in. The first four follow the theme, so Black Fruit stays visible on a Cellar card.
 $fruit-hues: (
-	'red': #9b1b30,
-	'blue': #5c2d6e,
-	'black': #3d1515,
-	'dried': #8b5e3c,
+	'red': var(--c-fruit-red),
+	'blue': var(--c-fruit-blue),
+	'black': var(--c-fruit-black),
+	'dried': var(--c-fruit-dried),
 	'citrus': #c8a020,
 	'stone': #c07848,
 	'orchard': #5c8b5c,
@@ -14,8 +14,8 @@ $fruit-hues: (
 );
 
 .nose-fruit-dot {
-	width: 8px;
-	height: 8px;
+	width: 10px;
+	height: 10px;
 	border-radius: 50%;
 	flex-shrink: 0;
 
@@ -23,11 +23,6 @@ $fruit-hues: (
 		&--#{$name} {
 			background-color: $hue;
 		}
-	}
-
-	// Near-black on the page ground; the ring keeps it visible.
-	&--black {
-		box-shadow: 0 0 0 1px $rule-folio;
 	}
 }
 
@@ -43,11 +38,15 @@ $fruit-hues: (
 .nose-collapsible {
 	display: grid;
 	grid-template-rows: 1fr;
-	transition: grid-template-rows 0.25s ease;
+	transition:
+		grid-template-rows 0.25s ease,
+		margin-top 0.25s ease;
 	overflow: hidden;
 
+	// Closed, it also takes back the card's 18px gap above it, so the heading sits evenly in the card.
 	&--collapsed {
 		grid-template-rows: 0fr;
+		margin-top: -18px;
 	}
 
 	&__inner {

@@ -12,7 +12,15 @@ import { type Lang } from '../../i18n';
 type HomeT = (typeof homeText)['en'];
 
 /** Taste on your own, host a group, I have a code: the home page's three ways in. */
-export function StartDoors({ t, heading: H = 'h2' }: { t: HomeT; heading?: 'h2' | 'h3' }) {
+export function StartDoors({
+	t,
+	heading: H = 'h2',
+	loggedIn = false,
+}: {
+	t: HomeT;
+	heading?: 'h2' | 'h3';
+	loggedIn?: boolean;
+}) {
 	const d = t.doors;
 	return (
 		<div className="home-doors" id="code">
@@ -23,7 +31,10 @@ export function StartDoors({ t, heading: H = 'h2' }: { t: HomeT; heading?: 'h2' 
 					</span>
 					<H className="home-door__title">{d.solo}</H>
 				</div>
-				<p>{d.soloBody}</p>
+				<p>
+					{d.soloBody}
+					{!loggedIn && d.soloNoAccount}
+				</p>
 				<Link href="/tastings/start" className="btn-primary home-door__cta">
 					{d.soloCta}
 				</Link>

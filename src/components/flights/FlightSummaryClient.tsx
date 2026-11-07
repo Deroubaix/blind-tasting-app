@@ -130,8 +130,10 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 								);
 							})}
 							<span role="cell" className="flight-summary__cell">
-								{formatAverage(wine.average, lang)}
-								{wine.average !== null && <span className="flight-muted"> / {wine.outOf}</span>}
+								<span>
+									{formatAverage(wine.average, lang)}
+									{wine.average !== null && <span className="flight-muted"> / {wine.outOf}</span>}
+								</span>
 							</span>
 						</div>
 					))}
@@ -156,10 +158,12 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 							);
 						})}
 						<span role="cell" className="flight-summary__cell">
-							<strong>{formatAverage(summary.groupAverage, lang)}</strong>
-							{summary.groupAverage !== null && summary.groupOutOf && (
-								<span className="flight-muted"> / {summary.groupOutOf}</span>
-							)}
+							<span>
+								<strong>{formatAverage(summary.groupAverage, lang)}</strong>
+								{summary.groupAverage !== null && summary.groupOutOf && (
+									<span className="flight-muted"> / {summary.groupOutOf}</span>
+								)}
+							</span>
 						</span>
 					</div>
 				</div>

@@ -133,7 +133,7 @@ export default function HomeDashboard({
 				<div className="home-section__head">
 					<h2>{d.startTitle}</h2>
 				</div>
-				<StartDoors t={t} heading="h3" />
+				<StartDoors t={t} heading="h3" loggedIn />
 			</section>
 		</>
 	);

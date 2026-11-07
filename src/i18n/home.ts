@@ -11,7 +11,8 @@ export const homeText = dict(
 		},
 		doors: {
 			solo: 'Taste on your own',
-			soloBody: 'One wine, the grid, an optional clock. No account needed.',
+			soloBody: 'One wine, the grid, an optional clock.',
+			soloNoAccount: ' No account needed.',
 			soloCta: 'Start a tasting',
 			host: 'Host a group',
 			hostBody: 'Pour bagged, numbered wines and share a code. Everyone tastes on their own phone; you reveal.',
@@ -147,7 +148,8 @@ export const homeText = dict(
 		},
 		doors: {
 			solo: 'Provar sozinho',
-			soloBody: 'Um vinho, a grelha, um cronómetro opcional. Não precisa de conta.',
+			soloBody: 'Um vinho, a grelha, um cronómetro opcional.',
+			soloNoAccount: ' Não precisa de conta.',
 			soloCta: 'Iniciar uma prova',
 			host: 'Organizar uma prova de grupo',
 			hostBody:

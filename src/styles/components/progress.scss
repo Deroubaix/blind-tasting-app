@@ -302,6 +302,7 @@
 
 .progress-toggle {
 	align-self: flex-start;
+	@include phone-hit-area;
 	padding: 0;
 	border: none;
 	background: none;

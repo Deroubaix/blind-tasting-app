@@ -75,7 +75,7 @@ export const userText = dict(
 			send: 'Send reset link',
 		},
 		reset: {
-			invalidHeading: 'This link has expired',
+			invalidHeading: 'This link is incomplete',
 			invalidSubheading: 'This reset link is missing required information. Please request a new one.',
 			requestNew: 'Request a new link',
 			expiredBefore: 'This reset link is invalid or has expired. Please request a new one from the ',
@@ -209,7 +209,7 @@ export const userText = dict(
 			send: 'Enviar ligação',
 		},
 		reset: {
-			invalidHeading: 'Esta ligação expirou',
+			invalidHeading: 'Esta ligação está incompleta',
 			invalidSubheading: 'Falta informação necessária nesta ligação. Peça uma nova.',
 			requestNew: 'Pedir uma nova ligação',
 			expiredBefore: 'Esta ligação é inválida ou expirou. Peça uma nova na página ',

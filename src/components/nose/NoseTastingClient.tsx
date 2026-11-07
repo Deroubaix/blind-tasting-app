@@ -226,9 +226,21 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	};
 
 	// The whole heading is the toggle; the count says what a closed section is holding.
-	const renderSectionHeader = (title: string, isOpen: boolean, onToggle: () => void, selectedCount: number) => (
+	const renderSectionHeader = (
+		title: string,
+		isOpen: boolean,
+		onToggle: () => void,
+		selectedCount: number,
+		controls: string,
+	) => (
 		<h2 className="tasting-section__head">
-			<button type="button" className="tasting-section__toggle" onClick={onToggle} aria-expanded={isOpen}>
+			<button
+				type="button"
+				className="tasting-section__toggle"
+				onClick={onToggle}
+				aria-expanded={isOpen}
+				aria-controls={controls}
+			>
 				<span className="section-label">{title}</span>
 				<span className="tasting-section__right">
 					{!isOpen && selectedCount > 0 && <span className="tasting-aside">{t.selected(selectedCount)}</span>}
@@ -282,9 +294,11 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 					complexOpen,
 					() => setComplexOpen((o) => !o),
 					countSelected(NOSE_NON_FRUIT),
+					'nose-non-fruit',
 				)}
 				{/* `inert` takes the hidden chips out of the tab order and the accessibility tree. */}
 				<div
+					id="nose-non-fruit"
 					className={`nose-collapsible${complexOpen ? '' : ' nose-collapsible--collapsed'}`}
 					inert={!complexOpen}
 				>
@@ -304,8 +318,13 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 					woodOpen,
 					() => setWoodOpen((o) => !o),
 					countSelected(['Oak Descriptors', ...NOSE_OAK_ASSESSMENT]),
+					'nose-oak',
 				)}
-				<div className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`} inert={!woodOpen}>
+				<div
+					id="nose-oak"
+					className={`nose-collapsible${woodOpen ? '' : ' nose-collapsible--collapsed'}`}
+					inert={!woodOpen}
+				>
 					<div className="nose-collapsible__inner tasting-section__body">
 						{/* New oak first, as on the grid */}
 						<div className="nose-oak">

@@ -96,6 +96,44 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 			}}
 		>
 			<div className="fc-layout">
+				{/* Before the form in the markup, as on CMS: on narrow screens it shows above it. */}
+				<section className={`fc-notes${notesOpen ? ' fc-notes--open' : ''}`} aria-labelledby="fc-notes-title">
+					<h2 className="fc-notes__title" id="fc-notes-title">
+						{t.analysis}
+					</h2>
+					<button
+						type="button"
+						className="fc-notes__toggle"
+						aria-expanded={notesOpen}
+						aria-controls="fc-notes-full"
+						onClick={() => setNotesOpen((open) => !open)}
+					>
+						{notesOpen ? t.hideNotes : t.showNotes}
+						{notesOpen ? (
+							<IconChevronUp size={16} aria-hidden="true" />
+						) : (
+							<IconChevronDown size={16} aria-hidden="true" />
+						)}
+					</button>
+					<div className="fc-notes__full" id="fc-notes-full">
+						<Recap label={phases.sight} pairs={sightPairs} />
+						<Recap label={phases.nose} pairs={nosePairs} />
+						{aromas && (
+							<div className="fc-analysis__row">
+								<div className="fc-analysis__row-label">{t.aromas}</div>
+								<div className="fc-analysis__row-value">{aromas}</div>
+							</div>
+						)}
+						<Recap label={phases.palate} pairs={palatePairs} />
+						{flavours && (
+							<div className="fc-analysis__row">
+								<div className="fc-analysis__row-label">{t.flavours}</div>
+								<div className="fc-analysis__row-value">{flavours}</div>
+							</div>
+						)}
+					</div>
+				</section>
+
 				<div className="fc-form wset-conclusions">
 					<OptionCard
 						label={t.quality}
@@ -178,43 +216,6 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 						</div>
 					</div>
 				</div>
-
-				<section className={`fc-notes${notesOpen ? ' fc-notes--open' : ''}`} aria-labelledby="fc-notes-title">
-					<h2 className="fc-notes__title" id="fc-notes-title">
-						{t.analysis}
-					</h2>
-					<button
-						type="button"
-						className="fc-notes__toggle"
-						aria-expanded={notesOpen}
-						aria-controls="fc-notes-full"
-						onClick={() => setNotesOpen((open) => !open)}
-					>
-						{notesOpen ? t.hideNotes : t.showNotes}
-						{notesOpen ? (
-							<IconChevronUp size={16} aria-hidden="true" />
-						) : (
-							<IconChevronDown size={16} aria-hidden="true" />
-						)}
-					</button>
-					<div className="fc-notes__full" id="fc-notes-full">
-						<Recap label={phases.sight} pairs={sightPairs} />
-						<Recap label={phases.nose} pairs={nosePairs} />
-						{aromas && (
-							<div className="fc-analysis__row">
-								<div className="fc-analysis__row-label">{t.aromas}</div>
-								<div className="fc-analysis__row-value">{aromas}</div>
-							</div>
-						)}
-						<Recap label={phases.palate} pairs={palatePairs} />
-						{flavours && (
-							<div className="fc-analysis__row">
-								<div className="fc-analysis__row-label">{t.flavours}</div>
-								<div className="fc-analysis__row-value">{flavours}</div>
-							</div>
-						)}
-					</div>
-				</section>
 			</div>
 		</TastingPhaseLayout>
 	);

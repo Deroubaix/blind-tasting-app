@@ -108,6 +108,10 @@
 		gap: 10px 16px;
 	}
 
+	&__action {
+		margin-left: auto;
+	}
+
 	&__title {
 		margin: 0;
 		font-family: $font-sans;
@@ -134,9 +138,15 @@
 		color: $color-ink;
 	}
 
+	// Set into the card, on the page ground, as the design has it.
 	.ledger-field {
 		flex: 1 1 14rem;
 		height: 48px;
+		background-color: $color-ground;
+
+		&:-webkit-autofill {
+			-webkit-box-shadow: 0 0 0 1000px $color-ground inset;
+		}
 	}
 
 	&__btn.btn-quiet {

@@ -104,3 +104,16 @@
 		scrollbar-track-color: $background-color;
 	}
 }
+
+// A thumb-sized target on phones without moving the text: for a small standalone link or button.
+@mixin phone-hit-area($block: -12px, $inline: -4px) {
+	@include responsive($breakpoint-mobile) {
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: $block $inline;
+		}
+	}
+}

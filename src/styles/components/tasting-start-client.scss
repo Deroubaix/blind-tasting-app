@@ -182,12 +182,13 @@
 	ol {
 		margin: 0;
 		padding-left: 1.25em;
-		font-size: $text-14;
 		line-height: 1.55;
 		color: $color-text-secondary;
 
+		// On the li: the base li rule sets its own size.
 		> li {
 			margin: 0;
+			font-size: $text-15;
 		}
 
 		> li + li {

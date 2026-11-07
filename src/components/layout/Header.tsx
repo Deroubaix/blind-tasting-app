@@ -126,12 +126,36 @@ function PhoneDialog({
 	children: React.ReactNode;
 }) {
 	const closeBtn = useRef<HTMLButtonElement>(null);
+	const sheet = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		closeBtn.current?.focus();
 		const returnTo = trigger.current;
 		const onKey = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
 				onClose();
+				return;
+			}
+			// aria-modal promises the page behind is out of reach, so Tab wraps inside the sheet.
+			if (e.key !== 'Tab' || !sheet.current) {
+				return;
+			}
+			const focusable = sheet.current.querySelectorAll<HTMLElement>(
+				'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+			);
+			const first = focusable[0];
+			const last = focusable[focusable.length - 1];
+			if (!first) {
+				return;
+			}
+			if (e.shiftKey && document.activeElement === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (
+				!e.shiftKey &&
+				(document.activeElement === last || !sheet.current.contains(document.activeElement))
+			) {
+				e.preventDefault();
+				first.focus();
 			}
 		};
 		document.addEventListener('keydown', onKey);
@@ -143,7 +167,7 @@ function PhoneDialog({
 	return (
 		<>
 			<div className="phone-scrim" aria-hidden="true" onClick={onClose} />
-			<div className={className} role="dialog" aria-modal="true" aria-label={label}>
+			<div ref={sheet} className={className} role="dialog" aria-modal="true" aria-label={label}>
 				<div className={`${className}__head`}>
 					{head}
 					<button
