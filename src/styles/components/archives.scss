@@ -74,16 +74,39 @@
 		}
 	}
 
+	// The totals as figures under an ink rule.
+	&__figures {
+		display: flex;
+		gap: 40px;
+		margin: 0;
+		padding-top: 10px;
+		border-top: 1px solid $color-ink;
+
+		div {
+			display: flex;
+			flex-direction: column-reverse;
+		}
+
+		dt {
+			font-size: $text-13;
+			color: $color-text-secondary;
+		}
+
+		dd {
+			margin: 0;
+			font-family: $font-mono;
+			font-size: $text-24;
+			line-height: 1.2;
+		}
+	}
+
 	&__month {
 		h2 {
 			margin: 0;
-			padding: 18px 0 6px;
-			font-family: $font-sans;
-			font-style: normal;
-			font-size: $text-14;
-			font-weight: $font-weight-regular;
-			letter-spacing: 0;
-			color: $color-text-secondary;
+			padding: 22px 0 6px;
+			border-bottom: 1px solid $color-ink;
+			font-size: $text-24;
+			line-height: 1.2;
 		}
 
 		ul {
@@ -111,10 +134,44 @@
 	color: $color-ink;
 
 	strong {
+		display: flex;
+		align-items: center;
+		gap: 10px;
 		font-size: 1.0625rem;
 		font-weight: $font-weight-semibold;
 		line-height: 1.3;
 		transition: color 0.15s ease;
+	}
+
+	&__dot {
+		flex-shrink: 0;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+
+		&--red {
+			background: $color-link;
+		}
+
+		&--white {
+			background: $color-bar-white;
+		}
+	}
+
+	.figure {
+		font-family: $font-mono;
+		font-size: $text-20;
+	}
+
+	.figure__of {
+		font-family: $font-mono;
+		word-spacing: -0.4em;
+	}
+
+	&__reveal {
+		font-size: $text-14;
+		font-weight: $font-weight-semibold;
+		color: $color-link;
 	}
 
 	&:hover strong {
@@ -126,7 +183,9 @@
 		text-align: right;
 	}
 
+	// Lined up under the title, past the dot.
 	&__meta {
+		padding-left: 19px;
 		font-size: $text-14;
 		color: $color-text-secondary;
 	}

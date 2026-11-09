@@ -16,14 +16,7 @@ export const archivesText = dict(
 			tryAgain: 'Something went wrong. Please try again.',
 		},
 		list: {
-			counts: (tastings: number, revealed: number, flights: number) =>
-				[
-					`${tastings} ${tastings === 1 ? 'tasting' : 'tastings'}`,
-					`${revealed} revealed`,
-					flights ? `${flights} ${flights === 1 ? 'flight' : 'flights'}` : '',
-				]
-					.filter(Boolean)
-					.join(' · '),
+			figures: { tastings: 'Tastings', revealed: 'Revealed', flights: 'Flights' },
 			startTasting: 'Start a tasting',
 			search: 'Search your tastings',
 			searchPlaceholder: 'Search by grape, region or note',
@@ -208,14 +201,7 @@ export const archivesText = dict(
 			tryAgain: 'Algo correu mal. Tente novamente.',
 		},
 		list: {
-			counts: (tastings, revealed, flights) =>
-				[
-					`${tastings} ${tastings === 1 ? 'prova' : 'provas'}`,
-					`${revealed} ${revealed === 1 ? 'revelada' : 'reveladas'}`,
-					flights ? `${flights} ${flights === 1 ? 'flight' : 'flights'}` : '',
-				]
-					.filter(Boolean)
-					.join(' · '),
+			figures: { tastings: 'Provas', revealed: 'Reveladas', flights: 'Flights' },
 			startTasting: 'Iniciar uma prova',
 			search: 'Pesquisar as suas provas',
 			searchPlaceholder: 'Pesquisar por casta, região ou nota',

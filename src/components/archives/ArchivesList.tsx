@@ -14,6 +14,7 @@ import { formatTimerSeconds } from '../../data/timerData';
 import { gridOf } from '../../data/grids';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
+import { commonText } from '../../i18n/common';
 
 const service = new ClientTastingService();
 
@@ -39,6 +40,7 @@ export default function ArchivesList({ title }: { title: string }) {
 	const router = useRouter();
 	const { lang } = useLang();
 	const { list: t, shared } = useText(archivesText);
+	const common = useText(commonText);
 
 	useEffect(() => {
 		if (isInitialLoading) {
@@ -134,12 +136,28 @@ export default function ArchivesList({ title }: { title: string }) {
 			<header className="archive__head">
 				<div>
 					<h1>{title}</h1>
-					{rows.length > 0 && <p>{t.counts(rows.length, revealedCount, flightCount)}</p>}
 				</div>
 				<Link href="/tastings/start" className="btn-primary">
 					{t.startTasting}
 				</Link>
 			</header>
+
+			{rows.length > 0 && (
+				<dl className="archive__figures">
+					{(
+						[
+							[t.figures.tastings, rows.length],
+							[t.figures.revealed, revealedCount],
+							...(flightCount ? [[t.figures.flights, flightCount]] : []),
+						] as [string, number][]
+					).map(([label, n]) => (
+						<div key={label}>
+							<dt>{label}</dt>
+							<dd>{n}</dd>
+						</div>
+					))}
+				</dl>
+			)}
 
 			{rows.length === 0 ? (
 				<div className="empty-state archives-empty">
@@ -199,7 +217,16 @@ export default function ArchivesList({ title }: { title: string }) {
 									{rows.map(({ tasting, title, meta, score }) => (
 										<li key={tasting.id}>
 											<Link href={`/archives/${tasting.id}`} className="archive-row">
-												<strong>{title}</strong>
+												<strong>
+													<span
+														className={`archive-row__dot archive-row__dot--${tasting.wineType === 'White' ? 'white' : 'red'}`}
+														aria-hidden="true"
+													/>
+													<span className="visually-hidden">
+														{tasting.wineType === 'White' ? common.white : common.red}:{' '}
+													</span>
+													{title}
+												</strong>
 												<span className="archive-row__end">
 													{score ? (
 														<span
@@ -212,7 +239,7 @@ export default function ArchivesList({ title }: { title: string }) {
 													) : tasting.flight ? (
 														<span className="archive-row__waiting">{t.awaitingHost}</span>
 													) : (
-														<span className="pill-tag pill-tag--wine">{t.reveal}</span>
+														<span className="archive-row__reveal">{t.reveal} →</span>
 													)}
 												</span>
 												<span className="archive-row__meta">{meta}</span>
