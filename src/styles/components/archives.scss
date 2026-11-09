@@ -298,8 +298,8 @@
 	gap: 12px;
 	padding: 16px 18px;
 	background: $color-card;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
+	border: 1px solid $color-ink;
+	border-radius: 0;
 
 	&__head {
 		display: flex;

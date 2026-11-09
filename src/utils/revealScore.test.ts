@@ -203,6 +203,7 @@ describe('the WSET grid', () => {
 	it('counts an answer key of just the assessments as a reveal', () => {
 		expect(isRevealed(key)).toBe(true);
 		expect(revealTitle(key)).toBe('Very good wine');
+		expect(revealTitle(key, 'pt')).toBe('Vinho muito bom');
 		expect(revealTitle({ ...key, grapeVariety: 'Riesling' })).toBe('Riesling');
 	});
 

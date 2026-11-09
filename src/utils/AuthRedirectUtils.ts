@@ -8,13 +8,13 @@ export function isSavingTasting(redirectTo: string) {
 }
 
 /** Where the auth pages send someone when there is no usable return path. */
-export const DEFAULT_AFTER_LOGIN = '/archives';
+export const DEFAULT_AFTER_LOGIN = '/';
 
 // A made-up origin to resolve against: anything that still has it afterwards stayed on this app.
 const SAME_APP = 'https://app.invalid';
 
 /**
- * The `?r=` return path, if it keeps the user on this app; otherwise the archive.
+ * The `?r=` return path, if it keeps the user on this app; otherwise home.
  *
  * `r` comes from the URL, so anyone can write it. Unchecked, `/login?r=https://evil.site` sends
  * someone off-site straight after a genuine login — a trusted page vouching for a phishing one.

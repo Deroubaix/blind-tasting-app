@@ -147,6 +147,11 @@
 		font-weight: $font-weight-regular;
 		color: $color-text-secondary;
 	}
+
+	// The cards used to pad their own sides; bare rows side by side need a wider gutter.
+	.tasting-grid {
+		column-gap: 40px;
+	}
 }
 
 // ── Section card: a titled card holding several groups ────────────────────────

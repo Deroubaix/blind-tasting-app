@@ -18,9 +18,9 @@ describe('safeRedirect', () => {
 		expect(safeRedirect('/archives/abc#top')).toBe('/archives/abc#top');
 	});
 
-	it('falls back to the archive with no return path', () => {
-		expect(safeRedirect(null)).toBe('/archives');
-		expect(safeRedirect('')).toBe('/archives');
+	it('falls back to home with no return path', () => {
+		expect(safeRedirect(null)).toBe('/');
+		expect(safeRedirect('')).toBe('/');
 	});
 
 	it.each([
@@ -33,6 +33,6 @@ describe('safeRedirect', () => {
 		'evil.site',
 		'https://app.invalid/archives',
 	])('refuses to leave the app for %j', (returnTo) => {
-		expect(safeRedirect(returnTo)).toBe('/archives');
+		expect(safeRedirect(returnTo)).toBe('/');
 	});
 });

@@ -370,7 +370,17 @@ export const archivesText = dict(
 			regionClose: 'Região certa, denominação diferente',
 			stepUnder: 'Um nível abaixo',
 			stepOver: 'Um nível acima',
-			qualityWine: (quality) => `Vinho · ${quality}`,
+			qualityWine: (quality) => {
+				const pt: Record<string, string> = {
+					Faulty: 'defeituoso',
+					Poor: 'fraco',
+					Acceptable: 'aceitável',
+					Good: 'bom',
+					'Very good': 'muito bom',
+					Outstanding: 'excecional',
+				};
+				return pt[quality] ? `Vinho ${pt[quality]}` : `Vinho · ${quality}`;
+			},
 			revealedWine: 'Vinho revelado',
 		},
 	},

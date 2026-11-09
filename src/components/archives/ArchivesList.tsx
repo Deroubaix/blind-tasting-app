@@ -137,9 +137,11 @@ export default function ArchivesList({ title }: { title: string }) {
 				<div>
 					<h1>{title}</h1>
 				</div>
-				<Link href="/tastings/start" className="btn-primary">
-					{t.startTasting}
-				</Link>
+				{rows.length > 0 && (
+					<Link href="/tastings/start" className="btn-primary">
+						{t.startTasting}
+					</Link>
+				)}
 			</header>
 
 			{rows.length > 0 && (

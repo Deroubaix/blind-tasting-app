@@ -102,10 +102,11 @@ button {
 	min-height: 42px;
 	// Horizontal stays wider: these hug their labels in a wrapping row.
 	padding: 6px 15px;
+	// Quieter than the question above it, so the label, then the chosen answer, stand out.
 	border: 1px solid $rule-mid;
 	border-radius: $radius-pill;
-	background-color: $color-card;
-	color: $color-ink;
+	background-color: transparent;
+	color: $color-text-secondary;
 	font-size: $text-16;
 	line-height: 1.25;
 	transition:
@@ -116,6 +117,7 @@ button {
 
 	&:hover {
 		border-color: $color-text-secondary;
+		color: $color-ink;
 	}
 
 	&:active {

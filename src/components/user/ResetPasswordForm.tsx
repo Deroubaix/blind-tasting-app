@@ -10,6 +10,7 @@ import FormControl from '../form/FormControl';
 import Label from '../form/Label';
 import TextInput from '../form/TextInput';
 import { JsonApiError } from '../../utils/ErrorUtils';
+import { DEFAULT_AFTER_LOGIN } from '../../utils/AuthRedirectUtils';
 import { resetPasswordSchema, PASSWORD_MIN_LENGTH, type ResetPasswordFormType } from '../../schemas/auth';
 import useLoadTracker from '../../hooks/useLoadTracker';
 import useRedirectIfAuthenticated from '../../hooks/useRedirectIfAuthenticated';
@@ -48,7 +49,7 @@ export default function ResetPasswordForm() {
 		try {
 			await completePasswordReset(email, token, values.password);
 			await signIn(email, values.password);
-			router.push('/archives');
+			router.push(DEFAULT_AFTER_LOGIN);
 		} catch (err) {
 			const apiError = JsonApiError.create(err);
 

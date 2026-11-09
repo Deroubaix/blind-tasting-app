@@ -155,10 +155,6 @@
 
 // ── 3. The scorecard: the sheet, marked ───────────────────────────────────────
 .detail-card.scorecard {
-	background: $color-card;
-	border: 1px solid $color-ink;
-	border-radius: 0;
-
 	.detail-card__head {
 		padding-bottom: 8px;
 		border-bottom: 1px solid $color-ink;

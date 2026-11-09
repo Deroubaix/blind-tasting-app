@@ -11,8 +11,8 @@
 .sight-toggle-group {
 	// Equal columns rather than flex: in an auto-width flex row "No" comes out narrower than "Yes".
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: $spacing-md;
+	grid-template-columns: repeat(2, minmax(96px, max-content));
+	gap: $spacing-xs;
 }
 
 // ── Color swatches ────────────────────────────────────────────────────────────
