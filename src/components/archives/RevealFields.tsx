@@ -7,10 +7,12 @@ import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from '../tasting/autoco
 import QualityLevelSelect from '../tasting/QualityLevelSelect';
 import TastingCustomSelect from '../tasting/TastingCustomSelect';
 import { WSET_QUALITY, WSET_READINESS } from '../wset/wsetFields';
+import { STYLE_CATEGORIES } from '../tasting/conclusionFields';
 import { type Grid } from '../../data/grids';
 import { type Reveal } from '../../utils/revealScore';
 import { useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
+import { tastingText } from '../../i18n/tasting';
 
 type Props = {
 	value: Reveal;
@@ -24,11 +26,13 @@ type Props = {
 /** The reveal's fields: the final conclusion's controls, plus an optional wine name. */
 export default function RevealFields({ value, onChange, layout = 'form', grid = 'cms' }: Props) {
 	const t = useText(archivesText).fields;
+	const inputs = useText(tastingText).inputs;
 	const ids = {
 		grape: useId(),
 		country: useId(),
 		region: useId(),
 		quality: useId(),
+		style: useId(),
 		vintage: useId(),
 		name: useId(),
 		assessment: useId(),
@@ -114,6 +118,21 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 						onChange={(qualityLevel) => onChange({ qualityLevel: qualityLevel || null })}
 						labelId={ids.quality}
 						textClassName="tasting-input reveal-field__text"
+					/>
+				</div>
+			)}
+			{!wset && (
+				<div className="reveal-field">
+					<span className="accent-label" id={ids.style}>
+						{t.styleCategory}
+					</span>
+					<TastingCustomSelect
+						options={STYLE_CATEGORIES}
+						labelId={ids.style}
+						value={value.styleCategory ?? ''}
+						onChange={(styleCategory) => onChange({ styleCategory: styleCategory || null })}
+						placeholder={inputs.whereAppropriate}
+						clearLabel={inputs.notApplicable}
 					/>
 				</div>
 			)}

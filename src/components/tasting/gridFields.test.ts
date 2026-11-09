@@ -74,12 +74,53 @@ describe('palate', () => {
 		expect(PALATE_OPTIONS.red.Sweetness).toHaveLength(7);
 		expect(PALATE_OPTIONS.white).toHaveProperty('Balance');
 	});
+
+	it('uses the grid texture terms, Other included', () => {
+		expect(PALATE_OPTIONS.red['Tannin Texture']).toEqual([
+			'Silky',
+			'Soft',
+			'Gritty',
+			'Coarse',
+			'Rough',
+			'Stalky',
+			'Hard',
+			'Other',
+		]);
+		for (const type of ['red', 'white'] as const) {
+			expect(PALATE_OPTIONS[type].Texture).toEqual([
+				'Lean',
+				'Linear',
+				'Crisp',
+				'Soft',
+				'Creamy',
+				'Round',
+				'Waxy',
+				'Oily',
+				'Viscous',
+				'Other',
+			]);
+		}
+	});
 });
 
 describe('conclusions', () => {
 	it('uses the grid age ranges and quality levels', () => {
 		expect(AGE_RANGES).toEqual(['1-3 years', '3-5 years', '5-10 years', '10 years+']);
-		expect(QUALITY_LEVELS).toEqual(expect.arrayContaining(['Reserva', 'Riserva', 'Kabinett', 'Gran Selezione']));
+		expect(QUALITY_LEVELS).toEqual([
+			'Village',
+			'Premier Cru',
+			'Grand Cru',
+			'Reserva',
+			'Gran Reserva',
+			'Normale',
+			'Riserva',
+			'Classico',
+			'Gran Selezione',
+			'Kabinett',
+			'Spätlese',
+			'Auslese',
+			'Other',
+		]);
 	});
 
 	it('offers every Advanced Sommelier core grape', () => {

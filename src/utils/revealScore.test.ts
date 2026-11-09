@@ -236,6 +236,31 @@ describe('the WSET grid', () => {
 	});
 });
 
+describe('style category', () => {
+	const vouvray = { grapeVariety: 'Chenin Blanc', regionAppellation: 'Vouvray', styleCategory: 'Demi-Sec' };
+	const status = (c: Record<string, string>, r: Record<string, string>) =>
+		compareReveal(c, r).fields.find((f) => f.key === 'styleCategory')?.status;
+
+	it('scores the style when the label gives one', () => {
+		expect(status({ styleCategory: 'Demi-Sec' }, vouvray)).toBe('correct');
+		expect(status({ styleCategory: 'Sec' }, vouvray)).toBe('wrong');
+		expect(status({}, vouvray)).toBe('notcalled');
+		expect(status({ styleCategory: 'Other' }, vouvray)).toBe('wrong');
+		expect(revealOutOf(vouvray)).toBe(3);
+	});
+
+	it('leaves it off the card when the label has none', () => {
+		expect(status({ styleCategory: 'Sec' }, { grapeVariety: 'Chenin Blanc' })).toBeUndefined();
+		expect(status({}, { grapeVariety: 'Chenin Blanc', styleCategory: 'Other' })).toBeUndefined();
+		expect(compareReveal(call, actual).outOf).toBe(revealOutOf(actual));
+		expect(compareReveal(call, actual).fields.map((f) => f.key)).not.toContain('styleCategory');
+	});
+
+	it('is not asked on the WSET grid', () => {
+		expect(revealOutOf({ qualityAssessment: 'Good', styleCategory: 'Sec' }, 'wset')).toBe(1);
+	});
+});
+
 describe('revealOutOf', () => {
 	it('matches what each score is out of, an unnamed quality level included', () => {
 		const other = { ...actual, qualityLevel: 'Other' };

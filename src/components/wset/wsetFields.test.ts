@@ -57,10 +57,12 @@ describe('palate', () => {
 			'Tannin',
 			'Alcohol',
 			'Body',
+			'Mousse',
 			'Flavour Intensity',
 			'Finish',
 		]);
 		expect(Object.keys(WSET_PALATE.white)).not.toContain('Tannin');
+		expect(WSET_PALATE.white.Mousse).toEqual(['Delicate', 'Creamy', 'Aggressive']);
 	});
 
 	it('uses the SAT five-point scales', () => {

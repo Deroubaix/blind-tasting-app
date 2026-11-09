@@ -28,6 +28,7 @@ export type Reveal = {
 	countryOfOrigin?: string | null;
 	regionAppellation?: string | null;
 	qualityLevel?: string | null;
+	styleCategory?: string | null;
 	vintage?: string | null;
 	/** Producer or cuvée. Not scored; titles the tasting once revealed. */
 	wineName?: string | null;
@@ -40,6 +41,7 @@ export type RevealField =
 	| 'countryOfOrigin'
 	| 'regionAppellation'
 	| 'qualityLevel'
+	| 'styleCategory'
 	| 'vintage';
 export type FieldStatus = 'correct' | 'close' | 'wrong' | 'notcalled' | 'na';
 
@@ -68,18 +70,33 @@ export type Comparison = {
 	shortlist: { grape: boolean | null; country: boolean | null };
 };
 
-type FieldDef = { key: RevealField; label: string; short: string; abbr: string };
+type FieldDef = {
+	key: RevealField;
+	label: string;
+	short: string;
+	abbr: string;
+	/** Few labels give it, so it's left off the scorecard when this one doesn't. */
+	optional?: boolean;
+};
 
 export const REVEAL_FIELDS: FieldDef[] = [
 	{ key: 'grapeVariety', label: 'Grape variety or blend', short: 'grape', abbr: 'Grape' },
 	{ key: 'countryOfOrigin', label: 'Country of origin', short: 'country', abbr: 'Ctry' },
 	{ key: 'regionAppellation', label: 'Region and appellation', short: 'region', abbr: 'Region' },
 	{ key: 'qualityLevel', label: 'Official quality level', short: 'quality level', abbr: 'Qual' },
+	{
+		key: 'styleCategory',
+		label: 'Official style category',
+		short: 'style category',
+		abbr: 'Style',
+		optional: true,
+	},
 	{ key: 'vintage', label: 'Vintage', short: 'vintage', abbr: 'Vint' },
 ];
 
 /**
- * The WSET Level 3 paper marks quality and readiness; naming the wine is not asked. The identity
+ * The app scores a WSET tasting on quality and readiness only (the real paper marks the whole note,
+ * reasons included); naming the wine is not asked at Level 3. The identity
  * fields are scored only when the answer key gives them, so a tutor who enters just the two
  * assessments scores the wine out of two.
  */
@@ -96,7 +113,7 @@ export const WSET_REVEAL_FIELDS: FieldDef[] = [
 export function scoredFields(grid: Grid = 'cms', lang: Lang = DEFAULT_LANG): FieldDef[] {
 	const fields = grid === 'wset' ? WSET_REVEAL_FIELDS : REVEAL_FIELDS;
 	const words = archivesText[lang].score.fields;
-	return lang === DEFAULT_LANG ? fields : fields.map((field) => ({ key: field.key, ...words[field.key] }));
+	return lang === DEFAULT_LANG ? fields : fields.map((field) => ({ ...field, ...words[field.key] }));
 }
 
 type ScoreText = (typeof archivesText)[Lang]['score'];
@@ -162,6 +179,8 @@ function regionsClose(call: string, actual: string): boolean {
 }
 
 const isOther = (value: string) => fold(value) === 'other';
+/** Picked from a grid list ending in "Other", which names nothing. */
+const fromList = (key: RevealField) => key === 'qualityLevel' || key === 'styleCategory';
 
 /** On the SAT's scales, one step off (Good for Very good, say) is close. */
 function compareScale(key: RevealField, call: string, actual: string, t: ScoreText): [FieldStatus, string] | null {
@@ -185,15 +204,15 @@ function compareField(
 	t: ScoreText,
 ): [FieldStatus, string] {
 	if (!actual) {
-		return ['na', key === 'qualityLevel' ? t.noneOnLabel : t.notInReveal];
+		return ['na', fromList(key) ? t.noneOnLabel : t.notInReveal];
 	}
-	if (key === 'qualityLevel' && isOther(actual)) {
+	if (fromList(key) && isOther(actual)) {
 		return ['na', t.levelNotNamed];
 	}
 	if (!call) {
 		return ['notcalled', t.leftBlankMiss];
 	}
-	if (key === 'qualityLevel' && isOther(call)) {
+	if (fromList(key) && isOther(call)) {
 		return ['wrong', t.otherNotLevel];
 	}
 	if (sameName(call, actual)) {
@@ -238,11 +257,11 @@ export function compareReveal(
 ): Comparison {
 	const t = archivesText[lang].score;
 	const grape = clean(reveal.grapeVariety);
-	const fields = scoredFields(grid, lang).map((field) => {
+	const fields = scoredFields(grid, lang).flatMap(({ optional, ...field }) => {
 		const called = clean(call?.[field.key]);
 		const actual = clean(reveal[field.key]);
 		const [status, note] = compareField(field.key, called, actual, grape, t);
-		return { ...field, status, call: called, actual, note };
+		return optional && status === 'na' ? [] : [{ ...field, status, call: called, actual, note }];
 	});
 
 	const shorts = (status: FieldStatus) =>

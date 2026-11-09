@@ -6,7 +6,7 @@ import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { DescriptorClusters, OptionCard } from './WsetBits';
-import { type AromaCluster, WSET_FLAVOUR_KEY, WSET_PALATE, aromaClusters } from './wsetFields';
+import { type AromaCluster, WSET_FLAVOUR_KEY, WSET_PALATE, WSET_PALATE_OPTIONAL, aromaClusters } from './wsetFields';
 
 export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
@@ -39,7 +39,8 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 	const own = flavours.filter((term) => !presets.has(term));
 
 	const keys = Object.keys(structure);
-	const answered = keys.filter((key) => palate[key]).length;
+	const required = keys.filter((key) => !WSET_PALATE_OPTIONAL.includes(key));
+	const answered = required.filter((key) => palate[key]).length;
 
 	return (
 		<TastingPhaseLayout
@@ -53,7 +54,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 				backLabel: t.back,
 				nextLabel: t.next,
 				onNext: () => router.push(`/tastings/final-conclusion?wineType=${wineType}`),
-				nextDisabled: answered < keys.length,
+				nextDisabled: answered < required.length,
 			}}
 		>
 			<div className="tasting-grid tasting-grid--2">
@@ -64,7 +65,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 						options={structure[key]}
 						value={palate[key] as string | undefined}
 						onChange={(v) => set(key, v)}
-						required
+						required={required.includes(key)}
 					/>
 				))}
 			</div>

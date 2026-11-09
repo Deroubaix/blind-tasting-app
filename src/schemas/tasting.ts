@@ -45,6 +45,7 @@ export const revealSchema = z.object({
 	countryOfOrigin: revealText(200),
 	regionAppellation: revealText(200),
 	qualityLevel: revealText(200),
+	styleCategory: revealText(60),
 	vintage: z
 		.string()
 		.trim()

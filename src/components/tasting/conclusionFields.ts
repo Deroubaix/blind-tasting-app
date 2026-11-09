@@ -6,10 +6,8 @@ export const QUALITY_LEVELS = [
 	'Village',
 	'Premier Cru',
 	'Grand Cru',
-	'Crianza',
 	'Reserva',
 	'Gran Reserva',
-	'Cru Classé',
 	'Normale',
 	'Riserva',
 	'Classico',
@@ -17,7 +15,6 @@ export const QUALITY_LEVELS = [
 	'Kabinett',
 	'Spätlese',
 	'Auslese',
-	'Grosses Gewächs (GG)',
 	'Other',
 ];
 export const STYLE_CATEGORIES = ['Trocken', 'Sec', 'Demi-Sec', 'Moelleux', 'Aszú', 'VT', 'SGN', 'Other'];

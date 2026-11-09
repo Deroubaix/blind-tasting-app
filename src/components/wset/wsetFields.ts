@@ -185,7 +185,9 @@ export function aromaClusters(wineType: WineType): AromaCluster[] {
 
 // ── Palate ────────────────────────────────────────────────────────────────────
 
-/** Structure, in SAT order. Tannin is red-only; every row must be answered to move on. */
+const MOUSSE = ['Delicate', 'Creamy', 'Aggressive'];
+
+/** Structure, in SAT order. Tannin is red-only; every row but Mousse (sparkling only) must be answered. */
 export const WSET_PALATE: Record<WineType, Record<string, string[]>> = {
 	red: {
 		Sweetness: ['Dry', 'Off-dry', 'Medium-dry', 'Medium-sweet', 'Sweet', 'Luscious'],
@@ -193,6 +195,7 @@ export const WSET_PALATE: Record<WineType, Record<string, string[]>> = {
 		Tannin: FIVE,
 		Alcohol: ['Low', 'Medium', 'High'],
 		Body: ['Light', 'Medium(-)', 'Medium', 'Medium(+)', 'Full'],
+		Mousse: MOUSSE,
 		'Flavour Intensity': INTENSITY,
 		Finish: ['Short', 'Medium(-)', 'Medium', 'Medium(+)', 'Long'],
 	},
@@ -201,10 +204,13 @@ export const WSET_PALATE: Record<WineType, Record<string, string[]>> = {
 		Acidity: FIVE,
 		Alcohol: ['Low', 'Medium', 'High'],
 		Body: ['Light', 'Medium(-)', 'Medium', 'Medium(+)', 'Full'],
+		Mousse: MOUSSE,
 		'Flavour Intensity': INTENSITY,
 		Finish: ['Short', 'Medium(-)', 'Medium', 'Medium(+)', 'Long'],
 	},
 };
+
+export const WSET_PALATE_OPTIONAL = ['Mousse'];
 
 /** Flavour descriptors on the palate: the same clusters as the nose, stored as a list under this key. */
 export const WSET_FLAVOUR_KEY = 'Flavour Characteristics';

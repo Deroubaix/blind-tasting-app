@@ -36,7 +36,7 @@ export const wsetText = dict(
 		},
 		conclusions: {
 			description:
-				'Judge the quality on balance, length, intensity and complexity, and say whether the wine is ready. Give your reasons; the examiner marks those too.',
+				'Judge the quality on balance, length, intensity and complexity, and say whether the wine is ready. Give your reasons: the exam marks them, though the app scores only the quality and readiness.',
 			back: 'Back to Palate',
 			next: 'Review & Save',
 			quality: 'Quality level',
@@ -97,7 +97,7 @@ export const wsetText = dict(
 		},
 		conclusions: {
 			description:
-				'Avalie a qualidade pelo equilíbrio, final, intensidade e complexidade, e diga se o vinho está pronto a beber. Justifique; o examinador também avalia as razões.',
+				'Avalie a qualidade pelo equilíbrio, final, intensidade e complexidade, e diga se o vinho está pronto a beber. Justifique: o exame avalia as razões, mas a aplicação só pontua a qualidade e a prontidão.',
 			back: 'Voltar ao paladar',
 			next: 'Rever e guardar',
 			quality: 'Nível de qualidade',

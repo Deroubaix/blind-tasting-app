@@ -5,6 +5,8 @@ type WineType = 'red' | 'white';
 
 const FIVE_LEVEL = ['Low', 'Medium−', 'Medium', 'Medium+', 'High'];
 
+const TEXTURE = ['Lean', 'Linear', 'Crisp', 'Soft', 'Creamy', 'Round', 'Waxy', 'Oily', 'Viscous', 'Other'];
+
 const SWEETNESS = [
 	'Bone Dry',
 	'Dry',
@@ -23,8 +25,8 @@ export const PALATE_OPTIONS: Record<WineType, Record<string, string[]>> = {
 		Alcohol: FIVE_LEVEL,
 		Body: ['Light', 'Medium−', 'Medium', 'Medium+', 'Full'],
 		'Tannin Volume': FIVE_LEVEL,
-		'Tannin Texture': ['Silky', 'Soft', 'Gritty', 'Coarse', 'Rough', 'Stalky', 'Hard'],
-		Texture: ['Lean', 'Linear', 'Crisp', 'Soft', 'Creamy', 'Round', 'Waxy', 'Oily', 'Viscous'],
+		'Tannin Texture': ['Silky', 'Soft', 'Gritty', 'Coarse', 'Rough', 'Stalky', 'Hard', 'Other'],
+		Texture: TEXTURE,
 		Balance: ['Yes', 'No'],
 		'Length of Finish': ['Short', 'Medium−', 'Medium', 'Medium+', 'Long'],
 		Complexity: ['Simple', 'Medium−', 'Medium', 'Medium+', 'High'],
@@ -35,7 +37,7 @@ export const PALATE_OPTIONS: Record<WineType, Record<string, string[]>> = {
 		Alcohol: FIVE_LEVEL,
 		Body: ['Light', 'Medium−', 'Medium', 'Medium+', 'Full'],
 		'Phenolic Bitterness': ['Yes', 'No'],
-		Texture: ['Lean', 'Linear', 'Crisp', 'Soft', 'Creamy', 'Round', 'Waxy', 'Oily', 'Viscous'],
+		Texture: TEXTURE,
 		Balance: ['Yes', 'No'],
 		'Length of Finish': ['Short', 'Medium−', 'Medium', 'Medium+', 'Long'],
 		Complexity: ['Simple', 'Medium−', 'Medium', 'Medium+', 'High'],

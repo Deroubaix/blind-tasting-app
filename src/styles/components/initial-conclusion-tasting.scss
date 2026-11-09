@@ -1,5 +1,5 @@
 @use '../abstracts' as *;
-// Initial Conclusion page. The two columns are a .tasting-grid--2.
+// Initial Conclusion page: four cells in a .tasting-grid--2.
 
 .ic-col {
 	display: flex;
@@ -7,7 +7,7 @@
 	gap: $spacing-md;
 }
 
-// Sections after the first in a column need air above them; the type is .section-label.
-.section-label--mt {
-	margin-top: $spacing-sm;
+// Air above each heading in the second row and in the phone stack, as between .sheet-groups.
+.tasting-grid.ic-grid {
+	row-gap: 28px;
 }

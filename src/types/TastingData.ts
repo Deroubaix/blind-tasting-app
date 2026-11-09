@@ -61,6 +61,7 @@ export type TastingData = {
 		countryOfOrigin?: string | null;
 		regionAppellation?: string | null;
 		qualityLevel?: string | null;
+		styleCategory?: string | null;
 		vintage?: string | null;
 		wineName?: string | null;
 	} | null;

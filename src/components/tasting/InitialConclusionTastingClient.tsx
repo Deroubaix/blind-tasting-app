@@ -59,55 +59,8 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 				onNext: handleNextPhase,
 			}}
 		>
-			<div className="tasting-grid tasting-grid--2">
-				{/* ── Left column ── */}
-				<div className="ic-col">
-					<div className="section-label">{t.environment}</div>
-
-					<div className="tasting-card">
-						<div className="tasting-card__label" id="ic-climate-label">
-							{t.climate}
-						</div>
-						<div
-							className="tasting-options tasting-options--equal"
-							role="group"
-							aria-labelledby="ic-climate-label"
-						>
-							{CLIMATES.map((opt) => (
-								<button
-									key={opt}
-									aria-pressed={ic.climate === opt}
-									className={`tasting-option${ic.climate === opt ? ' tasting-option--selected' : ''}`}
-									onClick={() => updateIC({ climate: ic.climate === opt ? null : opt })}
-								>
-									{opt}
-								</button>
-							))}
-						</div>
-					</div>
-
-					<div className="section-label section-label--mt">{t.maturity}</div>
-
-					<div className="tasting-card">
-						<div className="tasting-card__label" id="ic-age-label">
-							{t.ageRange}
-						</div>
-						<div className="tasting-options" role="group" aria-labelledby="ic-age-label">
-							{AGE_RANGES.map((opt) => (
-								<button
-									key={opt}
-									aria-pressed={ic.ageRange === opt}
-									className={`tasting-option${ic.ageRange === opt ? ' tasting-option--selected' : ''}`}
-									onClick={() => updateIC({ ageRange: ic.ageRange === opt ? null : opt })}
-								>
-									{opt}
-								</button>
-							))}
-						</div>
-					</div>
-				</div>
-
-				{/* ── Right column ── */}
+			{/* Cells in grid order (grapes, climate, countries, age), so rows and the phone stack both read right. */}
+			<div className="tasting-grid tasting-grid--2 ic-grid">
 				<div className="ic-col">
 					<div className="section-label">{t.varietal}</div>
 
@@ -150,8 +103,36 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 							</div>
 						)}
 					</div>
+				</div>
 
-					<div className="section-label section-label--mt">{t.geographic}</div>
+				<div className="ic-col">
+					<div className="section-label">{t.environment}</div>
+
+					<div className="tasting-card">
+						<div className="tasting-card__label" id="ic-climate-label">
+							{t.climate}
+						</div>
+						<div
+							className="tasting-options tasting-options--equal"
+							role="group"
+							aria-labelledby="ic-climate-label"
+						>
+							{CLIMATES.map((opt) => (
+								<button
+									key={opt}
+									aria-pressed={ic.climate === opt}
+									className={`tasting-option${ic.climate === opt ? ' tasting-option--selected' : ''}`}
+									onClick={() => updateIC({ climate: ic.climate === opt ? null : opt })}
+								>
+									{opt}
+								</button>
+							))}
+						</div>
+					</div>
+				</div>
+
+				<div className="ic-col">
+					<div className="section-label">{t.geographic}</div>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label">{t.countries}</div>
@@ -193,6 +174,28 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 								))}
 							</div>
 						)}
+					</div>
+				</div>
+
+				<div className="ic-col">
+					<div className="section-label">{t.maturity}</div>
+
+					<div className="tasting-card">
+						<div className="tasting-card__label" id="ic-age-label">
+							{t.ageRange}
+						</div>
+						<div className="tasting-options" role="group" aria-labelledby="ic-age-label">
+							{AGE_RANGES.map((opt) => (
+								<button
+									key={opt}
+									aria-pressed={ic.ageRange === opt}
+									className={`tasting-option${ic.ageRange === opt ? ' tasting-option--selected' : ''}`}
+									onClick={() => updateIC({ ageRange: ic.ageRange === opt ? null : opt })}
+								>
+									{opt}
+								</button>
+							))}
+						</div>
 					</div>
 				</div>
 			</div>

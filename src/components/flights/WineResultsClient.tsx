@@ -269,6 +269,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 		const close = statuses.filter((s) => s === 'close').length;
 		return [{ key: field.key, text: t.right(right, submittedRows.length, close) }];
 	});
+	const shown = fields.filter((field) => !field.optional || group.some((g) => g.key === field.key));
 
 	return (
 		<main className="flight-main flight-main--narrow">
@@ -371,7 +372,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 							</div>
 							{row.status === 'submitted' ? (
 								<ul className="flight-calls__fields">
-									{fields.map((field) => {
+									{shown.map((field) => {
 										const cell = row.fields?.find((f) => f.key === field.key);
 										const status = cell?.status ?? 'na';
 										const word = scorecard.status[status];
