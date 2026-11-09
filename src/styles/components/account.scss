@@ -107,6 +107,11 @@
 
 	&__action {
 		margin-left: auto;
+
+		// Wrapped under the title on a phone: start it at the left edge with the text.
+		@include responsive($breakpoint-mobile) {
+			margin-left: 0;
+		}
 	}
 
 	&__title {
