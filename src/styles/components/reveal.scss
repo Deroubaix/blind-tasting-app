@@ -5,7 +5,7 @@
 .reveal-card {
 	background: $color-card;
 	border: 1px solid $rule;
-	border-radius: 14px;
+	border-radius: $radius-lg;
 }
 
 // Before the palette, so each status modifier's --tone wins.

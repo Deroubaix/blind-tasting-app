@@ -11,6 +11,7 @@
 	font-weight: $font-weight-semibold;
 	color: $color;
 	font-family: $font-sans;
+	font-style: normal;
 	transition: color 0.2s ease;
 
 	&:hover,
@@ -24,12 +25,13 @@
 	font-size: $text-16;
 	font-weight: $font-weight-semibold;
 	font-family: $font-sans;
+	font-style: normal;
 }
 
-// Chosen option/pill: the solid wine fill.
-@mixin selected-outline($accent: $color-wine, $text: $color-on-wine) {
+// A chosen option: ink edge, garnet tint, semibold. Never colour alone: the weight changes too.
+@mixin selected-outline($accent: $color-ink, $fill: $color-tint, $text: $color-ink) {
 	border-color: $accent;
-	background-color: $accent;
+	background-color: $fill;
 	color: $text;
 	font-weight: $font-weight-semibold;
 
@@ -37,7 +39,7 @@
 	&:focus,
 	&:active {
 		border-color: $accent;
-		background-color: $accent;
+		background-color: $fill;
 		color: $text;
 	}
 }

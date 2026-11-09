@@ -55,10 +55,10 @@
 	}
 
 	&__timer-display {
-		@include figures;
-		font-family: $font-serif;
+		font-family: $font-mono;
+		font-variant-numeric: tabular-nums;
 		font-size: $text-timer-live;
-		font-weight: $font-weight-heading;
+		font-weight: $font-weight-regular;
 		line-height: 1.1;
 		color: $color-ink;
 

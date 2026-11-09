@@ -125,6 +125,12 @@ button {
 	// selected-outline restates itself under :hover, so the base hover never reaches a chosen option.
 	&--selected {
 		@include selected-outline;
+
+		&::before {
+			content: '✓';
+			margin-right: 6px;
+			color: $color-link;
+		}
 	}
 
 	// Free-flowing descriptor chips (Nose and WSET aromas) sit tighter than single-choice rows.

@@ -1,55 +1,58 @@
 // The palette as CSS variables, so the theme can change at runtime; _base.scss emits theme-properties.
 
-// Paper is the default; Cellar applies when the reader picks Dark, or picks Auto on a dark system.
+// Light is the default; dark applies when the reader picks Dark, or picks Auto on a dark system.
+// Buttons and selection are ink; garnet ('link') is the one colour of our own.
 $paper: (
-	'ground': #f5efe4,
-	'card': #fffbf4,
-	'raised': #ede5d6,
-	'ink': #27201d,
-	'text-secondary': #655a54,
-	'text-muted': #6e625b,
-	'wine': #7a2434,
-	'wine-hover': #5e1a28,
-	'on-wine': #fff8ee,
-	'link': #7a2434,
-	'rule': #dacfbf,
-	'rule-strong': #c4b7a5,
+	'ground': #fbfaf6,
+	'card': #ffffff,
+	'raised': #f1efe8,
+	'ink': #1e211f,
+	'text-secondary': #585c57,
+	'text-muted': #676b65,
+	'wine': #1e211f,
+	'wine-hover': #3a3d3b,
+	'on-wine': #fbfaf6,
+	'link': #7d2735,
+	'tint': #f4e6e8,
+	'rule': #d8d6cf,
+	'rule-strong': #767a74,
 	'ok': #2e6b40,
-	'close': #8a5a0b,
+	'close': #8a5a00,
 	'bad': #a12a3b,
 	'taster-2': #466d3e,
 	'taster-3': #7a5c17,
 	'taster-4': #44628a,
-	'bar-red': #ded3c1,
+	'bar-red': #d8d6cf,
 	'bar-white': #d9b48f,
-	'fruit-red': #b8475c,
+	'fruit-red': #9c2b45,
 	'fruit-blue': #4f6aa8,
-	'fruit-black': #3b3230,
-	'fruit-dried': #9a6b2e,
-	'shadow': rgba(39, 32, 29, 0.14),
-	'scrim': rgba(39, 32, 29, 0.45),
+	'fruit-black': #2e2a33,
+	'fruit-dried': #8a4a2c,
+	'shadow': rgba(30, 33, 31, 0.14),
+	'scrim': rgba(30, 33, 31, 0.45),
 );
 
 $cellar: (
-	'ground': #1c1816,
-	'card': #262120,
-	'raised': #2e2826,
-	'ink': #efe6d8,
-	'text-secondary': #b8aca0,
-	'text-muted': #a2958a,
-	'wine': #8e2f42,
-	'wine-hover': #a33a4f,
-	'on-wine': #fff4ea,
-	'link': #e39aa6,
-	'rule': #3a3330,
-	'rule-strong': #544a45,
+	'ground': #1d1f1e,
+	'card': #262827,
+	'raised': #303231,
+	'ink': #efede6,
+	'text-secondary': #b0b3ac,
+	'text-muted': #9a9e97,
+	'wine': #efede6,
+	'wine-hover': #d2d0c8,
+	'on-wine': #1d1f1e,
+	'link': #e07a8c,
+	'tint': #3e2a2f,
+	'rule': #3d403e,
+	'rule-strong': #7a7e78,
 	'ok': #9ccfa5,
-	'close': #e6bc6a,
+	'close': #e6b35a,
 	'bad': #f09aa6,
 	'taster-2': #a8c49f,
 	'taster-3': #d6bf8e,
 	'taster-4': #a6b8d2,
-	'bar-red': #3b3330,
+	'bar-red': #3d403e,
 	'bar-white': #a98a5e,
 	'fruit-red': #e07a8a,
 	'fruit-blue': #8fa6d9,
@@ -97,11 +100,12 @@ $color-ink: var(--c-ink);
 $color-text-secondary: var(--c-text-secondary);
 $color-text-muted: var(--c-text-muted);
 
-// Wine red: spent on actions and selection only
+// Actions: ink in both themes (the names predate the move from wine-red buttons)
 $color-wine: var(--c-wine);
 $color-wine-hover: var(--c-wine-hover);
 $color-on-wine: var(--c-on-wine); // text on a wine fill
-$color-link: var(--c-link); // links, focus rings, selected text
+$color-link: var(--c-link); // garnet: links, focus rings, marks and corrections
+$color-tint: var(--c-tint); // the fill behind a chosen option
 
 // Rules
 $color-rule: var(--c-rule);

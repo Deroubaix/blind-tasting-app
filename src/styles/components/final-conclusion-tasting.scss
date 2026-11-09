@@ -31,11 +31,12 @@
 	padding: 14px 16px;
 	background-color: $color-card;
 	border: 1px solid $rule;
-	border-radius: 12px;
+	border-radius: $radius-lg;
 
 	&__title {
 		margin: 0;
 		font-family: $font-sans;
+		font-style: normal;
 		font-size: $text-14;
 		font-weight: $font-weight-regular;
 		color: $color-text-secondary;

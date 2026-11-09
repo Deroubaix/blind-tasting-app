@@ -55,12 +55,14 @@
 		gap: 8px;
 		margin: 0;
 		font-family: $font-sans;
+		font-style: normal;
 		font-size: $text-16;
 		font-weight: $font-weight-semibold;
 		color: $color-ink;
 
 		small {
 			font-family: $font-sans;
+			font-style: normal;
 			font-size: $text-13;
 			font-weight: $font-weight-regular;
 			color: $color-text-muted;
@@ -122,7 +124,7 @@
 
 // Two-line pills read as cards, not capsules.
 .start-option:has(small) {
-	border-radius: 14px;
+	border-radius: $radius-lg;
 }
 
 .start-timer {
@@ -169,12 +171,13 @@
 .start-how {
 	padding: 20px 22px;
 	border: 1px solid $rule;
-	border-radius: 12px;
+	border-radius: $radius-lg;
 	background: $color-card;
 
 	h2 {
 		margin: 0 0 10px;
 		font-family: $font-sans;
+		font-style: normal;
 		font-size: $text-15;
 		font-weight: $font-weight-semibold;
 	}

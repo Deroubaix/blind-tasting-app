@@ -2,7 +2,8 @@
 // abstracts/_font-scale.scss.
 @use 'abstracts' as *;
 
-// Headings: Newsreader 500, fluid sizes, so h1/h2 need no mobile override.
+// Headings: Caslon italic, fluid sizes, so h1/h2 need no mobile override. A heading styled in
+// the sans (a card or question label) sets its style back to normal with the family.
 h1,
 h2,
 h3,
@@ -12,7 +13,7 @@ h6 {
 	font-family: $font-serif;
 	font-weight: $font-weight-heading;
 	color: $color-ink;
-	letter-spacing: -0.01em;
+	letter-spacing: -0.005em;
 	margin: 0;
 
 	// One voice: an `<em>` in a heading no longer changes face.
@@ -22,6 +23,12 @@ h6 {
 }
 
 // Every screen title; only the home hero scales past it (home-page.scss).
+h1,
+h2,
+h3 {
+	font-style: italic;
+}
+
 h1 {
 	font-size: clamp(2rem, 4vw, 2.75rem);
 	line-height: 1.1;
@@ -42,6 +49,7 @@ h4,
 h5,
 h6 {
 	font-family: $font-sans;
+	font-style: normal;
 	font-weight: $font-weight-semibold;
 	letter-spacing: normal;
 }
@@ -142,6 +150,7 @@ html {
 	// the browser, which every rem in the app then scales with.
 	font-size: 100%;
 	font-family: $font-sans;
+	font-style: normal;
 	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 }
@@ -162,6 +171,7 @@ html {
 	color: $color-on-wine;
 	font-size: $font-size-sm;
 	font-family: $font-sans;
+	font-style: normal;
 	text-decoration: none;
 	border-radius: 0 0 6px 0;
 	translate: 0 -100%;

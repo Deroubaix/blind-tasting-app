@@ -215,11 +215,11 @@ body.menu-open {
 		border: 1px solid $rule-mid;
 		border-radius: $radius;
 		color: $color-ink;
-		font-family: $font-serif;
+		font-family: $font-mono;
 		// Above 16px, so it may beat the coarse-pointer rule; it has to be !important to.
 		font-size: $text-20 !important;
-		font-weight: $font-weight-heading;
-		letter-spacing: 0.22em;
+		font-weight: $font-weight-regular;
+		letter-spacing: 0.18em;
 		text-transform: uppercase;
 
 		&::placeholder {
@@ -255,6 +255,9 @@ body.menu-open {
 
 // ── Wordmark ─────────────────────────────────────────────────────────────────
 .wordmark {
+	display: inline-flex;
+	align-items: center;
+	gap: 9px;
 	font-family: $font-serif;
 	font-size: 1.375rem;
 	font-weight: $font-weight-heading;
@@ -285,6 +288,7 @@ body.menu-open {
 	background-color: fade($color-ground, 94%);
 	backdrop-filter: blur(8px);
 	font-family: $font-sans;
+	font-style: normal;
 
 	&__logo {
 		margin-right: 4px;
@@ -397,7 +401,7 @@ body.menu-open {
 	padding: 8px 8px calc(18px + env(safe-area-inset-bottom));
 	background: $color-card;
 	border-top: 1px solid $rule;
-	border-radius: 20px 20px 0 0;
+	border-radius: $radius-lg $radius-lg 0 0;
 	box-shadow: 0 -10px 30px $color-shadow;
 	animation: sheet-in 0.25s ease-out;
 
@@ -531,6 +535,7 @@ body.menu-open {
 	background-color: $color-card;
 	border-top: 1px solid $rule;
 	font-family: $font-sans;
+	font-style: normal;
 
 	&__inner {
 		padding-block: 48px 56px;
@@ -596,6 +601,8 @@ body.menu-open {
 		flex: 1 1 320px;
 		margin: 0;
 		padding: 8px 0;
+		// Beats the global phone size for p.
+		font-size: inherit;
 		line-height: 1.5;
 	}
 

@@ -1,7 +1,7 @@
 import '../styles/main.scss';
 import React, { type ReactNode } from 'react';
 import type { Metadata } from 'next';
-import { Newsreader, Source_Sans_3 } from 'next/font/google';
+import { IBM_Plex_Mono, Libre_Caslon_Text, Source_Sans_3 } from 'next/font/google';
 import { BRAND } from '../data/brand';
 import { AuthProvider } from '../components/auth/AuthProvider';
 import ToastProvider from '../components/toast/ToastProvider';
@@ -24,11 +24,18 @@ const sourceSans = Source_Sans_3({
 	display: 'swap',
 });
 
-const newsreader = Newsreader({
+const caslon = Libre_Caslon_Text({
 	subsets: ['latin'],
-	variable: '--font-newsreader',
-	weight: ['400', '500', '600'],
+	variable: '--font-caslon',
+	weight: ['400', '700'],
 	style: ['normal', 'italic'],
+	display: 'swap',
+});
+
+const plexMono = IBM_Plex_Mono({
+	subsets: ['latin'],
+	variable: '--font-plex-mono',
+	weight: ['400', '500'],
 	display: 'swap',
 });
 
@@ -49,10 +56,13 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 	const lang = await getLang();
 	const theme = await getTheme();
 	return (
-		<html lang={LOCALES[lang]} data-theme={theme} className={`${sourceSans.variable} ${newsreader.variable}`}>
+		<html
+			lang={LOCALES[lang]}
+			data-theme={theme}
+			className={`${sourceSans.variable} ${caslon.variable} ${plexMono.variable}`}
+		>
 			<head>
 				<meta charSet="utf-8" />
-				<link rel="icon" href="/favicon.ico" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</head>
 			<body>

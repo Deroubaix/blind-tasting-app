@@ -1,7 +1,7 @@
 // Type scale, weights and family aliases. Separate from `typography.scss` to break a cycle:
 // typography needs `active-state` from `mixins.scss`, which needs `$font-size-sm` from here.
 @use 'sass:math';
-// Both families are loaded via next/font/google in layout.tsx, as --font-source-sans and --font-newsreader.
+// All three families are loaded via next/font/google in layout.tsx.
 
 $text-base-size: 16px;
 $text-scale-ratio: 1.25;
@@ -19,14 +19,17 @@ $font-size-xxxxl: $text-base-size * math.pow($text-scale-ratio, 5);
 // Body text is regular; 600 is the most any text gets, kept for the word that matters.
 $font-weight-regular: 400;
 $font-weight-semibold: 600;
-// Newsreader headings and figures.
-$font-weight-heading: 500;
+// Caslon has no medium: headings are regular, set in italic (_base.scss).
+$font-weight-heading: 400;
 
 // Source Sans 3 — body text, labels and controls.
 $font-sans: var(--font-source-sans), system-ui, sans-serif;
 
-// Newsreader — headings and figures: the timer, scores, counts.
-$font-serif: var(--font-newsreader), Georgia, serif;
+// Libre Caslon Text — headings and figures: scores, counts.
+$font-serif: var(--font-caslon), Georgia, serif;
+
+// IBM Plex Mono — what the taster wrote (short answers on a marked sheet), codes and the clock.
+$font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
 // ── Small-text sizes ──────────────────────────────────────────────────────────
 // The interface's labels, chips and captions, named by their approximate pixel size. Before these,

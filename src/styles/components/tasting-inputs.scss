@@ -64,7 +64,7 @@
 	padding: 18px;
 	background-color: $color-card;
 	border: 1px solid $rule;
-	border-radius: 14px;
+	border-radius: $radius-lg;
 
 	// The light swatch tile: wine colour is judged against a neutral light ground.
 	&--light {
@@ -289,6 +289,15 @@
 
 		.tasting-option {
 			padding: 6px;
+		}
+
+		// Pick one on a scale: the chosen segment fills with ink, so it reads apart from pick-any chips.
+		.tasting-option--selected {
+			@include selected-outline($fill: $color-ink, $text: $color-ground);
+
+			&::before {
+				display: none;
+			}
 		}
 	}
 

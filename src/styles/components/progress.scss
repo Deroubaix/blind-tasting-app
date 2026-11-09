@@ -91,6 +91,7 @@
 
 		span {
 			font-family: $font-sans;
+			font-style: normal;
 			font-size: $text-15;
 			font-weight: $font-weight-regular;
 			color: $color-text-secondary;
@@ -119,7 +120,7 @@
 	padding: 18px 20px;
 	background: $color-card;
 	border: 1px solid $rule;
-	border-radius: 14px;
+	border-radius: $radius-lg;
 
 	@include responsive($breakpoint-mobile) {
 		padding: 16px;
@@ -428,6 +429,7 @@
 .progress-list-label {
 	margin: 4px 0 0;
 	font-family: $font-sans;
+	font-style: normal;
 	font-size: $text-14;
 	font-weight: $font-weight-regular;
 	letter-spacing: 0;
@@ -468,6 +470,7 @@
 
 	&__of {
 		font-family: $font-sans;
+		font-style: normal;
 		font-size: $text-13;
 		color: $color-text-secondary;
 	}

@@ -79,7 +79,7 @@
 		padding: 20px;
 		background-color: $color-card;
 		border: 1px solid $rule;
-		border-radius: 14px;
+		border-radius: $radius-lg;
 		box-shadow: $shadow-lift;
 		animation: modal-content-in 140ms ease-out 1;
 		scale: 1;

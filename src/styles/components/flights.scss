@@ -53,7 +53,7 @@
 
 .flight-card {
 	@include ledger-panel(18px);
-	border-radius: 14px;
+	border-radius: $radius-lg;
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;
@@ -352,11 +352,10 @@
 .flight-join {
 	&__code {
 		margin: 0;
-		font-family: $font-serif;
+		font-family: $font-mono;
 		// Read from across the room, so it runs past the type scale.
 		font-size: 2.75rem;
-		font-weight: $font-weight-heading;
-		font-variant-numeric: lining-nums;
+		font-weight: 500;
 		letter-spacing: 0.12em;
 		line-height: 1;
 		color: $color-ink;
@@ -461,7 +460,7 @@
 
 .flight-wine {
 	@include ledger-panel(18px);
-	border-radius: 14px;
+	border-radius: $radius-lg;
 	display: grid;
 	grid-template-columns: 44px minmax(0, 1fr);
 	gap: 12px;
@@ -609,6 +608,7 @@
 
 	&__people {
 		font-family: $font-sans;
+		font-style: normal;
 		font-size: $text-13;
 	}
 }
@@ -618,9 +618,9 @@
 	box-sizing: border-box;
 	padding: 14px 16px;
 	background-color: $color-ground;
-	border: 1px solid $rule;
+	border: 1px solid $rule-mid;
 	border-radius: $radius;
-	@include figures;
+	font-family: $font-mono;
 	// Above 16px, so it may beat the coarse-pointer rule; it has to be !important to.
 	font-size: $text-32 !important;
 	letter-spacing: 0.35em;
@@ -659,6 +659,7 @@
 .flight-section-label {
 	margin: 8px 0 0;
 	font-family: $font-sans;
+	font-style: normal;
 	font-size: $text-14;
 	font-weight: $font-weight-regular;
 	letter-spacing: 0;
@@ -751,7 +752,7 @@
 
 .flight-action {
 	@include ledger-panel($spacing-lg);
-	border-radius: 14px;
+	border-radius: $radius-lg;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
@@ -860,6 +861,7 @@
 
 		span {
 			font-family: $font-sans;
+			font-style: normal;
 			font-size: $text-14;
 			color: $color-text-secondary;
 		}
@@ -1146,6 +1148,7 @@
 	// The words under each total read as text, not figures.
 	&__row--total &__cell > .flight-muted {
 		font-family: $font-sans;
+		font-style: normal;
 		font-size: $text-12;
 	}
 }
