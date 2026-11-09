@@ -122,7 +122,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 												return (
 													<button
 														key={term}
-														className={`tasting-option tasting-option--compact${on ? ' tasting-option--selected' : ''}`}
+														className={`tasting-option tasting-option--multi${on ? ' tasting-option--selected' : ''}`}
 														aria-pressed={on}
 														onClick={() => onToggle(cluster, term)}
 													>
@@ -133,7 +133,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 											{own.map((term) => (
 												<button
 													key={term}
-													className="tasting-option tasting-option--compact tasting-option--selected tasting-option--custom"
+													className="tasting-option tasting-option--multi tasting-option--selected tasting-option--custom"
 													title={t.clickToRemove}
 													onClick={() => onRemove(cluster, term)}
 												>
@@ -178,7 +178,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 												</span>
 											) : (
 												<button
-													className="tasting-option tasting-option--compact tasting-option--ghost"
+													className="tasting-option tasting-option--multi tasting-option--ghost"
 													onClick={() => setOpen((o) => ({ ...o, [cluster.name]: true }))}
 												>
 													{t.other}

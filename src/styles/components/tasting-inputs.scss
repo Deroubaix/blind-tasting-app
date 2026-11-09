@@ -110,6 +110,45 @@
 	vertical-align: middle;
 }
 
+// ── The ruled sheet ───────────────────────────────────────────────────────────
+// On the phase pages each question and section is a ruled row, not a card.
+.tasting-phase-main {
+	.tasting-card:not(.tasting-card--light),
+	.tasting-q {
+		padding: 16px 0 0;
+		background: none;
+		border: none;
+		border-top: 1px solid $rule;
+		border-radius: 0;
+	}
+
+	.tasting-divider {
+		margin: 0 0 12px;
+		padding: 16px 0 0;
+		border-bottom: none;
+		border-top: 1px solid $rule;
+	}
+
+	// Headings over groups are Caslon italic; a section that folds is a sans row, as in V4.
+	.section-label {
+		font-style: italic;
+	}
+
+	.tasting-section .section-label {
+		font-family: $font-sans;
+		font-style: normal;
+		font-size: 1.0625rem;
+		font-weight: $font-weight-semibold;
+		letter-spacing: 0;
+	}
+
+	.tasting-group__label {
+		font-size: $text-14;
+		font-weight: $font-weight-regular;
+		color: $color-text-secondary;
+	}
+}
+
 // ── Section card: a titled card holding several groups ────────────────────────
 .tasting-section {
 	display: flex;
@@ -289,15 +328,6 @@
 
 		.tasting-option {
 			padding: 6px;
-		}
-
-		// Pick one on a scale: the chosen segment fills with ink, so it reads apart from pick-any chips.
-		.tasting-option--selected {
-			@include selected-outline($fill: $color-ink, $text: $color-ground);
-
-			&::before {
-				display: none;
-			}
 		}
 	}
 

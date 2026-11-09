@@ -31,8 +31,8 @@
 	gap: 8px;
 	padding: 14px 16px;
 	background-color: $color-card;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
+	border: 1px solid $color-ink;
+	border-radius: 0;
 
 	&__title {
 		margin: 0;

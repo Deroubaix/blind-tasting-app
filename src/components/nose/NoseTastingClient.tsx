@@ -113,7 +113,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	) => {
 		// The design splits chips by selection mode, not by layout: single-select
 		// rows are full-size options, multi-select descriptors are compact chips.
-		const pill = SINGLE_SELECT.has(category) ? '' : ' tasting-option--compact';
+		const pill = SINGLE_SELECT.has(category) ? '' : ' tasting-option--multi';
 
 		return (
 			<div

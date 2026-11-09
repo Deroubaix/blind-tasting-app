@@ -90,7 +90,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 						{own.map((term) => (
 							<button
 								key={term}
-								className="tasting-option tasting-option--compact tasting-option--selected tasting-option--custom"
+								className="tasting-option tasting-option--multi tasting-option--selected tasting-option--custom"
 								title={tb.clickToRemove}
 								onClick={() => setFlavours(flavours.filter((t) => t !== term))}
 							>

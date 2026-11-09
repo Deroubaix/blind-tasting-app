@@ -80,7 +80,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 						return (
 							<button
 								key={option}
-								className={`tasting-option tasting-option--compact${on ? ' tasting-option--selected' : ''}`}
+								className={`tasting-option tasting-option--multi${on ? ' tasting-option--selected' : ''}`}
 								aria-pressed={on}
 								onClick={() => toggleObservation(option)}
 							>
