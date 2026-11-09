@@ -11,11 +11,13 @@ import { GRAPE_VARIETALS, WINE_COUNTRIES } from './autocompleteData';
 import { useText } from '../../i18n/LanguageProvider';
 import { commonText } from '../../i18n/common';
 import { tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 
 export default function InitialConclusionTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const text = useText(tastingText);
+	const term = useTerm();
 	const t = text.initial;
 	const phaseName = useText(commonText).phase.cms;
 
@@ -124,7 +126,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 									className={`tasting-option${ic.climate === opt ? ' tasting-option--selected' : ''}`}
 									onClick={() => updateIC({ climate: ic.climate === opt ? null : opt })}
 								>
-									{opt}
+									{term(opt)}
 								</button>
 							))}
 						</div>
@@ -192,7 +194,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 									className={`tasting-option${ic.ageRange === opt ? ' tasting-option--selected' : ''}`}
 									onClick={() => updateIC({ ageRange: ic.ageRange === opt ? null : opt })}
 								>
-									{opt}
+									{term(opt)}
 								</button>
 							))}
 						</div>

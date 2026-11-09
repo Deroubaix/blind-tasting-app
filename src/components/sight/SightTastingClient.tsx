@@ -7,10 +7,12 @@ import { SIGHT_MULTI, SIGHT_SCALES, SIGHT_YES_NO } from './sightFields';
 import { type WineColorEntry, wineColors } from './sightData';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { swatchDescPt, tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 
 export default function SightTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const { lang } = useLang();
 	const desc = (item: { hex: string; desc: string }) => (lang === 'pt' && swatchDescPt[item.hex]) || item.desc;
+	const term = useTerm();
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const text = useText(tastingText);
@@ -44,7 +46,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 	// ─── Sub-renderers ───────────────────────────────────────────────────────────
 
 	const renderOptions = (field: string, options: readonly string[]) => (
-		<div className="tasting-options" role="group" aria-label={field}>
+		<div className="tasting-options" role="group" aria-label={term(field)}>
 			{options.map((opt) => {
 				const on = isChosen(field, opt);
 				return (
@@ -54,7 +56,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 						aria-pressed={on}
 						onClick={() => choose(field, opt)}
 					>
-						{opt}
+						{term(opt, field)}
 					</button>
 				);
 			})}
@@ -62,7 +64,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 	);
 
 	const renderToggle = (field: string) => (
-		<div className="sight-toggle-group" role="group" aria-label={field}>
+		<div className="sight-toggle-group" role="group" aria-label={term(field)}>
 			{SIGHT_YES_NO.map((opt) => {
 				const on = isChosen(field, opt);
 				return (
@@ -72,7 +74,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 						aria-pressed={on}
 						onClick={() => choose(field, opt)}
 					>
-						{opt}
+						{term(opt, field)}
 					</button>
 				);
 			})}
@@ -86,7 +88,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 
 		return (
 			<>
-				<div className="sight-swatches" role="group" aria-label={field}>
+				<div className="sight-swatches" role="group" aria-label={term(field)}>
 					{items.map((item) => {
 						const on = isChosen(field, item.name);
 						return (
@@ -102,7 +104,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 									style={{ backgroundColor: item.hex }}
 								/>
 								<span className={`sight-swatch-label${on ? ' sight-swatch-label--selected' : ''}`}>
-									{item.name}
+									{term(item.name)}
 								</span>
 								<span className="sight-swatch-desc">{desc(item)}</span>
 							</button>
@@ -111,7 +113,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				</div>
 				{chosen.map((item) => (
 					<p key={item.name} className="sight-swatch-chosen">
-						<strong>{item.name}</strong> &mdash; {desc(item)}
+						<strong>{term(item.name)}</strong> &mdash; {desc(item)}
 					</p>
 				))}
 			</>
@@ -145,12 +147,12 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				</h2>
 				<div className="tasting-grid tasting-grid--3">
 					<div className="tasting-card">
-						<div className="tasting-card__label">Clarity / Visible Sediment</div>
+						<div className="tasting-card__label">{term('Clarity / Visible Sediment')}</div>
 						{renderOptions('Clarity', SIGHT_SCALES.Clarity)}
 					</div>
 
 					<div className="tasting-card tasting-grid__span-2">
-						<div className="tasting-card__label">Intensity of Color</div>
+						<div className="tasting-card__label">{term('Intensity of Color')}</div>
 						{renderOptions('Intensity of Color', SIGHT_SCALES['Intensity of Color'])}
 					</div>
 				</div>
@@ -163,7 +165,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				<div className="tasting-grid">
 					<div className="tasting-card tasting-card--light">
 						<div className="tasting-card__head">
-							<div className="tasting-card__label">Primary Color</div>
+							<div className="tasting-card__label">{term('Primary Color')}</div>
 							<span className="sight-sublabel">{t.core}</span>
 						</div>
 						{renderSwatches('Primary Color', colors.primary)}
@@ -171,7 +173,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 
 					<div className="tasting-card tasting-card--light">
 						<div className="tasting-card__head">
-							<div className="tasting-card__label">Secondary Color(s)</div>
+							<div className="tasting-card__label">{term('Secondary Color(s)')}</div>
 							<span className="sight-sublabel">{t.selectAll}</span>
 						</div>
 						{renderSwatches('Secondary Color(s)', colors.secondary)}
@@ -187,24 +189,24 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 					{isRed && (
 						<>
 							<div className="tasting-card">
-								<div className="tasting-card__label">Rim Variation</div>
+								<div className="tasting-card__label">{term('Rim Variation')}</div>
 								{renderToggle('Rim Variation')}
 							</div>
 
 							<div className="tasting-card tasting-grid__span-2">
-								<div className="tasting-card__label">Staining</div>
+								<div className="tasting-card__label">{term('Staining')}</div>
 								{renderOptions('Staining', SIGHT_SCALES.Staining)}
 							</div>
 						</>
 					)}
 
 					<div className="tasting-card tasting-grid__span-2">
-						<div className="tasting-card__label">Tearing</div>
+						<div className="tasting-card__label">{term('Tearing')}</div>
 						{renderOptions('Tearing', SIGHT_SCALES.Tearing)}
 					</div>
 
 					<div className="tasting-card">
-						<div className="tasting-card__label">Gas Evidence</div>
+						<div className="tasting-card__label">{term('Gas Evidence')}</div>
 						{renderToggle('Gas Evidence')}
 					</div>
 				</div>

@@ -5,6 +5,7 @@ import Mark from '../misc/Mark';
 import { type Comparison, type ComparedField, type FieldStatus } from '../../utils/revealScore';
 import { useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
+import { useFieldValue } from '../../i18n/useTerm';
 
 /** The mark with its word under it, so no status relies on the mark alone. */
 export function StatusBadge({ status }: { status: FieldStatus }) {
@@ -20,16 +21,17 @@ export function StatusBadge({ status }: { status: FieldStatus }) {
 /** One field: your call, the label's correction under it where it differs, and the mark. */
 function FieldRow({ field }: { field: ComparedField }) {
 	const { scorecard: t } = useText(archivesText);
+	const show = useFieldValue();
 	const differs = field.status !== 'correct' && field.actual;
 	return (
 		<li className="scorecard__row">
 			<span className="scorecard__field">{field.label}</span>
 			<span className="scorecard__call">
-				{field.call ?? <span className="scorecard__blank">{t.leftBlank}</span>}
+				{field.call ? show(field.key, field.call) : <span className="scorecard__blank">{t.leftBlank}</span>}
 				{differs && (
 					<span className="scorecard__fix">
 						<span className="visually-hidden">{t.label}: </span>
-						{field.actual}
+						{show(field.key, field.actual!)}
 					</span>
 				)}
 				{field.note && <span className="scorecard__note">{field.note}</span>}

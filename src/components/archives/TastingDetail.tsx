@@ -19,6 +19,7 @@ import { WSET_CONCLUSION_KEYS } from '../wset/wsetFields';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
 import { commonText } from '../../i18n/common';
+import { useTerm } from '../../i18n/useTerm';
 
 const service = new ClientTastingService();
 
@@ -40,8 +41,17 @@ function SheetPhase({
 	label: string;
 	data: Record<string, string | string[] | null | undefined> | undefined | null;
 }) {
+	const term = useTerm();
+	// Grid terms show in the reader's language; free text (key '') stays as written.
+	const say = (value: string, key: string) => (key ? term(value, key) : value);
 	const entries = Object.entries(data ?? {})
-		.map(([key, value]) => [formatKey(key), Array.isArray(value) ? value.join(', ') : value] as const)
+		.map(
+			([key, value]) =>
+				[
+					term(key) === key ? formatKey(key) : term(key),
+					Array.isArray(value) ? value.map((v) => say(v, key)).join(', ') : value && say(value, key),
+				] as const,
+		)
 		.filter(([, value]) => Boolean(value));
 	if (entries.length === 0) {
 		return null;

@@ -16,6 +16,7 @@ import QualityLevelSelect from './QualityLevelSelect';
 import { useText } from '../../i18n/LanguageProvider';
 import { commonText } from '../../i18n/common';
 import { tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 
 // Values like "Medium−" or "High" mean nothing alone, so the attribute they answer
 // travels with them — flattened, five "Medium−" in a row name neither acid nor tannin.
@@ -57,6 +58,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const text = useText(tastingText);
 	const t = text.final;
 	const phaseName = useText(commonText).phase.cms;
+	const term = useTerm();
 	// Closed by default where it stacks above the form; beside the form it is always open.
 	const [notesOpen, setNotesOpen] = useState(false);
 
@@ -80,31 +82,37 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	// lists (aroma descriptors, countries) go flat.
 	const sight = tastingData.sight ?? {};
 	const sightPairs = sightFields(wineType)
-		.map((f) => [f, Array.isArray(sight[f]) ? (sight[f] as string[]).join(' · ') : sight[f]])
+		.map((f) => [
+			term(f),
+			Array.isArray(sight[f])
+				? (sight[f] as string[]).map((v) => term(v, f)).join(' · ')
+				: sight[f] && term(sight[f], f),
+		])
 		.filter(([, value]) => Boolean(value)) as [string, string][];
 
 	// Nose splits two ways: assessments are ambiguous without their attribute, descriptors are not.
 	const nose = tastingData.nose ?? {};
 	const nosePairs = Object.entries(nose)
 		.filter(([key, values]) => NOSE_ASSESSMENTS.has(key) && values?.length)
-		.map(([key, values]) => [key, values.join(' · ')] as [string, string]);
+		.map(([key, values]) => [term(key), values.map((v) => term(v, key)).join(' · ')] as [string, string]);
 	const noseDescriptors = Object.entries(nose)
 		.filter(([key, values]) => !NOSE_ASSESSMENTS.has(key) && values?.length)
 		.flatMap(([, values]) => values)
+		.map((v) => term(v))
 		.join(' · ');
 
 	// Grid order, not tap order.
 	const palate = tastingData.palate ?? {};
 	const palatePairs = [...Object.keys(PALATE_OPTIONS[wineType]), BALANCE_NOTE, ...CONFIRM_ROWS.map(confirmKey)]
 		.filter((key) => Boolean(palate[key]))
-		.map((key) => [key, palate[key]] as [string, string]);
+		.map((key) => [term(key), term(String(palate[key]), key)] as [string, string]);
 
 	const initial = tastingData.conclusion?.initial;
 	const initialPairs = (
 		[
 			[text.initial.grapes, (initial?.grapeVarieties ?? []).join(' · ')],
-			[text.initial.climate, initial?.climate],
-			[text.initial.ageRange, initial?.ageRange],
+			[text.initial.climate, initial?.climate && term(initial.climate)],
+			[text.initial.ageRange, initial?.ageRange && term(initial.ageRange)],
 		] as [string, string | null | undefined][]
 	)
 		.filter(([, value]) => Boolean(value))
@@ -112,13 +120,19 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const possibleOriginSummary = (initial?.possibleCountries ?? []).join(' · ');
 	const initialLine = [
 		(initial?.grapeVarieties ?? []).join(' / '),
-		initial?.climate,
+		initial?.climate && term(initial.climate),
 		possibleOriginSummary,
-		initial?.ageRange,
+		initial?.ageRange && term(initial.ageRange),
 	]
 		.filter(Boolean)
 		.join(' · ');
-	const finalIdentity = [vintage, grapeVariety, qualityLevel, styleCategory, countryOfOrigin]
+	const finalIdentity = [
+		vintage,
+		grapeVariety,
+		qualityLevel && term(qualityLevel),
+		styleCategory && term(styleCategory, 'Official Style Category'),
+		countryOfOrigin,
+	]
 		.filter(Boolean)
 		.join(' · ');
 
@@ -243,6 +257,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							<TastingCustomSelect
 								options={STYLE_CATEGORIES}
 								labelId="fc-style-label"
+								question="Official Style Category"
 								value={styleCategory}
 								onChange={setStyleCategory}
 								placeholder={text.inputs.whereAppropriate}

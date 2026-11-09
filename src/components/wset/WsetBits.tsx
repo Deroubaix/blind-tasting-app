@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { commonText } from '../../i18n/common';
 import { useText } from '../../i18n/LanguageProvider';
 import { wsetText } from '../../i18n/wset';
+import { useTerm } from '../../i18n/useTerm';
 import { type AromaCluster, AROMA_GROUPS, aromaClusters } from './wsetFields';
 
 type WineType = 'red' | 'white';
@@ -28,10 +29,11 @@ export function OptionCard({
 	swatches?: Record<string, string>;
 }) {
 	const t = useText(wsetText).bits;
+	const word = useTerm();
 	return (
 		<div className="tasting-card">
 			<div className="tasting-card__label">
-				{label}
+				{word(label)}
 				{required && (
 					<span className="tasting-card__required" aria-label={t.required}>
 						*
@@ -41,7 +43,7 @@ export function OptionCard({
 			<div
 				className={`tasting-options${equalWidth ? ' tasting-options--equal' : ''}`}
 				role="group"
-				aria-label={label}
+				aria-label={word(label)}
 			>
 				{options.map((option) => {
 					const on = value === option;
@@ -60,7 +62,7 @@ export function OptionCard({
 									aria-hidden="true"
 								/>
 							)}
-							{option}
+							{word(option, label)}
 						</button>
 					);
 				})}
@@ -87,6 +89,7 @@ type ClusterProps = {
 export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd, onRemove }: ClusterProps) {
 	const t = useText(wsetText).bits;
 	const tc = useText(commonText);
+	const word = useTerm();
 	const [drafts, setDrafts] = useState<Record<string, string>>({});
 	const [open, setOpen] = useState<Record<string, boolean>>({});
 	const clusters = aromaClusters(wineType);
@@ -115,8 +118,8 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 								const own = custom(cluster);
 								return (
 									<div key={cluster.name} className="tasting-group">
-										<div className="tasting-group__label">{cluster.name}</div>
-										<div className="tasting-options" role="group" aria-label={cluster.name}>
+										<div className="tasting-group__label">{word(cluster.name)}</div>
+										<div className="tasting-options" role="group" aria-label={word(cluster.name)}>
 											{cluster.terms.map((term) => {
 												const on = chosen.includes(term);
 												return (
@@ -126,7 +129,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 														aria-pressed={on}
 														onClick={() => onToggle(cluster, term)}
 													>
-														{term}
+														{word(term)}
 													</button>
 												);
 											})}

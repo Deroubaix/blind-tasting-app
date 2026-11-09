@@ -19,6 +19,7 @@ import { type Grid } from '../data/grids';
 import { CORE_LIST, interchangeable } from '../components/archives/coreList';
 import { archivesText } from '../i18n/archives';
 import { DEFAULT_LANG, type Lang } from '../i18n';
+import { termIn } from '../i18n/terms';
 
 export type Reveal = {
 	/** The WSET answer key: the tutor's quality level and readiness. Absent on a CMS reveal. */
@@ -325,11 +326,18 @@ export function revealTitle(reveal: Reveal, lang: Lang = DEFAULT_LANG): string {
  * The call in one line. On the CMS grid that is the wine named; on the WSET grid the quality and
  * readiness, with the identity after them when the taster ventured one.
  */
-export function describeCall(call: Record<string, string | null | undefined> | null | undefined, grid: Grid): string {
+export function describeCall(
+	call: Record<string, string | null | undefined> | null | undefined,
+	grid: Grid,
+	lang: Lang = DEFAULT_LANG,
+): string {
 	if (grid !== 'wset') {
 		return describeWine(call);
 	}
-	const assessment = [clean(call?.qualityAssessment), clean(call?.readiness)].filter(Boolean).join(' · ');
+	const assessment = [clean(call?.qualityAssessment), clean(call?.readiness)]
+		.filter((value): value is string => Boolean(value))
+		.map((value) => termIn(lang, value))
+		.join(' · ');
 	const identity = describeWine(call);
 	return [assessment, identity].filter(Boolean).join(' — ');
 }

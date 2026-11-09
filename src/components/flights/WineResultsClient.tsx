@@ -18,6 +18,7 @@ import {
 } from '../../utils/flightLogic';
 import { Avatar, FlightMessage, flightService, useFlight, useRequireLogin } from './FlightBits';
 import { flightsText } from '../../i18n/flights';
+import { useFieldValue, useTerm } from '../../i18n/useTerm';
 import { commonText } from '../../i18n/common';
 import { archivesText } from '../../i18n/archives';
 import { useLang, useText } from '../../i18n/LanguageProvider';
@@ -35,7 +36,7 @@ const AGREEMENT_ICONS: Record<Agreement, typeof IconCheck> = {
 const byKey = (group: Record<string, string>, key: string, fallback: string) => group[key] ?? fallback;
 
 /** Short scale labels, so five levels fit a phone: "Medium+" → "Med+". */
-const shortLevel = (level: string) => level.replace('Medium', 'Med');
+const shortLevel = (level: string) => level.replace('Medium', 'Med').replace(/^Médi[oa]/, 'Méd');
 
 function structure(results: WineResults): StructureAttribute[] {
 	const answers = results.rows
@@ -83,7 +84,7 @@ function ScaleRow({ attr, results }: { attr: StructureAttribute; results: WineRe
 
 	return (
 		<li className={`agreement-scale agreement-scale--${attr.agreement}`}>
-			<span className="agreement-scale__name">{attr.name === 'Length of Finish' ? 'Finish' : attr.name}</span>
+			<span className="agreement-scale__name">{attr.name}</span>
 			<div className="agreement-scale__track" role="img" aria-label={`${attr.name}: ${phrase}`}>
 				<span className="agreement-scale__line" />
 				{max > min && (
@@ -138,6 +139,7 @@ function TasterSheet({
 }) {
 	const text = useText(flightsText);
 	const t = text.results;
+	const term = useTerm();
 	const palateRows = attrs
 		.map((attr) => {
 			const mine = attr.calls.find((call) => call.personId === row.person.id);
@@ -191,7 +193,7 @@ function TasterSheet({
 			{row.nose.length > 0 && (
 				<div className="flight-card">
 					<span className="tasting-card__label">{t.nose}</span>
-					<p className="flight-sheet__nose">{row.nose.join(' · ')}</p>
+					<p className="flight-sheet__nose">{row.nose.map((v) => term(v)).join(' · ')}</p>
 				</div>
 			)}
 			{row.tastingId && (
@@ -206,6 +208,8 @@ function TasterSheet({
 export default function WineResultsClient({ code, number }: { code: string; number: number }) {
 	const { lang } = useLang();
 	const text = useText(flightsText);
+	const term = useTerm();
+	const show = useFieldValue();
 	const t = text.results;
 	const common = useText(commonText);
 	const { scorecard } = useText(archivesText);
@@ -240,7 +244,12 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 		return <div className="empty-state">{common.loading}</div>;
 	}
 
-	const attrs = structure(results);
+	// Names and levels in the reader's language; the calls are indexes, so they still line up.
+	const attrs = structure(results).map((attr) => ({
+		...attr,
+		name: term(attr.name === 'Length of Finish' ? 'Finish' : attr.name),
+		levels: attr.levels.map((level) => term(level, attr.name)),
+	}));
 	const splits = attrs.filter((attr) => attr.agreement === 'split').length;
 	const submittedRows = results.rows.filter((row) => row.status === 'submitted');
 	const missing = results.rows.filter((row) => row.status !== 'submitted');
@@ -386,7 +395,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 													{byKey(t.field, field.key, field.label)}:{' '}
 												</span>
 												<Mark status={status} size={14} />
-												{cell?.call ?? '—'}
+												{cell?.call ? show(field.key, cell.call) : '—'}
 												<span className="visually-hidden">, {word}</span>
 											</li>
 										);

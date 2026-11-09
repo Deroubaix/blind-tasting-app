@@ -5,6 +5,7 @@ import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { useText } from '../../i18n/LanguageProvider';
 import { tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 import {
 	BALANCE_NOTE,
 	CONFIRM_ROWS,
@@ -19,6 +20,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const text = useText(tastingText);
+	const term = useTerm();
 	const t = text.palate;
 
 	// The CMS palate stores one answer per attribute; only the WSET grid keeps a list there.
@@ -78,14 +80,14 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 								return (
 									<div key={category} className="tasting-card">
 										<div className="tasting-card__label">
-											{category}
+											{term(category)}
 											{required.has(category) && (
 												<span className="tasting-card__required" aria-label={t.required}>
 													*
 												</span>
 											)}
 										</div>
-										<div className="tasting-options" role="group" aria-label={category}>
+										<div className="tasting-options" role="group" aria-label={term(category)}>
 											{options.map((option) => {
 												const selected = selectedOptions[category] === option;
 												return (
@@ -95,7 +97,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 														aria-pressed={selected}
 														onClick={() => toggleAnswer(category, option)}
 													>
-														{option}
+														{term(option, category)}
 													</button>
 												);
 											})}
@@ -133,7 +135,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 						return (
 							<div key={row} className="palate-confirm__row">
 								<span className="palate-confirm__label" id={`palate-confirm-${row}`}>
-									{row}
+									{term(row)}
 								</span>
 								<div
 									className="tasting-options palate-confirm__options"
@@ -149,7 +151,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 												aria-pressed={selected}
 												onClick={() => toggleAnswer(key, option)}
 											>
-												{option}
+												{term(option, row)}
 											</button>
 										);
 									})}

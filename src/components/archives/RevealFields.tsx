@@ -129,6 +129,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 					<TastingCustomSelect
 						options={STYLE_CATEGORIES}
 						labelId={ids.style}
+						question="Official Style Category"
 						value={value.styleCategory ?? ''}
 						onChange={(styleCategory) => onChange({ styleCategory: styleCategory || null })}
 						placeholder={inputs.whereAppropriate}

@@ -6,6 +6,7 @@ import { IconChevronDown, IconChevronUp, IconMapPin, IconSearch } from '@tabler/
 import { commonText } from '../../i18n/common';
 import { useText } from '../../i18n/LanguageProvider';
 import { wsetText } from '../../i18n/wset';
+import { useTerm } from '../../i18n/useTerm';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { ChipSearchField, VintageInput } from '../tasting/ConclusionInputs';
@@ -49,6 +50,7 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 	const router = useRouter();
 	const t = useText(wsetText).conclusions;
 	const phases = useText(commonText).phase.wset;
+	const term = useTerm();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const final = tastingData.conclusion?.final ?? {};
 	const { quality, readiness, reasons } = WSET_CONCLUSION_KEYS;
@@ -60,21 +62,24 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 
 	const sight = tastingData.sight ?? {};
 	const sightPairs = WSET_APPEARANCE_FIELDS.filter((f) => sight[f]).map(
-		(f) => [f, sight[f] as string] as [string, string],
+		(f) => [term(f), term(sight[f] as string, f)] as [string, string],
 	);
 	const nose = tastingData.nose ?? {};
 	const nosePairs = Object.keys(WSET_NOSE_ASSESSMENTS)
 		.filter((key) => nose[key]?.length)
-		.map((key) => [key, nose[key].join(' · ')] as [string, string]);
+		.map((key) => [term(key), nose[key].map((v) => term(v, key)).join(' · ')] as [string, string]);
 	const aromas = Object.entries(nose)
 		.filter(([key, values]) => !(key in WSET_NOSE_ASSESSMENTS) && values?.length)
 		.flatMap(([, values]) => values)
+		.map((v) => term(v))
 		.join(' · ');
 	const palate = tastingData.palate ?? {};
 	const palatePairs = Object.keys(WSET_PALATE[wineType])
 		.filter((key) => palate[key])
-		.map((key) => [key, palate[key] as string] as [string, string]);
-	const flavours = Array.isArray(palate[WSET_FLAVOUR_KEY]) ? (palate[WSET_FLAVOUR_KEY] as string[]).join(' · ') : '';
+		.map((key) => [term(key), term(palate[key] as string, key)] as [string, string]);
+	const flavours = Array.isArray(palate[WSET_FLAVOUR_KEY])
+		? (palate[WSET_FLAVOUR_KEY] as string[]).map((v) => term(v)).join(' · ')
+		: '';
 
 	return (
 		<TastingPhaseLayout

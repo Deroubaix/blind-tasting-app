@@ -15,6 +15,7 @@ import {
 } from './noseFields';
 import { useText } from '../../i18n/LanguageProvider';
 import { tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 
 // ── Fruit dot colors (SCSS modifier suffix per grid fruit group) ───────────────
 const fruitDotClass: Record<string, string> = {
@@ -35,6 +36,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	const router = useRouter();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const text = useText(tastingText);
+	const term = useTerm();
 	const t = text.nose;
 
 	const selectedOptions: Record<string, string[]> = (tastingData.nose as Record<string, string[]>) || {};
@@ -119,7 +121,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			<div
 				className={`tasting-options${equalWidth ? ' tasting-options--equal' : ''}`}
 				role="group"
-				aria-label={category}
+				aria-label={term(category)}
 			>
 				{options.map((option) => {
 					const selected = selections.includes(option);
@@ -130,7 +132,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 							aria-pressed={selected}
 							className={`tasting-option${pill}${selected ? ' tasting-option--selected' : ''}`}
 						>
-							{option}
+							{term(option, category)}
 						</button>
 					);
 				})}
@@ -195,7 +197,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 		return (
 			<>
-				<div className="tasting-card__label">{category}</div>
+				<div className="tasting-card__label">{term(category)}</div>
 				{renderPills(category, options, selections, customValues, equalWidth)}
 			</>
 		);
@@ -213,7 +215,7 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 			<>
 				<div className="tasting-group__label">
 					{dotClass && <span className={`nose-fruit-dot nose-fruit-dot--${dotClass}`} />}
-					{category}
+					{term(category)}
 				</div>
 				{renderPills(category, options, selections, customValues)}
 			</>

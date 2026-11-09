@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useText } from '../../i18n/LanguageProvider';
 import { wsetText } from '../../i18n/wset';
+import { useTerm } from '../../i18n/useTerm';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { DescriptorClusters, OptionCard } from './WsetBits';
@@ -12,6 +13,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 	const router = useRouter();
 	const t = useText(wsetText).palate;
 	const tb = useText(wsetText).bits;
+	const word = useTerm();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const palate = tastingData.palate ?? {};
 	const structure = WSET_PALATE[wineType];
@@ -72,7 +74,7 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 
 			<div className="wset-group">
 				<div className="tasting-divider">
-					<span className="section-label">{WSET_FLAVOUR_KEY}</span>
+					<span className="section-label">{word(WSET_FLAVOUR_KEY)}</span>
 				</div>
 				<p className="wset-lede">{t.flavourLede}</p>
 			</div>

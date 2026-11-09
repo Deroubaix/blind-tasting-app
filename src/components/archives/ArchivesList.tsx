@@ -64,7 +64,7 @@ export default function ArchivesList({ title }: { title: string }) {
 				const grid = gridOf(tasting.grid);
 				const revealed = isRevealed(tasting.reveal);
 				const result = revealed ? compareReveal(final, tasting.reveal!, null, grid, lang) : null;
-				const call = describeCall(final, grid);
+				const call = describeCall(final, grid, lang);
 				const title = revealed
 					? revealTitle(tasting.reveal!, lang)
 					: tasting.wineName || final.grapeVariety || shared.untitled;

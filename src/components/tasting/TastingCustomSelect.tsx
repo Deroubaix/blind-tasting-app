@@ -5,6 +5,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import useDropPlacement from './useDropPlacement';
 import { useText } from '../../i18n/LanguageProvider';
 import { tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 
 interface Props {
 	options: string[];
@@ -15,6 +16,8 @@ interface Props {
 	clearLabel?: string;
 	/** Id of the visible label, so the control is announced by name. */
 	labelId?: string;
+	/** The grid question the options answer, for wording that agrees with it in Portuguese. */
+	question?: string;
 }
 
 /**
@@ -22,8 +25,17 @@ interface Props {
  * from the keyboard and is announced properly: arrows move, Enter or Space picks, Home/End jump,
  * Escape closes, and Tab moves on. It used to open from the keyboard but offer no way to choose.
  */
-export default function TastingCustomSelect({ options, value, onChange, placeholder, clearLabel, labelId }: Props) {
+export default function TastingCustomSelect({
+	options,
+	value,
+	onChange,
+	placeholder,
+	clearLabel,
+	labelId,
+	question,
+}: Props) {
 	const t = useText(tastingText).inputs;
+	const term = useTerm();
 	const [open, setOpen] = useState(false);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const wrapRef = useRef<HTMLDivElement>(null);
@@ -34,7 +46,7 @@ export default function TastingCustomSelect({ options, value, onChange, placehol
 	// The clear entry is just the first option, with an empty value.
 	const entries = [
 		...(clearLabel ? [{ value: '', label: clearLabel }] : []),
-		...options.map((o) => ({ value: o, label: o })),
+		...options.map((o) => ({ value: o, label: term(o, question) })),
 	];
 	const optionId = (index: number) => `${listId}-option-${index}`;
 
@@ -137,7 +149,7 @@ export default function TastingCustomSelect({ options, value, onChange, placehol
 				onKeyDown={handleKeyDown}
 			>
 				<span className={`tasting-select-value${!value ? ' tasting-select-value--placeholder' : ''}`}>
-					{value || (placeholder ?? t.select)}
+					{value ? term(value, question) : (placeholder ?? t.select)}
 				</span>
 				<IconChevronDown
 					size={14}

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { commonText } from '../../i18n/common';
 import { useText } from '../../i18n/LanguageProvider';
 import { wsetText } from '../../i18n/wset';
+import { useTerm } from '../../i18n/useTerm';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { OptionCard, backToSetup } from './WsetBits';
@@ -14,6 +15,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 	const all = useText(wsetText);
 	const t = all.appearance;
 	const tc = useText(commonText);
+	const term = useTerm();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const sight = tastingData.sight ?? {};
 
@@ -72,9 +74,9 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 			/>
 			<div className="tasting-card">
 				<div className="tasting-card__label">
-					{WSET_OBSERVATIONS_KEY} <span className="tasting-aside">{t.ifApparent}</span>
+					{term(WSET_OBSERVATIONS_KEY)} <span className="tasting-aside">{t.ifApparent}</span>
 				</div>
-				<div className="tasting-options" role="group" aria-label={WSET_OBSERVATIONS_KEY}>
+				<div className="tasting-options" role="group" aria-label={term(WSET_OBSERVATIONS_KEY)}>
 					{WSET_OBSERVATIONS.map((option) => {
 						const on = observations.includes(option);
 						return (
@@ -84,7 +86,7 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 								aria-pressed={on}
 								onClick={() => toggleObservation(option)}
 							>
-								{option}
+								{term(option)}
 							</button>
 						);
 					})}

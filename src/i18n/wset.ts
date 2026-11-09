@@ -112,7 +112,7 @@ export const wsetText = dict(
 			grape: 'Casta ou lote',
 			grapePlaceholder: 'p. ex. Riesling',
 			country: 'País de origem',
-			countryPlaceholder: 'p. ex. Germany',
+			countryPlaceholder: 'p. ex. Alemanha',
 			region: 'Região e denominação',
 			regionPlaceholder: 'p. ex. Mosel',
 			vintage: 'Colheita',
