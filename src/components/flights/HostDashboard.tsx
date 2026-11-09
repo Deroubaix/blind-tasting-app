@@ -12,6 +12,7 @@ import { formatCode } from '../../utils/flightLogic';
 import {
 	Avatar,
 	FlightHead,
+	Glass,
 	StatusPill,
 	avatarState,
 	clockText,
@@ -131,6 +132,19 @@ function TastersCard({ flight }: { flight: FlightView }) {
 							<span className="flight-tasters__text">
 								<span className="flight-tasters__name">{member.name}</span>
 								<span className="flight-muted">{tasterLine(member, flight, now, text)}</span>
+								<span className="flight-glasses">
+									{flight.wines.map((wine) => {
+										const status = wine.statuses[member.id] ?? 'notstarted';
+										const state = wine.revealed && status === 'submitted' ? 'revealed' : status;
+										return (
+											<Glass
+												key={wine.number}
+												state={state === 'notsubmitted' ? 'notstarted' : state}
+												label={`${text.bits.wineN(wine.number)}: ${text.bits.status[state]}`}
+											/>
+										);
+									})}
+								</span>
 							</span>
 							{member.endsAt && new Date(member.endsAt).getTime() > now && (
 								<span className="flight-clock">{clockText(member.endsAt, now)}</span>
@@ -138,6 +152,16 @@ function TastersCard({ flight }: { flight: FlightView }) {
 						</li>
 					))}
 				</ul>
+			)}
+			{flight.members.length > 0 && (
+				<p className="flight-legend" aria-hidden="true">
+					{(['submitted', 'tasting', 'notstarted', 'revealed'] as const).map((state) => (
+						<span key={state} className="flight-legend__item">
+							<Glass state={state} />
+							{text.bits.status[state]}
+						</span>
+					))}
+				</p>
 			)}
 		</section>
 	);
@@ -326,17 +350,6 @@ export default function HostDashboard({ flight, reload }: { flight: FlightView; 
 							<WineCard key={wine.number} wine={wine} flight={flight} />
 						))}
 					</ol>
-					<p className="flight-legend" aria-hidden="true">
-						<span className="flight-legend__item flight-legend__item--filled">
-							{text.bits.status.submitted}
-						</span>
-						<span className="flight-legend__item flight-legend__item--dashed">
-							{text.bits.status.tasting}
-						</span>
-						<span className="flight-legend__item flight-legend__item--faint">
-							{text.bits.status.notstarted}
-						</span>
-					</p>
 				</div>
 			</div>
 		</main>

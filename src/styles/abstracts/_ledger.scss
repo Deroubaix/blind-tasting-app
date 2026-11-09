@@ -58,7 +58,7 @@ $shadow-lift: 0 12px 32px $color-shadow; // dropdowns, popovers, dialogs
 	padding: $padding;
 }
 
-// A small status tag. Colour it with `--tone`; it defaults to the secondary text level.
+// A small status: an icon and a word in `--tone`, no pill. It defaults to the secondary text level.
 @mixin ledger-tag {
 	--tone: #{$color-text-secondary};
 	font-family: $font-sans;
@@ -69,12 +69,7 @@ $shadow-lift: 0 12px 32px $color-shadow; // dropdowns, popovers, dialogs
 	color: var(--tone);
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	min-height: 26px;
-	padding: 0 10px;
-	border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent);
-	border-radius: $radius-pill;
-	background: color-mix(in srgb, var(--tone) 8%, transparent);
+	gap: 5px;
 	white-space: nowrap;
 }
 

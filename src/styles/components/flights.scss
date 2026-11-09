@@ -53,7 +53,8 @@
 
 .flight-card {
 	@include ledger-panel(18px);
-	border-radius: $radius-lg;
+	border-color: $color-ink;
+	border-radius: 0;
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;
@@ -141,7 +142,7 @@
 
 // A status line in a tinted box. Colour it with `--tone`.
 .flight-notice {
-	--tone: #{$color-ok};
+	--tone: #{$color-ink};
 	@include ledger-panel($spacing-md);
 	border-color: color-mix(in srgb, var(--tone) 40%, transparent);
 	background-color: color-mix(in srgb, var(--tone) 6%, $color-card);
@@ -152,7 +153,17 @@
 
 	> svg {
 		flex-shrink: 0;
+		color: $color-link;
+	}
+
+	&--warning > svg {
 		color: var(--tone);
+	}
+
+	&:not(&--warning) {
+		border-color: $color-ink;
+		border-radius: 0;
+		background-color: $color-card;
 	}
 }
 
@@ -244,11 +255,7 @@
 	}
 
 	&--revealed {
-		--tone: #{$color-ok};
-	}
-
-	&--notsubmitted {
-		border-style: dashed;
+		--tone: #{$color-link};
 	}
 }
 
@@ -451,32 +458,34 @@
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	border-top: 1px solid $color-ink;
 
 	> li {
 		margin: 0;
 	}
 }
 
+// One wine as a ruled row; the one to act on has a garnet number.
 .flight-wine {
-	@include ledger-panel(18px);
-	border-radius: $radius-lg;
 	display: grid;
 	grid-template-columns: 44px minmax(0, 1fr);
 	gap: 12px;
 	align-items: start;
-
-	&--active {
-		border-color: $color-wine;
-	}
+	padding: 16px 0;
+	border-bottom: 1px solid $rule;
 
 	&__n {
 		padding-top: 2px;
 		font-family: $font-serif;
+		font-style: italic;
 		font-size: 1.875rem;
 		font-weight: $font-weight-heading;
 		line-height: 1;
-		color: $color-wine;
+		color: $color-ink;
+	}
+
+	&--active &__n {
+		color: $color-link;
 	}
 
 	&__body {
@@ -525,43 +534,64 @@
 	}
 
 	@include responsive($breakpoint-mobile) {
-		padding: 16px;
 		grid-template-columns: 36px minmax(0, 1fr);
 	}
 }
 
 .flight-legend {
 	display: flex;
-	gap: $spacing-lg;
+	gap: 6px 16px;
 	flex-wrap: wrap;
 	margin: 0;
+	padding-top: 10px;
+	border-top: 1px solid $rule;
 	font-size: $text-12;
-	color: $color-text-muted;
+	color: $color-text-secondary;
 
 	&__item {
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
+		gap: 4px;
+	}
+}
 
-		&::before {
-			content: '';
-			width: 12px;
-			height: 12px;
-			border-radius: 50%;
-			box-sizing: border-box;
-		}
+// A taster's wines as glasses, in pouring order.
+.flight-glasses {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0;
+	margin: 4px 0 0 -4px;
+}
 
-		&--filled::before {
-			background-color: $color-ink;
-		}
+.flight-glass {
+	display: inline-flex;
 
-		&--dashed::before {
-			border: 1.5px dashed $color-ink;
-		}
+	svg {
+		display: block;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
 
-		&--faint::before {
-			border: 1px solid $rule-mid;
-		}
+	&__line {
+		stroke: $color-ink;
+	}
+
+	&__wine {
+		fill: $color-link;
+	}
+
+	&__tick {
+		stroke: $color-link;
+		stroke-width: 2.2;
+	}
+
+	&--notstarted &__line {
+		stroke: $color-text-muted;
+	}
+
+	&--tasting &__line {
+		stroke-dasharray: 2.5 2.5;
 	}
 }
 
@@ -752,7 +782,8 @@
 
 .flight-action {
 	@include ledger-panel($spacing-lg);
-	border-radius: $radius-lg;
+	border-color: $color-ink;
+	border-radius: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
@@ -765,7 +796,7 @@
 
 	&:hover,
 	&:focus-visible {
-		border-color: $rule-accent;
+		border-color: $color-link;
 	}
 }
 

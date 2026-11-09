@@ -117,6 +117,23 @@ export function Avatar({
 export const avatarState = (status: EntryStatus): 'filled' | 'dashed' | 'faint' =>
 	status === 'submitted' ? 'filled' : status === 'tasting' ? 'dashed' : 'faint';
 
+export type GlassState = 'notstarted' | 'tasting' | 'submitted' | 'revealed';
+
+/** One wine for one taster: an empty glass, a dashed one while tasting, filled once submitted, ticked once revealed. */
+export function Glass({ state, label }: { state: GlassState; label?: string }) {
+	return (
+		<span className={`flight-glass flight-glass--${state}`} role={label ? 'img' : undefined} aria-label={label}>
+			<svg width="30" height="24" viewBox="0 0 30 24" fill="none" aria-hidden="true">
+				{state !== 'notstarted' && state !== 'tasting' && (
+					<path d="M6.6 8c1 3.6 3 5.6 5.4 5.6s4.4-2 5.4-5.6Z" className="flight-glass__wine" />
+				)}
+				<path d="M5 2.5h14c0 6.5-2.2 10.5-7 11.5v6.5M8.5 21h7" className="flight-glass__line" />
+				{state === 'revealed' && <path d="M21.5 15l2.4 2.5L29 11" className="flight-glass__tick" />}
+			</svg>
+		</span>
+	);
+}
+
 const STATUS_ICONS: Record<EntryStatus | 'revealed' | 'allsubmitted', typeof IconCheck> = {
 	notstarted: IconMinus,
 	tasting: IconPointFilled,
