@@ -627,11 +627,13 @@
 			grid-column: auto;
 			padding-top: 6px;
 
-			.btn-primary,
-			.btn-quiet,
-			.code-form {
+			// Children only, so Join inside the code form keeps its own width.
+			> .btn-primary,
+			> .btn-quiet,
+			> .code-form {
 				flex: 1;
 				width: auto;
+				min-width: 0;
 			}
 		}
 	}
