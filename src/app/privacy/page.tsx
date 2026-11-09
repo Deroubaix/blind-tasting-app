@@ -17,8 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const CONTROLLER = 'Marisha Deroubaix';
-// TODO: set the privacy address before launch.
-const CONTACT: string | null = null;
+// TODO: placeholder on the reserved example.com domain; replace with the real privacy inbox before launch.
+const CONTACT: string | null = 'privacy@example.com';
 const UPDATED = { en: '4 November 2026', pt: '4 de novembro de 2026' };
 
 function Contact({ pt = false }: { pt?: boolean }) {
