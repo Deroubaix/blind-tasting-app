@@ -46,8 +46,8 @@ export default function HomeDashboard({
 			<section className="page-container home-dash">
 				<p className="home-eyebrow">{d.eyebrow}</p>
 				<h1 className="home-dash__title">{d.hello(firstName)}</h1>
-				<div className="home-dash__cards">
-					<section className="home-card home-dash__card">
+				<div className="home-dash__cols">
+					<section className="home-dash__col">
 						<div className="home-dash__head">
 							<h2>{d.recent}</h2>
 							{tastings.length > 0 && (
@@ -81,7 +81,7 @@ export default function HomeDashboard({
 						)}
 					</section>
 
-					<section className="home-card home-dash__card">
+					<section className="home-dash__col">
 						<div className="home-dash__head">
 							<h2>{d.flights}</h2>
 							{flights.length > 0 && (
@@ -108,7 +108,7 @@ export default function HomeDashboard({
 						)}
 					</section>
 
-					<section className="home-card home-dash__card">
+					<section className="home-dash__col">
 						<div className="home-dash__head">
 							<h2>{d.progress}</h2>
 							{average && (
@@ -129,7 +129,7 @@ export default function HomeDashboard({
 				</div>
 			</section>
 
-			<section className="page-container home-section">
+			<section className="page-container home-section home-section--stack">
 				<div className="home-section__head">
 					<h2>{d.startTitle}</h2>
 				</div>

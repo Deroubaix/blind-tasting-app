@@ -1,17 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
-import { IconGlassFull, IconKeyboard, IconUsers } from '@tabler/icons-react';
 import CodeForm from '../layout/CodeForm';
 import RevealOnScroll from './RevealOnScroll';
 import { compareReveal, type FieldStatus, type Reveal } from '../../utils/revealScore';
-import { ALL_TIMER_PRESETS, formatTimerSeconds } from '../../data/timerData';
 import { formatDecimal } from '../../utils/NumberUtils';
 import { type homeText } from '../../i18n/home';
 import { type Lang } from '../../i18n';
 
 type HomeT = (typeof homeText)['en'];
 
-/** Taste on your own, host a group, I have a code: the home page's three ways in. */
+/** Taste on your own, host a group, I have a code: the home page's three ways in, as ruled rows. */
 export function StartDoors({
 	t,
 	heading: H = 'h2',
@@ -24,41 +22,30 @@ export function StartDoors({
 	const d = t.doors;
 	return (
 		<div className="home-doors" id="code">
-			<div className="home-card home-door">
-				<div className="home-door__top">
-					<span className="home-door__icon" aria-hidden="true">
-						<IconGlassFull size={20} stroke={1.8} />
-					</span>
-					<H className="home-door__title">{d.solo}</H>
-				</div>
-				<p>
+			<div className="home-door">
+				<H className="home-door__title">{d.solo}</H>
+				<p className="home-door__body">
 					{d.soloBody}
 					{!loggedIn && d.soloNoAccount}
 				</p>
-				<Link href="/tastings/start" className="btn-primary home-door__cta">
-					{d.soloCta}
-				</Link>
-			</div>
-			<div className="home-card home-door">
-				<div className="home-door__top">
-					<span className="home-door__icon" aria-hidden="true">
-						<IconUsers size={20} stroke={1.8} />
-					</span>
-					<H className="home-door__title">{d.host}</H>
+				<div className="home-door__cta">
+					<Link href="/tastings/start" className="btn-primary">
+						{d.soloCta}
+					</Link>
 				</div>
-				<p>{d.hostBody}</p>
-				<Link href="/flights/new" className="btn-quiet home-door__cta">
-					{d.hostCta}
-				</Link>
 			</div>
-			<div className="home-card home-door">
-				<div className="home-door__top">
-					<span className="home-door__icon" aria-hidden="true">
-						<IconKeyboard size={20} stroke={1.8} />
-					</span>
-					<H className="home-door__title">{d.code}</H>
+			<div className="home-door">
+				<H className="home-door__title">{d.host}</H>
+				<p className="home-door__body">{d.hostBody}</p>
+				<div className="home-door__cta">
+					<Link href="/flights/new" className="btn-quiet">
+						{d.hostCta}
+					</Link>
 				</div>
-				<p>{d.codeBody}</p>
+			</div>
+			<div className="home-door">
+				<H className="home-door__title">{d.code}</H>
+				<p className="home-door__body">{d.codeBody}</p>
 				<div className="home-door__cta">
 					<CodeForm id="home-code" />
 				</div>
@@ -95,14 +82,28 @@ const SAMPLE_CALL = {
 
 export const sampleScorecard = (lang: Lang) => compareReveal(SAMPLE_CALL, SAMPLE_LABEL, null, 'cms', lang);
 
-export function StatusTag({ status, word, delay }: { status: FieldStatus; word: string; delay?: number }) {
+const TICK = 'M4.5 12.5l4.5 5L19.5 5.5';
+const TILDE = 'M4 13.5c2.5-3.5 5-3.5 8 0s5.5 3.5 8 0';
+const CROSS = 'M6.5 6.5l11 11M17.5 6.5l-11 11';
+const MARK_PATHS: Record<FieldStatus, string> = {
+	correct: TICK,
+	close: TILDE,
+	wrong: CROSS,
+	notcalled: CROSS,
+	na: 'M6 12h12',
+};
+
+/** A marker's tick, tilde or cross in the margin; the status word is there for screen readers. */
+export function Mark({ status, word, delay }: { status: FieldStatus; word: string; delay?: number }) {
 	return (
 		<span
-			className={`home-tag home-tag--${status}`}
+			className={`home-mark home-mark--${status}`}
 			style={delay === undefined ? undefined : { transitionDelay: `${delay}s` }}
 		>
-			<i aria-hidden="true" />
-			{word}
+			<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+				<path d={MARK_PATHS[status]} />
+			</svg>
+			<span className="visually-hidden">{word}</span>
 		</span>
 	);
 }
@@ -112,7 +113,9 @@ function Steps({ steps }: { steps: Record<string, readonly string[]> }) {
 		<ol className="home-steps">
 			{Object.values(steps).map(([title, body], i) => (
 				<li key={title} className="home-steps__item">
-					<span className="home-steps__n">{i + 1}</span>
+					<span className="home-steps__n" aria-hidden="true">
+						{i + 1}.
+					</span>
 					<span>
 						<strong>{title}</strong>
 						<span>{body}</span>
@@ -123,10 +126,20 @@ function Steps({ steps }: { steps: Record<string, readonly string[]> }) {
 	);
 }
 
+function SectionHead({ eyebrow, title, lede }: { eyebrow: string; title: string; lede: string }) {
+	return (
+		<div className="home-section__head">
+			<p className="home-eyebrow">{eyebrow}</p>
+			<h2>{title}</h2>
+			<p className="home-section__lede">{lede}</p>
+		</div>
+	);
+}
+
 /** The logged-out home page. */
 export default function HomeIntro({ t, status, lang }: { t: HomeT; status: Record<FieldStatus, string>; lang: Lang }) {
 	const card = sampleScorecard(lang);
-	const bars = [30, 20, 45, 40, 60, 55, 70, 65, 80, 75];
+	const a = t.after;
 	return (
 		<>
 			<section className="page-container home-hero">
@@ -138,147 +151,92 @@ export default function HomeIntro({ t, status, lang }: { t: HomeT; status: Recor
 			</section>
 
 			<RevealOnScroll className="page-container home-section" id="solo">
-				<div className="home-section__head">
-					<h2>{t.modes.title}</h2>
-					<p>{t.modes.lede}</p>
-				</div>
-				<div className="home-modes">
-					<article className="home-card home-mode">
-						<div className="home-mode__kicker">
-							<span className="home-pill">{t.modes.soloTag}</span>
-							<span>{t.modes.soloKicker}</span>
-						</div>
-						<h3>{t.modes.soloTitle}</h3>
-						<Steps steps={t.modes.soloSteps} />
-						<Link href="/tastings/start" className="btn-primary home-mode__cta">
-							{t.modes.soloCta}
-						</Link>
-					</article>
-					<article className="home-card home-mode" id="group">
-						<div className="home-mode__kicker">
-							<span className="home-pill">{t.modes.groupTag}</span>
-							<span>{t.modes.groupKicker}</span>
-						</div>
-						<h3>{t.modes.groupTitle}</h3>
-						<Steps steps={t.modes.groupSteps} />
-						<div className="home-ctas">
-							<Link href="/flights/new" className="btn-quiet">
-								{t.modes.groupCta}
-							</Link>
-							<Link href="/flights/join" className="home-link">
-								{t.modes.haveCode}
-							</Link>
-						</div>
-					</article>
-				</div>
+				<SectionHead eyebrow={t.modes.soloEyebrow} title={t.modes.soloTitle} lede={t.modes.soloLede} />
+				<Steps steps={t.modes.soloSteps} />
+			</RevealOnScroll>
+
+			<RevealOnScroll className="page-container home-section" id="group">
+				<SectionHead eyebrow={t.modes.groupEyebrow} title={t.modes.groupTitle} lede={t.modes.groupLede} />
+				<Steps steps={t.modes.groupSteps} />
 			</RevealOnScroll>
 
 			<RevealOnScroll className="page-container home-section" id="after">
-				<div className="home-section__head">
-					<h2>{t.after.title}</h2>
-					<p>{t.after.lede}</p>
-				</div>
+				<SectionHead eyebrow={a.eyebrow} title={a.title} lede={a.lede} />
 				<div className="home-after">
-					<article className="home-card home-after__card">
-						<h3>{t.after.scorecard}</h3>
-						<p>{t.after.scorecardBody}</p>
-						<div className="home-rows">
-							{card.fields.map((field, i) => (
-								<div key={field.key} className="home-row">
-									<span>
-										<span className="home-row__field">
-											{t.columns[field.key as keyof HomeT['columns']]}
-										</span>
-										{field.call}
-										{field.status !== 'correct' && (
-											<span className="home-muted">
-												{' '}
-												· {t.after.label}: {field.actual}
-											</span>
-										)}
-									</span>
-									<StatusTag
-										status={field.status}
-										word={status[field.status]}
-										delay={0.2 + i * 0.4}
-									/>
-								</div>
-							))}
-							<div className="home-row home-row--total">
-								<strong>{t.after.tasting(24)}</strong>
-								<span className="home-reveal-late" style={{ transitionDelay: '2.3s' }}>
-									<Figure score={card.score} outOf={card.outOf} size="lg" />
-								</span>
-							</div>
+					<div className="home-sheet">
+						<div className="home-sheet__head">
+							<strong>{a.tasting(24)}</strong>
+							<span className="home-muted">{a.marked}</span>
 						</div>
-					</article>
-					<article className="home-card home-after__card">
-						<h3>{t.after.archive}</h3>
-						<p>{t.after.archiveBody}</p>
-						<div className="home-rows">
-							{Object.values(t.after.archiveRows).map(([title, meta], i) => (
-								<div key={title} className="home-row">
-									<span>
-										<strong>{title}</strong>
-										<span className="home-row__field">{meta}</span>
-									</span>
-									{i < 2 ? (
-										<Figure score={i === 0 ? 4 : 2} outOf={5} />
-									) : (
-										<span className="home-link">{t.after.reveal}</span>
+						{card.fields.map((field, i) => (
+							<div key={field.key} className="home-sheet__row">
+								<span className="home-sheet__key">
+									{t.columns[field.key as keyof HomeT['columns']]}
+								</span>
+								<span className="home-sheet__call">
+									{field.call}
+									{field.status !== 'correct' && (
+										<>
+											{' '}
+											<span className="visually-hidden">{a.label}: </span>
+											<span className="home-sheet__fix">{field.actual}</span>
+										</>
 									)}
-								</div>
-							))}
-						</div>
-					</article>
-					<article className="home-card home-after__card">
-						<h3>{t.after.progress}</h3>
-						<p>{t.after.progressBody}</p>
-						<div className="home-trend">
-							<span>
-								{t.after.rolling} <Figure score={formatDecimal(3.1, lang)} />{' '}
-								<span className="home-muted">
-									{t.after.upFrom} {formatDecimal(1.8, lang)}
 								</span>
-							</span>
-							<div className="home-bars" aria-hidden="true">
-								{bars.map((h, i) => (
-									<i
-										key={i}
-										className={i === bars.length - 1 ? 'is-on' : ''}
-										style={{ height: `${h}%` }}
-									/>
-								))}
+								<Mark status={field.status} word={status[field.status]} delay={0.2 + i * 0.35} />
 							</div>
+						))}
+						<div className="home-sheet__total">
+							<span className="home-muted">{a.score}</span>
+							<span className="home-reveal-late" style={{ transitionDelay: '2s' }}>
+								<Figure score={card.score} outOf={card.outOf} size="lg" />
+							</span>
 						</div>
-						<div className="home-rows">
-							{Object.values(t.after.confusions).map(([call, actual, count]) => (
-								<div key={call} className="home-row">
-									<span>
-										<span className="home-row__field">{t.after.youCall}</span>
-										{call}, <span className="home-muted">{t.after.itWas}</span> {actual}
-									</span>
-									<span className="home-fig home-fig--sm">{count}</span>
-								</div>
-							))}
-						</div>
-					</article>
-				</div>
-			</RevealOnScroll>
+					</div>
 
-			<RevealOnScroll className="page-container home-section">
-				<div className="home-section__head">
-					<h2>{t.pace.title}</h2>
-					<p>{t.pace.lede}</p>
-				</div>
-				<div className="home-pace">
-					{ALL_TIMER_PRESETS.map(({ seconds }) => (
-						<div key={seconds} className="home-card home-pace__card">
-							<span className="home-fig home-fig--xl">{formatTimerSeconds(seconds)}</span>
-							<strong>{t.pace.presets[seconds][0]}</strong>
-							<span className="home-muted">{t.pace.presets[seconds][1]}</span>
+					<div className="home-lists">
+						<div>
+							<p className="home-lists__caption">{a.archiveCaption}</p>
+							<ul className="home-rows home-rows--ruled">
+								{Object.values(a.archiveRows).map(([title, meta], i) => (
+									<li key={title} className="home-row">
+										<span>
+											<strong>{title}</strong>
+											<span className="home-row__field">{meta}</span>
+										</span>
+										{i < 2 ? (
+											<Figure score={i === 0 ? 4 : 2} outOf={5} />
+										) : (
+											<span className="home-link">{a.reveal}</span>
+										)}
+									</li>
+								))}
+							</ul>
 						</div>
-					))}
+						<div>
+							<p className="home-lists__caption">{a.habitsCaption}</p>
+							<ul className="home-rows home-rows--ruled">
+								<li className="home-row">
+									<span>{a.rolling}</span>
+									<span>
+										<Figure score={formatDecimal(3.1, lang)} />{' '}
+										<span className="home-muted home-row__aside">
+											{a.upFrom} {formatDecimal(1.8, lang)}
+										</span>
+									</span>
+								</li>
+								{Object.values(a.confusions).map(([call, actual, count]) => (
+									<li key={call} className="home-row">
+										<span>
+											{a.youCall} <strong>{call}</strong>, {a.itWas}{' '}
+											<span className="home-sheet__fix">{actual}</span>
+										</span>
+										<span className="home-row__count">{count}</span>
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
 				</div>
 			</RevealOnScroll>
 

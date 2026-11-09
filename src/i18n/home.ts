@@ -21,11 +21,9 @@ export const homeText = dict(
 			codeBody: "It's on the host's screen: six letters and numbers.",
 		},
 		modes: {
-			title: 'Two ways to taste',
-			lede: 'Same grid, same scoring. The difference is who pours and who reveals.',
-			soloTag: 'Solo',
-			soloKicker: 'No account needed',
-			soloTitle: 'Taste on your own',
+			soloEyebrow: 'Solo',
+			soloTitle: 'On your own',
+			soloLede: 'No account needed. Saving the sheet needs a free one.',
 			soloSteps: {
 				1: [
 					'Choose the grid and the clock',
@@ -40,14 +38,14 @@ export const homeText = dict(
 					'Unwrap the bottle and type what it says. A photo of the label is optional.',
 				],
 				4: [
-					'See your call scored',
-					'Field by field: Correct, Close or Wrong. The sheet goes into your archive.',
+					'Your sheet comes back marked',
+					'Field by field: ✓ correct, ~ close, × wrong. The sheet goes into your archive.',
 				],
 			},
-			soloCta: 'Start a tasting',
-			groupTag: 'Flight',
-			groupKicker: 'Free account for everyone taking part',
-			groupTitle: 'Taste with a group',
+			groupEyebrow: 'Flights',
+			groupTitle: 'With a group',
+			groupLede:
+				'Same grid, same marking. The difference is who pours and who reveals. Everyone taking part needs a free account.',
 			groupSteps: {
 				1: [
 					'The host pours and bags the wines',
@@ -59,34 +57,28 @@ export const homeText = dict(
 				],
 				3: ['The host reveals each label once', 'Only when a wine is ready. Nobody sees the answer early.'],
 				4: [
-					'Scored together, at the same moment',
-					'Everyone who submitted is marked against the label, side by side, with where the group split on structure.',
+					'Marked together, side by side',
+					'Everyone who submitted is marked against the label, with where the group split on structure.',
 				],
 			},
-			groupCta: 'Host a flight',
-			haveCode: 'I have a code',
 		},
 		after: {
-			title: 'After the reveal',
-			lede: 'The scoring is the point. What you get once the label is in.',
-			scorecard: 'A scorecard',
-			scorecardBody:
-				'Each field of your final call against the label. One point for an exact match; Close marks the near misses, such as a vintage within two years.',
+			eyebrow: 'After the reveal',
+			title: 'The marking is the point',
+			lede: 'Each field of your final call against the label. One point for an exact match. Close marks a near miss, such as a vintage within two years, and scores nothing, but it is worth knowing.',
 			label: 'label',
 			tasting: (n: number) => `Tasting ${n}`,
-			archive: 'An archive',
-			archiveBody:
-				'Every sheet you save, with its call, its label and its score, so you can go back and see how your reasoning held up.',
+			marked: 'Marked',
+			score: 'Score',
+			archiveCaption: 'Every sheet goes into your archive',
 			archiveRows: {
 				1: ['Chambolle-Musigny 2018', 'Pinot Noir · 12 September'],
 				2: ['Barolo 2016', 'Nebbiolo · 10 September'],
 				3: ['Douro white blend', 'Not revealed yet · 3 September'],
 			},
 			reveal: 'Reveal',
-			progress: 'Progress',
-			progressBody:
-				'Whether you are getting better, which grapes and countries you confuse, and where your palate runs against the group.',
-			rolling: 'Rolling average, last five:',
+			habitsCaption: 'And your habits show',
+			rolling: 'Last five, average',
 			upFrom: 'up from',
 			youCall: 'You call',
 			itWas: 'it was',
@@ -101,16 +93,6 @@ export const homeText = dict(
 			regionAppellation: 'Region',
 			qualityLevel: 'Quality',
 			vintage: 'Vintage',
-		},
-		pace: {
-			title: 'At exam pace, if you want it',
-			lede: 'The presets are the real exam paces per wine. Turn the clock off and you get the same grid without it.',
-			/** By seconds per wine; see TIMER_PRESETS. */
-			presets: {
-				240: ['Advanced and Master', 'Six wines in 25 minutes'],
-				675: ['Certified', 'Four wines in 45 minutes'],
-				900: ['WSET Level 3', 'Two wines in 30 minutes'],
-			},
 		},
 		closing: {
 			title: 'Pour a glass. Open the grid.',
@@ -159,11 +141,9 @@ export const homeText = dict(
 			codeBody: 'Está no ecrã do anfitrião: seis letras e números.',
 		},
 		modes: {
-			title: 'Duas maneiras de provar',
-			lede: 'A mesma grelha, a mesma pontuação. Muda quem serve e quem revela.',
-			soloTag: 'Sozinho',
-			soloKicker: 'Não precisa de conta',
-			soloTitle: 'Provar sozinho',
+			soloEyebrow: 'Sozinho',
+			soloTitle: 'Por sua conta',
+			soloLede: 'Não precisa de conta. Para guardar a ficha, precisa de uma gratuita.',
 			soloSteps: {
 				1: [
 					'Escolha a grelha e o cronómetro',
@@ -178,14 +158,14 @@ export const homeText = dict(
 					'Destape a garrafa e escreva o que lá está. A fotografia do rótulo é opcional.',
 				],
 				4: [
-					'Veja a sua conclusão pontuada',
-					'Campo a campo: Certo, Quase ou Errado. A ficha fica no seu arquivo.',
+					'A sua ficha volta corrigida',
+					'Campo a campo: ✓ certo, ~ quase, × errado. A ficha fica no seu arquivo.',
 				],
 			},
-			soloCta: 'Iniciar uma prova',
-			groupTag: 'Flight',
-			groupKicker: 'Conta gratuita para todos os participantes',
-			groupTitle: 'Provar em grupo',
+			groupEyebrow: 'Flights',
+			groupTitle: 'Em grupo',
+			groupLede:
+				'A mesma grelha, a mesma correção. Muda quem serve e quem revela. Todos os participantes precisam de uma conta gratuita.',
 			groupSteps: {
 				1: [
 					'O anfitrião serve e tapa os vinhos',
@@ -200,33 +180,28 @@ export const homeText = dict(
 					'Só quando o vinho está pronto. Ninguém vê a resposta antes do tempo.',
 				],
 				4: [
-					'Pontuados juntos, no mesmo momento',
-					'Todos os que submeteram são comparados com o rótulo, lado a lado, e vê onde o grupo se dividiu na estrutura.',
+					'Corrigidos juntos, lado a lado',
+					'Todos os que submeteram são comparados com o rótulo, e vê onde o grupo se dividiu na estrutura.',
 				],
 			},
-			groupCta: 'Organizar um flight',
-			haveCode: 'Tenho um código',
 		},
 		after: {
-			title: 'Depois da revelação',
-			lede: 'A pontuação é o objetivo. O que recebe quando o rótulo está introduzido.',
-			scorecard: 'Uma ficha de pontuação',
-			scorecardBody:
-				'Cada campo da sua conclusão final face ao rótulo. Um ponto por cada acerto exato; Quase assinala os quase acertos, como uma colheita a menos de dois anos.',
+			eyebrow: 'Depois da revelação',
+			title: 'O que conta é a correção',
+			lede: 'Cada campo da sua conclusão final face ao rótulo. Um ponto por cada acerto exato. Quase assinala um quase acerto, como uma colheita a menos de dois anos, e não pontua, mas vale a pena saber.',
 			label: 'rótulo',
 			tasting: (n) => `Prova ${n}`,
-			archive: 'Um arquivo',
-			archiveBody:
-				'Todas as fichas que guarda, com a conclusão, o rótulo e a pontuação, para voltar atrás e ver como o seu raciocínio se aguentou.',
+			marked: 'Corrigida',
+			score: 'Pontuação',
+			archiveCaption: 'Todas as fichas vão para o seu arquivo',
 			archiveRows: {
 				1: ['Chambolle-Musigny 2018', 'Pinot Noir · 12 de setembro'],
 				2: ['Barolo 2016', 'Nebbiolo · 10 de setembro'],
 				3: ['Lote branco do Douro', 'Ainda não revelado · 3 de setembro'],
 			},
 			reveal: 'Revelar',
-			progress: 'Progresso',
-			progressBody: 'Se está a melhorar, que castas e países confunde, e onde o seu paladar diverge do grupo.',
-			rolling: 'Média móvel, últimas cinco:',
+			habitsCaption: 'E os seus hábitos aparecem',
+			rolling: 'Últimas cinco, média',
 			upFrom: 'subiu de',
 			youCall: 'Diz',
 			itWas: 'era',
@@ -241,15 +216,6 @@ export const homeText = dict(
 			regionAppellation: 'Região',
 			qualityLevel: 'Qualidade',
 			vintage: 'Colheita',
-		},
-		pace: {
-			title: 'Ao ritmo do exame, se quiser',
-			lede: 'As predefinições são os ritmos reais do exame por vinho. Desligue o cronómetro e tem a mesma grelha sem ele.',
-			presets: {
-				240: ['Advanced e Master', 'Seis vinhos em 25 minutos'],
-				675: ['Certified', 'Quatro vinhos em 45 minutos'],
-				900: ['WSET Nível 3', 'Dois vinhos em 30 minutos'],
-			},
 		},
 		closing: {
 			title: 'Sirva um copo. Abra a grelha.',

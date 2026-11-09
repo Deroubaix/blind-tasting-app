@@ -47,10 +47,6 @@
 	gap: 10px 14px;
 }
 
-.home-pill {
-	@include ledger-tag;
-}
-
 .home-fig {
 	font-family: $font-serif;
 	font-weight: $font-weight-heading;
@@ -79,46 +75,35 @@
 	}
 }
 
-// A rule across the top of the text column, not the column's padding.
+// An ink rule across the top of the text column, not the column's padding.
 @mixin column-rule {
-	background: linear-gradient($color-rule, $color-rule) top center / calc(100% - 64px) 1px no-repeat;
+	background: linear-gradient($color-ink, $color-ink) top center / calc(100% - 64px) 1px no-repeat;
 
 	@include responsive(45rem) {
 		background-size: calc(100% - 32px) 1px;
 	}
 }
 
-// ── Cards ────────────────────────────────────────────────────────────────────
-.home-card {
-	box-sizing: border-box;
-	padding: 22px;
-	background: $color-card;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
-	transition:
-		border-color 0.15s ease,
-		box-shadow 0.2s ease,
-		transform 0.2s ease;
-
-	h3 {
-		margin: 0;
-	}
-}
-
-.home-door:hover,
-.home-mode:hover,
-.home-after__card:hover {
-	border-color: $rule-mid;
-	box-shadow: 0 10px 26px fade($color-shadow, 60%);
-	transform: translateY(-2px);
-}
-
+// ── Ruled lists ──────────────────────────────────────────────────────────────
 .home-rows {
 	display: flex;
 	flex-direction: column;
 	margin: 0;
 	padding: 0;
 	list-style: none;
+
+	// A list under a caption: an ink rule on top, light rules between.
+	&--ruled {
+		border-top: 1px solid $color-ink;
+
+		.home-row:first-child {
+			border-top: none;
+		}
+
+		.home-row:last-child {
+			border-bottom: 1px solid $rule;
+		}
+	}
 }
 
 .home-row {
@@ -135,9 +120,8 @@
 		border-top: none;
 	}
 
-	&--total {
-		padding-top: 12px;
-		border-top: 2px solid $rule-mid;
+	strong {
+		font-weight: $font-weight-semibold;
 	}
 
 	&__field {
@@ -146,15 +130,21 @@
 		color: $color-text-secondary;
 	}
 
+	&__aside {
+		font-size: $text-13;
+	}
+
+	&__count {
+		font-variant-numeric: tabular-nums;
+		font-size: $text-15;
+		white-space: nowrap;
+	}
+
 	&__main {
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
 		color: $color-ink;
-
-		strong {
-			font-weight: $font-weight-semibold;
-		}
 
 		&:hover strong {
 			color: $color-link;
@@ -162,188 +152,106 @@
 	}
 }
 
-.home-tag {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	height: 24px;
-	padding: 0 9px;
-	border: 1px solid currentColor;
-	border-radius: $radius-pill;
-	font-size: $text-13;
-	font-weight: $font-weight-semibold;
-	white-space: nowrap;
-
-	i {
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		background: currentColor;
-	}
-
-	&--correct {
-		color: $color-ok;
-	}
-
-	&--close {
-		color: $color-close;
-	}
-
-	&--wrong,
-	&--notcalled {
-		color: $color-error;
-	}
-
-	&--na {
-		color: $color-text-secondary;
-	}
-}
-
 // ── Hero and the three ways in ───────────────────────────────────────────────
 .home-hero {
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
-	padding-block: 40px 36px;
+	gap: 20px;
+	padding-block: 56px 40px;
 
 	&__title {
-		max-width: 760px;
+		max-width: 900px;
 		margin: 0;
-		font-size: 3.375rem;
-		line-height: 1.1;
+		font-size: 4.25rem;
+		line-height: 1.05;
 	}
 
 	&__lede {
-		max-width: 640px;
+		max-width: 620px;
 		font-size: 1.1875rem;
 		color: $color-text-secondary;
 	}
 }
 
 .home-doors {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 12px;
-	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	margin-top: 12px;
+	border-top: 1px solid $color-ink;
 }
 
 .home-door {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-
-	&__top {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-
-	&__icon {
-		width: 40px;
-		height: 40px;
-		flex-shrink: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: $radius-lg;
-		background: $color-raised;
-		color: $color-wine;
-	}
+	display: grid;
+	grid-template-columns: 230px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 6px 24px;
+	padding: 18px 0;
+	border-bottom: 1px solid $rule;
 
 	&__title {
 		margin: 0;
-		font-family: $font-sans;
-		font-style: normal;
-		font-size: 1.1875rem;
-		font-weight: $font-weight-semibold;
-		line-height: 1.3;
-		letter-spacing: 0;
+		font-size: 1.5rem;
+		line-height: 1.15;
 	}
 
-	p {
+	&__body {
 		font-size: $text-15;
+		line-height: 1.45;
 		color: $color-text-secondary;
 	}
 
 	&__cta {
-		margin-top: auto;
-	}
+		display: flex;
+		justify-content: flex-end;
 
-	.btn-primary,
-	.btn-quiet {
-		align-self: flex-start;
+		.code-form {
+			width: 260px;
+		}
 	}
 }
 
-// ── Sections ─────────────────────────────────────────────────────────────────
+// ── Sections: a heading column and its content ───────────────────────────────
 .home-section {
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-	padding-block: 60px;
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr);
+	align-items: start;
+	gap: 20px 48px;
+	padding-block: 48px;
 	@include column-rule;
 	scroll-margin-top: var(--navbar-height_approx);
 
 	&__head {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
+		gap: 6px;
 
 		h2 {
 			margin: 0;
-			font-size: 2.25rem;
-		}
-
-		p {
-			max-width: 620px;
-			color: $color-text-secondary;
+			font-size: 2.5rem;
+			line-height: 1.05;
 		}
 	}
-}
 
-.home-modes {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 16px;
-}
-
-.home-mode {
-	display: flex;
-	flex-direction: column;
-	gap: 18px;
-	padding: 26px;
-	scroll-margin-top: calc(var(--navbar-height_approx) + 16px);
-
-	&__kicker {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: $text-14;
+	&__lede {
+		margin-top: 4px !important;
+		font-size: $text-16;
+		line-height: 1.5;
 		color: $color-text-secondary;
-	}
-
-	h3 {
-		font-size: 1.625rem;
-	}
-
-	&__cta {
-		align-self: flex-start;
 	}
 }
 
 .home-steps {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
 	margin: 0;
 	padding: 0;
 	list-style: none;
 
 	&__item {
 		display: grid;
-		grid-template-columns: 34px 1fr;
-		gap: 12px;
-		align-items: start;
+		grid-template-columns: 30px minmax(0, 1fr);
+		gap: 10px;
+		margin: 0;
+		padding: 10px 0;
+		border-bottom: 1px solid $rule;
 
 		strong {
 			display: block;
@@ -363,77 +271,114 @@
 
 	&__n {
 		font-family: $font-serif;
+		font-style: italic;
 		font-size: 1.375rem;
-		font-weight: $font-weight-heading;
 		line-height: 1.2;
-		color: $color-wine;
-		font-variant-numeric: tabular-nums;
 	}
 }
 
+// ── The marked sheet ─────────────────────────────────────────────────────────
 .home-after {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 16px;
-
-	&__card {
-		display: flex;
-		flex-direction: column;
-		gap: 14px;
-
-		h3 {
-			font-size: 1.375rem;
-		}
-
-		> p {
-			font-size: $text-15;
-			color: $color-text-secondary;
-		}
-	}
-}
-
-.home-trend {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
-	font-size: $text-15;
+	gap: 28px;
+	min-width: 0;
 }
 
-.home-bars {
-	display: flex;
-	align-items: flex-end;
-	gap: 5px;
-	height: 56px;
+.home-sheet {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 480px;
+	padding: 16px 18px;
+	background: $color-card;
+	border: 1px solid $color-ink;
 
-	i {
-		flex: 1;
-		background: $color-raised;
-		border-radius: 3px 3px 0 0;
-
-		&.is-on {
-			background: $color-wine;
-		}
-	}
-}
-
-.home-pace {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 12px;
-
-	&__card {
+	&__head {
 		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		padding: 18px;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 10px;
+		padding-bottom: 8px;
+		border-bottom: 1px solid $color-ink;
+		font-size: $text-15;
 
 		strong {
 			font-weight: $font-weight-semibold;
 		}
+	}
 
-		.home-muted {
-			font-size: $text-14;
+	&__row {
+		display: grid;
+		grid-template-columns: 84px minmax(0, 1fr) 28px;
+		align-items: baseline;
+		gap: 0 12px;
+		padding: 8px 0;
+		border-bottom: 1px solid $rule;
+		font-size: $text-15;
+
+		&:nth-last-child(2) {
+			border-bottom: none;
 		}
+	}
+
+	&__key {
+		font-size: $text-14;
+		color: $color-text-secondary;
+	}
+
+	&__call {
+		font-family: $font-mono;
+		overflow-wrap: anywhere;
+	}
+
+	// The marker's correction, written beside the call.
+	&__fix {
+		font-family: $font-serif;
+		font-style: italic;
+		color: $color-link;
+	}
+
+	&__total {
+		display: flex;
+		justify-content: flex-end;
+		align-items: baseline;
+		gap: 8px;
+		padding-top: 10px;
+		border-top: 1px solid $color-ink;
+		font-size: $text-14;
+
+		.home-fig {
+			font-size: 2.125rem;
+			line-height: 1;
+			color: $color-link;
+		}
+	}
+}
+
+.home-mark {
+	display: flex;
+	justify-content: flex-end;
+	align-self: center;
+	color: $color-link;
+
+	path {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+}
+
+.home-lists {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px 32px;
+
+	&__caption {
+		padding-bottom: 6px;
+		font-size: $text-14;
+		color: $color-text-secondary;
 	}
 }
 
@@ -442,17 +387,18 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 18px;
-	margin-top: 24px;
-	padding-block: 112px 104px;
+	padding-block: 72px 88px;
 	@include column-rule;
 
 	h2 {
+		max-width: 14ch;
 		margin: 0;
-		font-size: 2.375rem;
+		font-size: 3rem;
+		line-height: 1.05;
 	}
 
 	p {
-		max-width: 560px;
+		max-width: 52ch;
 		font-size: $text-18;
 		color: $color-text-secondary;
 	}
@@ -471,25 +417,27 @@
 
 	&__title {
 		margin: 0;
-		font-size: 2.5rem;
-		line-height: 1.1;
+		font-size: 2.75rem;
+		line-height: 1.05;
 	}
 
-	&__cards {
+	&__cols {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 16px;
-		margin-top: 10px;
+		gap: 24px 32px;
+		margin-top: 14px;
 		align-items: start;
 	}
 
-	&__card {
+	&__col {
 		display: flex;
 		flex-direction: column;
-		gap: 10px;
-		padding: 16px 18px;
+		gap: 4px;
+		padding-top: 10px;
+		border-top: 1px solid $color-ink;
 
 		> .home-muted {
+			padding-top: 6px;
 			font-size: $text-15;
 		}
 	}
@@ -515,8 +463,15 @@
 	}
 }
 
+// The logged-in "Start something": the heading above the rows, not beside them.
+.home-section--stack {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+}
+
 // ── Motion ───────────────────────────────────────────────────────────────────
-// Sections below the fold fade up as they arrive; the sample scorecard fills in row by row.
+// Sections below the fold fade up as they arrive; the sample sheet is marked row by row.
 .rv {
 	transition:
 		opacity 0.55s ease,
@@ -527,94 +482,108 @@
 		transform: translateY(16px);
 	}
 
-	.home-tag,
+	.home-mark,
 	.home-reveal-late {
 		transition:
-			opacity 0.4s ease,
-			transform 0.4s ease;
+			opacity 0.3s ease,
+			transform 0.3s ease;
 	}
 
-	&--waiting .home-tag,
+	&--waiting .home-mark,
 	&--waiting .home-reveal-late {
 		opacity: 0;
-		transform: translateX(10px);
+		transform: scale(1.4);
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.rv,
-	.rv .home-tag,
-	.rv .home-reveal-late,
-	.home-card {
+	.rv .home-mark,
+	.rv .home-reveal-late {
 		transition: none;
 	}
 
 	.rv--waiting,
-	.rv--waiting .home-tag,
+	.rv--waiting .home-mark,
 	.rv--waiting .home-reveal-late {
 		opacity: 1;
-		transform: none;
-	}
-
-	.home-door:hover,
-	.home-mode:hover,
-	.home-after__card:hover {
 		transform: none;
 	}
 }
 
 // ── Narrower ─────────────────────────────────────────────────────────────────
 @include responsive($breakpoint-nav) {
-	.home-after,
-	.home-dash__cards {
-		grid-template-columns: 1fr;
+	.home-dash__cols {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.home-hero__title {
+		font-size: 3.5rem;
+	}
+
+	.home-door {
+		grid-template-columns: 200px minmax(0, 1fr);
+
+		&__cta {
+			grid-column: 2;
+			justify-content: flex-start;
+		}
 	}
 }
 
 @include responsive(45rem) {
 	.home-hero {
-		padding-block: 28px 32px;
+		padding-block: 28px 28px;
+		gap: 16px;
 
 		&__title {
-			font-size: 2.5rem;
+			font-size: 2.75rem;
+		}
+
+		&__lede {
+			font-size: 1.0625rem;
 		}
 	}
 
-	// minmax, not 1fr: a bare 1fr can't shrink below the code form, which overflowed a phone in PT.
-	.home-doors,
-	.home-modes {
+	.home-door {
 		grid-template-columns: minmax(0, 1fr);
+		padding: 16px 0;
+
+		&__cta {
+			grid-column: auto;
+			padding-top: 6px;
+
+			.btn-primary,
+			.btn-quiet,
+			.code-form {
+				flex: 1;
+				width: auto;
+			}
+		}
 	}
 
 	.home-section {
-		padding-block: 44px;
+		grid-template-columns: minmax(0, 1fr);
+		padding-block: 40px;
 
 		&__head h2 {
-			font-size: 1.875rem;
+			font-size: 2.25rem;
 		}
 	}
 
-	.home-pace {
-		gap: 8px;
-
-		&__card {
-			padding: 14px 12px;
-		}
-
-		.home-fig--xl {
-			font-size: 1.625rem;
-		}
+	.home-lists {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.home-closing {
-		padding-block: 72px;
+		padding-block: 56px 64px;
 
 		h2 {
-			font-size: 2rem;
+			font-size: 2.375rem;
 		}
 	}
 
 	.home-dash__title {
-		font-size: 1.875rem;
+		font-size: 2.25rem;
 	}
 }
