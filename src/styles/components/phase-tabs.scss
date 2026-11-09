@@ -1,0 +1,90 @@
+@use '../abstracts' as *;
+// The phases as tabs under the tasting header, with Start over at the end of the row.
+
+.phase-tabs {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	border-bottom: 1px solid $rule;
+
+	&__nav {
+		display: flex;
+		min-width: 0;
+		// The first tab's text lines up with the page, not its padding.
+		margin-left: -16px;
+	}
+
+	&__tab {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 44px;
+		padding: 0 16px;
+		margin-bottom: -1px;
+		border-bottom: 2px solid transparent;
+		font-size: $text-15;
+		white-space: nowrap;
+		color: $color-text-secondary;
+		transition: color 0.15s ease;
+
+		&:hover {
+			color: $color-ink;
+		}
+
+		&--done {
+			color: $color-ink;
+		}
+
+		&[aria-current='step'] {
+			border-bottom-color: $color-link;
+			color: $color-ink;
+			font-weight: $font-weight-semibold;
+		}
+	}
+
+	&__tick {
+		margin-left: 4px;
+		color: $color-link;
+	}
+
+	&__start-over {
+		@include bare-button;
+		margin-left: auto;
+		min-height: 44px;
+		padding: 0 4px;
+		font-size: $text-14;
+		color: $color-text-secondary;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+
+		&:hover {
+			color: $color-link;
+		}
+	}
+}
+
+// Equal tabs across the phone, with Start over on its own line below them.
+@include responsive($breakpoint-mobile) {
+	.phase-tabs {
+		flex-wrap: wrap;
+		gap: 0;
+		border-bottom: none;
+
+		&__nav {
+			flex: 1 1 100%;
+			margin-left: 0;
+			border-bottom: 1px solid $rule;
+		}
+
+		&__tab {
+			flex: 1;
+			min-width: 0;
+			padding: 0 2px;
+			font-size: $text-14;
+		}
+
+		&__start-over {
+			min-height: 40px;
+		}
+	}
+}

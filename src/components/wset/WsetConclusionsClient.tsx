@@ -58,9 +58,6 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 	const update = (patch: Record<string, string | null>) =>
 		updateTastingData({ conclusion: { ...tastingData.conclusion, final: { ...final, ...patch } } });
 
-	const answered = [final[quality], final[readiness]].filter(Boolean).length;
-	const pct = Math.round((answered / 2) * 100);
-
 	const sight = tastingData.sight ?? {};
 	const sightPairs = WSET_APPEARANCE_FIELDS.filter((f) => sight[f]).map(
 		(f) => [f, sight[f] as string] as [string, string],
@@ -82,10 +79,8 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={pct}
 			timerPage="finalConclusion"
 			timerDestination={`/tastings/save?wineType=${wineType}`}
-			phase={t.phase}
 			title={phases.finalConclusion}
 			description={t.description}
 			footer={{

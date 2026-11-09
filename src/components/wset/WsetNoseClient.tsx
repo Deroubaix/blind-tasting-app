@@ -6,7 +6,7 @@ import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { DescriptorClusters, OptionCard } from './WsetBits';
-import { type AromaCluster, WSET_NOSE_ASSESSMENTS, wsetNoseSteps } from './wsetFields';
+import { type AromaCluster, WSET_NOSE_ASSESSMENTS } from './wsetFields';
 
 export default function WsetNoseClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
@@ -35,17 +35,11 @@ export default function WsetNoseClient({ wineType }: { wineType: 'red' | 'white'
 			(nose[cluster.name] ?? []).filter((t) => t !== term),
 		);
 
-	const steps = wsetNoseSteps(wineType);
-	const done = steps.filter((step) => step.some((key) => (nose[key]?.length ?? 0) > 0)).length;
-	const pct = Math.round((done / steps.length) * 100);
-
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={pct}
 			timerPage="nose"
 			timerDestination={`/tastings/palate?wineType=${wineType}`}
-			phase={t.phase}
 			title={t.title}
 			description={t.description}
 			footer={{

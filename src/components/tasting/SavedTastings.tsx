@@ -151,7 +151,6 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			phase={t.phase}
 			title={t.title}
 			description={t.description}
 			footer={{

@@ -14,14 +14,12 @@ export const wsetText = dict(
 			backToSetup: 'Back to Setup',
 		},
 		appearance: {
-			phase: 'Phase 01',
 			description:
 				'Tilt the glass against a white background. Clarity and intensity first, then the colour, then anything else you notice.',
 			next: 'Next: The Nose',
 			ifApparent: 'if apparent',
 		},
 		nose: {
-			phase: 'Phase 02',
 			title: 'The Nose',
 			description:
 				'Is it clean? How intense? Then the aromas by cluster: primary from the grape, secondary from the winemaking, tertiary from age. Finish with the development.',
@@ -29,7 +27,6 @@ export const wsetText = dict(
 			next: 'Next: The Palate',
 		},
 		palate: {
-			phase: 'Phase 03',
 			title: 'The Palate',
 			description: 'Place each structural element on its scale, then note the flavours and how long they last.',
 			back: 'Back to Nose',
@@ -38,7 +35,6 @@ export const wsetText = dict(
 			ownTerms: 'Your own terms',
 		},
 		conclusions: {
-			phase: 'Phase 04',
 			description:
 				'Judge the quality on balance, length, intensity and complexity, and say whether the wine is ready. Give your reasons; the examiner marks those too.',
 			back: 'Back to Palate',
@@ -78,14 +74,12 @@ export const wsetText = dict(
 			backToSetup: 'Voltar à configuração',
 		},
 		appearance: {
-			phase: 'Fase 01',
 			description:
 				'Incline o copo contra um fundo branco. Primeiro a limpidez e a intensidade, depois a cor, depois tudo o que mais notar.',
 			next: 'Seguinte: Nariz',
 			ifApparent: 'se evidente',
 		},
 		nose: {
-			phase: 'Fase 02',
 			title: 'Nariz',
 			description:
 				'Está limpo? Qual a intensidade? Depois os aromas por grupo: primários da uva, secundários da vinificação, terciários do envelhecimento. Termine com a evolução.',
@@ -93,7 +87,6 @@ export const wsetText = dict(
 			next: 'Seguinte: Paladar',
 		},
 		palate: {
-			phase: 'Fase 03',
 			title: 'Paladar',
 			description:
 				'Situe cada elemento da estrutura na sua escala e depois registe os sabores e quanto tempo duram.',
@@ -103,7 +96,6 @@ export const wsetText = dict(
 			ownTerms: 'Os seus próprios termos',
 		},
 		conclusions: {
-			phase: 'Fase 04',
 			description:
 				'Avalie a qualidade pelo equilíbrio, final, intensidade e complexidade, e diga se o vinho está pronto a beber. Justifique; o examinador também avalia as razões.',
 			back: 'Voltar ao paladar',

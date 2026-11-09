@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import { SIGHT_MULTI, SIGHT_SCALES, SIGHT_YES_NO, sightFields } from './sightFields';
+import { SIGHT_MULTI, SIGHT_SCALES, SIGHT_YES_NO } from './sightFields';
 import { type WineColorEntry, wineColors } from './sightData';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { swatchDescPt, tastingText } from '../../i18n/tasting';
@@ -40,13 +40,6 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 	const handleNextPhase = () => router.push(`/tastings/nose?wineType=${wineType}`);
 
 	const colors = wineColors[wineType];
-
-	const fields = sightFields(wineType);
-	const answered = fields.filter((field) => {
-		const value = selected[field];
-		return Array.isArray(value) ? value.length > 0 : value != null;
-	});
-	const pct = Math.round((answered.length / fields.length) * 100);
 
 	// ─── Sub-renderers ───────────────────────────────────────────────────────────
 
@@ -129,10 +122,8 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={pct}
 			timerPage="sight"
 			timerDestination={`/tastings/nose?wineType=${wineType}`}
-			phase={text.phaseLabel('01')}
 			title={t.title}
 			description={isRed ? t.descRed : t.descWhite}
 			footer={{

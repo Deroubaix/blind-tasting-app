@@ -7,7 +7,6 @@ import {
 	WSET_QUALITY,
 	WSET_READINESS,
 	aromaClusters,
-	wsetNoseSteps,
 } from './wsetFields';
 
 // Pins the WSET mode to the Level 3 Systematic Approach to Tasting Wine.
@@ -47,11 +46,6 @@ describe('nose', () => {
 		for (const cluster of WSET_AROMA_CLUSTERS) {
 			expect(new Set(cluster.terms).size).toBe(cluster.terms.length);
 		}
-	});
-
-	it('counts condition, intensity, any aroma and development toward progress', () => {
-		expect(wsetNoseSteps('red')).toHaveLength(4);
-		expect(wsetNoseSteps('red')[2]).toContain('Black Fruit');
 	});
 });
 

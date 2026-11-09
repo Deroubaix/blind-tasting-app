@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
-import { AGE_RANGES, CLIMATES, icAnsweredCount, IC_REQUIRED_COUNT } from './conclusionFields';
+import { AGE_RANGES, CLIMATES } from './conclusionFields';
 import TastingAutocomplete from './TastingAutocomplete';
 import { GRAPE_VARIETALS, WINE_COUNTRIES } from './autocompleteData';
 import { useText } from '../../i18n/LanguageProvider';
@@ -25,8 +25,6 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 
 	const updateIC = (patch: Partial<NonNullable<typeof ic>>) =>
 		updateTastingData({ conclusion: { ...tastingData.conclusion, initial: { ...ic, ...patch } } });
-
-	const conclusionPct = Math.round((icAnsweredCount(ic) / IC_REQUIRED_COUNT) * 100);
 
 	const handleNextPhase = () => router.push(`/tastings/final-conclusion?wineType=${wineType}`);
 	const handlePreviousPhase = () => router.push(`/tastings/palate?wineType=${wineType}`);
@@ -50,10 +48,8 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={conclusionPct}
 			timerPage="initialConclusion"
 			timerDestination={`/tastings/final-conclusion?wineType=${wineType}`}
-			phase={text.phaseLabel('04')}
 			title={phaseName.initialConclusion}
 			description={t.description}
 			footer={{

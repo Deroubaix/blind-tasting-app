@@ -40,15 +40,12 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 
 	const keys = Object.keys(structure);
 	const answered = keys.filter((key) => palate[key]).length;
-	const pct = Math.round(((answered + (flavours.length ? 1 : 0)) / (keys.length + 1)) * 100);
 
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={pct}
 			timerPage="palate"
 			timerDestination={`/tastings/final-conclusion?wineType=${wineType}`}
-			phase={t.phase}
 			title={t.title}
 			description={t.description}
 			footer={{

@@ -1,11 +1,10 @@
 @use '../abstracts' as *;
-// Tasting Phase Layout — generic page shell shared by all tasting phase pages
-// (Sight, Nose, Palate, Initial Conclusion, Final Conclusion)
+// Tasting Phase Layout — the shell every phase page shares: header, tabs, the form, then Back and Next.
 
 // Below this the main area narrows its grids: the one threshold every phase uses.
 $narrow: 720px;
 
-// Sized against the main area, not the viewport: beside the sidebar on a tablet the viewport is wide but the room is not.
+// Sized against the main area, not the viewport.
 @mixin narrow {
 	@container main (max-width: #{$narrow}) {
 		@content;
@@ -13,35 +12,24 @@ $narrow: 720px;
 }
 
 .tasting-phase-page {
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
+	min-height: 100dvh;
 	background-color: $color-ground;
 	color: $color-ink;
-	overflow: hidden;
 }
 
-.tasting-phase-body {
-	display: flex;
-	flex: 1;
-	overflow: hidden;
+.tasting-phase-wrap {
+	max-width: 1040px;
+	margin: 0 auto;
+	padding: 0 40px 48px;
+	box-sizing: border-box;
 }
 
 .tasting-phase-main {
-	// Inline-size only, so the height still comes from the flex layout.
 	container: main / inline-size;
-	flex: 1;
-	overflow: auto;
-	background-color: $color-ground;
-	padding-bottom: 96px; // clear the fixed footer
-}
-
-.tasting-phase-content {
 	display: flex;
 	flex-direction: column;
 	gap: 26px;
-	max-width: 860px;
-	padding: 32px 32px 0;
+	padding-top: 24px;
 }
 
 // ── Page heading (every phase) ────────────────────────────────────────────────
@@ -52,7 +40,8 @@ $narrow: 720px;
 
 	h1 {
 		margin: 0;
-		font-size: 2.125rem;
+		font-size: 2.75rem;
+		line-height: 1.05;
 	}
 }
 
@@ -65,32 +54,17 @@ $narrow: 720px;
 }
 
 // ── Phone layout ─────────────────────────────────────────────────────────────
-// The desktop shell locks the viewport beside the sidebar; the phone layout scrolls normally instead.
 @include responsive($breakpoint-mobile) {
-	.tasting-phase-page {
-		height: auto;
-		min-height: 100dvh;
-		overflow: visible;
-	}
-
-	.tasting-phase-body {
-		flex-direction: column;
-		overflow: visible;
+	.tasting-phase-wrap {
+		padding: 0 16px 96px;
 	}
 
 	.tasting-phase-main {
-		overflow: visible;
-		padding-bottom: 88px;
-	}
-
-	.tasting-phase-content {
 		gap: 20px;
-		padding: 20px 16px;
+		padding-top: 12px;
 	}
 
-	.phase-head {
-		h1 {
-			font-size: 1.75rem;
-		}
+	.phase-head h1 {
+		font-size: 2.25rem;
 	}
 }

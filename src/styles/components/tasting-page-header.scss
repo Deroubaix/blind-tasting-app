@@ -2,46 +2,61 @@
 // Tasting session header — Shared across all tasting pages: Start, Sight, Nose, Palate, Conclusions
 
 .tasting-page-header {
+	// Sticky, so the clock stays in view.
+	position: sticky;
+	top: 0;
+	z-index: $index-sticky;
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 0 32px;
+	gap: 16px;
+	// The bar's content lines up with the page column.
+	padding-inline: max(40px, calc((100% - 960px) / 2));
 	min-height: 64px;
 	background-color: $color-ground;
-	border-bottom: 1px solid $rule;
-	flex-shrink: 0;
+	border-bottom: 1px solid $color-ink;
 
 	&__logo {
-		margin-right: auto;
+		flex-shrink: 0;
 		text-decoration: none;
 	}
 
-	// The phone strip carries the phase and title; on desktop the page body does.
-	&__phase {
-		display: none;
+	&__context {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: $text-14;
+		color: $color-text-secondary;
 	}
 
 	// ── Clock ───────────────────────────────────────────────────────────────────
 	&__center {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 6px;
+		margin-left: auto;
 	}
 
 	&__clock {
 		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		line-height: 1.1;
+		align-items: center;
+		gap: 8px;
 	}
 
 	&__timer-label {
-		font-size: $text-12;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		line-height: 1.1;
+		font-size: $text-14;
 		color: $color-text-secondary;
+		white-space: nowrap;
 	}
 
-	// The last quarter of a phase: the word turns with the figures.
-	&__clock:has(.timer-display--warning) &__timer-label {
+	// The last quarter of a phase: "low" under the label, and the figures turn with it.
+	&__clock:has(.timer-display--warning) &__timer-label::after {
+		content: attr(data-low);
+		font-weight: $font-weight-semibold;
 		color: $color-warning;
 	}
 
@@ -81,14 +96,14 @@
 		@include bare-button;
 		width: 44px;
 		height: 44px;
-		border: 1px solid $rule-mid;
+		margin-right: -10px;
 		border-radius: $radius;
 		color: $color-ink;
-		transition: border-color 0.15s ease;
+		transition: background-color 0.15s ease;
 
 		&:hover,
 		&:focus-visible {
-			border-color: $color-ink;
+			background-color: $color-raised;
 		}
 
 		&:disabled {
@@ -104,11 +119,15 @@
 		gap: $spacing-md;
 		position: relative;
 		margin-left: 8px;
+
+		&:empty {
+			display: none;
+		}
 	}
 
-	&__wine-label {
-		font-size: $text-14;
-		color: $color-text-secondary;
+	// The Start page has no clock to push the right side over.
+	&__center:empty + &__right {
+		margin-left: auto;
 	}
 
 	&__cancel {
@@ -134,58 +153,25 @@
 	}
 }
 
-// ── Phone: one strip carrying phase, title and clock ─────────────────────────
-// Sticky, so the stepper below can sit at the strip's height; expiry navigates on, so the clock never scrolls away.
+// ── Phone: the glass, the context and the clock ──────────────────────────────
 @include responsive($breakpoint-mobile) {
 	.tasting-page-header {
-		position: sticky;
-		top: 0;
-		// Sticky chrome, with the footer: over the page, under menus and dialogs.
-		z-index: $index-sticky;
-		height: 56px;
-		min-height: 0;
-		padding: 0 16px;
-		border-bottom: none;
+		gap: 10px;
+		min-height: 56px;
+		padding-inline: 16px;
 
-		&__logo,
-		&__right {
+		// The account menu lives on the other pages; a phone tasting has no room for it.
+		&__right:not(:has(.tasting-page-header__cancel)) {
 			display: none;
 		}
 
-		&__phase {
-			display: flex;
-			flex-direction: column;
-			flex: 1;
-			min-width: 0;
-			line-height: 1.2;
-		}
-
-		&__phase-label {
-			font-size: $text-14;
-			color: $color-text-secondary;
-		}
-
-		&__phase-num {
-			@include figures;
-		}
-
-		&__phase-title {
-			font-size: $text-16;
-			font-weight: $font-weight-semibold;
-			color: $color-ink;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+		&__timer-display {
+			font-size: $text-20;
 		}
 	}
 
-	// The Start page has no phase: its strip keeps the wordmark and Cancel.
-	.tasting-page-header:not(:has(.tasting-page-header__phase)) {
-		border-bottom: 1px solid $rule;
-
-		.tasting-page-header__logo,
-		.tasting-page-header__right {
-			display: flex;
-		}
+	// During a tasting the glass alone stands for the name.
+	.tasting-page-header:has(.tasting-page-header__context) .wordmark__name {
+		display: none;
 	}
 }

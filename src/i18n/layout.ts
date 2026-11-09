@@ -74,6 +74,7 @@ export const layoutText = dict(
 			flightWine: (n: number, total: number) => `Flight · Wine ${n} of ${total}`,
 			timeRemaining: 'Time left',
 			untimed: 'Untimed',
+			low: 'low',
 			pauseTimer: 'Pause the timer',
 		},
 		timer: {
@@ -174,6 +175,7 @@ export const layoutText = dict(
 			flightWine: (n, total) => `Flight · Vinho ${n} de ${total}`,
 			timeRemaining: 'Tempo restante',
 			untimed: 'Sem cronómetro',
+			low: 'a acabar',
 			pauseTimer: 'Pausar o cronómetro',
 		},
 		timer: {

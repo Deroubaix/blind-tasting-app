@@ -166,21 +166,3 @@ export const NOSE_OAK_ASSESSMENT = ['New Oak', 'Oak Intensity', 'Oak Type'];
 // Single-answer categories. Drives chip shape on the Nose page (segmented rect rather than
 // pill) and label pairing in the Final Conclusion recap. Everything else is multi-select.
 export const NOSE_ASSESSMENTS = new Set(['Aromatic Intensity', 'Age Assessment', ...NOSE_OAK_ASSESSMENT]);
-
-/**
- * What counts toward the Nose progress bar: each inner list is one step, done when any of its
- * categories has an answer. The fruit families are one step, so a wine with only red fruit is
- * not marked partly done. Faults are noted only when apparent, so they are not a step at all.
- */
-export function noseProgressSteps(wineType: WineType): string[][] {
-	return [
-		['Aromatic Intensity'],
-		['Age Assessment'],
-		FRUIT_FAMILIES[wineType],
-		['Fruit Condition'],
-		['From Grape(s)', 'From Winemaking'],
-		['Earth'],
-		['Mineral'],
-		['New Oak'],
-	];
-}

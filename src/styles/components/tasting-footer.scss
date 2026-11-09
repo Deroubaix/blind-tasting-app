@@ -1,27 +1,17 @@
 @use '../abstracts' as *;
-// Tasting Footer — sticky bottom bar shared by all tasting phase pages.
+// Back and Next: at the end of the form on a desktop, fixed to the bottom of a phone.
 
 .tasting-footer {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: $index-sticky;
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 12px 32px calc(12px + env(safe-area-inset-bottom, 0px));
-	background-color: $color-ground;
+	margin-top: 36px;
+	padding-top: 18px;
 	border-top: 1px solid $rule;
 
 	.btn-quiet,
 	.btn-primary {
-		min-height: 46px;
-	}
-
-	&__start-over {
-		width: 46px;
-		padding: 0;
+		min-height: 48px;
 	}
 
 	&__back {
@@ -30,17 +20,26 @@
 
 	&__next {
 		margin-left: auto;
-		padding: 0 18px;
+		min-width: 200px;
+		padding: 0 20px;
 	}
 }
 
 @include responsive($breakpoint-mobile) {
 	.tasting-footer {
-		padding-inline: 16px;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: $index-sticky;
+		margin: 0;
+		padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+		background-color: $color-ground;
+		border-top: 1px solid $color-ink;
 
 		// "Back to Initial Conclusion" would crowd Next; the arrow and aria-label carry it here.
 		&__back {
-			width: 46px;
+			width: 48px;
 			padding: 0;
 		}
 
@@ -48,7 +47,6 @@
 			display: none;
 		}
 
-		// Next takes what Start over and Back leave.
 		&__next {
 			flex: 1;
 			min-width: 0;

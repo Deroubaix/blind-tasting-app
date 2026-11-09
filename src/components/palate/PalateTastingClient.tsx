@@ -40,17 +40,13 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 		router.push(`/tastings/nose?wineType=${wineType}`);
 	};
 
-	const allKeys = Object.keys(currentOptions);
-	const palatePct = Math.round((allKeys.filter((k) => selectedOptions[k]).length / allKeys.length) * 100);
 	const requiredFilled = [...required].every((k) => selectedOptions[k]);
 
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={palatePct}
 			timerPage="palate"
 			timerDestination={`/tastings/initial-conclusion?wineType=${wineType}`}
-			phase={text.phaseLabel('03')}
 			title={t.title}
 			description={t.description}
 			footer={{

@@ -12,7 +12,6 @@ import {
 	NOSE_OAK_ASSESSMENT,
 	NOSE_OPTIONS,
 	NOSE_TOP,
-	noseProgressSteps,
 } from './noseFields';
 import { useText } from '../../i18n/LanguageProvider';
 import { tastingText } from '../../i18n/tasting';
@@ -100,10 +99,6 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 
 	const countSelected = (keys: string[]) =>
 		keys.reduce((total, cat) => total + (selectedOptions[cat]?.length || 0), 0);
-
-	const steps = noseProgressSteps(wineType);
-	const stepsDone = steps.filter((step) => step.some((k) => (selectedOptions[k]?.length || 0) > 0));
-	const nosePct = Math.round((stepsDone.length / steps.length) * 100);
 
 	const presetOptions = NOSE_OPTIONS[wineType];
 
@@ -258,10 +253,8 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={nosePct}
 			timerPage="nose"
 			timerDestination={`/tastings/palate?wineType=${wineType}`}
-			phase={text.phaseLabel('02')}
 			title={t.title}
 			description={t.description}
 			footer={{

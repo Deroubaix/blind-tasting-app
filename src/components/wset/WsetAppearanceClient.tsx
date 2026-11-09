@@ -7,14 +7,7 @@ import { wsetText } from '../../i18n/wset';
 import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { OptionCard, backToSetup } from './WsetBits';
-import {
-	WSET_APPEARANCE,
-	WSET_APPEARANCE_FIELDS,
-	WSET_COLOUR,
-	WSET_COLOUR_HEX,
-	WSET_OBSERVATIONS,
-	WSET_OBSERVATIONS_KEY,
-} from './wsetFields';
+import { WSET_APPEARANCE, WSET_COLOUR, WSET_COLOUR_HEX, WSET_OBSERVATIONS, WSET_OBSERVATIONS_KEY } from './wsetFields';
 
 export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
@@ -38,17 +31,13 @@ export default function WsetAppearanceClient({ wineType }: { wineType: 'red' | '
 		updateTastingData({ sight: { ...sight, [WSET_OBSERVATIONS_KEY]: next } });
 	};
 
-	const answered = WSET_APPEARANCE_FIELDS.filter((field) => sight[field]).length;
-	const pct = Math.round((answered / WSET_APPEARANCE_FIELDS.length) * 100);
 	const back = backToSetup(tastingData.flight, wineType, all.bits);
 
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={pct}
 			timerPage="sight"
 			timerDestination={`/tastings/nose?wineType=${wineType}`}
-			phase={t.phase}
 			title={tc.phase.wset.sight}
 			description={t.description}
 			footer={{

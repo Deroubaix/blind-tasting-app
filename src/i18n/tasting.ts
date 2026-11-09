@@ -3,7 +3,6 @@ import { dict } from './index';
 /** The CMS tasting flow: start page, phase pages, sidebar, shared inputs and the save page. */
 export const tastingText = dict(
 	{
-		phaseLabel: (num: string) => `Phase ${num}`,
 		add: 'Add',
 		optional: 'optional',
 		remove: (value: string) => `Remove ${value}`,
@@ -54,8 +53,8 @@ export const tastingText = dict(
 		sidebar: {
 			wineGrid: (wine: string, grid: string) => `${wine} wine · ${grid}`,
 			phases: 'Phases',
-			phaseProgress: (phase: string, pct: number) => `${phase}: ${pct}% answered`,
-			/** What the phone stepper shows: five segments across 390px cannot carry "Initial Conclusion". */
+			done: 'done',
+			/** The tab names: five tabs across 390px cannot carry "Initial Conclusion". */
 			short: {
 				cms: {
 					sight: 'Sight',
@@ -170,7 +169,6 @@ export const tastingText = dict(
 			wineNameRequired: 'Please enter the wine name.',
 		},
 		save: {
-			phase: 'Wrap Up',
 			title: 'Review & Save',
 			description: 'Add any final notes and a photo before saving your tasting record.',
 			backWset: 'Back to Conclusions',
@@ -207,7 +205,6 @@ export const tastingText = dict(
 		},
 	},
 	{
-		phaseLabel: (num) => `Fase ${num}`,
 		add: 'Adicionar',
 		optional: 'opcional',
 		remove: (value) => `Remover ${value}`,
@@ -257,7 +254,7 @@ export const tastingText = dict(
 		sidebar: {
 			wineGrid: (wine, grid) => `Vinho ${wine.toLowerCase()} · ${grid}`,
 			phases: 'Fases',
-			phaseProgress: (phase, pct) => `${phase}: ${pct}% respondido`,
+			done: 'feita',
 			short: {
 				cms: {
 					sight: 'Vista',
@@ -372,7 +369,6 @@ export const tastingText = dict(
 			wineNameRequired: 'Indique o nome do vinho.',
 		},
 		save: {
-			phase: 'Para terminar',
 			title: 'Rever e guardar',
 			description: 'Acrescente notas finais e uma fotografia antes de guardar o registo da prova.',
 			backWset: 'Voltar às Conclusões',

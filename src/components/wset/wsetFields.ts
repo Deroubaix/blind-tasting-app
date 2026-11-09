@@ -183,11 +183,6 @@ export function aromaClusters(wineType: WineType): AromaCluster[] {
 	return WSET_AROMA_CLUSTERS.filter((cluster) => !cluster.wineType || cluster.wineType === wineType);
 }
 
-/** What counts toward the Nose progress bar: the three assessments and any aroma at all. */
-export function wsetNoseSteps(wineType: WineType): string[][] {
-	return [['Condition'], ['Intensity'], aromaClusters(wineType).map((c) => c.name), ['Development']];
-}
-
 // ── Palate ────────────────────────────────────────────────────────────────────
 
 /** Structure, in SAT order. Tannin is red-only; every row must be answered to move on. */

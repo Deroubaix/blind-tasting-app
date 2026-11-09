@@ -4,7 +4,7 @@ import React, { type ReactNode, useEffect } from 'react';
 import TastingPageHeader from './TastingPageHeader';
 import PhaseHeading from './PhaseHeading';
 import TastingFooter from './TastingFooter';
-import LeftSidebar from '../tasting/LeftSideBar';
+import PhaseTabs from '../tasting/PhaseTabs';
 import { usePathname } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import { advanceFurthestPhase } from '../tasting/phaseCompletion';
@@ -21,12 +21,8 @@ type FooterProps = {
 
 type TastingPhaseLayoutProps = {
 	wineType: 'red' | 'white';
-	/** Owned here rather than by each phase page: the phone header strip shows the
-	 *  phase and title too, and the two must not be able to disagree. */
-	phase: string;
 	title: string;
 	description: ReactNode;
-	progress?: number;
 	timerPage?: 'sight' | 'nose' | 'palate' | 'initialConclusion' | 'finalConclusion';
 	timerDestination?: string;
 	footer: FooterProps;
@@ -35,10 +31,8 @@ type TastingPhaseLayoutProps = {
 
 export default function TastingPhaseLayout({
 	wineType,
-	phase,
 	title,
 	description,
-	progress,
 	timerPage,
 	timerDestination,
 	footer,
@@ -89,23 +83,15 @@ export default function TastingPhaseLayout({
 			<a className="skip-link" href="#main">
 				Skip to assessment
 			</a>
-			<TastingPageHeader
-				wineType={wineType}
-				phase={phase}
-				title={title}
-				timerPage={timerPage}
-				timerDestination={timerDestination}
-			/>
-			<div className="tasting-phase-body">
-				<LeftSidebar wineType={wineType} progress={progress} />
+			<TastingPageHeader wineType={wineType} timerPage={timerPage} timerDestination={timerDestination} />
+			<div className="tasting-phase-wrap">
+				<PhaseTabs wineType={wineType} />
 				<main id="main" className="tasting-phase-main">
-					<div className="tasting-phase-content">
-						<PhaseHeading title={title} description={description} />
-						{children}
-					</div>
+					<PhaseHeading title={title} description={description} />
+					{children}
 				</main>
+				<TastingFooter {...footer} />
 			</div>
-			<TastingFooter {...footer} />
 		</div>
 	);
 }

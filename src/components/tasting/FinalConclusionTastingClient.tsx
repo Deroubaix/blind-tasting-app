@@ -11,7 +11,7 @@ import { GRAPE_VARIETALS, WINE_COUNTRIES, WINE_REGIONS } from './autocompleteDat
 import { sightFields } from '../sight/sightFields';
 import { NOSE_ASSESSMENTS } from '../nose/noseFields';
 import { BALANCE_NOTE, CONFIRM_ROWS, PALATE_OPTIONS, confirmKey } from '../palate/palateFields';
-import { fcAnsweredCount, FC_REQUIRED, STYLE_CATEGORIES } from './conclusionFields';
+import { STYLE_CATEGORIES } from './conclusionFields';
 import QualityLevelSelect from './QualityLevelSelect';
 import { useText } from '../../i18n/LanguageProvider';
 import { commonText } from '../../i18n/common';
@@ -122,8 +122,6 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 		.filter(Boolean)
 		.join(' · ');
 
-	const conclusionPct = Math.round((fcAnsweredCount(fc) / FC_REQUIRED.length) * 100);
-
 	// No flush needed before navigating — the answers are already in the context.
 	const handleNext = () => router.push(`/tastings/save?wineType=${wineType}`);
 	const handleBack = () => router.push(`/tastings/initial-conclusion?wineType=${wineType}`);
@@ -131,10 +129,8 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	return (
 		<TastingPhaseLayout
 			wineType={wineType}
-			progress={conclusionPct}
 			timerPage="finalConclusion"
 			timerDestination={`/tastings/save?wineType=${wineType}`}
-			phase={text.phaseLabel('05')}
 			title={phaseName.finalConclusion}
 			description={t.description}
 			footer={{

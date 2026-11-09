@@ -3,6 +3,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import Link from 'next/link';
 import Wordmark from './Wordmark';
+import { BRAND } from '../../data/brand';
 import Prefs from './Prefs';
 import useDismiss from '../../hooks/useDismiss';
 import { useRouter } from 'next/navigation';
@@ -12,17 +13,15 @@ import { useModalProvider } from '../modal/ModalProvider';
 import { pauseClock, resumeClock } from '../../data/timerClock';
 import { unlockAudio } from '../../utils/beep';
 import TimerConditional from './TimerConditional';
-import splitPhaseLabel from './phaseLabel';
 import { useTastingContext } from '../tasting/TastingContext';
+import { gridOf } from '../../data/grids';
 import { useText } from '../../i18n/LanguageProvider';
 import { commonText } from '../../i18n/common';
 import { layoutText } from '../../i18n/layout';
+import { tastingText } from '../../i18n/tasting';
 
 type TastingPageHeaderProps = {
 	wineType?: 'red' | 'white';
-	/** Phone only — the strip carries the phase and title the desktop page shows in body copy. */
-	phase?: string;
-	title?: string;
 	timerPage?: 'sight' | 'nose' | 'palate' | 'initialConclusion' | 'finalConclusion';
 	timerDestination?: string;
 	cancelHref?: string;
@@ -30,14 +29,13 @@ type TastingPageHeaderProps = {
 
 export default function TastingPageHeader({
 	wineType,
-	phase,
-	title,
 	timerPage,
 	timerDestination,
 	cancelHref,
 }: TastingPageHeaderProps) {
 	const t = useText(layoutText);
 	const c = useText(commonText);
+	const sidebar = useText(tastingText).sidebar;
 	const { user, isInitialLoading, signOut } = useAuthProvider();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
@@ -89,28 +87,16 @@ export default function TastingPageHeader({
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
 
 	const wineWord = wineType === 'red' ? c.red : wineType === 'white' ? c.white : null;
-	const { name: phaseName, number: phaseNumber } = splitPhaseLabel(phase ?? '');
+	const context =
+		flightLabel ?? (wineWord ? sidebar.wineGrid(wineWord, c.grid[gridOf(tastingData.grid)].short) : null);
 
 	return (
 		<header className="tasting-page-header">
-			<Link href="/" className="tasting-page-header__logo">
+			<Link href="/" className="tasting-page-header__logo" aria-label={BRAND.name}>
 				<Wordmark size="sm" />
 			</Link>
 
-			{title && (
-				<div className="tasting-page-header__phase">
-					<span className="tasting-page-header__phase-label">
-						{flightLabel ?? (
-							<>
-								{wineWord && <>{wineWord} &middot; </>}
-								{phaseName}
-								{phaseNumber && <span className="tasting-page-header__phase-num"> {phaseNumber}</span>}
-							</>
-						)}
-					</span>
-					<span className="tasting-page-header__phase-title">{title}</span>
-				</div>
-			)}
+			{timerPage && context && <span className="tasting-page-header__context">{context}</span>}
 
 			<div className="tasting-page-header__center">
 				{timerPage && !tastingData.timerEnabled && (
@@ -121,7 +107,7 @@ export default function TastingPageHeader({
 						<div
 							className={`tasting-page-header__clock${paused ? ' tasting-page-header__clock--paused' : ''}`}
 						>
-							<span className="tasting-page-header__timer-label">
+							<span className="tasting-page-header__timer-label" data-low={t.tastingHeader.low}>
 								{paused ? t.tastingHeader.paused : t.tastingHeader.timeRemaining}
 							</span>
 							<div className="tasting-page-header__timer-display">
@@ -151,7 +137,6 @@ export default function TastingPageHeader({
 					</Link>
 				) : (
 					<>
-						{flightLabel && <span className="tasting-page-header__wine-label">{flightLabel}</span>}
 						{isLoggedIn && (
 							<div className="nav-pop" ref={dropdownRef}>
 								<button

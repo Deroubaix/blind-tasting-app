@@ -25,7 +25,7 @@ export default function Wordmark({ size = 'md' }: { size?: 'sm' | 'md' }) {
 	return (
 		<span className={`wordmark wordmark--${size}`}>
 			<GlassMark size={size === 'sm' ? 18 : 20} />
-			{BRAND.name}
+			<span className="wordmark__name">{BRAND.name}</span>
 		</span>
 	);
 }
