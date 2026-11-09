@@ -21,7 +21,10 @@ export default class SessionService {
 
 	/** Signs the user in: issues the token and sets it as the session cookie on this response. */
 	public async start(userId: string) {
-		const token = jwt.sign({ userId }, ServerConfig.getJwtSecret(), { expiresIn: SESSION_SECONDS });
+		const token = jwt.sign({ userId }, ServerConfig.getJwtSecret(), {
+			algorithm: 'HS256',
+			expiresIn: SESSION_SECONDS,
+		});
 		(await cookies()).set(AUTH_COOKIE, token, { ...cookieAttributes, maxAge: SESSION_SECONDS });
 	}
 
@@ -46,7 +49,8 @@ export default class SessionService {
 
 		let userId: string;
 		try {
-			userId = (jwt.verify(token, ServerConfig.getJwtSecret()) as { userId: string }).userId;
+			userId = (jwt.verify(token, ServerConfig.getJwtSecret(), { algorithms: ['HS256'] }) as { userId: string })
+				.userId;
 		} catch {
 			throw apiError(401, 'sessionExpired');
 		}

@@ -80,3 +80,26 @@ export function logServerError(context: string, error: unknown): void {
 	const message = error instanceof Error ? error.message : String(error);
 	process.stderr.write(`Error in ${context}: ${message}\n`);
 }
+
+/** A request body read up to `max` bytes; past that it stops reading and refuses with 413. */
+export async function readBodyCapped(request: Request, max: number): Promise<Buffer> {
+	if (Number(request.headers.get('content-length') ?? 0) > max) {
+		throw apiError(413, 'photoTooLarge');
+	}
+	const chunks: Uint8Array[] = [];
+	let total = 0;
+	const reader = request.body?.getReader();
+	while (reader) {
+		const { done, value } = await reader.read();
+		if (done) {
+			break;
+		}
+		total += value.byteLength;
+		if (total > max) {
+			await reader.cancel();
+			throw apiError(413, 'photoTooLarge');
+		}
+		chunks.push(value);
+	}
+	return Buffer.concat(chunks);
+}

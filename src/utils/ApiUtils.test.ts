@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { apiError, errorResponse } from './ApiUtils';
+import { ApiError, apiError, errorResponse, readBodyCapped } from './ApiUtils';
 import { JsonApiError } from './ErrorUtils';
 
 // The client's FetchUtils and JsonApiError only understand the `{ error, message, statusCode }`
@@ -55,5 +55,35 @@ describe('apiError', () => {
 	it('words the generic 500 in the request language too', async () => {
 		const response = errorResponse(new Error('secret'), 'pt');
 		expect((await response.json()).message).toBe('Erro interno do servidor.');
+	});
+});
+
+const put = (body: BodyInit, headers: Record<string, string> = {}) =>
+	new Request('http://test/upload', { method: 'PUT', body, headers, duplex: 'half' } as RequestInit);
+
+// A body that says nothing about its length up front.
+const stream = (sizes: number[]) =>
+	new ReadableStream<Uint8Array>({
+		start(controller) {
+			sizes.forEach((size) => controller.enqueue(new Uint8Array(size)));
+			controller.close();
+		},
+	});
+
+describe('readBodyCapped', () => {
+	it('returns a body within the cap', async () => {
+		expect((await readBodyCapped(put(new Uint8Array(10)), 10)).length).toBe(10);
+	});
+
+	it('refuses on the declared length before reading', async () => {
+		await expect(readBodyCapped(put(new Uint8Array(1), { 'content-length': '11' }), 10)).rejects.toMatchObject({
+			statusCode: 413,
+		});
+	});
+
+	it('stops reading a streamed body once it passes the cap', async () => {
+		const error = await readBodyCapped(put(stream([6, 6, 6])), 10).catch((e) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.statusCode).toBe(413);
 	});
 });

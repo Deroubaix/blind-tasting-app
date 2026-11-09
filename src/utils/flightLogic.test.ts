@@ -18,6 +18,12 @@ describe('flight codes', () => {
 		expect(CODE_ALPHABET).not.toMatch(/[01OIL]/);
 	});
 
+	it('use every letter of the alphabet, and rarely repeat', () => {
+		const codes = Array.from({ length: 2000 }, () => newFlightCode());
+		expect(new Set(codes.join('')).size).toBe(CODE_ALPHABET.length);
+		expect(new Set(codes).size).toBeGreaterThan(1990);
+	});
+
 	it('read back whatever the taster typed', () => {
 		expect(normalizeCode(' b7k-q4m ')).toBe('B7KQ4M');
 		expect(formatCode('B7KQ4M')).toBe('B7K·Q4M');

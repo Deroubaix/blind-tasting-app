@@ -1,4 +1,5 @@
-import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError, readBodyCapped } from '../../../../utils/ApiUtils';
+import { MAX_PHOTO_BYTES } from '../../../../utils/PhotoKeyUtils';
 import { getLang } from '../../../../i18n/server';
 import ServerServices from '../../../../services/server/ServerServices';
 import PhotoService from '../../../../services/server/PhotoService';
@@ -8,9 +9,7 @@ export async function PUT(request: Request) {
 	try {
 		const userId = await ServerServices.getClass(SessionService).requireUserId();
 		const key = new URL(request.url).searchParams.get('key') ?? '';
-		await ServerServices.getClass(PhotoService).upload(userId, key, async () =>
-			Buffer.from(await request.arrayBuffer()),
-		);
+		await ServerServices.getClass(PhotoService).upload(userId, key, () => readBodyCapped(request, MAX_PHOTO_BYTES));
 		return jsonResponse({ ok: true });
 	} catch (error) {
 		logServerError('PUT /api/photos/upload', error);

@@ -10,10 +10,18 @@ export const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 export const CODE_LENGTH = 6;
 export const MAX_WINES = 12;
 
-export function newFlightCode(random: () => number = Math.random): string {
-	return Array.from({ length: CODE_LENGTH }, () => CODE_ALPHABET[Math.floor(random() * CODE_ALPHABET.length)]).join(
-		'',
-	);
+/** From the platform's secure random source; bytes past the last whole alphabet are redrawn so no letter is favoured. */
+export function newFlightCode(): string {
+	const limit = 256 - (256 % CODE_ALPHABET.length);
+	let code = '';
+	while (code.length < CODE_LENGTH) {
+		for (const byte of crypto.getRandomValues(new Uint8Array(CODE_LENGTH))) {
+			if (byte < limit && code.length < CODE_LENGTH) {
+				code += CODE_ALPHABET[byte % CODE_ALPHABET.length];
+			}
+		}
+	}
+	return code;
 }
 
 /** Uppercased, with spaces, dashes and the dot dropped: " b7k-q4m " → "B7KQ4M". */
