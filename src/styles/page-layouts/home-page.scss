@@ -405,18 +405,34 @@
 	gap: 14px;
 	padding-block: 40px 48px;
 
+	&__greeting {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
 	&__title {
 		margin: 0;
-		font-size: 2.75rem;
+		font-size: 4rem;
 		line-height: 1.05;
 	}
 
 	&__cols {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 24px 32px;
-		margin-top: 14px;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		gap: 40px 56px;
+		margin-top: 18px;
 		align-items: start;
+	}
+
+	&__stack {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+	}
+
+	.home-rows > li + li {
+		border-top: 1px solid $rule;
 	}
 
 	&__col {
@@ -450,6 +466,67 @@
 		.home-link {
 			font-size: $text-14;
 		}
+	}
+}
+
+// A recent tasting or a flight: the wine's colour, the title, the score or next step, and a line of detail.
+.home-recent {
+	display: grid;
+	grid-template-columns: 9px minmax(0, 1fr) auto;
+	gap: 2px 10px;
+	align-items: center;
+	padding: 12px 0;
+	color: $color-ink;
+
+	&--link {
+		grid-template-columns: minmax(0, 1fr) auto;
+
+		&:hover .home-recent__title {
+			color: $color-link;
+		}
+	}
+
+	&__dot {
+		width: 9px;
+		height: 9px;
+		border: 1px solid $color-text-secondary;
+		border-radius: 50%;
+
+		&--red {
+			border-color: $color-link;
+			background: $color-link;
+		}
+
+		&--white {
+			border-color: $color-bar-white;
+			background: $color-bar-white;
+		}
+	}
+
+	&__title {
+		grid-column: -3;
+		min-width: 0;
+		font-size: $text-16;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
+
+		&:hover {
+			color: $color-link;
+		}
+	}
+
+	&__end {
+		grid-column: -2;
+		grid-row: 1 / span 2;
+		justify-self: end;
+		font-size: $text-14;
+	}
+
+	&__meta {
+		grid-column: -3;
+		min-width: 0;
+		font-size: $text-14;
+		color: $color-text-secondary;
 	}
 }
 
@@ -574,6 +651,6 @@
 	}
 
 	.home-dash__title {
-		font-size: 2.25rem;
+		font-size: 2.875rem;
 	}
 }
