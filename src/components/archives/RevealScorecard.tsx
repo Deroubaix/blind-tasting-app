@@ -1,51 +1,38 @@
 'use client';
 
 import Link from 'next/link';
-import { IconBan, IconCheck, IconMinus, IconTilde, IconX } from '@tabler/icons-react';
+import Mark from '../misc/Mark';
 import { type Comparison, type ComparedField, type FieldStatus } from '../../utils/revealScore';
 import { useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
 
-/** Every status has an icon and a word (scorecard.status), so none relies on colour alone. */
-const STATUS_ICON: Record<FieldStatus, typeof IconCheck> = {
-	correct: IconCheck,
-	close: IconTilde,
-	wrong: IconX,
-	notcalled: IconMinus,
-	na: IconBan,
-};
-
+/** The mark with its word under it, so no status relies on the mark alone. */
 export function StatusBadge({ status }: { status: FieldStatus }) {
 	const word = useText(archivesText).scorecard.status[status];
-	const Icon = STATUS_ICON[status];
 	return (
 		<span className={`reveal-status reveal-status--${status}`}>
-			<Icon size={12} stroke={2.2} aria-hidden="true" />
-			{word}
+			<Mark status={status} size={22} />
+			<span className="reveal-status__word">{word}</span>
 		</span>
 	);
 }
 
-/** One field: your call, the label where it differs, and the result. */
+/** One field: your call, the label's correction under it where it differs, and the mark. */
 function FieldRow({ field }: { field: ComparedField }) {
 	const { scorecard: t } = useText(archivesText);
 	const differs = field.status !== 'correct' && field.actual;
 	return (
 		<li className="scorecard__row">
-			<span>
-				<span className="scorecard__field">{field.label}</span>
+			<span className="scorecard__field">{field.label}</span>
+			<span className="scorecard__call">
 				{field.call ?? <span className="scorecard__blank">{t.leftBlank}</span>}
-				{(differs || field.note) && (
-					<span className="scorecard__label">
-						{differs && (
-							<>
-								{t.label}: <b>{field.actual}</b>
-							</>
-						)}
-						{differs && field.note && ' · '}
-						{field.note}
+				{differs && (
+					<span className="scorecard__fix">
+						<span className="visually-hidden">{t.label}: </span>
+						{field.actual}
 					</span>
 				)}
+				{field.note && <span className="scorecard__note">{field.note}</span>}
 			</span>
 			<StatusBadge status={field.status} />
 		</li>

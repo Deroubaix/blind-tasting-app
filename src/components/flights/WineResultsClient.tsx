@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { IconArrowsSplit2, IconCheck, IconChevronLeft, IconChevronRight, IconTilde } from '@tabler/icons-react';
 import { useModalProvider } from '../modal/ModalProvider';
 import { StatusBadge } from '../archives/RevealScorecard';
+import Mark from '../misc/Mark';
 import { type FieldStatus, scoredFields } from '../../utils/revealScore';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type WineResultRow, type WineResults } from '../../types/Flight';
@@ -383,6 +384,7 @@ export default function WineResultsClient({ code, number }: { code: string; numb
 												<span className="visually-hidden">
 													{byKey(t.field, field.key, field.label)}:{' '}
 												</span>
+												<Mark status={status} size={14} />
 												{cell?.call ?? '—'}
 												<span className="visually-hidden">, {word}</span>
 											</li>

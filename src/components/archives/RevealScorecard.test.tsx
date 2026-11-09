@@ -30,7 +30,7 @@ describe('RevealScorecard', () => {
 
 	it('gives the label only where the call differs from it', () => {
 		const { container } = render(<RevealScorecard comparison={comparison} onEdit={() => {}} />);
-		const labels = [...container.querySelectorAll('.scorecard__label b')].map((b) => b.textContent);
+		const labels = [...container.querySelectorAll('.scorecard__fix')].map((el) => el.lastChild?.textContent);
 		expect(labels).toEqual(['Chambolle-Musigny', '2018']); // region close, vintage not called
 	});
 

@@ -377,6 +377,19 @@ body.menu-open {
 			font-size: $text-15;
 		}
 	}
+
+	// "Começar" is wider than "Start"; at 390 it pushed the avatar off the edge.
+	@include responsive(25rem) {
+		gap: 8px;
+
+		.wordmark {
+			font-size: 1.0625rem;
+		}
+
+		&__start {
+			padding: 0 12px;
+		}
+	}
 }
 
 // ── Phone: the Start sheet and the full menu ─────────────────────────────────

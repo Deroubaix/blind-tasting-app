@@ -824,11 +824,21 @@
 
 	&__legend {
 		display: flex;
-		gap: $spacing-sm;
+		gap: 6px 16px;
 		flex-wrap: wrap;
 		margin: 0;
 		padding-top: 10px;
 		border-top: 1px solid $rule;
+
+		.reveal-status {
+			flex-direction: row;
+			align-items: center;
+			gap: 4px;
+		}
+
+		.reveal-status__word {
+			font-size: $text-13;
+		}
 	}
 }
 
@@ -936,40 +946,12 @@
 	}
 
 	&__field {
-		--tone: #{$color-text-secondary};
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
-		padding: 4px 10px;
-		border-radius: $radius-pill;
-		background: $color-raised;
+		gap: 4px;
+		padding: 2px 10px 2px 0;
+		font-family: $font-mono;
 		font-size: $text-14;
-
-		&::before {
-			content: '';
-			flex-shrink: 0;
-			width: 7px;
-			height: 7px;
-			border-radius: 50%;
-			background: var(--tone);
-		}
-
-		&--correct {
-			--tone: #{$color-ok};
-		}
-
-		&--close {
-			--tone: #{$color-close};
-		}
-
-		&--wrong {
-			--tone: #{$color-error};
-		}
-
-		&--na::before {
-			background: transparent;
-			border: 1px solid $rule-mid;
-		}
 	}
 
 	&__row--missing &__name {

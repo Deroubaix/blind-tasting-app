@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import CodeForm from '../layout/CodeForm';
 import RevealOnScroll from './RevealOnScroll';
+import Mark from '../misc/Mark';
 import { compareReveal, type FieldStatus, type Reveal } from '../../utils/revealScore';
 import { formatDecimal } from '../../utils/NumberUtils';
 import { type homeText } from '../../i18n/home';
@@ -82,32 +83,6 @@ const SAMPLE_CALL = {
 
 export const sampleScorecard = (lang: Lang) => compareReveal(SAMPLE_CALL, SAMPLE_LABEL, null, 'cms', lang);
 
-const TICK = 'M4.5 12.5l4.5 5L19.5 5.5';
-const TILDE = 'M4 13.5c2.5-3.5 5-3.5 8 0s5.5 3.5 8 0';
-const CROSS = 'M6.5 6.5l11 11M17.5 6.5l-11 11';
-const MARK_PATHS: Record<FieldStatus, string> = {
-	correct: TICK,
-	close: TILDE,
-	wrong: CROSS,
-	notcalled: CROSS,
-	na: 'M6 12h12',
-};
-
-/** A marker's tick, tilde or cross in the margin; the status word is there for screen readers. */
-export function Mark({ status, word, delay }: { status: FieldStatus; word: string; delay?: number }) {
-	return (
-		<span
-			className={`home-mark home-mark--${status}`}
-			style={delay === undefined ? undefined : { transitionDelay: `${delay}s` }}
-		>
-			<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-				<path d={MARK_PATHS[status]} />
-			</svg>
-			<span className="visually-hidden">{word}</span>
-		</span>
-	);
-}
-
 function Steps({ steps }: { steps: Record<string, readonly string[]> }) {
 	return (
 		<ol className="home-steps">
@@ -183,7 +158,12 @@ export default function HomeIntro({ t, status, lang }: { t: HomeT; status: Recor
 										</>
 									)}
 								</span>
-								<Mark status={field.status} word={status[field.status]} delay={0.2 + i * 0.35} />
+								<Mark
+									status={field.status}
+									word={status[field.status]}
+									delay={0.2 + i * 0.35}
+									className="home-mark"
+								/>
 							</div>
 						))}
 						<div className="home-sheet__total">

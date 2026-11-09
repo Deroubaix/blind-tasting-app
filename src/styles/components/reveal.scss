@@ -9,23 +9,18 @@
 }
 
 // Before the palette, so each status modifier's --tone wins.
+// A mark with its word under it (see RevealScorecard).
 .reveal-status {
-	@include ledger-tag;
-}
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 2px;
 
-// ── Status palette ────────────────────────────────────────────────────────────
-// One colour per status, always paired with an icon and a word (see RevealScorecard).
-$reveal-statuses: (
-	correct: $color-ok,
-	close: $color-close,
-	wrong: $color-error,
-	notcalled: $color-text-secondary,
-	na: $color-text-secondary,
-);
-
-@each $status, $colour in $reveal-statuses {
-	.reveal-status--#{$status} {
-		--tone: #{$colour};
+	&__word {
+		font-size: $text-11;
+		line-height: 1.1;
+		color: $color-text-secondary;
+		white-space: nowrap;
 	}
 }
 
@@ -158,7 +153,18 @@ $reveal-statuses: (
 	}
 }
 
-// ── 3. The scorecard ──────────────────────────────────────────────────────────
+// ── 3. The scorecard: the sheet, marked ───────────────────────────────────────
+.detail-card.scorecard {
+	background: $color-card;
+	border: 1px solid $color-ink;
+	border-radius: 0;
+
+	.detail-card__head {
+		padding-bottom: 8px;
+		border-bottom: 1px solid $color-ink;
+	}
+}
+
 .scorecard {
 	&__rows {
 		margin: 0;
@@ -172,36 +178,55 @@ $reveal-statuses: (
 
 	&__row {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 4px 12px;
-		align-items: center;
+		grid-template-columns: 96px minmax(0, 1fr) auto;
+		gap: 0 12px;
+		align-items: baseline;
 		padding: 10px 0;
 		font-size: $text-16;
 
 		& + & {
 			border-top: 1px solid $rule;
 		}
+
+		.reveal-status {
+			align-self: center;
+		}
 	}
 
 	&__field {
-		display: block;
-		font-size: $text-13;
+		min-width: 0;
+		font-size: $text-14;
 		color: $color-text-secondary;
+		// "denominação" is wider than the phone column.
+		hyphens: auto;
+		overflow-wrap: anywhere;
+	}
+
+	&__call {
+		min-width: 0;
+		font-family: $font-mono;
+		overflow-wrap: anywhere;
 	}
 
 	&__blank {
+		font-family: $font-sans;
 		color: $color-text-secondary;
 	}
 
-	&__label {
+	// The marker's correction, written under the call.
+	&__fix {
 		display: block;
-		font-size: $text-14;
-		color: $color-text-secondary;
+		margin-top: 2px;
+		font-family: $font-serif;
+		font-style: italic;
+		color: $color-link;
+	}
 
-		b {
-			font-weight: $font-weight-semibold;
-			color: $color-ink;
-		}
+	&__note {
+		display: block;
+		font-family: $font-sans;
+		font-size: $text-13;
+		color: $color-text-secondary;
 	}
 
 	&__shortlist,
@@ -215,6 +240,13 @@ $reveal-statuses: (
 	&__shortlist b {
 		font-weight: $font-weight-semibold;
 		color: $color-ink;
+	}
+}
+
+@include responsive($breakpoint-mobile) {
+	.scorecard__row {
+		grid-template-columns: 72px minmax(0, 1fr) auto;
+		gap: 0 10px;
 	}
 }
 
