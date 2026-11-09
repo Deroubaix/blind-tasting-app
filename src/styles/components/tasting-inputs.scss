@@ -73,7 +73,7 @@
 		padding: 20px;
 
 		.tasting-card__label {
-			color: $tasting-on-light-accent;
+			color: $tasting-on-light-strong;
 		}
 	}
 }
@@ -120,13 +120,6 @@
 		border: none;
 		border-top: 1px solid $rule;
 		border-radius: 0;
-	}
-
-	.tasting-divider {
-		margin: 0 0 12px;
-		padding: 16px 0 0;
-		border-bottom: none;
-		border-top: 1px solid $rule;
 	}
 
 	// Headings over groups are Caslon italic; a section that folds is a sans row, as in V4.
@@ -236,17 +229,6 @@
 		font-weight: $font-weight-semibold;
 		color: $color-ink;
 	}
-}
-
-// ── Section divider (a section label on a rule) ───────────────────────────────
-.tasting-divider {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	width: 100%;
-	margin: $spacing-xl 0 $spacing-md;
-	padding-bottom: $spacing-sm;
-	border-bottom: 1px solid $rule-soft;
 }
 
 // ── Aside: the muted italic note beside a label ───────────────────────────────

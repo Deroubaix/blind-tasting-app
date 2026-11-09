@@ -1,5 +1,5 @@
 // The WSET Level 3 screens reuse the phase-page vocabulary (tasting-grid, tasting-card, tasting-option,
-// tasting-group, tasting-divider). Only what the SAT adds lives here.
+// tasting-group, sheet-group). Only what the SAT adds lives here.
 @use '../abstracts' as *;
 
 // The colour swatch inside an option: a tint before the term, since the SAT names colours, not hues.
@@ -15,6 +15,17 @@
 
 .wset-group {
 	margin-top: $spacing-lg;
+
+	&.sheet-group {
+		margin-bottom: 0;
+	}
+
+	// A heading over the aroma groups: the first group sits under it without a second rule.
+	&--lead + .sheet-group {
+		margin-top: 0;
+		padding-top: 0;
+		border-top: none;
+	}
 }
 
 .wset-lede {

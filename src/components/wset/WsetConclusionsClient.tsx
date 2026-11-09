@@ -164,10 +164,8 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 						/>
 					</div>
 
-					<div className="wset-group">
-						<div className="tasting-divider">
-							<span className="section-label">{t.wineItself}</span>
-						</div>
+					<div className="wset-group sheet-group">
+						<h2 className="section-label">{t.wineItself}</h2>
 						<p className="wset-lede">{t.identityLede}</p>
 					</div>
 					<div className="tasting-grid">

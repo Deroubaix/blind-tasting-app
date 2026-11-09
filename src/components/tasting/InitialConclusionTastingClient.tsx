@@ -63,8 +63,10 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 		>
 			{/* Cells in grid order (grapes, climate, countries, age), so rows and the phone stack both read right. */}
 			<div className="tasting-grid tasting-grid--2 ic-grid">
-				<div className="ic-col">
-					<div className="section-label">{t.varietal}</div>
+				<section className="ic-col sheet-group" aria-labelledby="ic-varietal">
+					<h2 className="section-label" id="ic-varietal">
+						{t.varietal}
+					</h2>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label">{t.grapes}</div>
@@ -105,10 +107,12 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 							</div>
 						)}
 					</div>
-				</div>
+				</section>
 
-				<div className="ic-col">
-					<div className="section-label">{t.environment}</div>
+				<section className="ic-col sheet-group" aria-labelledby="ic-environment">
+					<h2 className="section-label" id="ic-environment">
+						{t.environment}
+					</h2>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label" id="ic-climate-label">
@@ -131,10 +135,12 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 							))}
 						</div>
 					</div>
-				</div>
+				</section>
 
-				<div className="ic-col">
-					<div className="section-label">{t.geographic}</div>
+				<section className="ic-col sheet-group" aria-labelledby="ic-geographic">
+					<h2 className="section-label" id="ic-geographic">
+						{t.geographic}
+					</h2>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label">{t.countries}</div>
@@ -178,10 +184,12 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 							</div>
 						)}
 					</div>
-				</div>
+				</section>
 
-				<div className="ic-col">
-					<div className="section-label">{t.maturity}</div>
+				<section className="ic-col sheet-group" aria-labelledby="ic-maturity">
+					<h2 className="section-label" id="ic-maturity">
+						{t.maturity}
+					</h2>
 
 					<div className="tasting-card">
 						<div className="tasting-card__label" id="ic-age-label">
@@ -200,7 +208,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 							))}
 						</div>
 					</div>
-				</div>
+				</section>
 			</div>
 		</TastingPhaseLayout>
 	);

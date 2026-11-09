@@ -106,10 +106,10 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 	return (
 		<>
 			{AROMA_GROUPS.map((group) => (
-				<div key={group} className="wset-group">
-					<div className="tasting-divider">
-						<span className="section-label">{t.groups[group]}</span>
-					</div>
+				<section key={group} className="wset-group sheet-group" aria-labelledby={`aroma-${group}`}>
+					<h2 className="section-label" id={`aroma-${group}`}>
+						{t.groups[group]}
+					</h2>
 					<div className="tasting-grid tasting-grid--2">
 						{clusters
 							.filter((cluster) => cluster.group === group)
@@ -192,7 +192,7 @@ export function DescriptorClusters({ wineType, selected, custom, onToggle, onAdd
 								);
 							})}
 					</div>
-				</div>
+				</section>
 			))}
 		</>
 	);

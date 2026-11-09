@@ -10,4 +10,8 @@
 // Air above each heading in the second row and in the phone stack, as between .sheet-groups.
 .tasting-grid.ic-grid {
 	row-gap: 28px;
+
+	> .sheet-group {
+		margin-bottom: 0;
+	}
 }

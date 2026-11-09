@@ -273,14 +273,16 @@ export default function NoseTastingClient({ wineType }: { wineType: 'red' | 'whi
 				</section>
 			))}
 
-			<section className="tasting-card tasting-section">
-				<h2 className="section-label">{t.fruit}</h2>
+			<section className="sheet-group" aria-labelledby="nose-fruit">
+				<h2 className="section-label" id="nose-fruit">
+					{t.fruit}
+				</h2>
 				{FRUIT_FAMILIES[wineType].map((cat) => (
 					<div key={cat} className="tasting-group">
 						{renderFruitCategory(cat)}
 					</div>
 				))}
-				<div className="tasting-section__sub">{renderCategory('Fruit Condition')}</div>
+				<div className="tasting-q">{renderCategory('Fruit Condition')}</div>
 			</section>
 
 			<section className="tasting-card tasting-section">

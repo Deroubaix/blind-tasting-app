@@ -72,10 +72,8 @@ export default function WsetPalateClient({ wineType }: { wineType: 'red' | 'whit
 				))}
 			</div>
 
-			<div className="wset-group">
-				<div className="tasting-divider">
-					<span className="section-label">{word(WSET_FLAVOUR_KEY)}</span>
-				</div>
+			<div className="wset-group wset-group--lead sheet-group">
+				<h2 className="section-label">{word(WSET_FLAVOUR_KEY)}</h2>
 				<p className="wset-lede">{t.flavourLede}</p>
 			</div>
 			<DescriptorClusters
