@@ -42,6 +42,13 @@ export const PALATE_OPTIONS: Record<WineType, Record<string, string[]>> = {
 	},
 };
 
+/** The structure questions in three groups, in grid order; each wine type uses the keys it has. */
+export const PALATE_GROUPS = [
+	['structure', ['Sweetness', 'Acidity', 'Alcohol', 'Body', 'Tannin Volume', 'Phenolic Bitterness']],
+	['texture', ['Tannin Texture', 'Texture']],
+	['finish', ['Balance', 'Length of Finish', 'Complexity']],
+] as const;
+
 /** Free-text note paired with Balance: what dominates the wine. Stored under this key. */
 export const BALANCE_NOTE = 'Dominant Element(s)';
 

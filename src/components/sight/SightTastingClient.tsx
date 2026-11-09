@@ -139,7 +139,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 			}}
 		>
 			{/* Three groups in 2024 CMS grid order; Rim Variation and Staining are red only. */}
-			<section className="sight-group" aria-labelledby="sight-clarity">
+			<section className="sheet-group" aria-labelledby="sight-clarity">
 				<h2 className="section-label" id="sight-clarity">
 					{t.groupClarity}
 				</h2>
@@ -156,7 +156,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				</div>
 			</section>
 
-			<section className="sight-group" aria-labelledby="sight-colour">
+			<section className="sheet-group" aria-labelledby="sight-colour">
 				<h2 className="section-label" id="sight-colour">
 					{t.groupColour}
 				</h2>
@@ -179,7 +179,7 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				</div>
 			</section>
 
-			<section className="sight-group" aria-labelledby="sight-glass">
+			<section className="sheet-group" aria-labelledby="sight-glass">
 				<h2 className="section-label" id="sight-glass">
 					{t.groupGlass}
 				</h2>

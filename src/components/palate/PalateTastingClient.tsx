@@ -5,7 +5,15 @@ import { useTastingContext } from '../tasting/TastingContext';
 import TastingPhaseLayout from '../layout/TastingPhaseLayout';
 import { useText } from '../../i18n/LanguageProvider';
 import { tastingText } from '../../i18n/tasting';
-import { BALANCE_NOTE, CONFIRM_ROWS, PALATE_OPTIONS, confirmKey, confirmOptions, palateRequired } from './palateFields';
+import {
+	BALANCE_NOTE,
+	CONFIRM_ROWS,
+	PALATE_GROUPS,
+	PALATE_OPTIONS,
+	confirmKey,
+	confirmOptions,
+	palateRequired,
+} from './palateFields';
 
 export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'white' }) {
 	const router = useRouter();
@@ -57,55 +65,66 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 				nextDisabled: !requiredFilled,
 			}}
 		>
-			{/* 2-column category grid */}
-			<div className="tasting-grid tasting-grid--2">
-				{Object.entries(currentOptions).map(([category, options]) => (
-					<div key={category} className="tasting-card">
-						<div className="tasting-card__label">
-							{category}
-							{required.has(category) && (
-								<span className="tasting-card__required" aria-label={t.required}>
-									*
-								</span>
-							)}
-						</div>
-						<div className="tasting-options" role="group" aria-label={category}>
-							{options.map((option) => {
-								const selected = selectedOptions[category] === option;
+			{PALATE_GROUPS.map(([group, keys]) => (
+				<section key={group} className="sheet-group" aria-labelledby={`palate-${group}`}>
+					<h2 className="section-label" id={`palate-${group}`}>
+						{t.groups[group]}
+					</h2>
+					<div className="tasting-grid tasting-grid--2">
+						{keys
+							.filter((category) => category in currentOptions)
+							.map((category) => {
+								const options = currentOptions[category];
 								return (
-									<button
-										key={option}
-										className={`tasting-option${selected ? ' tasting-option--selected' : ''}`}
-										aria-pressed={selected}
-										onClick={() => toggleAnswer(category, option)}
-									>
-										{option}
-									</button>
+									<div key={category} className="tasting-card">
+										<div className="tasting-card__label">
+											{category}
+											{required.has(category) && (
+												<span className="tasting-card__required" aria-label={t.required}>
+													*
+												</span>
+											)}
+										</div>
+										<div className="tasting-options" role="group" aria-label={category}>
+											{options.map((option) => {
+												const selected = selectedOptions[category] === option;
+												return (
+													<button
+														key={option}
+														className={`tasting-option${selected ? ' tasting-option--selected' : ''}`}
+														aria-pressed={selected}
+														onClick={() => toggleAnswer(category, option)}
+													>
+														{option}
+													</button>
+												);
+											})}
+										</div>
+										{/* The grid asks what dominates the wine alongside the yes/no. */}
+										{category === 'Balance' && (
+											<input
+												type="text"
+												className="tasting-input tasting-input--block"
+												aria-label={t.balanceAria}
+												placeholder={t.balancePlaceholder}
+												maxLength={120}
+												value={selectedOptions[BALANCE_NOTE] ?? ''}
+												onChange={(e) => setAnswer(BALANCE_NOTE, e.target.value)}
+											/>
+										)}
+									</div>
 								);
 							})}
-						</div>
-						{/* The grid asks what dominates the wine alongside the yes/no. */}
-						{category === 'Balance' && (
-							<input
-								type="text"
-								className="tasting-input tasting-input--block"
-								aria-label={t.balanceAria}
-								placeholder={t.balancePlaceholder}
-								maxLength={120}
-								value={selectedOptions[BALANCE_NOTE] ?? ''}
-								onChange={(e) => setAnswer(BALANCE_NOTE, e.target.value)}
-							/>
-						)}
 					</div>
-				))}
-			</div>
+				</section>
+			))}
 
 			{/* Confirm from the nose: six rows, one tap each, plus an optional note. */}
-			<div className="palate-notes tasting-card">
-				<div className="tasting-card__head">
-					<span className="tasting-card__label" id="palate-confirm-label">
+			<section className="sheet-group" aria-labelledby="palate-confirm-label">
+				<div className="sheet-group__head">
+					<h2 className="section-label" id="palate-confirm-label">
 						{t.confirm}
-					</span>
+					</h2>
 					<span className="tasting-aside">{t.anythingChanged}</span>
 				</div>
 				<div className="palate-confirm" role="group" aria-labelledby="palate-confirm-label">
@@ -150,7 +169,7 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 					value={confirmNose}
 					onChange={(e) => updateTastingData({ confirmNose: e.target.value })}
 				/>
-			</div>
+			</section>
 		</TastingPhaseLayout>
 	);
 }

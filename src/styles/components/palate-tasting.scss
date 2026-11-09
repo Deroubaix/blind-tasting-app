@@ -3,10 +3,6 @@
 // Palate Assessment page. Grid, cards and fields come from tasting-inputs.
 
 // ── Confirm from the Nose ─────────────────────────────────────────────────────
-.palate-notes {
-	margin-bottom: $spacing-lg;
-}
-
 .palate-confirm {
 	display: flex;
 	flex-direction: column;
@@ -22,9 +18,9 @@
 
 	&__label {
 		display: block;
-		font-size: $text-13;
-		font-weight: $font-weight-regular;
-		color: $color-text-secondary;
+		font-size: $text-16;
+		font-weight: $font-weight-semibold;
+		color: $color-ink;
 
 		// The note's label sits above its field rather than beside a row.
 		&--field {
