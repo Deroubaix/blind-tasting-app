@@ -19,7 +19,7 @@ import { type Grid } from '../data/grids';
 import { CORE_LIST, interchangeable } from '../components/archives/coreList';
 import { archivesText } from '../i18n/archives';
 import { DEFAULT_LANG, type Lang } from '../i18n';
-import { termIn } from '../i18n/terms';
+import { COUNTRIES_PT, termIn } from '../i18n/terms';
 
 export type Reveal = {
 	/** The WSET answer key: the tutor's quality level and readiness. Absent on a CMS reveal. */
@@ -129,10 +129,15 @@ const WSET_SCALES: Partial<Record<RevealField, string[]>> = {
 
 const clean = (value: string | null | undefined) => (value ?? '').trim() || null;
 
-// Each name in a core-list synonym pair ("Syrah/Shiraz") stands for the whole pair.
+// Each name in a core-list synonym pair ("Syrah/Shiraz") stands for the whole pair, and so does a
+// country named in Portuguese ("França" for France).
 const SYNONYMS = new Map<string, string[]>();
-for (const { grape } of CORE_LIST) {
-	const names = grape.split('/').map(fold);
+const pairs = [
+	...CORE_LIST.map(({ grape }) => grape.split('/')),
+	...Object.entries(COUNTRIES_PT).filter(([en, pt]) => en !== pt),
+];
+for (const pair of pairs) {
+	const names = pair.map(fold);
 	if (names.length > 1) {
 		names.forEach((name) => SYNONYMS.set(name, names));
 	}
@@ -332,22 +337,28 @@ export function describeCall(
 	lang: Lang = DEFAULT_LANG,
 ): string {
 	if (grid !== 'wset') {
-		return describeWine(call);
+		return describeWine(call, lang);
 	}
 	const assessment = [clean(call?.qualityAssessment), clean(call?.readiness)]
 		.filter((value): value is string => Boolean(value))
 		.map((value) => termIn(lang, value))
 		.join(' · ');
-	const identity = describeWine(call);
+	const identity = describeWine(call, lang);
 	return [assessment, identity].filter(Boolean).join(' — ');
 }
 
 /** "Pinot Noir, Chambolle-Musigny, France — 2018" — the same shape as the call's subtitle. */
-export function describeWine(wine: Reveal | Record<string, string | null | undefined> | null | undefined): string {
+export function describeWine(
+	wine: Reveal | Record<string, string | null | undefined> | null | undefined,
+	lang: Lang = DEFAULT_LANG,
+): string {
 	if (!wine) {
 		return '';
 	}
-	const parts = [wine.grapeVariety, wine.regionAppellation, wine.countryOfOrigin].map(clean).filter(Boolean);
+	const country = clean(wine.countryOfOrigin);
+	const parts = [clean(wine.grapeVariety), clean(wine.regionAppellation), country && termIn(lang, country)].filter(
+		Boolean,
+	);
 	const vintage = clean(wine.vintage);
 	return parts.length ? `${parts.join(', ')}${vintage ? ` — ${vintage}` : ''}` : (vintage ?? '');
 }

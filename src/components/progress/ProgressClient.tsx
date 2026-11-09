@@ -8,6 +8,7 @@ import { formatMonth, formatMonthYear, formatShortDate } from '../../utils/DateU
 import { formatDecimal } from '../../utils/NumberUtils';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { progressText } from '../../i18n/progress';
+import { useTerm } from '../../i18n/useTerm';
 import {
 	MIN_FOR_TREND,
 	ROLLING_WINDOW,
@@ -445,6 +446,7 @@ function ConfusionList({
 	pairs: { call: string; actual: string; n: number; of: number }[];
 	t: T;
 }) {
+	const term = useTerm();
 	return (
 		<>
 			<h3 className="progress-list-label">{title}</h3>
@@ -454,9 +456,9 @@ function ConfusionList({
 					<div key={`${pair.call}-${pair.actual}`} className="progress-pair-row">
 						<span className="progress-pair-row__text">
 							{t.confuse.youCall}
-							<strong>{pair.call}</strong>
+							<strong>{term(pair.call)}</strong>
 							{t.confuse.itWas}
-							<strong>{pair.actual}</strong>
+							<strong>{term(pair.actual)}</strong>
 						</span>
 						<div className="progress-pair-row__count">
 							{pair.of <= MAX_TALLY && (

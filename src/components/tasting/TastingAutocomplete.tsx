@@ -17,6 +17,8 @@ interface Props {
 	id?: string;
 	/** Name for screen readers when there is no <label> pointing at `id`. */
 	ariaLabel?: string;
+	/** Shown and searched in place of each suggestion; what's confirmed is still the suggestion. */
+	labelOf?: (suggestion: string) => string;
 }
 
 /**
@@ -32,6 +34,7 @@ export default function TastingAutocomplete({
 	icon,
 	id,
 	ariaLabel,
+	labelOf,
 }: Props) {
 	const t = useText(tastingText).inputs;
 	const listId = useId();
@@ -40,13 +43,15 @@ export default function TastingAutocomplete({
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const wrapRef = useRef<HTMLDivElement>(null);
 
-	const filtered = matchSuggestions(value, suggestions);
+	const shown = labelOf ? suggestions.map((suggestion) => labelOf(suggestion)) : suggestions;
+	const stored = (label: string) => suggestions[shown.indexOf(label)] ?? label;
+	const filtered = matchSuggestions(value, shown);
 
 	const showDropdown = open && filtered.length > 0;
 	const { dropUp, maxHeight } = useDropPlacement(wrapRef, showDropdown);
 
 	const select = (suggestion: string) => {
-		onConfirm(suggestion);
+		onConfirm(stored(suggestion));
 		setOpen(false);
 		setActiveIndex(-1);
 	};
@@ -64,7 +69,7 @@ export default function TastingAutocomplete({
 			if (activeIndex >= 0 && filtered[activeIndex]) {
 				select(filtered[activeIndex]);
 			} else {
-				onConfirm(resolveEnter(value, suggestions));
+				onConfirm(stored(resolveEnter(value, shown)));
 				setOpen(false);
 			}
 		} else if (e.key === 'Escape') {

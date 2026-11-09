@@ -17,6 +17,7 @@ export function ChipSearchField({
 	suggestions,
 	placeholder,
 	icon,
+	labelOf = (value) => value,
 }: {
 	id: string;
 	label: string;
@@ -27,6 +28,8 @@ export function ChipSearchField({
 	suggestions: string[];
 	placeholder: string;
 	icon: ReactNode;
+	/** For suggestions stored in English but shown in the reader's language (countries). */
+	labelOf?: (value: string) => string;
 }) {
 	const text = useText(tastingText);
 	const [input, setInput] = useState('');
@@ -45,11 +48,11 @@ export function ChipSearchField({
 			{value ? (
 				<div className="tasting-chips">
 					<span className="tasting-chip">
-						{value}
+						{labelOf(value)}
 						<button
 							type="button"
 							className="tasting-chip__remove"
-							aria-label={text.remove(value)}
+							aria-label={text.remove(labelOf(value))}
 							onClick={() => onChange(null)}
 						>
 							×
@@ -61,6 +64,7 @@ export function ChipSearchField({
 					<TastingAutocomplete
 						id={id}
 						suggestions={suggestions}
+						labelOf={labelOf}
 						value={input}
 						onChange={setInput}
 						onConfirm={confirm}

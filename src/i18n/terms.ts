@@ -4,8 +4,37 @@
 
 import { type Lang } from './index';
 
+/** The country list's names in Portuguese; a call typed either way scores the same (revealScore). */
+export const COUNTRIES_PT: Record<string, string> = {
+	France: 'França',
+	Italy: 'Itália',
+	Spain: 'Espanha',
+	Germany: 'Alemanha',
+	Portugal: 'Portugal',
+	Austria: 'Áustria',
+	Greece: 'Grécia',
+	Hungary: 'Hungria',
+	'United States': 'Estados Unidos',
+	Australia: 'Austrália',
+	'New Zealand': 'Nova Zelândia',
+	Argentina: 'Argentina',
+	Chile: 'Chile',
+	'South Africa': 'África do Sul',
+	Canada: 'Canadá',
+	Georgia: 'Geórgia',
+	Israel: 'Israel',
+	Lebanon: 'Líbano',
+	Switzerland: 'Suíça',
+	Romania: 'Roménia',
+	Bulgaria: 'Bulgária',
+	Croatia: 'Croácia',
+	Slovenia: 'Eslovénia',
+	Uruguay: 'Uruguai',
+};
+
 /** Most scales qualify a feminine noun (intensidade, acidez); masculine questions override below. */
 const PT: Record<string, string> = {
+	...COUNTRIES_PT,
 	// ── Shared scales and answers ──
 	Yes: 'Sim',
 	No: 'Não',
@@ -427,14 +456,15 @@ export function termIn(lang: Lang, en: string, question?: string): string {
 	if (en.startsWith('Confirm: ')) {
 		return `Confirmação: ${termIn(lang, en.slice('Confirm: '.length))}`;
 	}
-	return (question && PT_IN[question]?.[en]) ?? PT[en] ?? en;
+	return (question ? PT_IN[question]?.[en] : undefined) ?? PT[en] ?? en;
 }
 
 /** For the coverage test. */
 export const PT_TERMS = PT;
 
-/** Reveal fields answered from a grid list; the others are names (grapes, places) and stay as written. */
+/** Reveal fields whose values have a Portuguese name; grapes and regions stay as written. */
 export const LISTED: Record<string, string | undefined> = {
+	countryOfOrigin: undefined,
 	qualityLevel: undefined,
 	styleCategory: 'Official Style Category',
 	qualityAssessment: undefined,

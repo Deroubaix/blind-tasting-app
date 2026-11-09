@@ -117,7 +117,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	)
 		.filter(([, value]) => Boolean(value))
 		.map(([key, value]) => [key, value as string] as [string, string]);
-	const possibleOriginSummary = (initial?.possibleCountries ?? []).join(' · ');
+	const possibleOriginSummary = (initial?.possibleCountries ?? []).map((c) => term(c)).join(' · ');
 	const initialLine = [
 		(initial?.grapeVarieties ?? []).join(' / '),
 		initial?.climate && term(initial.climate),
@@ -131,7 +131,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 		grapeVariety,
 		qualityLevel && term(qualityLevel),
 		styleCategory && term(styleCategory, 'Official Style Category'),
-		countryOfOrigin,
+		countryOfOrigin && term(countryOfOrigin),
 	]
 		.filter(Boolean)
 		.join(' · ');
@@ -222,6 +222,7 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 							value={countryOfOrigin}
 							onChange={(v) => updateFC({ countryOfOrigin: v })}
 							suggestions={WINE_COUNTRIES}
+							labelOf={term}
 							placeholder={t.countryPlaceholder}
 							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>

@@ -13,6 +13,7 @@ import { type Reveal } from '../../utils/revealScore';
 import { useText } from '../../i18n/LanguageProvider';
 import { archivesText } from '../../i18n/archives';
 import { tastingText } from '../../i18n/tasting';
+import { useTerm } from '../../i18n/useTerm';
 
 type Props = {
 	value: Reveal;
@@ -27,6 +28,7 @@ type Props = {
 export default function RevealFields({ value, onChange, layout = 'form', grid = 'cms' }: Props) {
 	const t = useText(archivesText).fields;
 	const inputs = useText(tastingText).inputs;
+	const term = useTerm();
 	const ids = {
 		grape: useId(),
 		country: useId(),
@@ -92,6 +94,7 @@ export default function RevealFields({ value, onChange, layout = 'form', grid = 
 				value={value.countryOfOrigin}
 				onChange={(countryOfOrigin) => onChange({ countryOfOrigin })}
 				suggestions={WINE_COUNTRIES}
+				labelOf={term}
 				placeholder={t.countryPlaceholder}
 				icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 			/>

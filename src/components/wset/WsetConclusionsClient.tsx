@@ -190,6 +190,7 @@ export default function WsetConclusionsClient({ wineType }: { wineType: 'red' | 
 							value={final.countryOfOrigin}
 							onChange={(v) => update({ countryOfOrigin: v })}
 							suggestions={WINE_COUNTRIES}
+							labelOf={term}
 							placeholder={t.countryPlaceholder}
 							icon={<IconMapPin size={14} className="tasting-search-icon" aria-hidden="true" />}
 						/>

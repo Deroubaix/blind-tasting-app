@@ -141,6 +141,7 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 						<div className="tasting-search-row">
 							<TastingAutocomplete
 								suggestions={WINE_COUNTRIES}
+								labelOf={term}
 								ariaLabel={t.countriesAria}
 								value={countryInput}
 								onChange={setCountryInput}
@@ -160,10 +161,10 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 							<div className="tasting-chips">
 								{ic.possibleCountries!.map((c) => (
 									<span key={c} className="tasting-chip">
-										{c}
+										{term(c)}
 										<button
 											className="tasting-chip__remove"
-											aria-label={text.remove(c)}
+											aria-label={text.remove(term(c))}
 											onClick={() =>
 												updateIC({
 													possibleCountries: ic.possibleCountries!.filter((x) => x !== c),

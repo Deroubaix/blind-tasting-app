@@ -236,6 +236,20 @@ describe('the WSET grid', () => {
 	});
 });
 
+describe('countries named in Portuguese', () => {
+	it('score the same as the English name', () => {
+		expect(sameName('França', 'France')).toBe(true);
+		expect(sameName('estados unidos', 'United States')).toBe(true);
+		expect(sameName('França', 'Italy')).toBe(false);
+	});
+
+	it("show in the reader's language in the one-line summary", () => {
+		const wine = { grapeVariety: 'Chenin Blanc', countryOfOrigin: 'France', vintage: '2020' };
+		expect(describeWine(wine, 'pt')).toBe('Chenin Blanc, França — 2020');
+		expect(describeWine(wine)).toBe('Chenin Blanc, France — 2020');
+	});
+});
+
 describe('style category', () => {
 	const vouvray = { grapeVariety: 'Chenin Blanc', regionAppellation: 'Vouvray', styleCategory: 'Demi-Sec' };
 	const status = (c: Record<string, string>, r: Record<string, string>) =>
