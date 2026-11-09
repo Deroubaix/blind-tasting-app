@@ -347,7 +347,7 @@ export const tastingText = dict(
 			grape: 'Casta ou lote',
 			grapePlaceholder: 'p. ex. Pinot Noir',
 			country: 'País de origem',
-			countryPlaceholder: 'p. ex. France',
+			countryPlaceholder: 'p. ex. França',
 			region: 'Região e denominação',
 			regionPlaceholder: 'p. ex. Burgundy — Côte de Nuits',
 			qualityLevel: 'Nível de qualidade oficial',

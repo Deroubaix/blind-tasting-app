@@ -53,8 +53,6 @@
 
 .flight-card {
 	@include ledger-panel(18px);
-	border-color: $color-ink;
-	border-radius: 0;
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-md;
@@ -140,30 +138,13 @@
 	}
 }
 
-// A status line in a tinted box. Colour it with `--tone`.
+// A status line in an ink box, its icon in garnet.
 .flight-notice {
-	--tone: #{$color-ink};
 	@include ledger-panel($spacing-md);
-	border-color: color-mix(in srgb, var(--tone) 40%, transparent);
-	background-color: color-mix(in srgb, var(--tone) 6%, $color-card);
-
-	&--warning {
-		--tone: #{$color-warning};
-	}
 
 	> svg {
 		flex-shrink: 0;
 		color: $color-link;
-	}
-
-	&--warning > svg {
-		color: var(--tone);
-	}
-
-	&:not(&--warning) {
-		border-color: $color-ink;
-		border-radius: 0;
-		background-color: $color-card;
 	}
 }
 
@@ -245,17 +226,11 @@
 	@include ledger-tag;
 	width: fit-content;
 
-	&--tasting {
-		--tone: #{$color-link};
-	}
-
+	&--tasting,
 	&--submitted,
-	&--allsubmitted {
-		--tone: #{$color-ink};
-	}
-
+	&--allsubmitted,
 	&--revealed {
-		--tone: #{$color-link};
+		--tone: #{$color-ink};
 	}
 }
 
@@ -682,7 +657,7 @@
 	gap: 4px;
 
 	&__ok {
-		@include ledger-label($text-11, $color-ok);
+		@include ledger-label($text-13, $color-ink);
 		@include icon-label(4px);
 	}
 }
@@ -784,8 +759,6 @@
 
 .flight-action {
 	@include ledger-panel($spacing-lg);
-	border-color: $color-ink;
-	border-radius: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
@@ -1154,7 +1127,7 @@
 		font-size: $text-14;
 
 		svg {
-			color: $color-ok;
+			color: $color-link;
 			margin-right: 3px;
 		}
 	}

@@ -9,23 +9,15 @@ $rule: $color-rule;
 $rule-folio: $color-rule;
 $rule-mid: $color-rule-strong;
 $rule-double: 3px double $color-rule-strong;
-// The border of a panel or row that is current, selected or needs attention.
-$rule-accent: fade($color-link, 45%);
 
 // ── Corners ──────────────────────────────────────────────────────────────────
-// Square-cut: 2px for bars and marks, 4px for everything else. No pills, no rounded cards.
+// Square-cut: 2px for bars and marks, 4px for controls. Panels have no corners.
 $radius-sm: 2px;
 $radius: 4px;
-$radius-lg: 4px;
-// Chips and tags are 4px rectangles too; the name stays so the call sites need not change.
-$radius-pill: 4px;
 
 // ── Tasters ──────────────────────────────────────────────────────────────────
 // One tint per taster in a flight, in join order: avatars, dots and their marks on scales.
 $taster-tints: ($color-link, var(--c-taster-2), var(--c-taster-3), var(--c-taster-4));
-
-// ── Depth ────────────────────────────────────────────────────────────────────
-$shadow-lift: 0 12px 32px $color-shadow; // dropdowns, popovers, dialogs
 
 @mixin figures {
 	font-family: $font-serif;
@@ -50,11 +42,11 @@ $shadow-lift: 0 12px 32px $color-shadow; // dropdowns, popovers, dialogs
 	gap: 8px;
 }
 
-// A raised panel on the page ground.
+// A panel on the page ground: square, ruled in ink.
 @mixin ledger-panel($padding: 20px 22px) {
 	background: $color-card;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
+	border: 1px solid $color-ink;
+	border-radius: 0;
 	padding: $padding;
 }
 

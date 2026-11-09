@@ -237,9 +237,7 @@
 	max-width: min(280px, 100%);
 	padding: 10px 12px;
 	background: $color-ground;
-	border: 1px solid $rule-mid;
-	border-radius: $radius;
-	box-shadow: $shadow-lift;
+	border: 1px solid $color-ink;
 	font-size: $text-12;
 	color: $color-text-secondary;
 	pointer-events: none;

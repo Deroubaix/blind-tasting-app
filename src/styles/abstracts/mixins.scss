@@ -44,14 +44,6 @@
 	}
 }
 
-// Glyph at full hue on a 10% wash of it — a thin stroke needs the extra lightness to clear 3:1.
-// Pass only wine hues or status colours.
-@mixin icon-tile($hue) {
-	background: fade($hue, 10%);
-	border: 1px solid fade($hue, 28%);
-	color: $hue;
-}
-
 // Icon + label on one centre line; without it an svg child sits on the text baseline and rides high.
 @mixin icon-label($gap: 5px) {
 	display: inline-flex;

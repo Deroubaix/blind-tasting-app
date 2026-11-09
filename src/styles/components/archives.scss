@@ -9,7 +9,7 @@
 	}
 
 	&--white {
-		--tone: #{$color-ok};
+		--tone: #{$color-ink};
 	}
 }
 
@@ -265,7 +265,6 @@
 
 	&__photo {
 		display: block;
-		border-radius: $radius-lg;
 		overflow: hidden;
 		border: 1px solid $rule;
 

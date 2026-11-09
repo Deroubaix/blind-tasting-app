@@ -10,7 +10,7 @@ import { PHASE_ORDER } from '../tasting/phaseCompletion';
 import { unlockAudio } from '../../utils/beep';
 import { JsonApiError } from '../../utils/ErrorUtils';
 import { type FlightView, type MyWineView } from '../../types/Flight';
-import { Avatar, FlightHead, StatusPill, clockText, flightService, formatTimer, useNow } from './FlightBits';
+import { Avatar, FlightHead, StatusTag, clockText, flightService, formatTimer, useNow } from './FlightBits';
 import { formatTime } from '../../utils/DateUtils';
 import { flightsText } from '../../i18n/flights';
 import { commonText } from '../../i18n/common';
@@ -152,7 +152,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 							<div className="flight-wine__body">
 								<div className="flight-wine__row">
 									<strong>{title}</strong>
-									<StatusPill
+									<StatusTag
 										status={
 											info?.revealed
 												? wine.status === 'submitted'

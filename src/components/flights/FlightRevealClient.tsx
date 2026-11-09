@@ -85,14 +85,14 @@ export default function FlightRevealClient({ code, number }: { code: string; num
 					</div>
 				</div>
 				<div className="reveal-form__body">
-					<span className="accent-label">{t.eyebrow(number, flight.wineCount)}</span>
+					<span className="page-eyebrow page-eyebrow--plain">{t.eyebrow(number, flight.wineCount)}</span>
 					<h1 className="reveal-heading" id="flight-reveal-heading">
 						{t.heading(number)}
 					</h1>
 					<p className="reveal-lede">{flight.grid === 'wset' ? t.ledeWset : t.ledeCms}</p>
 
 					{!revealed && tasting.length > 0 && (
-						<div className="flight-notice flight-notice--warning flight-warning" role="note">
+						<div className="flight-notice flight-warning" role="note">
 							<IconPointFilled size={16} aria-hidden="true" />
 							<div>
 								<p className="flight-warning__lead">

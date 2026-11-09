@@ -19,7 +19,6 @@
 	overflow: hidden;
 	min-width: 260px;
 	max-width: 360px;
-	box-shadow: $shadow-lift;
 	color: $color-ink;
 	font-size: $text-14;
 
@@ -76,10 +75,6 @@
 		&--running {
 			transform: scaleX(0);
 		}
-	}
-
-	&--success &__timer {
-		background-color: $color-ok;
 	}
 
 	&--error &__timer {

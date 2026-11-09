@@ -98,7 +98,7 @@ export default function RevealPanel({
 				</div>
 
 				<div className="reveal-form__body">
-					<span className="accent-label">{t.eyebrow}</span>
+					<span className="page-eyebrow page-eyebrow--plain">{t.eyebrow}</span>
 					<h2 className="reveal-heading" id="reveal-form-heading">
 						{t.formHeading}
 					</h2>
@@ -165,7 +165,7 @@ export default function RevealPanel({
 		return (
 			<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
 				<div className="reveal-invite__text">
-					<span className="accent-label">{t.eyebrow}</span>
+					<span className="page-eyebrow page-eyebrow--plain">{t.eyebrow}</span>
 					<h2 className="reveal-heading" id="reveal-invite-heading">
 						{t.waitingHeading}
 					</h2>
@@ -182,7 +182,7 @@ export default function RevealPanel({
 	return (
 		<section className="reveal-card reveal-invite" aria-labelledby="reveal-invite-heading">
 			<div className="reveal-invite__text">
-				<span className="accent-label">{t.eyebrow}</span>
+				<span className="page-eyebrow page-eyebrow--plain">{t.eyebrow}</span>
 				<h2 className="reveal-heading" id="reveal-invite-heading">
 					{t.inviteHeading}
 				</h2>

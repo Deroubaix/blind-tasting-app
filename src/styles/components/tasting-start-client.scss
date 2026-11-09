@@ -90,7 +90,7 @@
 	min-height: 44px;
 	padding: 8px 16px;
 	border: 1px solid $rule-mid;
-	border-radius: $radius-pill;
+	border-radius: $radius;
 	background: $color-card;
 	color: $color-ink;
 	font-size: $text-15;
@@ -120,11 +120,6 @@
 			opacity: 0.85;
 		}
 	}
-}
-
-// Two-line pills read as cards, not capsules.
-.start-option:has(small) {
-	border-radius: $radius-lg;
 }
 
 .start-timer {
@@ -169,10 +164,7 @@
 }
 
 .start-how {
-	padding: 20px 22px;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
-	background: $color-card;
+	@include ledger-panel;
 
 	h2 {
 		margin: 0 0 10px;

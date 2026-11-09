@@ -13,7 +13,7 @@ import {
 	Avatar,
 	FlightHead,
 	Glass,
-	StatusPill,
+	StatusTag,
 	avatarState,
 	clockText,
 	flightService,
@@ -181,13 +181,13 @@ function WineCard({ wine, flight }: { wine: FlightWineView; flight: FlightView }
 	const started = statuses.some((s) => s !== 'notstarted');
 
 	const pill = wine.revealed ? (
-		<StatusPill status="revealed" />
+		<StatusTag status="revealed" />
 	) : allSubmitted ? (
-		<StatusPill status="allsubmitted" />
+		<StatusTag status="allsubmitted" />
 	) : started ? (
-		<StatusPill status="tasting" />
+		<StatusTag status="tasting" />
 	) : (
-		<StatusPill status="notstarted" />
+		<StatusTag status="notstarted" />
 	);
 
 	return (

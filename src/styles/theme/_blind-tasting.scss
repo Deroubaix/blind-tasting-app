@@ -16,8 +16,6 @@ $paper: (
 	'tint': #f4e6e8,
 	'rule': #d8d6cf,
 	'rule-strong': #767a74,
-	'ok': #2e6b40,
-	'close': #8a5a00,
 	'bad': #a12a3b,
 	'taster-2': #466d3e,
 	'taster-3': #7a5c17,
@@ -28,7 +26,6 @@ $paper: (
 	'fruit-blue': #4f6aa8,
 	'fruit-black': #2e2a33,
 	'fruit-dried': #8a4a2c,
-	'shadow': rgba(30, 33, 31, 0.14),
 	'scrim': rgba(30, 33, 31, 0.45),
 );
 
@@ -46,8 +43,6 @@ $cellar: (
 	'tint': #3e2a2f,
 	'rule': #3d403e,
 	'rule-strong': #7a7e78,
-	'ok': #9ccfa5,
-	'close': #e6b35a,
 	'bad': #f09aa6,
 	'taster-2': #a8c49f,
 	'taster-3': #d6bf8e,
@@ -58,7 +53,6 @@ $cellar: (
 	'fruit-blue': #8fa6d9,
 	'fruit-black': #b9afa3,
 	'fruit-dried': #d1a66a,
-	'shadow': rgba(0, 0, 0, 0.5),
 	'scrim': rgba(0, 0, 0, 0.66),
 );
 
@@ -112,17 +106,14 @@ $color-rule: var(--c-rule);
 $color-rule-strong: var(--c-rule-strong);
 
 // Scoring and status
-$color-ok: var(--c-ok);
-$color-close: var(--c-close);
 $color-error: var(--c-bad);
-$color-warning: var(--c-close);
+$color-warning: var(--c-link);
 
 // Wine hues — depict role only (swatches, and icons that depict wine).
 $color-wine-red-tint: #b8475c;
 $color-wine-gold-tint: #c9a227;
 
 // Overlays and depth
-$color-shadow: var(--c-shadow);
 $color-scrim: var(--c-scrim);
 $color-bar-red: var(--c-bar-red); // Progress chart: one tasting of a red
 $color-bar-white: var(--c-bar-white);

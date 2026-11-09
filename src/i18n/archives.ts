@@ -307,7 +307,7 @@ export const archivesText = dict(
 			grape: 'Casta ou lote',
 			grapePlaceholder: 'p. ex. Pinot Noir',
 			country: 'País de origem',
-			countryPlaceholder: 'p. ex. France',
+			countryPlaceholder: 'p. ex. França',
 			region: 'Região e denominação',
 			regionPlaceholder: 'p. ex. Chambolle-Musigny',
 			qualityLevel: 'Nível de qualidade oficial',

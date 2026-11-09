@@ -64,7 +64,7 @@
 	padding: 18px;
 	background-color: $color-card;
 	border: 1px solid $rule;
-	border-radius: $radius-lg;
+	border-radius: $radius;
 
 	// The light swatch tile: wine colour is judged against a neutral light ground.
 	&--light {
@@ -412,7 +412,7 @@
 	@include icon-label;
 	padding: 4px 10px;
 	border: 1px solid;
-	border-radius: $radius-pill;
+	border-radius: $radius;
 	font-size: $text-14;
 	@include selected-outline;
 
@@ -462,7 +462,6 @@
 	right: 0;
 	margin: 0;
 	list-style: none;
-	box-shadow: $shadow-lift;
 	z-index: $index-dropdown;
 	max-height: 200px;
 	overflow-y: auto;

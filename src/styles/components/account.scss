@@ -22,10 +22,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
-	padding: 20px;
-	background-color: $color-card;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
+	@include ledger-panel(20px);
 
 	h2 {
 		font-size: 1.375rem;

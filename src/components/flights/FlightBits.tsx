@@ -153,7 +153,7 @@ const STATUS_ICONS: Record<EntryStatus | 'revealed' | 'allsubmitted', typeof Ico
 };
 
 /** A status as an icon and a word, never color alone. */
-export function StatusPill({ status, word }: { status: keyof typeof STATUS_ICONS; word?: string }) {
+export function StatusTag({ status, word }: { status: keyof typeof STATUS_ICONS; word?: string }) {
 	const fallback = useText(flightsText).bits.status[status];
 	const Icon = STATUS_ICONS[status];
 	return (

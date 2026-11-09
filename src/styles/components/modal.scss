@@ -78,9 +78,7 @@
 	&__content {
 		padding: 20px;
 		background-color: $color-card;
-		border: 1px solid $rule;
-		border-radius: $radius-lg;
-		box-shadow: $shadow-lift;
+		border: 1px solid $color-ink;
 		animation: modal-content-in 140ms ease-out 1;
 		scale: 1;
 		height: 100%;

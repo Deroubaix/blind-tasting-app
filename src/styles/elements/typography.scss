@@ -149,30 +149,6 @@
 	}
 }
 
-// A score as figures in a quiet box; a perfect score earns one small green tick.
-.score-tag {
-	@include figures;
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	width: fit-content;
-	padding: 2px 7px;
-	border: 1px solid $rule-mid;
-	border-radius: $radius-sm;
-	font-size: $text-13;
-	white-space: nowrap;
-
-	svg {
-		color: $color-ok;
-	}
-}
-
-// The accent label over a field, a form or a section.
-.accent-label {
-	@include ledger-label($text-10, $color-link);
-	display: block;
-}
-
 // ── Score figure ───────────────────────────────────────────────────────────────
 // "3 / 5" in the serif, with a quieter denominator.
 .figure {
@@ -216,7 +192,7 @@
 	min-height: 40px;
 	padding: 0 14px;
 	border: 1px solid $rule-mid;
-	border-radius: $radius-pill;
+	border-radius: $radius;
 	background: $color-card;
 	color: $color-ink;
 	font-size: $text-15;
@@ -234,23 +210,6 @@
 		border-color: $color-wine;
 		color: $color-on-wine;
 		font-weight: $font-weight-semibold;
-	}
-}
-
-// A small outlined pill: "Reveal" on an archive row.
-.pill-tag {
-	display: inline-flex;
-	align-items: center;
-	height: 24px;
-	padding: 0 9px;
-	border: 1px solid currentColor;
-	border-radius: $radius-pill;
-	font-size: $text-13;
-	font-weight: $font-weight-semibold;
-	white-space: nowrap;
-
-	&--wine {
-		color: $color-link;
 	}
 }
 

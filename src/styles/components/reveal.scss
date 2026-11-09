@@ -4,8 +4,7 @@
 // ── Shared pieces ─────────────────────────────────────────────────────────────
 .reveal-card {
 	background: $color-card;
-	border: 1px solid $rule;
-	border-radius: $radius-lg;
+	border: 1px solid $color-ink;
 }
 
 // Before the palette, so each status modifier's --tone wins.
@@ -139,6 +138,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: $spacing-xxs;
+
+	> .tasting-card__label {
+		margin-bottom: 6px;
+	}
 
 	&__hint {
 		margin-left: $spacing-xxs;
@@ -326,7 +329,7 @@
 		}
 
 		// The sheet has its own title, so the in-card heading and eyebrow would repeat it.
-		&__body > .accent-label,
+		&__body > .page-eyebrow,
 		.reveal-heading {
 			display: none;
 		}

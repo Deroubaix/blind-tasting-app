@@ -87,7 +87,7 @@
 	}
 }
 
-// Under a field; turns green with a tick once the password is long enough.
+// Under a field; turns ink with a tick once the password is long enough.
 .auth-hint {
 	display: flex;
 	align-items: center;
@@ -96,7 +96,7 @@
 	color: $color-text-secondary;
 
 	&--met {
-		color: $color-ok;
+		color: $color-ink;
 	}
 }
 
@@ -146,7 +146,8 @@
 }
 
 .auth-success-icon {
-	@include icon-tile($color-ok);
+	border: 1px solid $color-ink;
+	color: $color-link;
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;

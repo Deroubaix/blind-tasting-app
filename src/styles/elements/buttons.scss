@@ -110,7 +110,7 @@ button {
 	padding: 6px 15px;
 	// Quieter than the question above it, so the label, then the chosen answer, stand out.
 	border: 1px solid $rule-mid;
-	border-radius: $radius-pill;
+	border-radius: $radius;
 	background-color: transparent;
 	color: $color-text-secondary;
 	font-size: $text-16;
