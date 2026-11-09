@@ -286,8 +286,28 @@
 
 	&__actions {
 		display: flex;
-		justify-content: flex-end;
 		padding-top: 4px;
+	}
+
+	// Rare and final, so a quiet line of text; the dialog asks before anything goes.
+	&__delete {
+		@include bare-button;
+		@include quiet-link($text-15, $color-text-secondary, $color-link);
+		@include phone-hit-area;
+		font-weight: $font-weight-regular;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: $rule-mid;
+
+		&:hover,
+		&:focus-visible {
+			text-decoration-color: currentColor;
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: progress;
+		}
 	}
 }
 

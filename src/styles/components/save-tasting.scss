@@ -26,7 +26,8 @@
 		width: 100%;
 		justify-content: flex-start;
 		gap: $spacing-md;
-		padding: $spacing-md;
+		// Flush left with the other ruled rows on the page.
+		padding: 0 0 $spacing-md;
 		text-align: left;
 		border-radius: $radius;
 	}
@@ -63,7 +64,7 @@
 	}
 
 	&__body {
-		padding: $spacing-md;
+		padding: $spacing-md 0;
 		border-top: 1px solid $rule-soft;
 	}
 

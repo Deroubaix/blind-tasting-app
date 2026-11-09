@@ -37,10 +37,10 @@ export default function TastingFooter({
 				className="tasting-footer__next btn-primary"
 				onClick={onNext}
 				disabled={nextLoading || nextDisabled}
+				aria-busy={nextLoading || undefined}
 			>
-				{nextLoading && <Loading size={14} inline />}
 				{nextLabel}
-				<IconArrowRight size={16} aria-hidden="true" />
+				{nextLoading ? <Loading size={16} inline /> : <IconArrowRight size={16} aria-hidden="true" />}
 			</button>
 		</footer>
 	);

@@ -262,12 +262,7 @@ export default function TastingDetail({ id, openReveal = false }: { id: string; 
 			)}
 
 			<div className="tasting-detail__actions">
-				<button
-					type="button"
-					className="btn-quiet btn-quiet--plain"
-					onClick={confirmDelete}
-					disabled={deleting}
-				>
+				<button type="button" className="tasting-detail__delete" onClick={confirmDelete} disabled={deleting}>
 					{t.deleteTasting}
 				</button>
 			</div>

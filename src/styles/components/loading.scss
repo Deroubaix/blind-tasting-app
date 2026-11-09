@@ -18,8 +18,9 @@
 		animation: rotating 700ms linear infinite;
 	}
 
+	// Sized by its inline width and height; padding would push the icon out over the label.
 	&--inline {
-		display: inline-block;
-		padding-left: $spacing-sm;
+		display: inline-flex;
+		flex-shrink: 0;
 	}
 }

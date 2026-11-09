@@ -72,6 +72,12 @@ button {
 		background-color: $color-wine-hover;
 		border-color: $color-wine-hover;
 	}
+
+	// Working, not unavailable: it keeps its colour while the spinner runs.
+	&[aria-busy='true']:disabled {
+		opacity: 1;
+		cursor: progress;
+	}
 }
 
 // Outlined, for the action beside a .btn-primary or any low-emphasis action.
