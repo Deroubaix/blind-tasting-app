@@ -138,72 +138,77 @@ export default function SightTastingClient({ wineType }: { wineType: 'red' | 'wh
 				onNext: handleNextPhase,
 			}}
 		>
-			{/*
-              Three-column grid, in 2024 CMS grid order.
-              ┌──────────────┬─────────────────────────────┐
-              │ Clarity      │ Intensity of Color (span 2) │
-              ├──────────────┴─────────────────────────────┤
-              │ Primary Color (full width)                 │
-              ├────────────────────────────────────────────┤
-              │ Secondary Color(s) (full width)            │
-              ├──────────────┬─────────────────────────────┤
-              │ Rim Var.*    │ Staining* (span 2)          │   *red only
-              ├──────────────┴──────────────┬──────────────┤
-              │ Tearing (span 2)            │ Gas Evidence │
-              └─────────────────────────────┴──────────────┘
-            */}
-			<div className="tasting-grid tasting-grid--3">
-				<div className="tasting-card">
-					<div className="tasting-card__label">Clarity / Visible Sediment</div>
-					{renderOptions('Clarity', SIGHT_SCALES.Clarity)}
-				</div>
-
-				<div className="tasting-card tasting-grid__span-2">
-					<div className="tasting-card__label">Intensity of Color</div>
-					{renderOptions('Intensity of Color', SIGHT_SCALES['Intensity of Color'])}
-				</div>
-
-				<div className="tasting-card tasting-grid__span-full tasting-card--light">
-					<div className="tasting-card__head">
-						<div className="tasting-card__label">Primary Color</div>
-						<span className="sight-sublabel">{t.core}</span>
+			{/* Three groups in 2024 CMS grid order; Rim Variation and Staining are red only. */}
+			<section className="sight-group" aria-labelledby="sight-clarity">
+				<h2 className="section-label" id="sight-clarity">
+					{t.groupClarity}
+				</h2>
+				<div className="tasting-grid tasting-grid--3">
+					<div className="tasting-card">
+						<div className="tasting-card__label">Clarity / Visible Sediment</div>
+						{renderOptions('Clarity', SIGHT_SCALES.Clarity)}
 					</div>
-					{renderSwatches('Primary Color', colors.primary)}
-				</div>
 
-				<div className="tasting-card tasting-grid__span-full tasting-card--light">
-					<div className="tasting-card__head">
-						<div className="tasting-card__label">Secondary Color(s)</div>
-						<span className="sight-sublabel">{t.selectAll}</span>
+					<div className="tasting-card tasting-grid__span-2">
+						<div className="tasting-card__label">Intensity of Color</div>
+						{renderOptions('Intensity of Color', SIGHT_SCALES['Intensity of Color'])}
 					</div>
-					{renderSwatches('Secondary Color(s)', colors.secondary)}
 				</div>
+			</section>
 
-				{isRed && (
-					<>
-						<div className="tasting-card">
-							<div className="tasting-card__label">Rim Variation</div>
-							{renderToggle('Rim Variation')}
+			<section className="sight-group" aria-labelledby="sight-colour">
+				<h2 className="section-label" id="sight-colour">
+					{t.groupColour}
+				</h2>
+				<div className="tasting-grid">
+					<div className="tasting-card tasting-card--light">
+						<div className="tasting-card__head">
+							<div className="tasting-card__label">Primary Color</div>
+							<span className="sight-sublabel">{t.core}</span>
 						</div>
+						{renderSwatches('Primary Color', colors.primary)}
+					</div>
 
-						<div className="tasting-card tasting-grid__span-2">
-							<div className="tasting-card__label">Staining</div>
-							{renderOptions('Staining', SIGHT_SCALES.Staining)}
+					<div className="tasting-card tasting-card--light">
+						<div className="tasting-card__head">
+							<div className="tasting-card__label">Secondary Color(s)</div>
+							<span className="sight-sublabel">{t.selectAll}</span>
 						</div>
-					</>
-				)}
-
-				<div className="tasting-card tasting-grid__span-2">
-					<div className="tasting-card__label">Tearing</div>
-					{renderOptions('Tearing', SIGHT_SCALES.Tearing)}
+						{renderSwatches('Secondary Color(s)', colors.secondary)}
+					</div>
 				</div>
+			</section>
 
-				<div className="tasting-card">
-					<div className="tasting-card__label">Gas Evidence</div>
-					{renderToggle('Gas Evidence')}
+			<section className="sight-group" aria-labelledby="sight-glass">
+				<h2 className="section-label" id="sight-glass">
+					{t.groupGlass}
+				</h2>
+				<div className="tasting-grid tasting-grid--3">
+					{isRed && (
+						<>
+							<div className="tasting-card">
+								<div className="tasting-card__label">Rim Variation</div>
+								{renderToggle('Rim Variation')}
+							</div>
+
+							<div className="tasting-card tasting-grid__span-2">
+								<div className="tasting-card__label">Staining</div>
+								{renderOptions('Staining', SIGHT_SCALES.Staining)}
+							</div>
+						</>
+					)}
+
+					<div className="tasting-card tasting-grid__span-2">
+						<div className="tasting-card__label">Tearing</div>
+						{renderOptions('Tearing', SIGHT_SCALES.Tearing)}
+					</div>
+
+					<div className="tasting-card">
+						<div className="tasting-card__label">Gas Evidence</div>
+						{renderToggle('Gas Evidence')}
+					</div>
 				</div>
-			</div>
-			{/* end .sight-grid */}
+			</section>
 		</TastingPhaseLayout>
 	);
 }

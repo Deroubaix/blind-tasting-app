@@ -81,6 +81,9 @@ export const tastingText = dict(
 			backToSetup: 'Back to Setup',
 			next: 'Next: The Nose',
 			core: 'Core',
+			groupClarity: 'Clarity and intensity',
+			groupColour: 'Color',
+			groupGlass: 'In the glass',
 			selectAll: 'Select all that apply',
 		},
 		nose: {
@@ -281,6 +284,9 @@ export const tastingText = dict(
 			backToSetup: 'Voltar à configuração',
 			next: 'Seguinte: Nariz',
 			core: 'Núcleo',
+			groupClarity: 'Limpidez e intensidade',
+			groupColour: 'Cor',
+			groupGlass: 'No copo',
 			selectAll: 'Selecione todas as que se aplicam',
 		},
 		nose: {

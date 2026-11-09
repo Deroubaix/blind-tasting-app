@@ -308,15 +308,16 @@
 		gap: 12px;
 	}
 
+	// A box's title: ink and semibold, so it reads above the grey field names inside.
 	&__label {
 		margin: 0;
 		font-family: $font-sans;
 		font-style: normal;
-		font-size: $text-14;
-		font-weight: $font-weight-regular;
+		font-size: $text-16;
+		font-weight: $font-weight-semibold;
 		letter-spacing: 0;
 		line-height: 1.4;
-		color: $color-text-secondary;
+		color: $color-ink;
 	}
 }
 
