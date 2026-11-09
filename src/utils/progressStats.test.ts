@@ -5,6 +5,8 @@ import {
 	bestRun,
 	biasWord,
 	confusions,
+	homeHabits,
+	signedSteps,
 	median,
 	palateBias,
 	revealedFor,
@@ -12,6 +14,7 @@ import {
 	toProgressTasting,
 	trendOf,
 	palateSamplesFor,
+	type PalateSample,
 } from './progressStats';
 
 let n = 0;
@@ -180,6 +183,46 @@ describe('palate', () => {
 		expect(samples).toEqual([
 			{ attribute: 'Acidity', grid: 'cms', wineType: 'red', delta: 1.5 },
 			{ attribute: 'Tannin', grid: 'cms', wineType: 'red', delta: 1 },
+		]);
+	});
+});
+
+describe('home habits', () => {
+	const wrong = (call: string, actual: string) => ({ grape: { call, actual, wrong: true } });
+	const right = (name: string) => ({ grape: { call: name, actual: name, wrong: false } });
+	const acid = (delta: number): PalateSample => ({ attribute: 'Acidity', grid: 'cms', wineType: 'red', delta });
+
+	it('waits for five revealed tastings', () => {
+		const four = [t(2, wrong('Syrah', 'Grenache')), t(2, wrong('Syrah', 'Grenache')), t(3), t(4)];
+		expect(homeHabits([...four, t(1, { revealed: false })], [acid(1), acid(1), acid(1)])).toBeNull();
+		expect(homeHabits([...four, t(3)], [])).not.toBeNull();
+	});
+
+	it('names the most repeated wrong grape, out of the times it was poured', () => {
+		const list = [
+			t(2, wrong('Syrah', 'Grenache')),
+			t(2, wrong('Syrah', 'Grenache')),
+			t(3, right('Grenache')),
+			t(2, wrong('Merlot', 'Malbec')),
+			t(4),
+		];
+		expect(homeHabits(list, [])?.confusion).toEqual({ call: 'Syrah', actual: 'Grenache', n: 2, of: 3 });
+	});
+
+	it('only calls an attribute high or low with three flight wines behind it, and never when in line', () => {
+		const five = [t(3), t(3), t(3), t(3), t(3)];
+		expect(homeHabits(five, [acid(1), acid(1)])?.bias).toBeNull();
+		expect(homeHabits(five, [acid(0.2), acid(0.2), acid(0.2)])?.bias).toBeNull();
+		const bias = homeHabits(five, [acid(-1), acid(-0.5), acid(-0.6)])?.bias;
+		expect(bias).toMatchObject({ attribute: 'Acidity', wines: 3 });
+		expect(bias?.bias).toBeCloseTo(-0.7);
+	});
+
+	it('signs the steps and rounds by size', () => {
+		expect([signedSteps(0.7, 'en'), signedSteps(-1.25, 'en'), signedSteps(0.04, 'en')]).toEqual([
+			'+0.7',
+			'−1.3',
+			'0.0',
 		]);
 	});
 });

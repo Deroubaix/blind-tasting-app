@@ -530,6 +530,13 @@
 	}
 }
 
+// The grape it really was, in the marking pen.
+.home-habit__actual {
+	font-family: $font-serif;
+	font-size: $text-18;
+	color: $color-link;
+}
+
 // The logged-in "Start something": the heading above the rows, not beside them.
 .home-section--stack {
 	display: flex;

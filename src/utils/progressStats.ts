@@ -5,6 +5,7 @@ import { type Grid, gridOf } from '../data/grids';
 import { DEFAULT_LANG, type Lang } from '../i18n';
 import { type TastingData } from '../types/TastingData';
 import { compareStructure, structureAttributes, wineTypeOf } from './flightLogic';
+import { formatDecimal } from './NumberUtils';
 
 export type WineType = 'red' | 'white';
 export type TypeFilter = 'all' | WineType;
@@ -197,6 +198,32 @@ export function palateBias(samples: PalateSample[], grid: Grid, type: TypeFilter
 			wines: mine.length,
 		};
 	}).filter((b) => b.wines > 0);
+}
+
+/** "+0.7" or "−1.3", rounded by size so −1.25 rounds like +1.25. */
+export function signedSteps(bias: number, lang: Lang): string {
+	const rounded = (Math.sign(bias) * Math.round(Math.abs(bias) * 10)) / 10;
+	return (rounded > 0 ? '+' : rounded < 0 ? '−' : '') + formatDecimal(Math.abs(rounded), lang);
+}
+
+/** Revealed tastings before the home page names a habit. */
+export const HABITS_AFTER = 5;
+/** Flight wines behind an attribute before the home page calls it running high or low. */
+export const BIAS_MIN_WINES = 3;
+
+/**
+ * The home page's two habits: the wrong grape call made most often, and the attribute that runs
+ * furthest from the group on either grid. Null until there is enough behind them.
+ */
+export function homeHabits(list: ProgressTasting[], samples: PalateSample[]) {
+	if (list.filter((t) => t.revealed).length < HABITS_AFTER) {
+		return null;
+	}
+	const bias = (['cms', 'wset'] as const)
+		.flatMap((grid) => palateBias(samples, grid, 'all'))
+		.filter((b) => b.wines >= BIAS_MIN_WINES && biasWord(b.bias) !== 'inline')
+		.sort((a, b) => Math.abs(b.bias) - Math.abs(a.bias))[0];
+	return { confusion: confusions(list, 'grape', 'all')[0] ?? null, bias: bias ?? null };
 }
 
 export const biasWord = (bias: number): 'high' | 'low' | 'inline' =>

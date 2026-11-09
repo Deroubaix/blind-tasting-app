@@ -1,12 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
 import { Figure, StartDoors } from './HomeIntro';
-import { type ProgressTasting, revealedFor, rollingAverage, share } from '../../utils/progressStats';
+import {
+	type PalateSample,
+	type ProgressTasting,
+	biasWord,
+	homeHabits,
+	revealedFor,
+	rollingAverage,
+	share,
+	signedSteps,
+} from '../../utils/progressStats';
 import { formatDecimal } from '../../utils/NumberUtils';
 import HomeRecent, { type RecentTasting } from './HomeRecent';
 import { type FlightListItem } from '../../types/Flight';
 import { type homeText } from '../../i18n/home';
 import { flightsText } from '../../i18n/flights';
+import { progressText } from '../../i18n/progress';
+import { termIn } from '../../i18n/terms';
 import { type Lang } from '../../i18n';
 
 type HomeT = (typeof homeText)['en'];
@@ -50,6 +61,7 @@ export default function HomeDashboard({
 	recent,
 	counts,
 	flights,
+	palate,
 	lang,
 }: {
 	t: HomeT;
@@ -58,11 +70,14 @@ export default function HomeDashboard({
 	recent: RecentTasting[];
 	counts: { week: number; waiting: number };
 	flights: FlightListItem[];
+	palate: PalateSample[];
 	lang: Lang;
 }) {
 	const d = t.dashboard;
 	const f = flightsText[lang];
 	const average = latestAverage(tastings, lang);
+	const habits = homeHabits(tastings, palate);
+	const { confusion, bias } = habits ?? { confusion: null, bias: null };
 	const liveHosted = flights.filter((x) => x.role === 'host' && !x.ended).length;
 	const sub = summary(d, counts, liveHosted, !tastings.length && !flights.length);
 	return (
@@ -135,13 +150,44 @@ export default function HomeDashboard({
 								)}
 							</div>
 							{average ? (
-								<div className="home-row home-row--first">
-									<span>{d.rolling}</span>
-									<Figure score={average.score} outOf={average.outOf} />
-								</div>
+								<ul className="home-rows">
+									<li className="home-row">
+										<span>{d.rolling}</span>
+										<Figure score={average.score} outOf={average.outOf} />
+									</li>
+									{confusion && (
+										<li className="home-row">
+											<span>
+												{d.youCall}
+												<strong>{termIn(lang, confusion.call)}</strong>
+												{d.itWas}
+												<em className="home-habit__actual">{termIn(lang, confusion.actual)}</em>
+											</span>
+											<span className="home-fig">
+												{confusion.n}
+												<span className="home-fig__of"> {d.of(confusion.of)}</span>
+											</span>
+										</li>
+									)}
+									{bias && (
+										<li className="home-row">
+											<span>
+												{d.againstGroup(progressText[lang].palate.name[bias.attribute])}
+											</span>
+											<span className="home-fig">
+												{signedSteps(bias.bias, lang)}
+												<span className="home-fig__of">
+													{' '}
+													{d.runs[biasWord(bias.bias) === 'high' ? 'high' : 'low']}
+												</span>
+											</span>
+										</li>
+									)}
+								</ul>
 							) : (
 								<p className="home-muted">{d.noProgress}</p>
 							)}
+							{average && !habits && <p className="home-note">{d.habitsAfter}</p>}
 						</section>
 					</div>
 				</div>

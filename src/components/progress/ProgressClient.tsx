@@ -18,6 +18,7 @@ import {
 	averageShare,
 	bestRun,
 	biasWord,
+	signedSteps,
 	confusions,
 	matchesType,
 	palateBias,
@@ -500,11 +501,6 @@ function PalateSection({
 	const wines = Math.max(0, ...rows.map((r) => r.wines));
 	const words = { high: [] as string[], low: [] as string[], inline: [] as string[] };
 	rows.forEach((r) => words[biasWord(r.bias)].push(t.palate.inSentence[r.attribute]));
-	const signed = (b: number) => {
-		// By size, so −1.25 rounds like +1.25.
-		const rounded = (Math.sign(b) * Math.round(Math.abs(b) * 10)) / 10;
-		return (rounded > 0 ? '+' : rounded < 0 ? '−' : '') + formatDecimal(Math.abs(rounded), lang);
-	};
 
 	return (
 		<Section className="progress-section--palate">
@@ -543,7 +539,7 @@ function PalateSection({
 									/>
 								</div>
 								<div className="progress-bias__figure">
-									<div>{signed(row.bias)}</div>
+									<div>{signedSteps(row.bias, lang)}</div>
 									<div className="progress-bias__word">{t.palate[word]}</div>
 								</div>
 							</div>

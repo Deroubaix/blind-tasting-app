@@ -8,6 +8,7 @@ import SessionService from '../services/server/SessionService';
 import TastingService from '../services/server/TastingService';
 import FlightService from '../services/server/FlightService';
 import UserService from '../services/server/UserService';
+import ProgressService from '../services/server/ProgressService';
 import { toProgressTasting } from '../utils/progressStats';
 import { tastingRow } from '../utils/tastingRow';
 import { isRevealed } from '../utils/revealScore';
@@ -38,10 +39,11 @@ export default async function Homepage() {
 		);
 	}
 
-	const [user, tastings, flights] = await Promise.all([
+	const [user, tastings, flights, palate] = await Promise.all([
 		ServerServices.getClass(UserService).me(userId),
 		ServerServices.getClass(TastingService).list(userId),
 		ServerServices.getClass(FlightService).list(userId),
+		ServerServices.getClass(ProgressService).palateSamples(userId),
 	]);
 	// The stored JSON columns hold what the tasting flow saved, which is TastingData's shape.
 	const saved = tastings.map((tasting) => ({
@@ -72,6 +74,7 @@ export default async function Homepage() {
 						waiting: saved.filter((tasting) => !isRevealed(tasting.reveal)).length,
 					}}
 					flights={flights}
+					palate={palate}
 					lang={lang}
 				/>
 			</main>
