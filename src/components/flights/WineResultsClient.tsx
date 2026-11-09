@@ -178,7 +178,7 @@ function TasterSheet({
 			</div>
 			{palateRows.length > 0 && (
 				<div className="flight-card flight-sheet__palate">
-					<span className="tasting-card__label">{t.palateAgainst}</span>
+					<h3 className="tasting-card__label">{t.palateAgainst}</h3>
 					<dl>
 						{palateRows.map((item) => (
 							<div key={item.name}>
@@ -192,7 +192,7 @@ function TasterSheet({
 			)}
 			{row.nose.length > 0 && (
 				<div className="flight-card">
-					<span className="tasting-card__label">{t.nose}</span>
+					<h3 className="tasting-card__label">{t.nose}</h3>
 					<p className="flight-sheet__nose">{row.nose.map((v) => term(v)).join(' · ')}</p>
 				</div>
 			)}

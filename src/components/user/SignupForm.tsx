@@ -80,7 +80,11 @@ export default function SignupForm() {
 			</header>
 
 			<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
-				{error && <p className="auth-error">{error}</p>}
+				{error && (
+					<p className="auth-error" role="alert">
+						{error}
+					</p>
+				)}
 
 				<FormControl className="auth-field" name="displayName">
 					<Label>{t.displayName}</Label>

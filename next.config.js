@@ -38,14 +38,6 @@ const nextConfig = {
 	async headers() {
 		return [{ source: '/:path*', headers: securityHeaders }];
 	},
-	eslint: {
-		// Linting is its own gate — `pnpm lint`. Next runs ESLint during `next build` by default,
-		// which turns every lint finding into a failed build. Adding a config to a repo that had
-		// never been linted surfaced ~30 pre-existing errors at once; they are tracked separately
-		// rather than blocking every build until they are cleared. Remove this once `pnpm lint`
-		// is clean.
-		ignoreDuringBuilds: true,
-	},
 	sassOptions: {
 		// Lets stylesheets resolve from the styles root, so deep files can reach shared partials
 		// without counting `../` hops.

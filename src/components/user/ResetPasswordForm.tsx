@@ -95,7 +95,11 @@ export default function ResetPasswordForm() {
 			</header>
 
 			<Form className="auth-form" form={form} onSubmit={handleSubmit} disabled={isLoading}>
-				{error && <p className="auth-error">{error}</p>}
+				{error && (
+					<p className="auth-error" role="alert">
+						{error}
+					</p>
+				)}
 
 				<FormControl className="auth-field" name="password">
 					<Label>{t.newPassword}</Label>

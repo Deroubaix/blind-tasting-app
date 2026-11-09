@@ -27,7 +27,8 @@ export default forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
 	const formControl = useFormControlContext();
 
 	const disabled = props.disabled || formControl?.disabled || formContext?.disabled;
-	const formInputProps =
+	// Mantine adds `error`; FormControl shows the message, so here it only marks the field invalid.
+	const { error, ...formInputProps } =
 		formContext && formControl
 			? formContext.form.getInputProps(formControl.name)
 			: {
@@ -49,6 +50,8 @@ export default forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
 			id={formControl?.fieldId}
 			disabled={disabled}
 			autoComplete={autoComplete}
+			aria-invalid={error || formControl?.errorId ? true : undefined}
+			aria-describedby={[formControl?.errorId].filter(Boolean).join(' ') || undefined}
 			{...formInputProps}
 		/>
 	);

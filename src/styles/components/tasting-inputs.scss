@@ -78,9 +78,12 @@
 	}
 }
 
-// One question's name, above its options.
+// One question's name, above its options; also a card title, so it sets its own face over a heading's.
 .tasting-card__label {
 	margin-bottom: 10px;
+	font-family: $font-sans;
+	font-style: normal;
+	letter-spacing: normal;
 	font-size: 1.0625rem;
 	font-weight: $font-weight-semibold;
 	line-height: 1.3;
