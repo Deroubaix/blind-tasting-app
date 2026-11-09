@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { compareReveal, describeCall, describeWine, isRevealed, revealTitle, sameName } from './revealScore';
+import {
+	compareReveal,
+	describeCall,
+	describeWine,
+	isRevealed,
+	revealOutOf,
+	revealTitle,
+	sameName,
+} from './revealScore';
 
 // The design's "near miss" sample: grape, country and quality right; village and vintage close.
 const call = {
@@ -68,6 +76,18 @@ describe('compareReveal', () => {
 	it('treats a listed synonym as the same grape', () => {
 		expect(sameName('Shiraz', 'Syrah/Shiraz')).toBe(true);
 		expect(sameName('Grenache', 'Syrah/Shiraz')).toBe(false);
+		expect(sameName('Syrah/Shiraz', 'Shiraz')).toBe(true);
+		expect(sameName('Primitivo', 'Zinfandel')).toBe(true);
+		const shiraz = compareReveal({ grapeVariety: 'Shiraz' }, { grapeVariety: 'Syrah' });
+		expect(shiraz.fields.find((f) => f.key === 'grapeVariety')?.status).toBe('correct');
+		expect(sameName('Grenache/Syrah', 'Grenache/Syrah/Mourvèdre')).toBe(true);
+	});
+
+	it("doesn't score a call that lists several guesses", () => {
+		expect(sameName('Pinot Noir/Syrah/Merlot/Nebbiolo', 'Syrah')).toBe(false);
+		expect(sameName('France/Italy/USA', 'France')).toBe(false);
+		expect(sameName('Syrah/Pinot Noir', 'Syrah/Shiraz')).toBe(false);
+		expect(sameName('/', 'Syrah')).toBe(false);
 	});
 
 	it('says so when everything is right, or nothing is', () => {
@@ -213,5 +233,14 @@ describe('the WSET grid', () => {
 			'Very good · Can drink now, but has potential for ageing — Riesling — 2019',
 		);
 		expect(describeCall({ grapeVariety: 'Riesling' }, 'cms')).toBe('Riesling');
+	});
+});
+
+describe('revealOutOf', () => {
+	it('matches what each score is out of, an unnamed quality level included', () => {
+		const other = { ...actual, qualityLevel: 'Other' };
+		expect(revealOutOf(other)).toBe(compareReveal(call, other).outOf);
+		expect(revealOutOf(other)).toBe(revealOutOf(actual) - 1);
+		expect(revealOutOf({ grapeVariety: 'Syrah', vintage: ' ' })).toBe(1);
 	});
 });

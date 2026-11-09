@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IconCheck, IconChecks, IconMinus, IconPointFilled } from '@tabler/icons-react';
@@ -33,21 +33,30 @@ export function useFlight(code: string, enabled: boolean) {
 	const t = useText(flightsText).bits;
 	const [flight, setFlight] = useState<FlightView | null>(null);
 	const [error, setError] = useState<'notFound' | 'loadFailed' | null>(null);
+	const pending = useRef(0);
+	// Every miss counts against the per-user code limit, so a gone flight is never asked for again.
+	const gone = useRef(false);
 
-	const reload = useCallback(
-		() =>
-			flightService
-				.get(code)
-				.then((next) => {
-					setFlight(next);
-					setError(null);
-				})
-				.catch((err) => {
-					const apiError = JsonApiError.create(err);
-					setError(apiError.statusCode === 404 ? 'notFound' : 'loadFailed');
-				}),
-		[code],
-	);
+	const reload = useCallback(async () => {
+		if (gone.current) {
+			return;
+		}
+		pending.current += 1;
+		try {
+			setFlight(await flightService.get(code));
+			setError(null);
+		} catch (err) {
+			const notFound = JsonApiError.create(err).statusCode === 404;
+			gone.current = notFound;
+			setError(notFound ? 'notFound' : 'loadFailed');
+		} finally {
+			pending.current -= 1;
+		}
+	}, [code]);
+
+	useEffect(() => {
+		gone.current = false;
+	}, [code]);
 
 	useEffect(() => {
 		if (!enabled) {
@@ -55,7 +64,7 @@ export function useFlight(code: string, enabled: boolean) {
 		}
 		const first = setTimeout(reload, 0);
 		const id = setInterval(() => {
-			if (document.visibilityState === 'visible') {
+			if (document.visibilityState === 'visible' && pending.current === 0) {
 				void reload();
 			}
 		}, 4000);

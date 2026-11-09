@@ -62,7 +62,8 @@ export default function TastingPhaseLayout({
 			const tag = (e.target as HTMLElement).tagName;
 			const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable;
 
-			if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && !footer.nextLoading) {
+			// Same rule as the Next button: no shortcut past unanswered required questions.
+			if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && !footer.nextLoading && !footer.nextDisabled) {
 				e.preventDefault();
 				footer.onNext();
 				return;

@@ -133,7 +133,7 @@ describe('confusions across spellings', () => {
 			'grape',
 			'all',
 		);
-		expect(pairs).toEqual([{ call: 'Syrah', actual: 'Grüner Veltliner', n: 2, of: 4 }]);
+		expect(pairs).toEqual([{ call: 'Syrah', actual: 'Grüner Veltliner', n: 3, of: 4 }]);
 	});
 });
 

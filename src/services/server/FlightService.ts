@@ -13,10 +13,10 @@ import {
 } from '../../utils/flightLogic';
 import {
 	compareReveal,
+	revealOutOf,
 	describeWine,
 	isRevealed,
 	revealTitle,
-	scoredFields,
 	type Reveal,
 } from '../../utils/revealScore';
 import { gridOf } from '../../data/grids';
@@ -115,8 +115,7 @@ const endsAt = (flight: LoadedFlight, entry: LoadedEntry) =>
 	flight.timerSeconds ? new Date(entry.startedAt.getTime() + flight.timerSeconds * 1000).toISOString() : null;
 
 /** How many scored fields the label gave: what every score for this wine is out of. */
-const outOfFor = (flight: LoadedFlight, reveal: Reveal) =>
-	scoredFields(gridOf(flight.grid)).filter((field) => reveal[field.key]?.trim()).length;
+const outOfFor = (flight: LoadedFlight, reveal: Reveal) => revealOutOf(reveal, gridOf(flight.grid));
 
 function flightView(flight: LoadedFlight, userId: string, lang: Lang = DEFAULT_LANG): FlightView {
 	const role = roleOf(flight, userId);

@@ -81,11 +81,8 @@ export default class TastingService {
 			throw notFound();
 		}
 
-		// A flight tasting takes its entry with it, rather than leaving the wine looking half-tasted.
-		await this._prisma.$transaction([
-			this._prisma.flightEntry.deleteMany({ where: { tastingId: id, userId } }),
-			this._prisma.tasting.deleteMany({ where: { id, userId } }),
-		]);
+		// A flight entry outlives its tasting (tastingId goes null), so the wine reopens on the clock it started.
+		await this._prisma.tasting.deleteMany({ where: { id, userId } });
 
 		if (tasting.photoKey) {
 			await this._photos.remove(tasting.photoKey);

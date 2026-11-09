@@ -16,7 +16,7 @@ import { fold } from './autocompleteMatch';
 import { WINE_REGION_GROUPS } from '../components/tasting/autocompleteData';
 import { WSET_QUALITY, WSET_READINESS } from '../components/wset/wsetFields';
 import { type Grid } from '../data/grids';
-import { interchangeable } from '../components/archives/coreList';
+import { CORE_LIST, interchangeable } from '../components/archives/coreList';
 import { archivesText } from '../i18n/archives';
 import { DEFAULT_LANG, type Lang } from '../i18n';
 
@@ -111,14 +111,35 @@ const WSET_SCALES: Partial<Record<RevealField, string[]>> = {
 
 const clean = (value: string | null | undefined) => (value ?? '').trim() || null;
 
-/** Equal ignoring case and accents, or sharing one of the slash-separated names. */
-export function sameName(a: string, b: string): boolean {
-	if (fold(a) === fold(b)) {
+// Each name in a core-list synonym pair ("Syrah/Shiraz") stands for the whole pair.
+const SYNONYMS = new Map<string, string[]>();
+for (const { grape } of CORE_LIST) {
+	const names = grape.split('/').map(fold);
+	if (names.length > 1) {
+		names.forEach((name) => SYNONYMS.set(name, names));
+	}
+}
+
+const nameSet = (value: string) =>
+	new Set(
+		value
+			.split('/')
+			.map(fold)
+			.filter(Boolean)
+			.flatMap((name) => SYNONYMS.get(name) ?? [name]),
+	);
+
+/**
+ * Equal ignoring case and accents, or every slash-separated name in `call` is one of `actual`'s
+ * (synonyms included). "Every", so listing several guesses can't score.
+ */
+export function sameName(call: string, actual: string): boolean {
+	if (fold(call) === fold(actual)) {
 		return true;
 	}
-	const names = (value: string) => value.split('/').map(fold).filter(Boolean);
-	const other = new Set(names(b));
-	return names(a).some((name) => other.has(name));
+	const called = nameSet(call);
+	const given = nameSet(actual);
+	return called.size > 0 && [...called].every((name) => given.has(name));
 }
 
 const regionGroup = new Map<string, string>();
@@ -204,6 +225,9 @@ function compareField(
 function list(words: string[], and: string): string {
 	return words.length <= 1 ? (words[0] ?? '') : `${words.slice(0, -1).join(', ')} ${and} ${words.at(-1)}`;
 }
+
+/** What every score against this label is out of: the scored fields it gives, as compareReveal counts them. */
+export const revealOutOf = (reveal: Reveal, grid: Grid = 'cms') => compareReveal(null, reveal, null, grid).outOf;
 
 export function compareReveal(
 	call: Record<string, string | null | undefined> | undefined | null,
