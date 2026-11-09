@@ -31,15 +31,12 @@ const NAV_ITEMS = {
 
 const START_OVER_MODAL = 'tasting-start-over';
 
-/** The phases as tabs, a tick on each one done, and Start over at the end of the row. */
-export default function PhaseTabs({ wineType }: { wineType?: string }) {
-	const pathname = usePathname();
+/** Start over, behind a confirmation: beside the description on a phone, in the footer on a desktop. */
+export function StartOverButton({ className }: { className: string }) {
 	const router = useRouter();
 	const { tastingData, resetTastingData } = useTastingContext();
 	const { openModal, closeModal } = useModalProvider();
-	const t = useText(tastingText).sidebar;
 	const f = useText(layoutText).tastingFooter;
-	const grid = gridOf(tastingData.grid);
 
 	// Discarding a whole session is worth the interruption: nothing is persisted until the
 	// save step, so this has to name what goes before it goes.
@@ -76,6 +73,20 @@ export default function PhaseTabs({ wineType }: { wineType?: string }) {
 	};
 
 	return (
+		<button type="button" className={className} onClick={startOver}>
+			{f.startOver}
+		</button>
+	);
+}
+
+/** The phases as tabs, with a tick on each one done. */
+export default function PhaseTabs({ wineType }: { wineType?: string }) {
+	const pathname = usePathname();
+	const { tastingData } = useTastingContext();
+	const t = useText(tastingText).sidebar;
+	const grid = gridOf(tastingData.grid);
+
+	return (
 		<div className="phase-tabs">
 			<nav className="phase-tabs__nav" aria-label={t.phases}>
 				{NAV_ITEMS[grid].map(({ href, phase }) => {
@@ -101,9 +112,6 @@ export default function PhaseTabs({ wineType }: { wineType?: string }) {
 					);
 				})}
 			</nav>
-			<button type="button" className="phase-tabs__start-over" onClick={startOver}>
-				{f.startOver}
-			</button>
 		</div>
 	);
 }

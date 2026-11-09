@@ -18,10 +18,19 @@
 		padding: 0 18px;
 	}
 
+	&__start-over {
+		margin-right: auto;
+	}
+
 	&__next {
 		margin-left: auto;
 		min-width: 200px;
 		padding: 0 20px;
+	}
+
+	// Start over takes the free space, so Back sits beside Next.
+	&__start-over ~ &__next {
+		margin-left: 0;
 	}
 }
 
@@ -43,7 +52,8 @@
 			padding: 0;
 		}
 
-		&__back-label {
+		&__back-label,
+		&__start-over {
 			display: none;
 		}
 

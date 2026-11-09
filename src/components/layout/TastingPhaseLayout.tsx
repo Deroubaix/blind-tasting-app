@@ -4,7 +4,7 @@ import React, { type ReactNode, useEffect } from 'react';
 import TastingPageHeader from './TastingPageHeader';
 import PhaseHeading from './PhaseHeading';
 import TastingFooter from './TastingFooter';
-import PhaseTabs from '../tasting/PhaseTabs';
+import PhaseTabs, { StartOverButton } from '../tasting/PhaseTabs';
 import { usePathname } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import { advanceFurthestPhase } from '../tasting/phaseCompletion';
@@ -88,10 +88,17 @@ export default function TastingPhaseLayout({
 			<div className="tasting-phase-wrap">
 				<PhaseTabs wineType={wineType} />
 				<main id="main" className="tasting-phase-main">
-					<PhaseHeading title={title} description={description} />
+					<PhaseHeading
+						title={title}
+						description={description}
+						aside={<StartOverButton className="start-over phase-head__start-over" />}
+					/>
 					{children}
 				</main>
-				<TastingFooter {...footer} />
+				<TastingFooter
+					{...footer}
+					start={<StartOverButton className="start-over tasting-footer__start-over" />}
+				/>
 			</div>
 		</div>
 	);

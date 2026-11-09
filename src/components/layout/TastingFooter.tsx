@@ -1,5 +1,6 @@
 'use client';
 
+import React, { type ReactNode } from 'react';
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import Loading from '../misc/Loading';
 import { useText } from '../../i18n/LanguageProvider';
@@ -12,6 +13,8 @@ type TastingFooterProps = {
 	onNext: () => void;
 	nextLoading?: boolean;
 	nextDisabled?: boolean;
+	/** At the start of the row: Start over on a desktop. */
+	start?: ReactNode;
 };
 
 export default function TastingFooter({
@@ -21,11 +24,13 @@ export default function TastingFooter({
 	onNext,
 	nextLoading,
 	nextDisabled,
+	start,
 }: TastingFooterProps) {
 	const c = useText(commonText);
 	const back = backLabel ?? c.back;
 	return (
 		<footer className="tasting-footer">
+			{start}
 			{onBack && (
 				<button className="btn-quiet tasting-footer__back" onClick={onBack} aria-label={back}>
 					<IconArrowLeft size={16} aria-hidden="true" />

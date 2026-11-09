@@ -11,7 +11,7 @@ vi.mock('../tasting/TastingContext', () => ({
 vi.mock('./TastingPageHeader', () => ({ default: () => null }));
 vi.mock('./PhaseHeading', () => ({ default: () => null }));
 vi.mock('./TastingFooter', () => ({ default: () => null }));
-vi.mock('../tasting/PhaseTabs', () => ({ default: () => null }));
+vi.mock('../tasting/PhaseTabs', () => ({ default: () => null, StartOverButton: () => null }));
 
 afterEach(cleanup);
 

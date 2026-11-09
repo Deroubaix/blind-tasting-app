@@ -1,5 +1,5 @@
 @use '../abstracts' as *;
-// The phases as tabs under the tasting header, with Start over at the end of the row.
+// The phases as tabs under the tasting header.
 
 .phase-tabs {
 	display: flex;
@@ -47,23 +47,9 @@
 		color: $color-link;
 	}
 
-	&__start-over {
-		@include bare-button;
-		margin-left: auto;
-		min-height: 44px;
-		padding: 0 4px;
-		font-size: $text-14;
-		color: $color-text-secondary;
-		text-decoration: underline;
-		text-underline-offset: 3px;
-
-		&:hover {
-			color: $color-link;
-		}
-	}
 }
 
-// Equal tabs across the phone, with Start over on its own line below them.
+// Equal tabs across the phone.
 @include responsive($breakpoint-mobile) {
 	.phase-tabs {
 		flex-wrap: wrap;
@@ -81,10 +67,6 @@
 			min-width: 0;
 			padding: 0 2px;
 			font-size: $text-14;
-		}
-
-		&__start-over {
-			min-height: 40px;
 		}
 	}
 }
