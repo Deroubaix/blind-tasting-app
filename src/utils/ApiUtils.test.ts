@@ -18,7 +18,7 @@ describe('errorResponse', () => {
 	});
 
 	it('turns a validation failure into a 400 naming the problem', async () => {
-		const result = z.object({ wineType: z.string({ required_error: 'Wine type is required' }) }).safeParse({});
+		const result = z.object({ wineType: z.string({ error: 'Wine type is required' }) }).safeParse({});
 		const { status, body } = await respond(result.success ? null : result.error);
 		expect(status).toBe(400);
 		expect(body).toEqual({ error: 'BadRequest', message: 'Wine type is required', statusCode: 400 });

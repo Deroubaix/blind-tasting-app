@@ -57,7 +57,7 @@ describe('tastingCreateSchema', () => {
 
 	it.each([
 		['a fractional timer', { timerSeconds: 7.5 }, 'Timer length must be whole seconds'],
-		['a timer given as text', { timerSeconds: '240' }, 'Expected number, received string'],
+		['a timer given as text', { timerSeconds: '240' }, 'Invalid input: expected number, received string'],
 		['an unknown timer mode', { timerMode: 'turbo' }, undefined],
 		['a sight answer that is a number', { sight: { Clarity: 3 } }, undefined],
 		['a nose answer that is not a list', { nose: { 'Red Fruit': 'Cherry' } }, undefined],

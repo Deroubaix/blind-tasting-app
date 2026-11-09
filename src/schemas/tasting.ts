@@ -61,9 +61,7 @@ export type RevealInput = z.infer<typeof revealSchema>;
 export const revealUpdateSchema = z.object({ reveal: revealSchema.nullable() });
 
 export const tastingCreateSchema = z.object({
-	wineType: z.enum(['Red', 'White'], {
-		errorMap: () => ({ message: 'Wine type is required' }),
-	}),
+	wineType: z.enum(['Red', 'White'], { error: 'Wine type is required' }),
 	grid: z.enum(['cms', 'wset']).optional(),
 	wineName: optionalText(100, 'Wine name'),
 	notes: optionalText(5000, 'Notes'),
