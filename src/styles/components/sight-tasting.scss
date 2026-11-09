@@ -2,7 +2,7 @@
 // Sight Assessment page. Grid, cards and options come from tasting-inputs and buttons.
 
 .sight-sublabel {
-	@include ledger-label($text-11, $color-text-muted);
+	@include ledger-label($text-13, $color-text-muted);
 	// One line: on a narrow card it drops below the label rather than breaking into a column.
 	white-space: nowrap;
 }
@@ -62,7 +62,7 @@
 
 .sight-swatch-desc {
 	margin-top: 4px;
-	font-size: $text-11-5;
+	font-size: $text-13;
 	text-align: center;
 	color: $color-text-secondary;
 	line-height: 1.45;
@@ -73,9 +73,8 @@
 	display: none;
 	margin: $spacing-sm 0 0;
 	padding-top: $spacing-sm;
-	// The $rule tokens are cream, invisible on the light tile.
-	border-top: 1px solid rgba(20, 19, 19, 0.1);
-	font-size: $text-11-5;
+	border-top: 1px solid $tasting-on-light-rule;
+	font-size: $text-13;
 	line-height: 1.5;
 	color: $tasting-on-light-muted;
 

@@ -16,7 +16,7 @@
 	gap: 2px;
 
 	&__word {
-		font-size: $text-11;
+		font-size: $text-13;
 		line-height: 1.1;
 		color: $color-text-secondary;
 		white-space: nowrap;
@@ -89,7 +89,7 @@
 		flex-direction: column;
 		gap: $spacing-xs;
 		color: $color-text-secondary;
-		font-size: $text-12;
+		font-size: $text-13;
 
 		img {
 			width: 200px;
@@ -114,7 +114,7 @@
 
 	&__footnote {
 		margin-left: auto;
-		font-size: $text-12;
+		font-size: $text-13;
 		color: $color-text-muted;
 	}
 }
@@ -317,7 +317,7 @@
 		}
 
 		&__sheet-sub {
-			font-size: $text-11-5;
+			font-size: $text-13;
 			font-weight: $font-weight-regular;
 			color: $color-text-muted;
 		}

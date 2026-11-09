@@ -63,7 +63,7 @@ function JoinCard({ code }: { code: string }) {
 	const { showToast } = useToastProvider();
 
 	useEffect(() => {
-		QRCode.toString(link, { type: 'svg', margin: 1, color: { dark: '#27201d', light: '#fffbf4' } })
+		QRCode.toString(link, { type: 'svg', margin: 0, color: { dark: '#1e211f', light: '#ffffff' } })
 			.then(setQr)
 			.catch(() => setQr(''));
 	}, [link]);

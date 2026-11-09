@@ -37,7 +37,7 @@ export default function CodeForm({ id, label, hint, onGo }: CodeFormProps) {
 				<input
 					id={id}
 					className="code-form__input"
-					placeholder="ABC123"
+					placeholder="B7KQ4M"
 					autoComplete="off"
 					autoCapitalize="characters"
 					spellCheck={false}

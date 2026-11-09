@@ -16,6 +16,7 @@ $tasting-swatch-tile: #e8e8e8;
 // A fixed light ground in both themes, so it keeps its own ramp off a fixed near-black.
 // Alphas floor at 0.62, where 4.5:1 is cleared here; the design's 0.55 and 0.4
 // measure 3.87:1 and 2.51:1 and fail AA at the sizes they are set in.
+$tasting-on-light-rule: rgba(20, 19, 19, 0.1); // hairline on the tile
 $tasting-on-light-strong: #141313; // selected swatch name, selected ring — 15.1:1
 $tasting-on-light: rgba(20, 19, 19, 0.7); // swatch name — 6.26:1
 $tasting-on-light-muted: rgba(20, 19, 19, 0.66); // swatch description — 5.45:1

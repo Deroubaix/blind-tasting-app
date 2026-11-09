@@ -1,16 +1,16 @@
 @use '../abstracts' as *;
 // Nose Assessment page. Grid, cards, groups and dividers come from tasting-inputs.
 
-// The hue each fruit family is drawn in. The first four follow the theme, so Black Fruit stays visible on a Cellar card.
+// The hue each fruit family is drawn in; theme tokens, so every dot stays visible in dark mode.
 $fruit-hues: (
 	'red': var(--c-fruit-red),
 	'blue': var(--c-fruit-blue),
 	'black': var(--c-fruit-black),
 	'dried': var(--c-fruit-dried),
-	'citrus': #c8a020,
-	'stone': #c07848,
-	'orchard': #5c8b5c,
-	'tropical': #b87820,
+	'citrus': var(--c-fruit-citrus),
+	'stone': var(--c-fruit-stone),
+	'orchard': var(--c-fruit-orchard),
+	'tropical': var(--c-fruit-tropical),
 );
 
 .nose-fruit-dot {

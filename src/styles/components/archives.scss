@@ -93,9 +93,10 @@
 		}
 
 		dd {
+			@include figures;
 			margin: 0;
-			font-family: $font-mono;
 			font-size: $text-24;
+			font-weight: $font-weight-heading;
 			line-height: 1.2;
 		}
 	}
@@ -159,13 +160,7 @@
 	}
 
 	.figure {
-		font-family: $font-mono;
 		font-size: $text-20;
-	}
-
-	.figure__of {
-		font-family: $font-mono;
-		word-spacing: -0.4em;
 	}
 
 	&__reveal {

@@ -61,7 +61,7 @@
 	}
 
 	&__tick {
-		font-size: $text-11;
+		font-size: $text-13;
 		color: $color-text-muted;
 		white-space: nowrap;
 
@@ -77,7 +77,7 @@
 	}
 
 	&__word {
-		@include ledger-label($text-11, var(--verdict));
+		@include ledger-label($text-13, var(--verdict));
 		@include icon-label(4px);
 	}
 

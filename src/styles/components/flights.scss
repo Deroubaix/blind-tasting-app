@@ -235,7 +235,8 @@
 }
 
 .flight-clock {
-	@include figures;
+	font-family: $font-mono;
+	font-variant-numeric: tabular-nums;
 	font-size: $text-14;
 	color: $color-ink;
 }
@@ -351,12 +352,15 @@
 		gap: 14px;
 	}
 
+	// Black on white in both themes, so every camera reads it.
 	&__qr {
 		flex-shrink: 0;
 		width: 112px;
 		height: 112px;
-		border-radius: $radius;
-		overflow: hidden;
+		padding: 6px;
+		box-sizing: border-box;
+		background: #ffffff;
+		border: 1px solid $color-ink;
 
 		svg {
 			display: block;
@@ -522,7 +526,7 @@
 	margin: 0;
 	padding-top: 10px;
 	border-top: 1px solid $rule;
-	font-size: $text-12;
+	font-size: $text-13;
 	color: $color-text-secondary;
 
 	&__item {
@@ -641,7 +645,7 @@
 	}
 
 	&__label {
-		@include ledger-label($text-11, $color-text-secondary);
+		@include ledger-label($text-13, $color-text-secondary);
 	}
 
 	&__error {
@@ -663,19 +667,18 @@
 }
 
 // ── Your flights ──────────────────────────────────────────────────────────────
+// Set like the archive's month headings.
 .flight-section-label {
-	margin: 8px 0 0;
-	font-family: $font-sans;
-	font-style: normal;
-	font-size: $text-14;
-	font-weight: $font-weight-regular;
-	letter-spacing: 0;
-	color: $color-text-secondary;
+	margin: 0;
+	padding: 22px 0 6px;
+	border-bottom: 1px solid $color-ink;
+	font-size: $text-24;
+	line-height: 1.2;
 }
 
 .flight-rows {
 	list-style: none;
-	margin: 6px 0 0;
+	margin: 0;
 	padding: 0;
 
 	li + li .flight-row {
@@ -1136,7 +1139,7 @@
 	&__row--total &__cell > .flight-muted {
 		font-family: $font-sans;
 		font-style: normal;
-		font-size: $text-12;
+		font-size: $text-13;
 	}
 }
 
