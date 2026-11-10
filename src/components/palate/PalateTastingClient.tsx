@@ -39,7 +39,12 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 	// Tapping the chosen answer again clears it — a Texture tapped by mistake can be taken back.
 	const toggleAnswer = (category: string, option: string) => {
 		const { [category]: previous, ...rest } = selectedOptions;
-		updateTastingData({ palate: previous === option ? rest : { ...rest, [category]: option } });
+		const next = previous === option ? rest : { ...rest, [category]: option };
+		// What dominates only means something for an unbalanced wine.
+		if (category === 'Balance' && next.Balance !== 'No') {
+			delete next[BALANCE_NOTE];
+		}
+		updateTastingData({ palate: next });
 	};
 
 	const handleNextPhase = () => {
@@ -102,8 +107,8 @@ export default function PalateTastingClient({ wineType }: { wineType: 'red' | 'w
 												);
 											})}
 										</div>
-										{/* The grid asks what dominates the wine alongside the yes/no. */}
-										{category === 'Balance' && (
+										{/* The grid asks what dominates when the wine isn't balanced. */}
+										{category === 'Balance' && selectedOptions.Balance === 'No' && (
 											<input
 												type="text"
 												className="tasting-input tasting-input--block"
