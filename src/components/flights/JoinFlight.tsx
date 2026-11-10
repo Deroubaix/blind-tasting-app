@@ -46,7 +46,9 @@ export function JoinInvite({ flight, onJoined }: { flight: FlightView; onJoined:
 				<h1 className="flight-invite__title" id="flight-invite-heading">
 					{flight.name}
 				</h1>
-				<p className="flight-muted">{text.bits.hostedBy(flight.host.name)}</p>
+				<p className="flight-muted">
+					{flight.host ? text.bits.hostedBy(flight.host.name) : text.bits.hostGone}
+				</p>
 
 				<dl className="flight-facts">
 					<div>
@@ -193,8 +195,9 @@ export function JoinCodeClient() {
 							</span>
 							<strong>{found.name}</strong>
 							<span className="flight-muted">
-								{text.bits.hostedBy(found.host.name)} · {common.grid[found.grid].short} ·{' '}
-								{common.wines(found.wineCount)} · {formatTimer(found.timerSeconds, lang)}
+								{found.host ? text.bits.hostedBy(found.host.name) : text.bits.hostGone} ·{' '}
+								{common.grid[found.grid].short} · {common.wines(found.wineCount)} ·{' '}
+								{formatTimer(found.timerSeconds, lang)}
 							</span>
 							{found.members.length > 0 && (
 								<span className="flight-people">

@@ -30,7 +30,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 	const { showToast } = useToastProvider();
 	const mine = flight.mine ?? [];
 	const revealed = flight.wines.filter((wine) => wine.revealed).length;
-	const hostFirst = flight.host.name.split(' ')[0];
+	const hostFirst = flight.host?.name.split(' ')[0] ?? text.bits.theHost;
 
 	const begin = async (number: number, wineType: 'Red' | 'White') => {
 		closeModal(CHOOSE_MODAL);
@@ -106,7 +106,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 				crumb={`${text.bits.flight}${flight.ended ? ` · ${text.bits.ended}` : ''}`}
 				title={flight.name}
 				sub={[
-					text.bits.hostedBy(flight.host.name),
+					flight.host ? text.bits.hostedBy(flight.host.name) : text.bits.hostGone,
 					common.grid[flight.grid].short,
 					common.wines(flight.wineCount),
 					formatTimer(flight.timerSeconds, lang),
@@ -119,7 +119,11 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 							<Avatar key={member.id} person={member} size="sm" />
 						))}
 					</span>
-					<span>{t.whoPours(flight.members.length, hostFirst)}</span>
+					<span>
+						{flight.host
+							? t.whoPours(flight.members.length, hostFirst)
+							: text.bits.tasters(flight.members.length)}
+					</span>
 				</div>
 			</FlightHead>
 
@@ -133,7 +137,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 						detail = wine.status === 'submitted' ? (info.detail ?? '') : t.revealedBefore;
 					} else if (wine.status === 'submitted') {
 						const left = stillTasting(wine.number);
-						title = t.waitingFor(hostFirst);
+						title = flight.host ? t.waitingFor(hostFirst) : text.bits.hostGone;
 						detail = `${t.submitted}${wine.submittedAt ? t.at(formatTime(wine.submittedAt, lang)) : ''}${left ? t.stillTasting(left) : ''}`;
 					} else if (wine.status === 'tasting') {
 						title = !wine.endsAt
@@ -207,7 +211,7 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 			</ol>
 
 			<p className="flight-note">
-				{t.note(hostFirst)}
+				{flight.host ? t.note(hostFirst) : t.hostGoneNote}
 				{revealed > 0 && (
 					<>
 						{' '}

@@ -51,7 +51,7 @@ export type FlightView = {
 	timerSeconds: number | null;
 	ended: boolean;
 	createdAt: string;
-	host: { id: string; name: string };
+	host: { id: string; name: string } | null;
 	role: FlightRole;
 	members: FlightMemberView[];
 	wines: FlightWineView[];
@@ -98,7 +98,7 @@ export type FlightSummary = {
 	name: string;
 	grid: Grid;
 	createdAt: string;
-	hostName: string;
+	hostName: string | null;
 	timerSeconds: number | null;
 	members: FlightPerson[];
 	wines: {

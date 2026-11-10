@@ -53,7 +53,7 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 				title={summary.name}
 				sub={[
 					date,
-					text.bits.hostedBy(summary.hostName),
+					summary.hostName ? text.bits.hostedBy(summary.hostName) : text.bits.hostGone,
 					text.bits.tasters(summary.members.length),
 					formatTimer(summary.timerSeconds, lang),
 				].join(' · ')}

@@ -38,7 +38,7 @@ type ExportTasting = {
 type ExportFlight = {
 	code: string;
 	name: string;
-	hostId: string;
+	hostId: string | null;
 	wineCount: number;
 	timerSeconds: number | null;
 	endedAt: Date | null;

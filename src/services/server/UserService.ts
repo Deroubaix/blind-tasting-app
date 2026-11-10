@@ -29,6 +29,8 @@ export default class UserService {
 		}
 
 		await this._prisma.$transaction([
+			// Hosted flights stay for their tasters, ended, since no one is left to reveal the rest.
+			this._prisma.flight.updateMany({ where: { hostId: userId, endedAt: null }, data: { endedAt: new Date() } }),
 			this._prisma.tasting.deleteMany({ where: { userId } }),
 			this._prisma.user.delete({ where: { id: userId } }),
 		]);

@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const CONTROLLER = 'Marisha Deroubaix';
 // TODO: placeholder on the reserved example.com domain; replace with the real privacy inbox before launch.
 const CONTACT: string | null = 'privacy@example.com';
-const UPDATED = { en: '4 November 2026', pt: '4 de novembro de 2026' };
+const UPDATED = { en: '10 November 2026', pt: '10 de novembro de 2026' };
 
 function Contact({ pt = false }: { pt?: boolean }) {
 	if (CONTACT) {
@@ -74,6 +74,11 @@ function PrivacyEn() {
 						are counted against a hashed form of the email address, network address or account. They are
 						cleared within a day.
 					</li>
+					<li>
+						<strong>Sign-ins:</strong> each browser you are signed in on, with when it started and ends, so
+						logging out or resetting your password can sign it out. Removed when you log out, or soon after
+						it ends.
+					</li>
 				</ul>
 				<p>
 					There is no advertising, no analytics and no tracking, and your data is never sold or shared for
@@ -120,8 +125,8 @@ function PrivacyEn() {
 				<h2>How long it is kept</h2>
 				<p>
 					Your account, tastings and photos are kept until you delete them. Deleting a tasting deletes its
-					photo; deleting your account deletes everything, straight away, including any flight you host (the
-					tasters keep their own tastings from it).
+					photo; deleting your account deletes everything, straight away. A flight you host stays for its
+					tasters, ended and without your name.
 				</p>
 			</section>
 
@@ -211,6 +216,11 @@ function PrivacyPt() {
 						códigos de flight, as tentativas falhadas são contadas com base numa forma em hash do endereço
 						de email, do endereço de rede ou da conta. São apagados no prazo de um dia.
 					</li>
+					<li>
+						<strong>Sessões:</strong> cada navegador em que tem sessão iniciada, com o início e o fim, para
+						que terminar a sessão ou redefinir a palavra-passe a possa encerrar. Apagadas quando termina a
+						sessão, ou pouco depois de expirarem.
+					</li>
 				</ul>
 				<p>
 					Não há publicidade, análise de tráfego nem rastreamento, e os seus dados nunca são vendidos nem
@@ -261,8 +271,8 @@ function PrivacyPt() {
 				<h2>Durante quanto tempo são guardados</h2>
 				<p>
 					A sua conta, provas e fotografias são guardadas até as eliminar. Eliminar uma prova elimina a
-					respetiva fotografia; eliminar a conta elimina tudo, de imediato, incluindo qualquer flight que
-					organize (os provadores ficam com as suas próprias provas desse flight).
+					respetiva fotografia; eliminar a conta elimina tudo, de imediato. Um flight que organize fica para
+					os provadores, terminado e sem o seu nome.
 				</p>
 			</section>
 

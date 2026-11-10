@@ -19,47 +19,74 @@ const cookieAttributes = {
 export default class SessionService {
 	constructor(private readonly _prisma: PrismaClient) {}
 
-	/** Signs the user in: issues the token and sets it as the session cookie on this response. */
+	/** Signs the user in: records the session, then sets its token as the cookie on this response. */
 	public async start(userId: string) {
-		const token = jwt.sign({ userId }, ServerConfig.getJwtSecret(), {
+		const session = await this._prisma.session.create({
+			data: { userId, expiresAt: new Date(Date.now() + SESSION_SECONDS * 1000) },
+		});
+		const token = jwt.sign({ userId, sid: session.id }, ServerConfig.getJwtSecret(), {
 			algorithm: 'HS256',
 			expiresIn: SESSION_SECONDS,
 		});
 		(await cookies()).set(AUTH_COOKIE, token, { ...cookieAttributes, maxAge: SESSION_SECONDS });
+		this.sweepOccasionally();
 	}
 
-	/** Signs the user out by expiring the cookie, with the same attributes it was set with. */
+	/** Signs this browser out: ends its session, so a copied token stops working too, and expires the cookie. */
 	public async end() {
+		const claims = await this.claims().catch(() => null);
+		if (claims) {
+			await this._prisma.session.deleteMany({ where: { id: claims.sid } });
+		}
 		(await cookies()).set(AUTH_COOKIE, '', { ...cookieAttributes, maxAge: 0 });
+	}
+
+	/** Every browser the user is signed in on, e.g. after a password reset. */
+	public async endAll(userId: string) {
+		await this._prisma.session.deleteMany({ where: { userId } });
 	}
 
 	/**
 	 * The signed-in user's id, or a 401. An expired or forged token is a 401 too — `jwt.verify` throws
 	 * a plain Error for those, which `errorResponse` would otherwise report as a 500.
 	 *
-	 * A valid token is not enough on its own: it outlives the account it names, so a deleted user's
-	 * cookie would pass and then fail the Tasting foreign key as a 500. Checking the row turns that
-	 * into the same 401, which the client already answers by sending the taster to log in.
+	 * A valid token is not enough on its own: it outlives logging out, a password reset and the
+	 * account it names. Checking its session row turns each of those into the same 401, which the
+	 * client already answers by sending the taster to log in.
 	 */
 	public async requireUserId() {
+		const { userId, sid } = await this.claims();
+		// The session row goes with logging out, a password reset and the account itself.
+		const session = await this._prisma.session.findUnique({ where: { id: sid }, select: { userId: true } });
+		if (!session || session.userId !== userId) {
+			throw apiError(401, 'sessionExpired');
+		}
+		return userId;
+	}
+
+	/** The cookie's verified claims. Tokens from before sessions were recorded have no `sid`: signed out. */
+	private async claims(): Promise<{ userId: string; sid: string }> {
 		const token = (await cookies()).get(AUTH_COOKIE)?.value;
 		if (!token) {
 			throw apiError(401, 'notSignedIn');
 		}
-
-		let userId: string;
+		let claims: { userId?: unknown; sid?: unknown };
 		try {
-			userId = (jwt.verify(token, ServerConfig.getJwtSecret(), { algorithms: ['HS256'] }) as { userId: string })
-				.userId;
+			claims = jwt.verify(token, ServerConfig.getJwtSecret(), { algorithms: ['HS256'] }) as typeof claims;
 		} catch {
 			throw apiError(401, 'sessionExpired');
 		}
-
-		const user = await this._prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
-		if (!user) {
-			throw apiError(401, 'accountMissing');
+		if (typeof claims.userId !== 'string' || typeof claims.sid !== 'string') {
+			throw apiError(401, 'sessionExpired');
 		}
-		return userId;
+		return { userId: claims.userId, sid: claims.sid };
+	}
+
+	/** Drops expired sessions on about one sign-in in fifty, so the table stays small. */
+	private sweepOccasionally() {
+		if (Math.random() < 0.02) {
+			this._prisma.session.deleteMany({ where: { expiresAt: { lt: new Date() } } }).catch(() => undefined);
+		}
 	}
 
 	/** For server pages: the signed-in user's id, or null where a route would answer 401. */

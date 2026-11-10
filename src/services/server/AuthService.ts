@@ -1,5 +1,6 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { type PrismaClient } from '@prisma/client';
+import { after } from 'next/server';
 import ServerConfig from '../../config/ServerConfig';
 import type { Resend } from 'resend';
 import { RATE_LIMITS } from '../../utils/RateLimitUtils';
@@ -87,6 +88,11 @@ export default class AuthService {
 
 		const deliverTo = ServerConfig.getResendTestEmail() ?? email;
 
+		// Sent after the response, so an address with an account answers as fast as one without.
+		after(() => this.sendResetEmail(deliverTo, resetUrl));
+	}
+
+	private async sendResetEmail(deliverTo: string, resetUrl: string) {
 		try {
 			const sendResult = await this._resend().emails.send({
 				from: "The Sommelier's Ledger <onboarding@resend.dev>",
@@ -133,9 +139,13 @@ export default class AuthService {
 			throw invalidLinkError();
 		}
 
-		await this._prisma.user.update({
-			where: { email },
-			data: { password: await hashPassword(password), resetToken: null, resetTokenExpiry: null },
-		});
+		// Signs out every browser too: a reset is often because someone else got in.
+		await this._prisma.$transaction([
+			this._prisma.user.update({
+				where: { email },
+				data: { password: await hashPassword(password), resetToken: null, resetTokenExpiry: null },
+			}),
+			this._prisma.session.deleteMany({ where: { userId: user.id } }),
+		]);
 	}
 }

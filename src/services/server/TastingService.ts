@@ -69,8 +69,13 @@ export default class TastingService {
 			userId,
 			late ? { ...data, reveal: late, revealedAt: new Date() } : data,
 		);
-		if (flight && !late && !(await this._flights.linkTasting(flight.where, tasting.id))) {
-			// A second save of the same wine arrived together with the first. Its photo is the first's too.
+		const linked =
+			!flight ||
+			(late
+				? await this._flights.linkLateTasting(flight.where, tasting.id)
+				: await this._flights.linkTasting(flight.where, tasting.id));
+		if (flight && !linked) {
+			// Another save of this wine got there first (a double tap, or a second late save). Its photo may be the first's too.
 			await this._prisma.tasting.delete({ where: { id: tasting.id } });
 			throw apiError(409, 'alreadySubmitted', flight.where.flightId_userId_wineNumber.wineNumber);
 		}

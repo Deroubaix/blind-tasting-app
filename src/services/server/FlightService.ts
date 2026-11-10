@@ -128,7 +128,8 @@ function flightView(flight: LoadedFlight, userId: string, lang: Lang = DEFAULT_L
 		timerSeconds: flight.timerSeconds,
 		ended: flight.endedAt !== null,
 		createdAt: flight.created_at.toISOString(),
-		host: { id: flight.host.id, name: flight.host.displayName },
+		// Null once the host has deleted their account.
+		host: flight.host && { id: flight.host.id, name: flight.host.displayName },
 		role,
 	};
 
@@ -331,7 +332,7 @@ function flightSummary(flight: LoadedFlight, lang: Lang = DEFAULT_LANG): FlightS
 		name: flight.name,
 		grid: gridOf(flight.grid),
 		createdAt: flight.created_at.toISOString(),
-		hostName: flight.host.displayName,
+		hostName: flight.host?.displayName ?? null,
 		timerSeconds: flight.timerSeconds,
 		members,
 		wines,
@@ -569,11 +570,21 @@ export default class FlightService {
 		if (!entry) {
 			throw apiError(409, 'openWineFirst', wineNumber);
 		}
-		if (entry.tastingId) {
+		if (entry.tastingId || entry.lateTastingId) {
 			throw apiError(409, 'alreadySubmitted', wineNumber);
 		}
 		const reveal = flight.wines[0].revealedAt ? (flight.wines[0].reveal as Prisma.InputJsonValue) : null;
 		return { where, reveal, grid: flight.grid };
+	}
+
+	/** Records a save that came after the reveal, if no other got there first; false if one did. */
+	public async linkLateTasting(where: FlightEntryWhere, tastingId: string): Promise<boolean> {
+		const { flightId, userId, wineNumber } = where.flightId_userId_wineNumber;
+		const { count } = await this._prisma.flightEntry.updateMany({
+			where: { flightId, userId, wineNumber, tastingId: null, lateTastingId: null },
+			data: { lateTastingId: tastingId },
+		});
+		return count > 0;
 	}
 
 	/**

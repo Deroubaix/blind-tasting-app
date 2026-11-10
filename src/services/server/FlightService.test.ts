@@ -164,6 +164,12 @@ describe('flight permissions', () => {
 		await expect(service.view('B7KQ4M', VISITOR, 'en')).rejects.toEqual(refused(429, 'tooManyAttempts'));
 	});
 
+	it('records only one late save per wine', async () => {
+		const where = { flightId_userId_wineNumber: { flightId: 'f1', userId: TASTER, wineNumber: 1 } };
+		await expect(setup().service.linkLateTasting(where, 't2')).resolves.toBe(true);
+		await expect(setup(true, { linked: true }).service.linkLateTasting(where, 't3')).resolves.toBe(false);
+	});
+
 	it('links a tasting to its wine only once', async () => {
 		const where = { flightId_userId_wineNumber: { flightId: 'f1', userId: TASTER, wineNumber: 2 } };
 		await expect(setup().service.linkTasting(where, 't2')).resolves.toBe(true);

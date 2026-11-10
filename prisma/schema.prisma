@@ -17,9 +17,23 @@ model User {
   created_at       DateTime? @default(now()) @db.Timestamp(6)
 
   tastings          Tasting[]
+  sessions          Session[]
   hostedFlights     Flight[]
   flightMemberships FlightMember[]
   flightEntries     FlightEntry[]
+}
+
+/// One signed-in browser. The cookie's token names it, so logging out ends just this one and a
+/// password reset ends them all.
+model Session {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  userId     String   @db.VarChar(36)
+  expiresAt  DateTime
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Tasting {
@@ -55,7 +69,8 @@ model Tasting {
   revealedAt   DateTime?
   created_at   DateTime     @default(now())
   user         User         @relation(fields: [userId], references: [id])
-  flightEntry  FlightEntry?
+  flightEntry  FlightEntry? @relation("EntryTasting")
+  lateEntry    FlightEntry? @relation("EntryLateTasting")
 
   /// Makes the per-user numbering race-safe: a concurrent insert that picks the same
   /// number fails the constraint instead of silently duplicating.
@@ -77,7 +92,8 @@ model Flight {
   /// What tasters type to join: six characters with no look-alikes (0/O, 1/I/L).
   code         String    @unique @db.VarChar(6)
   name         String
-  hostId       String    @db.VarChar(36)
+  /// Null once the host deletes their account: the flight ends but stays for its tasters.
+  hostId       String?   @db.VarChar(36)
   wineCount    Int
   /// The grid every wine in the flight is tasted on; see Tasting.grid.
   grid         String    @default("cms")
@@ -86,7 +102,7 @@ model Flight {
   endedAt      DateTime?
   created_at   DateTime  @default(now())
 
-  host    User           @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  host    User?          @relation(fields: [hostId], references: [id], onDelete: SetNull)
   wines   FlightWine[]
   members FlightMember[]
   entries FlightEntry[]
@@ -117,15 +133,18 @@ model FlightMember {
 
 /// A taster's go at one wine, from the moment they open it: in progress until a tasting is linked.
 model FlightEntry {
-  flightId   String   @db.VarChar(36)
-  userId     String   @db.VarChar(36)
-  wineNumber Int
-  startedAt  DateTime @default(now())
-  tastingId  String?  @unique @db.VarChar(36)
+  flightId      String   @db.VarChar(36)
+  userId        String   @db.VarChar(36)
+  wineNumber    Int
+  startedAt     DateTime @default(now())
+  tastingId     String?  @unique @db.VarChar(36)
+  /// A save that arrived after the host revealed: in the taster's archive, not the results. One per wine.
+  lateTastingId String?  @unique @db.VarChar(36)
 
-  flight  Flight   @relation(fields: [flightId], references: [id], onDelete: Cascade)
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tasting Tasting? @relation(fields: [tastingId], references: [id], onDelete: SetNull)
+  flight      Flight   @relation(fields: [flightId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasting     Tasting? @relation("EntryTasting", fields: [tastingId], references: [id], onDelete: SetNull)
+  lateTasting Tasting? @relation("EntryLateTasting", fields: [lateTastingId], references: [id], onDelete: SetNull)
 
   @@id([flightId, userId, wineNumber])
 }

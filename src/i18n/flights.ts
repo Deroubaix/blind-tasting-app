@@ -24,6 +24,8 @@ export const flightsText = dict(
 				notsubmitted: 'not submitted',
 			},
 			hostedBy: (name: string) => `Hosted by ${name}`,
+			hostGone: 'Host account deleted',
+			theHost: 'the host',
 			tasters: (n: number) => (n === 1 ? '1 taster' : `${n} tasters`),
 			revealedOf: (n: number, total: number) => `${n} of ${total} revealed`,
 			allRevealed: (n: number) => (n === 1 ? 'Revealed' : `All ${n} revealed`),
@@ -159,6 +161,7 @@ export const flightsText = dict(
 			start: (n: number) => `Start wine ${n}`,
 			whoPours: (n: number, host: string) => `${n} tasting · ${host} pours and reveals`,
 			note: (host: string) => `Taste in any order. You’ll see the results for each wine once ${host} reveals it.`,
+			hostGoneNote: 'The host deleted their account, so wines not yet revealed won’t be.',
 		},
 		reveal: {
 			and: 'and',
@@ -282,6 +285,8 @@ export const flightsText = dict(
 				notsubmitted: 'não submetido',
 			},
 			hostedBy: (name) => `Organizado por ${name}`,
+			hostGone: 'Conta do anfitrião eliminada',
+			theHost: 'o anfitrião',
 			tasters: (n) => (n === 1 ? '1 provador' : `${n} provadores`),
 			revealedOf: (n, total) => `${n} de ${total} revelados`,
 			allRevealed: (n) => (n === 1 ? 'Revelado' : `Todos os ${n} revelados`),
@@ -417,6 +422,7 @@ export const flightsText = dict(
 			whoPours: (n, host) => `${n} a provar · ${host} serve e revela`,
 			note: (host) =>
 				`Prove pela ordem que quiser. Verá os resultados de cada vinho assim que ${host} o revelar.`,
+			hostGoneNote: 'O anfitrião eliminou a conta, por isso os vinhos ainda não revelados já não o serão.',
 		},
 		reveal: {
 			and: 'e',

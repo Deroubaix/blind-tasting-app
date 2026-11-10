@@ -96,8 +96,8 @@ export const userText = dict(
 					: `Your account, ${count === null ? 'all your tastings' : count === 1 ? 'your one tasting' : `all ${count} tastings`} and every label photo will be deleted for good.`,
 			flightsNote: (n: number) =>
 				n === 1
-					? 'The flight you host is deleted too, for everyone in it. Tasters keep their own tastings.'
-					: `The ${n} flights you host are deleted too, for everyone in them. Tasters keep their own tastings.`,
+					? 'The flight you host stays for its tasters, ended and without your name.'
+					: `The ${n} flights you host stay for their tasters, ended and without your name.`,
 			deletedTitle: 'Account deleted',
 			deletedBody: 'Your account and everything in it are gone.',
 			deleteFailed: 'The account could not be deleted. Please try again.',
@@ -231,8 +231,8 @@ export const userText = dict(
 					: `A sua conta, ${count === null ? 'todas as suas provas' : count === 1 ? 'a sua única prova' : `as ${count} provas`} e todas as fotografias de rótulos serão eliminadas definitivamente.`,
 			flightsNote: (n) =>
 				n === 1
-					? 'O flight que organiza também é eliminado, para todos os que nele participam. Os provadores mantêm as suas próprias provas.'
-					: `Os ${n} flights que organiza também são eliminados, para todos os que neles participam. Os provadores mantêm as suas próprias provas.`,
+					? 'O flight que organiza fica para os provadores, terminado e sem o seu nome.'
+					: `Os ${n} flights que organiza ficam para os provadores, terminados e sem o seu nome.`,
 			deletedTitle: 'Conta eliminada',
 			deletedBody: 'A sua conta e tudo o que continha foram eliminados.',
 			deleteFailed: 'Não foi possível eliminar a conta. Tente novamente.',
