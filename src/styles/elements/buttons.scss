@@ -87,8 +87,10 @@ button {
 	border: 1px solid $rule-mid;
 	color: $color-ink;
 
+	// Ink border and a raised fill: a border one grey darker barely showed in the light theme.
 	&:hover:not(:disabled) {
-		border-color: $color-text-secondary;
+		border-color: $color-ink;
+		background-color: $color-raised;
 	}
 
 	// No outline until hovered: an action that should not compete, such as Delete.
