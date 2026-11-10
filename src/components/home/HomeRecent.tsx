@@ -12,7 +12,7 @@ import { type TimerPhase } from '../../data/timerData';
 import { useText } from '../../i18n/LanguageProvider';
 import { homeText } from '../../i18n/home';
 import { archivesText } from '../../i18n/archives';
-import { tastingText } from '../../i18n/tasting';
+import { commonText } from '../../i18n/common';
 
 export type RecentTasting = TastingRow & {
 	id: string;
@@ -35,7 +35,7 @@ function DraftRow() {
 	const { tastingData } = useTastingContext();
 	const d = useText(homeText).dashboard;
 	const a = useText(archivesText).list;
-	const short = useText(tastingText).sidebar.short;
+	const phaseName = useText(commonText).phase;
 	if (!tastingData.wineType) {
 		return null;
 	}
@@ -47,7 +47,7 @@ function DraftRow() {
 		<li className="home-recent">
 			<Dot wineType={tastingData.wineType} />
 			<strong className="home-recent__title">
-				{flight ? a.flightWine(flight.name, flight.wineNumber) : d.inProgress}
+				{flight ? a.flightWine(flight.name, flight.wineNumber) : tastingData.wineName?.trim() || d.inProgress}
 			</strong>
 			<Link
 				href={`${PHASE_ORDER[furthest]}?wineType=${tastingData.wineType.toLowerCase()}`}
@@ -56,7 +56,9 @@ function DraftRow() {
 				{d.continue}
 			</Link>
 			<span className="home-recent__meta">
-				{[grid === 'wset' ? a.wset : a.cms, phase ? d.atPhase(short[grid][phase]) : d.readyToSave].join(' · ')}
+				{[grid === 'wset' ? a.wset : a.cms, phase ? d.atPhase(phaseName[grid][phase]) : d.readyToSave].join(
+					' · ',
+				)}
 			</span>
 		</li>
 	);

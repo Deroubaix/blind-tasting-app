@@ -36,7 +36,7 @@ const AGREEMENT_ICONS: Record<Agreement, typeof IconCheck> = {
 const byKey = (group: Record<string, string>, key: string, fallback: string) => group[key] ?? fallback;
 
 /** Short scale labels, so five levels fit a phone: "Medium+" → "Med+". */
-const shortLevel = (level: string) => level.replace('Medium', 'Med').replace(/^Médi[oa]/, 'Méd');
+const shortLevel = (level: string) => level.replace('Medium', 'Med').replace(/^Médi[oa]s?/, 'Méd');
 
 function structure(results: WineResults): StructureAttribute[] {
 	const answers = results.rows
@@ -96,7 +96,11 @@ function ScaleRow({ attr, results }: { attr: StructureAttribute; results: WineRe
 				{attr.levels.map((level, index) => {
 					const here = people(index);
 					return (
-						<span key={level} className="agreement-scale__stop" style={{ left: pos(index) }}>
+						<span
+							key={level}
+							className={`agreement-scale__stop${index === 0 ? ' agreement-scale__stop--first' : ''}${index === attr.levels.length - 1 ? ' agreement-scale__stop--last' : ''}`}
+							style={{ left: pos(index) }}
+						>
 							<span className="agreement-scale__dots">
 								{here.map((person) => (
 									<Avatar

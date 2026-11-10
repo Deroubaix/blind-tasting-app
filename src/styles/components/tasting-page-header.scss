@@ -175,3 +175,17 @@
 		display: none;
 	}
 }
+
+// The Start page's full name, beside "Cancelar", wraps rather than push it off a 320 screen.
+@include responsive(25rem) {
+	.tasting-page-header__logo {
+		flex-shrink: 1;
+		min-width: 0;
+
+		.wordmark {
+			max-width: 100%;
+			line-height: 1.05;
+			white-space: normal;
+		}
+	}
+}

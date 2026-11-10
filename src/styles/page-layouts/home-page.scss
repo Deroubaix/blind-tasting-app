@@ -70,7 +70,7 @@
 	&__of {
 		font-family: $font-sans;
 		font-style: normal;
-		font-size: 0.6em;
+		font-size: max(0.6em, #{$text-13});
 		color: $color-text-secondary;
 	}
 }
@@ -486,7 +486,10 @@
 		}
 	}
 
+	// On the title's first line, so a title that wraps doesn't leave it floating between lines.
 	&__dot {
+		align-self: start;
+		margin-top: calc(0.75em - 4.5px);
 		width: 9px;
 		height: 9px;
 		border: 1px solid $color-text-secondary;

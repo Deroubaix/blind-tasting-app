@@ -188,6 +188,7 @@ export default function HomeDashboard({
 								<p className="home-muted">{d.noProgress}</p>
 							)}
 							{average && !habits && <p className="home-note">{d.habitsAfter}</p>}
+							{average && habits && !confusion && !bias && <p className="home-note">{d.noHabits}</p>}
 						</section>
 					</div>
 				</div>

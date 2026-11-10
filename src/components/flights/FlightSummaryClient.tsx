@@ -66,7 +66,8 @@ export default function FlightSummaryClient({ code }: { code: string }) {
 			<p className="flight-note">{t.inArchive}</p>
 
 			<section className="flight-card flight-results__card">
-				<div className="flight-summary" role="table" aria-label={t.tableAria}>
+				{/* Focusable so the keyboard can scroll it sideways when the tasters don't fit. */}
+				<div className="flight-summary" role="table" aria-label={t.tableAria} tabIndex={0}>
 					<div
 						className="flight-summary__row flight-summary__row--head"
 						role="row"

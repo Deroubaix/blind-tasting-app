@@ -163,7 +163,7 @@
 	&__of {
 		font-family: $font-sans;
 		font-style: normal;
-		font-size: 0.64em;
+		font-size: max(0.64em, #{$text-13});
 		color: $color-text-secondary;
 	}
 
@@ -179,12 +179,11 @@
 
 // ── Filter chips ───────────────────────────────────────────────────────────────
 // A row of toggles that narrows a list; the chosen one is filled.
+// Wraps rather than scrolls: a hidden scroll gave no sign that more filters sat off the edge.
 .chip-row {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 8px;
-	overflow-x: auto;
-	padding-bottom: 2px;
-	scrollbar-width: none;
 }
 
 .chip {

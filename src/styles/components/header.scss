@@ -375,16 +375,30 @@ body.menu-open {
 		}
 	}
 
-	// "Começar" is wider than "Start"; at 390 it pushed the avatar off the edge.
+	// "Começar" is wider than "Start"; at 390 it pushed the avatar off the edge. Narrower still, the
+	// name wraps onto two lines rather than push the menu off the screen.
 	@include responsive(25rem) {
 		gap: 8px;
 
+		&__logo {
+			min-width: 0;
+		}
+
 		.wordmark {
+			max-width: 100%;
 			font-size: 1.0625rem;
+			line-height: 1.05;
+			white-space: normal;
 		}
 
 		&__start {
 			padding: 0 12px;
+		}
+	}
+
+	@include responsive(21.25rem) {
+		.wordmark {
+			font-size: 0.9375rem;
 		}
 	}
 }

@@ -115,10 +115,11 @@
 	gap: 22px;
 }
 
-// The label carries its own 10px gap to the field.
+// The label carries its own 10px gap to the field. min-width lets a long PT answer wrap at 320.
 .fc-field {
 	display: flex;
 	flex-direction: column;
+	min-width: 0;
 }
 
 // ── Narrow main area (and every phone): notes above the form, closed ──────────

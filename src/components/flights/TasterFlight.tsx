@@ -136,7 +136,11 @@ export default function TasterFlight({ flight, reload }: { flight: FlightView; r
 						title = t.waitingFor(hostFirst);
 						detail = `${t.submitted}${wine.submittedAt ? t.at(formatTime(wine.submittedAt, lang)) : ''}${left ? t.stillTasting(left) : ''}`;
 					} else if (wine.status === 'tasting') {
-						title = wine.endsAt ? t.timeLeft(clockText(wine.endsAt, now) ?? '') : text.bits.untimed;
+						title = !wine.endsAt
+							? text.bits.untimed
+							: new Date(wine.endsAt).getTime() <= now
+								? t.timeUp
+								: t.timeLeft(clockText(wine.endsAt, now) ?? '');
 						detail = t.carryOn;
 					} else {
 						title = t.ready;

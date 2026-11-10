@@ -65,6 +65,21 @@
 		color: $color-text-muted;
 		white-space: nowrap;
 
+		// The end labels run inward from their point, so they neither meet a neighbour nor leave the card.
+		.agreement-scale__stop--first &,
+		.agreement-scale__stop--last & {
+			position: absolute;
+			bottom: 0;
+		}
+
+		.agreement-scale__stop--first & {
+			left: 0;
+		}
+
+		.agreement-scale__stop--last & {
+			right: 0;
+		}
+
 		&--on {
 			color: $color-ink;
 		}
@@ -112,5 +127,33 @@
 
 	> li {
 		margin: 0;
+	}
+}
+
+// A 320 phone can't fit five levels beside the name, so the name goes above the scale.
+@include responsive(25rem) {
+	.agreement-scales--compact .agreement-scale {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.agreement-scales--compact .agreement-scale__verdict {
+		grid-column: 1;
+	}
+}
+
+// Still too tight for "Encorpado" beside "Méd+": show the levels someone called, and the ends.
+@include responsive(24rem) {
+	.agreement-scales--compact
+		.agreement-scale__stop:not(.agreement-scale__stop--first, .agreement-scale__stop--last)
+		.agreement-scale__tick:not(.agreement-scale__tick--on),
+	// An end nobody called gives way to a called level beside it.
+	.agreement-scales--compact
+		.agreement-scale__stop:has(.agreement-scale__tick--on)
+		+ .agreement-scale__stop--last
+		.agreement-scale__tick:not(.agreement-scale__tick--on),
+	.agreement-scales--compact
+		.agreement-scale__stop--first:has(+ .agreement-scale__stop .agreement-scale__tick--on)
+		.agreement-scale__tick:not(.agreement-scale__tick--on) {
+		visibility: hidden;
 	}
 }

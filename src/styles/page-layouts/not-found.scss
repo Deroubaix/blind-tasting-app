@@ -1,0 +1,33 @@
+@use '../abstracts' as *;
+
+.not-found {
+	max-width: 36rem;
+	min-height: 60vh;
+	margin: 0 auto;
+	padding: calc(var(--navbar-height_approx) + #{$spacing-xxl}) $spacing-xl $spacing-xxl;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: $spacing-md;
+
+	h1,
+	p {
+		margin: 0;
+	}
+
+	p {
+		color: $color-text-secondary;
+	}
+
+	&__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $spacing-sm;
+		margin-top: $spacing-sm;
+	}
+
+	@include responsive($breakpoint-mobile) {
+		padding-left: $spacing-md;
+		padding-right: $spacing-md;
+	}
+}

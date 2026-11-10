@@ -71,7 +71,8 @@ export default async function Homepage() {
 					recent={recent}
 					counts={{
 						week: tastings.filter((tasting) => inPastWeek(tasting.created_at)).length,
-						waiting: saved.filter((tasting) => !isRevealed(tasting.reveal)).length,
+						// Only the ones you can label: a flight wine waits on its host.
+						waiting: saved.filter((tasting) => !tasting.flight && !isRevealed(tasting.reveal)).length,
 					}}
 					flights={flights}
 					palate={palate}

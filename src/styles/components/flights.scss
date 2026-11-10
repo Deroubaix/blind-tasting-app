@@ -169,7 +169,7 @@
 	&--sm {
 		width: 24px;
 		height: 24px;
-		font-size: $text-11;
+		font-size: $text-13;
 	}
 
 	&--md {
@@ -1073,6 +1073,11 @@
 	display: flex;
 	flex-direction: column;
 	overflow-x: auto;
+
+	&:focus-visible {
+		outline: 2px solid $color-link;
+		outline-offset: 4px;
+	}
 
 	&__row {
 		@include ledger-row($spacing-sm);

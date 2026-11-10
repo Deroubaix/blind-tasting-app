@@ -63,3 +63,11 @@
 		}
 	}
 }
+
+// "Seguinte: Conclusão final" on one line at 320.
+@include responsive(22.5rem) {
+	.tasting-footer__next {
+		padding: 0 12px;
+		font-size: $text-15;
+	}
+}

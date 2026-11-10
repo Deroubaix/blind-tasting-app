@@ -102,6 +102,13 @@ export const layoutText = dict(
 			description:
 				'Timed blind-tasting practice on the Court of Master Sommeliers deductive grid or the WSET Level 3 Systematic Approach, with an archive of every tasting you save.',
 		},
+		notFound: {
+			title: 'Page not found',
+			heading: 'Nothing poured here',
+			body: 'This page doesn’t exist, or it has moved. A link to a flight only works while the flight is kept.',
+			home: 'Go to the home page',
+			archive: 'Your archive',
+		},
 	},
 	{
 		header: {
@@ -153,7 +160,7 @@ export const layoutText = dict(
 			tagline: 'Prática de prova às cegas para a grelha dedutiva CMS e a WSET Nível 3 SAT.',
 			taste: 'Provar',
 			startTasting: 'Iniciar uma prova',
-			howSolo: 'Como funciona a prova sozinho',
+			howSolo: 'Como funciona provar sozinho',
 			whatAfter: 'O que recebe depois da revelação',
 			flights: 'Flights',
 			hostFlight: 'Organizar um flight',
@@ -202,6 +209,13 @@ export const layoutText = dict(
 		meta: {
 			description:
 				'Prática de prova às cegas cronometrada, na grelha dedutiva do Court of Master Sommeliers ou na Abordagem Sistemática da WSET Nível 3, com um arquivo de todas as provas que guardar.',
+		},
+		notFound: {
+			title: 'Página não encontrada',
+			heading: 'Nada servido aqui',
+			body: 'Esta página não existe, ou mudou de sítio. Uma ligação para um flight só funciona enquanto o flight existir.',
+			home: 'Ir para a página inicial',
+			archive: 'O seu arquivo',
 		},
 	},
 );
