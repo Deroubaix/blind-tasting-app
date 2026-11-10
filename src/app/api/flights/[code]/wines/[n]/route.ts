@@ -1,4 +1,4 @@
-import { errorResponse, jsonResponse, logServerError } from '../../../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError, readJson } from '../../../../../../utils/ApiUtils';
 import ServerServices from '../../../../../../services/server/ServerServices';
 import FlightService from '../../../../../../services/server/FlightService';
 import SessionService from '../../../../../../services/server/SessionService';
@@ -23,7 +23,7 @@ export async function PATCH(request: Request, { params }: Params) {
 	try {
 		const userId = await ServerServices.getClass(SessionService).requireUserId();
 		const { code, n } = await params;
-		const { reveal } = flightRevealSchema.parse(await request.json());
+		const { reveal } = flightRevealSchema.parse(await readJson(request));
 		return jsonResponse(await ServerServices.getClass(FlightService).reveal(code, n, userId, reveal));
 	} catch (error) {
 		logServerError('PATCH /api/flights/[code]/wines/[n]', error);

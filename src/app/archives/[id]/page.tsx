@@ -22,11 +22,12 @@ export default async function TastingDetailPage({
 	searchParams: Promise<{ reveal?: string }>;
 }) {
 	const { id } = await params;
-	if (!(await ServerServices.getClass(SessionService).currentUserId())) {
-		redirect(`/login?r=/archives/${id}`);
-	}
 	// `?reveal=1`: arrived from the home dashboard's Reveal link, so open straight onto the form.
 	const openReveal = (await searchParams).reveal === '1';
+	if (!(await ServerServices.getClass(SessionService).currentUserId())) {
+		const back = `/archives/${encodeURIComponent(id)}${openReveal ? '?reveal=1' : ''}`;
+		redirect(`/login?r=${encodeURIComponent(back)}`);
+	}
 
 	return (
 		<div className="site-page">

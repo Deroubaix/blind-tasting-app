@@ -388,13 +388,19 @@ export default class FlightService {
 		private readonly _rateLimits: RateLimitService,
 	) {}
 
-	/** Only misses count against the limit, since guessing is what it stops. */
+	/**
+	 * Only misses count against the limit, since guessing is what it stops. Past the limit, codes
+	 * still open the flights the user hosts or has joined: mistyping one shouldn't lock them out of theirs.
+	 */
 	private async load(code: string, userId: string): Promise<LoadedFlight> {
-		await this._rateLimits.check(RATE_LIMITS.flightCode, userId);
 		const flight = await this._prisma.flight.findUnique({
 			where: { code: normalizeCode(code) },
 			include: FLIGHT_INCLUDE,
 		});
+		if (flight && (flight.hostId === userId || flight.members.some((m) => m.userId === userId))) {
+			return flight;
+		}
+		await this._rateLimits.check(RATE_LIMITS.flightCode, userId);
 		if (!flight) {
 			await this._rateLimits.consume(RATE_LIMITS.flightCode, userId);
 			throw apiError(404, 'flightNotFound');
@@ -516,7 +522,8 @@ export default class FlightService {
 		const number = wineNumber(n, flight.wineCount);
 
 		const fields = revealFields(reveal);
-		if (fields.reveal === Prisma.DbNull) {
+		// Only fields this grid scores count: a reveal of nothing else would score every taster 0 of 0.
+		if (fields.reveal === Prisma.DbNull || outOfFor(flight, reveal as Reveal) === 0) {
 			throw apiError(400, 'revealNeedsField');
 		}
 		const submitted = flight.entries.filter((entry) => entry.wineNumber === number && entry.tastingId);
@@ -546,7 +553,7 @@ export default class FlightService {
 
 	/** The taster's entry for a flight wine, checked; `reveal` is set when the host got there first. */
 	public async entryToSubmit(userId: string, { code, wineNumber }: { code: string; wineNumber: number }) {
-		await this._rateLimits.check(RATE_LIMITS.flightCode, userId);
+		// No check up front: a found flight the user hasn't joined answers like a miss, so nothing leaks.
 		const flight = await this._prisma.flight.findUnique({
 			where: { code: normalizeCode(code) },
 			include: { members: { where: { userId } }, wines: { where: { number: wineNumber } } },
@@ -566,13 +573,22 @@ export default class FlightService {
 			throw apiError(409, 'alreadySubmitted', wineNumber);
 		}
 		const reveal = flight.wines[0].revealedAt ? (flight.wines[0].reveal as Prisma.InputJsonValue) : null;
-		return { where, reveal };
+		return { where, reveal, grid: flight.grid };
 	}
 
-	/** Links a saved tasting to its entry. Revealed between the check and the link: copy the reveal on. */
-	public async linkTasting(where: FlightEntryWhere, tastingId: string) {
-		await this._prisma.flightEntry.update({ where, data: { tastingId } });
-		const { flightId, wineNumber } = where.flightId_userId_wineNumber;
+	/**
+	 * Links a saved tasting to its entry, if no other save got there first; false if one did.
+	 * Revealed between the check and the link: copy the reveal on.
+	 */
+	public async linkTasting(where: FlightEntryWhere, tastingId: string): Promise<boolean> {
+		const { flightId, userId, wineNumber } = where.flightId_userId_wineNumber;
+		const { count } = await this._prisma.flightEntry.updateMany({
+			where: { flightId, userId, wineNumber, tastingId: null },
+			data: { tastingId },
+		});
+		if (count === 0) {
+			return false;
+		}
 		const wine = await this._prisma.flightWine.findUnique({
 			where: { flightId_number: { flightId, number: wineNumber } },
 		});
@@ -582,5 +598,6 @@ export default class FlightService {
 				data: { reveal: wine.reveal as Prisma.InputJsonValue, revealedAt: wine.revealedAt },
 			});
 		}
+		return true;
 	}
 }

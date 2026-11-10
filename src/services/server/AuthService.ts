@@ -10,6 +10,9 @@ import type RateLimitService from './RateLimitService';
 
 const TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
+// Checked against for unknown emails, so they take as long to refuse as a wrong password does.
+const DUMMY_HASH = `${'0'.repeat(32)}:${'0'.repeat(128)}`;
+
 const hashToken = (raw: string) => createHash('sha256').update(raw).digest('hex');
 
 /** 401 rather than 400: the client keys off this status to offer a fresh reset link. */
@@ -38,20 +41,26 @@ export default class AuthService {
 		return { id: user.id, email: user.email, name: user.displayName };
 	}
 
-	/** The user, or a 401. Only wrong passwords count against the account, so the limit gives nothing away. */
+	/**
+	 * The user, or a 401. Only wrong passwords count against the account, so the limit gives nothing away.
+	 * The tight limit is per account and address, so someone guessing elsewhere doesn't lock the owner out.
+	 */
 	public async logIn(email: string, password: string, ip: string): Promise<AuthenticatedUser> {
+		const fromHere = `${email}|${ip}`;
 		await this._rateLimits.consume(RATE_LIMITS.loginIp, ip);
-		await this._rateLimits.check(RATE_LIMITS.loginEmail, email);
+		await this._rateLimits.check(RATE_LIMITS.loginEmail, fromHere);
+		await this._rateLimits.check(RATE_LIMITS.loginAccount, email);
 
 		const user = await this._prisma.user.findUnique({ where: { email } });
-		const isPasswordValid = user ? await verifyPassword(password, user.password) : false;
+		const isPasswordValid = (await verifyPassword(password, user?.password ?? DUMMY_HASH)) && !!user;
 		if (!user || !isPasswordValid) {
 			// Counted for unknown emails too, so the limit gives away nothing about which exist.
-			await this._rateLimits.consume(RATE_LIMITS.loginEmail, email).catch(() => undefined);
+			await this._rateLimits.consume(RATE_LIMITS.loginEmail, fromHere).catch(() => undefined);
+			await this._rateLimits.consume(RATE_LIMITS.loginAccount, email).catch(() => undefined);
 			throw apiError(401, 'invalidCredentials');
 		}
 
-		await this._rateLimits.reset(RATE_LIMITS.loginEmail, email);
+		await this._rateLimits.reset(RATE_LIMITS.loginEmail, fromHere);
 
 		// The password and reset-token columns never leave the server.
 		return { id: user.id, email: user.email, displayName: user.displayName, created_at: user.created_at };

@@ -1,4 +1,4 @@
-import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError, readJson } from '../../../../utils/ApiUtils';
 import { getLang } from '../../../../i18n/server';
 import ServerServices from '../../../../services/server/ServerServices';
 import AuthService from '../../../../services/server/AuthService';
@@ -7,7 +7,7 @@ import { resetPasswordRequestSchema } from '../../../../schemas/auth';
 
 export async function POST(request: Request) {
 	try {
-		const { email, token, password } = resetPasswordRequestSchema.parse(await request.json());
+		const { email, token, password } = resetPasswordRequestSchema.parse(await readJson(request));
 		await ServerServices.getClass(AuthService).resetPassword(email, token, password, clientIp(request));
 		return jsonResponse({ ok: true });
 	} catch (error) {

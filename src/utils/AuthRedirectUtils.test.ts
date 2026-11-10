@@ -32,6 +32,10 @@ describe('safeRedirect', () => {
 		'javascript:alert(1)',
 		'evil.site',
 		'https://app.invalid/archives',
+		'/..//evil.site',
+		'/a/../..//evil.site',
+		'/%2e%2e//evil.site',
+		'/.//evil.site',
 	])('refuses to leave the app for %j', (returnTo) => {
 		expect(safeRedirect(returnTo)).toBe('/');
 	});

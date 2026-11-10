@@ -30,6 +30,7 @@ export const userText = dict(
 			passwordRequired: 'Password is required',
 			passwordShort: (n: number) => `Password must be at least ${n} characters`,
 			displayNameRequired: 'Display name is required',
+			displayNameLong: 'Keep the name under 60 characters',
 			confirmRequired: 'Please confirm your password',
 			mismatch: 'Passwords do not match',
 		},
@@ -164,6 +165,7 @@ export const userText = dict(
 			passwordRequired: 'Indique a palavra-passe',
 			passwordShort: (n) => `A palavra-passe tem de ter pelo menos ${n} caracteres`,
 			displayNameRequired: 'Indique o nome',
+			displayNameLong: 'O nome tem de ter menos de 60 caracteres',
 			confirmRequired: 'Confirme a palavra-passe',
 			mismatch: 'As palavras-passe não coincidem',
 		},
@@ -260,7 +262,7 @@ export const userText = dict(
 					.join(', '),
 			exportText:
 				'Um ZIP com os dados da sua conta, todas as provas com a respetiva revelação e pontuação, os seus flights e todas as fotografias de rótulos. Ficheiros JSON e JPEG, que não precisam da aplicação para ser lidos.',
-			exporting: 'A preparar o arquivo…',
+			exporting: 'A preparar o ficheiro…',
 			download: 'Transferir os meus dados',
 			deleteHeading: 'Eliminar a sua conta',
 			deleteText:

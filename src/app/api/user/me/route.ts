@@ -1,4 +1,4 @@
-import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError, readJson } from '../../../../utils/ApiUtils';
 import { getLang } from '../../../../i18n/server';
 import ServerServices from '../../../../services/server/ServerServices';
 import UserService from '../../../../services/server/UserService';
@@ -21,7 +21,7 @@ export async function GET() {
 export async function DELETE(request: Request) {
 	try {
 		const userId = await ServerServices.getClass(SessionService).requireUserId();
-		const { password } = deleteAccountSchema.parse(await request.json());
+		const { password } = deleteAccountSchema.parse(await readJson(request));
 		await ServerServices.getClass(UserService).deleteAccount(userId, password);
 		await ServerServices.getClass(SessionService).end();
 		return new Response(null, { status: 204 });

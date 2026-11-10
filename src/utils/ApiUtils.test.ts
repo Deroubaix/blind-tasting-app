@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { ApiError, apiError, errorResponse, readBodyCapped } from './ApiUtils';
+import { ApiError, apiError, errorResponse, readBodyCapped, readJson } from './ApiUtils';
 import { JsonApiError } from './ErrorUtils';
 
 // The client's FetchUtils and JsonApiError only understand the `{ error, message, statusCode }`
@@ -22,6 +22,19 @@ describe('errorResponse', () => {
 		const { status, body } = await respond(result.success ? null : result.error);
 		expect(status).toBe(400);
 		expect(body).toEqual({ error: 'BadRequest', message: 'Wine type is required', statusCode: 400 });
+	});
+
+	it("words zod's own messages as the app's, in the request's language", async () => {
+		const result = z.object({ email: z.string() }).safeParse({});
+		const response = errorResponse(result.success ? null : result.error, 'pt');
+		expect(response.status).toBe(400);
+		expect((await response.json()).message).toBe('Pedido inválido.');
+	});
+
+	it('translates the shared form messages', async () => {
+		const result = z.object({ email: z.string().min(1, 'Email is required') }).safeParse({ email: '' });
+		const body = await errorResponse(result.success ? null : result.error, 'pt').json();
+		expect(body.message).not.toBe('Email is required');
 	});
 
 	it('turns a body that is not JSON into a 400', async () => {
@@ -85,5 +98,20 @@ describe('readBodyCapped', () => {
 		const error = await readBodyCapped(put(stream([6, 6, 6])), 10).catch((e) => e);
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error.statusCode).toBe(413);
+	});
+});
+
+describe('readJson', () => {
+	const post = (body: string) => new Request('http://app.test/api', { method: 'POST', body });
+
+	it('refuses a NUL character anywhere in the body', async () => {
+		await expect(readJson(post('{"notes":{"a":["ok","x\\u0000"]}}'))).rejects.toMatchObject({ statusCode: 400 });
+		await expect(readJson(post('{"x\\u0000":1}'))).rejects.toMatchObject({ statusCode: 400 });
+	});
+
+	it('passes an ordinary body through', async () => {
+		await expect(readJson(post('{"notes":"Cassis, \\\\u0000 as text"}'))).resolves.toEqual({
+			notes: 'Cassis, \\u0000 as text',
+		});
 	});
 });

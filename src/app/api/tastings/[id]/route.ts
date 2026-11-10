@@ -1,4 +1,4 @@
-import { errorResponse, jsonResponse, logServerError } from '../../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError, readJson } from '../../../../utils/ApiUtils';
 import { getLang } from '../../../../i18n/server';
 import ServerServices from '../../../../services/server/ServerServices';
 import TastingService from '../../../../services/server/TastingService';
@@ -32,7 +32,7 @@ export async function DELETE(_request: Request, { params }: Params) {
 export async function PATCH(request: Request, { params }: Params) {
 	try {
 		const userId = await ServerServices.getClass(SessionService).requireUserId();
-		const { reveal } = revealUpdateSchema.parse(await request.json());
+		const { reveal } = revealUpdateSchema.parse(await readJson(request));
 		const tasting = await ServerServices.getClass(TastingService).setReveal(userId, (await params).id, reveal);
 		return jsonResponse({ tasting });
 	} catch (error) {

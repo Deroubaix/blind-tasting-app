@@ -39,18 +39,21 @@ const validationMessage = (v: Validation, key: ValidationKey) => {
 	return typeof value === 'function' ? value(PASSWORD_MIN_LENGTH) : value;
 };
 
-/** zodResolver in `lang`: the schemas keep the API's English, swapped here; an unknown message passes through. */
+/** A shared schema's English message in `lang`; an unknown message passes through. */
+export function translateValidation(message: string, lang: Lang): string {
+	const keys = Object.keys(userText.en.validation) as ValidationKey[];
+	const key = keys.find((k) => validationMessage(userText.en.validation, k) === message);
+	return key ? validationMessage(userText[lang].validation, key) : message;
+}
+
+/** zodResolver in `lang`: the schemas keep the API's English, swapped here. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function translatedResolver<Values>(schema: z.ZodType<any, any, any>, lang: Lang) {
 	const resolve = zodResolver<Values>(schema);
-	const keys = Object.keys(userText.en.validation) as ValidationKey[];
 	return (values: Values): FormErrors => {
 		const errors = resolve(values);
 		for (const [path, message] of Object.entries(errors)) {
-			const key = keys.find((k) => validationMessage(userText.en.validation, k) === message);
-			if (key) {
-				errors[path] = validationMessage(userText[lang].validation, key);
-			}
+			errors[path] = translateValidation(message as string, lang);
 		}
 		return errors;
 	};

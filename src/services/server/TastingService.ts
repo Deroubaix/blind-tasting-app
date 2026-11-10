@@ -41,12 +41,14 @@ export default class TastingService {
 	}
 
 	public async create(userId: string, body: TastingCreateInput) {
+		const flight = body.flight ? await this._flights.entryToSubmit(userId, body.flight) : null;
 		const timed = body.timerEnabled === true && body.timerSeconds != null;
 
 		const data = {
 			userId,
 			wineType: body.wineType,
-			grid: body.grid ?? 'cms',
+			// A flight wine is tasted on the flight's grid and revealed only by the host.
+			grid: flight?.grid ?? body.grid ?? 'cms',
 			timerEnabled: timed,
 			timerSeconds: timed ? body.timerSeconds : null,
 			timerMode: timed ? (body.timerMode ?? 'guided') : null,
@@ -58,18 +60,19 @@ export default class TastingService {
 			conclusion: body.conclusion ?? Prisma.DbNull,
 			wineName: body.wineName || null,
 			photoKey: await this._photos.verifiedKey(userId, body.photoKey),
-			...revealFields(body.reveal),
+			...revealFields(flight ? null : body.reveal),
 		};
 
-		const flight = body.flight ? await this._flights.entryToSubmit(userId, body.flight) : null;
 		// Revealed before this arrived: saved to the archive with the host's reveal, but not in the results.
 		const late = flight?.reveal ?? null;
 		const tasting = await this.createWithNextNumber(
 			userId,
 			late ? { ...data, reveal: late, revealedAt: new Date() } : data,
 		);
-		if (flight && !late) {
-			await this._flights.linkTasting(flight.where, tasting.id);
+		if (flight && !late && !(await this._flights.linkTasting(flight.where, tasting.id))) {
+			// A second save of the same wine arrived together with the first. Its photo is the first's too.
+			await this._prisma.tasting.delete({ where: { id: tasting.id } });
+			throw apiError(409, 'alreadySubmitted', flight.where.flightId_userId_wineNumber.wineNumber);
 		}
 		return { tasting, flightLate: Boolean(late) };
 	}

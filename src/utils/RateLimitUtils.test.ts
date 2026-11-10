@@ -28,7 +28,12 @@ describe('minutesUntil', () => {
 });
 
 describe('RATE_LIMITS', () => {
-	it('allows five wrong passwords per account per quarter hour', () => {
+	it('allows five wrong passwords per account and address per quarter hour', () => {
 		expect(RATE_LIMITS.loginEmail).toMatchObject({ limit: 5, windowMs: 15 * 60_000 });
+	});
+
+	it('keeps the per-account limit well above one guesser', () => {
+		expect(RATE_LIMITS.loginAccount.limit).toBeGreaterThanOrEqual(RATE_LIMITS.loginEmail.limit * 5);
+		expect(RATE_LIMITS.loginAccount.name).not.toBe(RATE_LIMITS.loginEmail.name);
 	});
 });

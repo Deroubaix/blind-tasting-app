@@ -27,7 +27,8 @@ export function safeRedirect(returnTo: string | null | undefined): string {
 	}
 	try {
 		const url = new URL(returnTo, SAME_APP);
-		if (url.origin !== SAME_APP) {
+		// `/..//evil.site` resolves to the path `//evil.site`, which is off-site once it reaches the browser.
+		if (url.origin !== SAME_APP || url.pathname.startsWith('//') || url.pathname.startsWith('/\\')) {
 			return DEFAULT_AFTER_LOGIN;
 		}
 		return `${url.pathname}${url.search}${url.hash}`;

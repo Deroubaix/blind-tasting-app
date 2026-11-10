@@ -1,4 +1,4 @@
-import { errorResponse, jsonResponse, logServerError } from '../../../utils/ApiUtils';
+import { errorResponse, jsonResponse, logServerError, readJson } from '../../../utils/ApiUtils';
 import { getLang } from '../../../i18n/server';
 import ServerServices from '../../../services/server/ServerServices';
 import FlightService from '../../../services/server/FlightService';
@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(request: Request) {
 	try {
 		const userId = await ServerServices.getClass(SessionService).requireUserId();
-		const input = flightCreateSchema.parse(await request.json());
+		const input = flightCreateSchema.parse(await readJson(request));
 		const flight = await ServerServices.getClass(FlightService).create(userId, input);
 		return jsonResponse({ code: flight.code }, 201);
 	} catch (error) {

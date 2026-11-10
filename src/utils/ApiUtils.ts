@@ -2,6 +2,10 @@ import { z } from 'zod';
 import { JsonApiError } from './ErrorUtils';
 import { DEFAULT_LANG, type Lang } from '../i18n';
 import { type ErrorArgs, type ErrorKey, errorText } from '../i18n/errors';
+import { translateValidation } from './FormUtils';
+
+// zod's own wording ("Invalid input: expected string, received undefined"), as opposed to the schemas' messages.
+const ZOD_DEFAULT = /^(Invalid|Too (big|small)|Unrecognized)\b/;
 
 const STATUS_NAMES: Record<number, string> = {
 	400: 'BadRequest',
@@ -54,7 +58,9 @@ export function errorResponse(error: unknown, lang: Lang = DEFAULT_LANG, fallbac
 		jsonResponse({ error: name, message, statusCode: status }, status);
 
 	if (error instanceof z.ZodError) {
-		return fail(400, 'BadRequest', error.issues[0]?.message ?? errorText[lang].invalidRequest);
+		const message = error.issues[0]?.message;
+		const shown = !message || ZOD_DEFAULT.test(message) ? errorText[lang].invalidRequest : message;
+		return fail(400, 'BadRequest', translateValidation(shown, lang));
 	}
 
 	// `request.json()` throws a SyntaxError on a body that is not JSON: the client's mistake, so a 400.
@@ -74,6 +80,22 @@ export function errorResponse(error: unknown, lang: Lang = DEFAULT_LANG, fallbac
 	}
 
 	return jsonResponse(JsonApiError.toJson(apiError), apiError.statusCode);
+}
+
+const hasNul = (value: unknown): boolean =>
+	typeof value === 'string'
+		? value.includes('\0')
+		: value !== null &&
+			typeof value === 'object' &&
+			Object.entries(value).some(([k, v]) => k.includes('\0') || hasNul(v));
+
+/** The JSON body. Postgres can't store a NUL character, so one is refused here as a 400, not a 500. */
+export async function readJson(request: Request): Promise<unknown> {
+	const body: unknown = await request.json();
+	if (hasNul(body)) {
+		throw apiError(400, 'invalidRequest');
+	}
+	return body;
 }
 
 export function logServerError(context: string, error: unknown): void {

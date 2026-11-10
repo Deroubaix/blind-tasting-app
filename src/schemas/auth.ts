@@ -23,7 +23,7 @@ export const loginSchema = z.object({
 });
 
 export const signupSchema = z.object({
-	displayName: z.string().min(1, 'Display name is required'),
+	displayName: z.string().trim().min(1, 'Display name is required').max(60, 'Keep the name under 60 characters'),
 	email,
 	password: newPassword,
 });

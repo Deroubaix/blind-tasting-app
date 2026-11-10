@@ -43,7 +43,7 @@ function flightRow() {
 
 type Query = { where: { code?: string }; include?: { members?: { where?: { userId: string } } } };
 
-function setup(exists = true) {
+function setup(exists = true, { locked = false, linked = false } = {}) {
 	const writes: string[] = [];
 	const write = (name: string) =>
 		vi.fn(async () => {
@@ -63,12 +63,23 @@ function setup(exists = true) {
 			update: write('flight.update'),
 		},
 		flightMember: { upsert: write('flightMember.upsert') },
-		flightEntry: { upsert: write('flightEntry.upsert'), findUnique: vi.fn(async () => null) },
-		flightWine: { update: write('flightWine.update') },
+		flightEntry: {
+			upsert: write('flightEntry.upsert'),
+			findUnique: vi.fn(async () => null),
+			updateMany: vi.fn(async () => {
+				writes.push('flightEntry.updateMany');
+				return { count: linked ? 0 : 1 };
+			}),
+		},
+		flightWine: { update: write('flightWine.update'), findUnique: vi.fn(async () => null) },
 		tasting: { updateMany: write('tasting.updateMany') },
 		$transaction: vi.fn(async (ops: unknown[]) => ops),
 	};
-	const rateLimits = { check: vi.fn(async () => {}), consume: vi.fn(async () => {}) };
+	const tooMany = () => Promise.reject(Object.assign(new Error('429'), { statusCode: 429, key: 'tooManyAttempts' }));
+	const rateLimits = {
+		check: vi.fn(async () => (locked ? tooMany() : undefined)),
+		consume: vi.fn(async () => {}),
+	};
 	const service = new FlightService(prisma as unknown as PrismaClient, rateLimits as unknown as RateLimitService);
 	return { service, writes, rateLimits };
 }
@@ -135,6 +146,28 @@ describe('flight permissions', () => {
 		await expect(service.entryToSubmit(VISITOR, { code: 'B7KQ4M', wineNumber: 1 })).rejects.toEqual(
 			refused(400, 'flightWineNotFound'),
 		);
+	});
+
+	it('refuses a reveal with nothing this grid scores', async () => {
+		const { service, writes } = setup();
+		const offGrid = { ...label, grapeVariety: null, countryOfOrigin: null, readiness: 'Drink now' };
+		await expect(service.reveal('B7KQ4M', '1', HOST, offGrid)).rejects.toEqual(refused(400, 'revealNeedsField'));
+		expect(writes).toEqual([]);
+	});
+
+	it('still opens your own flights after too many wrong codes', async () => {
+		for (const who of [HOST, TASTER]) {
+			const { service } = setup(true, { locked: true });
+			await expect(service.view('B7KQ4M', who, 'en')).resolves.toMatchObject({ code: 'B7KQ4M' });
+		}
+		const { service } = setup(true, { locked: true });
+		await expect(service.view('B7KQ4M', VISITOR, 'en')).rejects.toEqual(refused(429, 'tooManyAttempts'));
+	});
+
+	it('links a tasting to its wine only once', async () => {
+		const where = { flightId_userId_wineNumber: { flightId: 'f1', userId: TASTER, wineNumber: 2 } };
+		await expect(setup().service.linkTasting(where, 't2')).resolves.toBe(true);
+		await expect(setup(true, { linked: true }).service.linkTasting(where, 't3')).resolves.toBe(false);
 	});
 
 	it('counts a wrong code against the guess limit', async () => {

@@ -11,8 +11,10 @@ export type RateLimitRule = {
 export const MINUTE = 60 * 1000;
 
 export const RATE_LIMITS = {
-	/** Wrong passwords for one account. Cleared by a successful login. */
-	loginEmail: { name: 'login-email', limit: 5, windowMs: 15 * MINUTE },
+	/** Wrong passwords for one account from one address. Cleared by a successful login. */
+	loginEmail: { name: 'login-email-ip', limit: 5, windowMs: 15 * MINUTE },
+	/** Wrong passwords for one account from anywhere: high, so a stranger can't easily lock the owner out. */
+	loginAccount: { name: 'login-email', limit: 50, windowMs: 15 * MINUTE },
 	/** Every login attempt from one address, so one place cannot work through many accounts. */
 	loginIp: { name: 'login-ip', limit: 30, windowMs: 15 * MINUTE },
 	signupIp: { name: 'signup-ip', limit: 5, windowMs: 60 * MINUTE },
