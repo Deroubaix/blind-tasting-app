@@ -1,6 +1,8 @@
 import { apiError, logServerError } from '../../utils/ApiUtils';
 import { MAX_PHOTO_BYTES, newPhotoKey, ownsPhotoKey, userPhotoFolder } from '../../utils/PhotoKeyUtils';
+import { RATE_LIMITS } from '../../utils/RateLimitUtils';
 import type PhotoStorageService from './PhotoStorageService';
+import type RateLimitService from './RateLimitService';
 
 const notFound = () => apiError(404, 'notFound');
 
@@ -9,12 +11,20 @@ export default class PhotoService {
 	constructor(
 		// Built on first use: R2 needs its settings, which shouldn't stop anything but photos.
 		private readonly _storage: () => PhotoStorageService,
+		private readonly _rateLimits: RateLimitService,
 	) {}
 
-	/** Records nothing: the key only joins a tasting when one is saved with it, and the save checks the file. */
-	public async sign(userId: string) {
+	/**
+	 * Records nothing: the key only joins a tasting when one is saved with it, and the save checks the file.
+	 * The URL takes one JPEG of the stated size, and signing is limited, so it can't be used as free storage.
+	 */
+	public async sign(userId: string, size: number) {
+		if (size > MAX_PHOTO_BYTES) {
+			throw apiError(413, 'photoTooLarge');
+		}
+		await this._rateLimits.consume(RATE_LIMITS.photoSign, userId);
 		const key = newPhotoKey(userId);
-		return { key, uploadUrl: await this._storage().uploadUrl(key) };
+		return { key, uploadUrl: await this._storage().uploadUrl(key, size) };
 	}
 
 	/** The owner's photo: a signed URL on R2, the file itself on the local driver. */

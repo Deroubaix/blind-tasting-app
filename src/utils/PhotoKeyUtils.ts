@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 export const PHOTO_CONTENT_TYPE = 'image/jpeg';
 
 /** Far above what a 2000px JPEG comes to; it only has to stop an upload that skipped the resize. */
-export const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
+export const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 

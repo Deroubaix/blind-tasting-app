@@ -6,7 +6,8 @@ export default abstract class PhotoStorageService {
 	/** True when uploads come to /api/photos/upload rather than straight to a bucket. */
 	public abstract readonly receivesUploads: boolean;
 
-	public abstract uploadUrl(key: string): Promise<string>;
+	/** Where to PUT exactly `size` bytes of JPEG to `key`. */
+	public abstract uploadUrl(key: string, size: number): Promise<string>;
 
 	/** A short-lived URL to redirect to, or the file itself; null when nothing is stored. */
 	public abstract open(key: string): Promise<{ redirect: string } | { body: ReadableStream; size: number } | null>;

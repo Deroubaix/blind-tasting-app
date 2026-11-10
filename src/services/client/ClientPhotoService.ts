@@ -11,7 +11,8 @@ export default class ClientPhotoService {
 	 * default `same-origin` credentials send the auth cookie to the former and nothing to the latter.
 	 */
 	public async uploadLabelPhoto(photo: Blob): Promise<string> {
-		const { key, uploadUrl } = await FetchUtils.postJson<SignResponse>('/api/photos/sign', {}).response;
+		const { key, uploadUrl } = await FetchUtils.postJson<SignResponse>('/api/photos/sign', { size: photo.size })
+			.response;
 
 		await FetchUtils.execute(uploadUrl, {
 			method: 'PUT',

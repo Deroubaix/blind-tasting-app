@@ -31,13 +31,18 @@ export default class R2PhotoStorageService extends PhotoStorageService {
 	}
 
 	/** Valid for ten minutes. */
-	public uploadUrl(key: string) {
+	public uploadUrl(key: string, size: number) {
 		const command = new PutObjectCommand({
 			Bucket: this._config.bucket,
 			Key: key,
 			ContentType: PHOTO_CONTENT_TYPE,
+			ContentLength: size,
 		});
-		return getSignedUrl(this._s3, command, { expiresIn: 600 });
+		// Both signed, so the bucket refuses any other size or type sent to this URL.
+		return getSignedUrl(this._s3, command, {
+			expiresIn: 600,
+			signableHeaders: new Set(['content-type', 'content-length']),
+		});
 	}
 
 	public async open(key: string) {

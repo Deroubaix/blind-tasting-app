@@ -6,6 +6,7 @@ export const errorText = dict(
 		notSignedIn: 'Please log in to continue.',
 		sessionExpired: 'Your session has expired. Please log in again.',
 		accountMissing: 'Your account could not be found. Please log in again.',
+		crossSite: 'This request came from another site, so it was refused.',
 		tooManyAttempts: (minutes: number) =>
 			`Too many attempts. Try again in ${minutes} minute${minutes === 1 ? '' : 's'}.`,
 		invalidCredentials: 'Invalid email or password',
@@ -42,6 +43,7 @@ export const errorText = dict(
 		notSignedIn: 'Inicie sessão para continuar.',
 		sessionExpired: 'A sua sessão expirou. Inicie sessão novamente.',
 		accountMissing: 'Não foi possível encontrar a sua conta. Inicie sessão novamente.',
+		crossSite: 'Este pedido veio de outro site, por isso foi recusado.',
 		tooManyAttempts: (minutes: number) =>
 			`Demasiadas tentativas. Tente novamente dentro de ${minutes} minuto${minutes === 1 ? '' : 's'}.`,
 		invalidCredentials: 'Email ou palavra-passe incorretos.',

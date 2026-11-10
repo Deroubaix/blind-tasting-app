@@ -24,6 +24,8 @@ export const RATE_LIMITS = {
 	resetIp: { name: 'reset-ip', limit: 10, windowMs: 15 * MINUTE },
 	/** Looking up or joining flights by code, so codes can't be guessed in bulk. */
 	flightCode: { name: 'flight-code', limit: 30, windowMs: 15 * MINUTE },
+	/** Photo upload URLs per account: far more than anyone saves, far less than abuse needs. */
+	photoSign: { name: 'photo-sign', limit: 60, windowMs: 60 * MINUTE },
 	/** Wrong passwords when deleting an account. */
 	deleteAccount: { name: 'delete-account', limit: 5, windowMs: 15 * MINUTE },
 	// Building the archive reads every photo, so repeated downloads are the costliest request there is.

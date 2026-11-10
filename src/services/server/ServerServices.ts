@@ -35,7 +35,10 @@ const ServerServices = new ServiceContainer()
 	)
 	.withClassConstructorCallback(SessionService, (c) => [c.getClass(PrismaClient)])
 	.withClassConstructorCallback(RateLimitService, (c) => [c.getClass(PrismaClient)])
-	.withClassConstructorCallback(PhotoService, (c) => [() => c.getClass(PhotoStorageService)])
+	.withClassConstructorCallback(PhotoService, (c) => [
+		() => c.getClass(PhotoStorageService),
+		c.getClass(RateLimitService),
+	])
 	.withClassConstructorCallback(AuthService, (c) => [
 		c.getClass(PrismaClient),
 		c.getClass(RateLimitService),
