@@ -73,7 +73,7 @@ function writeSettings(settings: StartSettings) {
 export default function TastingStartClient() {
 	const router = useRouter();
 	const { showToast } = useToastProvider();
-	const { updateTastingData } = useTastingContext();
+	const { updateTastingData, resetTastingData } = useTastingContext();
 	const text = useText(tastingText);
 	const t = text.start;
 	const common = useText(commonText);
@@ -125,6 +125,8 @@ export default function TastingStartClient() {
 			// This tap is what lets the time-up beep sound on iOS later. See beep.ts.
 			unlockAudio();
 		}
+		// A fresh sheet: back from Sight, the old answers, clocks and any flight link would carry over.
+		resetTastingData();
 		updateTastingData({
 			wineType,
 			grid,

@@ -1,13 +1,16 @@
 'use client';
 
-import React, { type ReactNode, useEffect } from 'react';
+import React, { type ReactNode, useEffect, useRef } from 'react';
 import TastingPageHeader from './TastingPageHeader';
 import PhaseHeading from './PhaseHeading';
 import TastingFooter from './TastingFooter';
 import PhaseTabs, { StartOverButton } from '../tasting/PhaseTabs';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTastingContext } from '../tasting/TastingContext';
 import { advanceFurthestPhase } from '../tasting/phaseCompletion';
+import { useToastProvider } from '../toast/ToastProvider';
+import { useText } from '../../i18n/LanguageProvider';
+import { tastingText } from '../../i18n/tasting';
 
 type FooterProps = {
 	onReset?: () => void;
@@ -41,6 +44,20 @@ export default function TastingPhaseLayout({
 	const pathname = usePathname();
 	const { tastingData, updateTastingData } = useTastingContext();
 	const furthestPhase = tastingData.furthestPhase ?? 0;
+	const router = useRouter();
+	const { showToast } = useToastProvider();
+	const text = useText(tastingText);
+
+	// The sheet lives only in memory, so after a reload or a deep link there is nothing to fill in or
+	// save. Checked once on arrival: Start over empties it on purpose and navigates itself.
+	const arrivedEmpty = useRef(!tastingData.wineType);
+	useEffect(() => {
+		if (arrivedEmpty.current) {
+			showToast({ title: text.lost.title, children: text.lost.body, color: 'error' });
+			router.replace('/tastings/start');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	// Advancing to a phase is what completes the ones behind it (see advanceFurthestPhase).
 	//
@@ -59,6 +76,10 @@ export default function TastingPhaseLayout({
 
 	useEffect(() => {
 		const handler = (e: KeyboardEvent) => {
+			// A menu took the key, or a dialog is open over the page: neither is a page shortcut.
+			if (e.defaultPrevented || document.querySelector('[aria-modal="true"]')) {
+				return;
+			}
 			const tag = (e.target as HTMLElement).tagName;
 			const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable;
 
@@ -82,7 +103,7 @@ export default function TastingPhaseLayout({
 	return (
 		<div className="tasting-phase-page">
 			<a className="skip-link" href="#main">
-				Skip to assessment
+				{text.skipToSheet}
 			</a>
 			<TastingPageHeader wineType={wineType} timerPage={timerPage} timerDestination={timerDestination} />
 			<div className="tasting-phase-wrap">

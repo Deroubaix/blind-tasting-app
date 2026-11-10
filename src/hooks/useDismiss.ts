@@ -18,6 +18,8 @@ export default function useDismiss(
 		};
 		const onKey = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
+				// Claimed, so the tasting page's Escape-to-go-back leaves it alone.
+				e.preventDefault();
 				close();
 				trigger?.current?.focus();
 			}

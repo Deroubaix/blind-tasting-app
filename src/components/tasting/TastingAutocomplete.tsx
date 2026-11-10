@@ -73,6 +73,9 @@ export default function TastingAutocomplete({
 				setOpen(false);
 			}
 		} else if (e.key === 'Escape') {
+			if (open) {
+				e.preventDefault();
+			}
 			setOpen(false);
 			setActiveIndex(-1);
 		}

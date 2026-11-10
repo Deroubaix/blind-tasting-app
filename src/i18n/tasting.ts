@@ -6,6 +6,11 @@ export const tastingText = dict(
 		add: 'Add',
 		optional: 'optional',
 		remove: (value: string) => `Remove ${value}`,
+		skipToSheet: 'Skip to assessment',
+		lost: {
+			title: 'That tasting is no longer open',
+			body: 'Reloading the page clears a tasting that was not saved. Start a new one here.',
+		},
 		start: {
 			title: 'Set up a tasting',
 			sub: 'One wine. Pour it bagged, or have someone pour for you.',
@@ -212,6 +217,11 @@ export const tastingText = dict(
 		add: 'Adicionar',
 		optional: 'opcional',
 		remove: (value) => `Remover ${value}`,
+		skipToSheet: 'Saltar para a avaliação',
+		lost: {
+			title: 'Essa prova já não está aberta',
+			body: 'Recarregar a página apaga uma prova que não foi guardada. Comece uma nova aqui.',
+		},
 		start: {
 			title: 'Preparar uma prova',
 			sub: 'Um vinho. Sirva-o tapado, ou peça a alguém que o sirva.',

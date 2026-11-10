@@ -132,6 +132,7 @@ function PhoneDialog({
 		const returnTo = trigger.current;
 		const onKey = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
+				e.preventDefault();
 				onClose();
 				return;
 			}

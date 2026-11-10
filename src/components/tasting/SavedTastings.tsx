@@ -128,9 +128,11 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 				showLoginRequired();
 				router.push(saveRedirect);
 			} else {
+				// A refusal (already submitted, flight ended…) says why; anything else stays generic.
+				const refused = stage === 'tasting' && (apiError.statusCode ?? 500) < 500 ? apiError.message : null;
 				showToast({
 					title: stage === 'photo' ? t.photoUploadFailed : t.saveFailed,
-					children: stage === 'photo' ? t.photoUploadFailedBody : t.saveFailedBody,
+					children: stage === 'photo' ? t.photoUploadFailedBody : refused || t.saveFailedBody,
 					color: 'error',
 				});
 			}
