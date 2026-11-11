@@ -112,8 +112,8 @@ export type FlightSummary = {
 		scores: Record<string, { score: number; outOf: number } | null>;
 	}[];
 	totals: Record<string, { score: number; outOf: number; submitted: number }>;
+	/** The sum of the revealed wines' group averages, beside each taster's total. */
 	groupAverage: number | null;
-	/** What the group average is out of, when every revealed wine is scored out of the same. */
 	groupOutOf: number | null;
 	mostConfused: { number: number; title: string; average: number; outOf: number; note: string | null } | null;
 };

@@ -20,7 +20,10 @@ export type ProgressTasting = {
 	grid: Grid;
 	wineType: WineType | null;
 	title: string;
+	/** Has a reveal that scores at least one field. */
 	revealed: boolean;
+	/** No reveal yet, and the taster's to add: a flight wine waits on its host. */
+	awaiting: boolean;
 	score: number;
 	outOf: number;
 	grape: Call | null;
@@ -60,6 +63,7 @@ export function toProgressTasting(tasting: Saved, lang: Lang = DEFAULT_LANG): Pr
 		wineType: wineTypeOf(tasting.wineType),
 		title: revealed ? revealTitle(tasting.reveal!, lang) : tasting.wineName || '',
 		revealed: !!result && result.outOf > 0,
+		awaiting: !revealed && !tasting.flight,
 		score: result?.score ?? 0,
 		outOf: result?.outOf ?? 0,
 		grape: field('grapeVariety'),

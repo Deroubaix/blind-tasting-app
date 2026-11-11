@@ -11,7 +11,7 @@ import {
 	share,
 	signedSteps,
 } from '../../utils/progressStats';
-import { formatDecimal } from '../../utils/NumberUtils';
+import { percent } from '../../utils/NumberUtils';
 import HomeRecent, { type RecentTasting } from './HomeRecent';
 import { type FlightListItem } from '../../types/Flight';
 import { type homeText } from '../../i18n/home';
@@ -25,7 +25,7 @@ type HomeT = (typeof homeText)['en'];
 export const RECENT_COUNT = 5;
 
 /** The latest rolling average on the grid with the most revealed tastings, as Progress shows it. */
-function latestAverage(list: ProgressTasting[], lang: Lang) {
+function latestAverage(list: ProgressTasting[]) {
 	const wset = list.filter((x) => x.revealed && x.grid === 'wset').length;
 	const cms = list.filter((x) => x.revealed && x.grid === 'cms').length;
 	const grid = wset > cms ? 'wset' : 'cms';
@@ -34,9 +34,7 @@ function latestAverage(list: ProgressTasting[], lang: Lang) {
 		return null;
 	}
 	const value = rollingAverage(revealed.map(share)).at(-1)!;
-	return grid === 'wset'
-		? { score: `${Math.round(value * 100)}%`, outOf: undefined }
-		: { score: formatDecimal(value * 5, lang), outOf: 5 };
+	return { score: percent(value), outOf: undefined };
 }
 
 /** The greeting's second line: the most pressing two facts, or nothing when there is nothing to say. */
@@ -75,7 +73,7 @@ export default function HomeDashboard({
 }) {
 	const d = t.dashboard;
 	const f = flightsText[lang];
-	const average = latestAverage(tastings, lang);
+	const average = latestAverage(tastings);
 	const habits = homeHabits(tastings, palate);
 	const { confusion, bias } = habits ?? { confusion: null, bias: null };
 	const liveHosted = flights.filter((x) => x.role === 'host' && !x.ended).length;

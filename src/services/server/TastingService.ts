@@ -108,11 +108,17 @@ export default class TastingService {
 	/** Sets, edits or clears (`null`) the reveal; flight wines are the host's to reveal. */
 	public async setReveal(userId: string, id: string, reveal: RevealInput | null) {
 		const existing = await this.get(userId, id);
-		if (existing.flight) {
+		// A flight's host reveals its wines; once the host has deleted their account, the taster does.
+		if (existing.flight && (await this.flightHasHost(existing.flight.code))) {
 			throw apiError(409, 'flightRevealLocked');
 		}
 		await this._prisma.tasting.updateMany({ where: { id, userId }, data: revealFields(reveal) });
 		return this.get(userId, id);
+	}
+
+	private async flightHasHost(code: string) {
+		const flight = await this._prisma.flight.findUnique({ where: { code }, select: { hostId: true } });
+		return !!flight?.hostId;
 	}
 
 	/** Per-account numbering; @@unique([userId, number]) is the real guard, so a P2002 retries with the next number. */

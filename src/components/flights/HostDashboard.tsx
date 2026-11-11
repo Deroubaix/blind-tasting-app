@@ -50,7 +50,9 @@ function tasterLine(member: FlightMemberView, flight: FlightView, now: number, t
 	if (member.submittedCount === flight.wineCount) {
 		return `${t.bits.submittedOf(member.submittedCount, flight.wineCount)}${member.outOf ? ` · ${member.total} / ${member.outOf}` : ''}`;
 	}
-	return member.submittedCount
+	// Opened a wine, even if it was revealed before they saved: started, not "not started".
+	const started = flight.wines.some((wine) => (wine.statuses[member.id] ?? 'notstarted') !== 'notstarted');
+	return member.submittedCount || started
 		? t.bits.submittedOf(member.submittedCount, flight.wineCount)
 		: t.bits.status.notstarted;
 }

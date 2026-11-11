@@ -9,3 +9,6 @@ export function formatDecimal(value: number, lang: Lang, digits = 1): string {
 export function formatAverage(value: number | null, lang: Lang): string {
 	return value === null ? '—' : value.toLocaleString(formatLocale(lang), { maximumFractionDigits: 1 });
 }
+
+/** A share of fields right as the Progress figures show it: "60%". */
+export const percent = (value: number) => `${Math.round(value * 100)}%`;

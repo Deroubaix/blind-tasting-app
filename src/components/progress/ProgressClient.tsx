@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { type Grid } from '../../data/grids';
 import { type Lang } from '../../i18n';
 import { formatMonth, formatMonthYear, formatShortDate } from '../../utils/DateUtils';
-import { formatDecimal } from '../../utils/NumberUtils';
+import { percent } from '../../utils/NumberUtils';
 import { useLang, useText } from '../../i18n/LanguageProvider';
 import { progressText } from '../../i18n/progress';
 import { useTerm } from '../../i18n/useTerm';
 import {
 	MIN_FOR_TREND,
 	ROLLING_WINDOW,
+	RUN_THRESHOLD,
 	type PalateSample,
 	type ProgressTasting,
 	type TypeFilter,
@@ -37,15 +38,6 @@ const useTimeZone = () =>
 		() => undefined,
 		() => 'UTC',
 	);
-
-/** CMS reads as fields right out of 5, WSET as a percentage, since its sheets score 2 to 6 fields. */
-function figure(value: number, grid: Grid, lang: Lang): { value: string; unit: string } {
-	return grid === 'wset'
-		? { value: String(Math.round(value * 100)), unit: '%' }
-		: { value: formatDecimal(value * 5, lang), unit: ' / 5' };
-}
-const figureText = (value: number, grid: Grid, lang: Lang) =>
-	grid === 'wset' ? `${Math.round(value * 100)}%` : formatDecimal(value * 5, lang);
 
 type Props = { list: ProgressTasting[]; palate: PalateSample[]; name: string; memberSince: string | null };
 
@@ -166,9 +158,10 @@ function ProgressBody({
 	lang: Lang;
 }) {
 	const revealed = revealedFor(list, grid, type);
-	const waiting = list.filter((x) => !x.revealed && x.grid === grid && matchesType(x, type)).length;
+	const onGrid = list.filter((x) => x.grid === grid && matchesType(x, type));
+	const waiting = onGrid.filter((x) => x.awaiting).length;
 	const mean = averageShare(revealed);
-	const avg = mean === null ? { value: '—', unit: '' } : figure(mean, grid, lang);
+	const avg = mean === null ? { value: '—', unit: '' } : { value: String(Math.round(mean * 100)), unit: '%' };
 
 	return (
 		<>
@@ -176,24 +169,28 @@ function ProgressBody({
 				tiles={[
 					{
 						label: t.totals.tastings,
-						value: String(revealed.length + waiting),
+						value: String(onGrid.length),
 						sub: grid === 'cms' ? t.filters.cms : t.filters.wset,
 					},
 					{
 						label: t.totals.revealed,
 						value: String(revealed.length),
-						sub: waiting ? t.totals.waiting(waiting) : t.totals.allRevealed,
+						sub: waiting
+							? t.totals.waiting(waiting)
+							: revealed.length === onGrid.length
+								? t.totals.allRevealed
+								: undefined,
 					},
 					{
 						label: t.totals.average,
 						value: avg.value,
 						unit: avg.unit,
-						sub: grid === 'cms' ? t.totals.averageCms : t.totals.averageWset,
+						sub: t.totals.averageSub,
 					},
 					{
 						label: t.totals.bestRun,
 						value: String(bestRun(revealed)),
-						sub: t.totals.run(grid === 'cms' ? '3 / 5' : '60%'),
+						sub: t.totals.run(percent(RUN_THRESHOLD)),
 					},
 				]}
 			/>
@@ -237,22 +234,23 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 	const n = revealed.length;
 	const xOf = (i: number) => ((i + 0.5) / n) * 100;
 	const yOf = (v: number) => (1 - v) * 100;
-	const fmt = (v: number) => figureText(v, grid, lang);
+	const fmt = percent;
 	const typeWord = (x: ProgressTasting) =>
 		x.wineType === 'white' ? t.trend.white : x.wineType === 'red' ? t.trend.red : '';
 
+	const yearOf = (iso: string) => new Date(iso).toLocaleDateString('en', { year: 'numeric', timeZone });
+	const spansYears = new Set(revealed.filter((x) => x.date).map((x) => yearOf(x.date))).size > 1;
 	// One label per calendar month, skipped when it would crowd the one before.
 	const months: { key: string; label: string; short: string; left: number }[] = [];
 	revealed.forEach((x, i) => {
 		if (!x.date) {
 			return;
 		}
-		const d = new Date(x.date);
-		const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}`;
+		const key = formatMonthYear(x.date, lang, timeZone);
 		const previous = months[months.length - 1];
 		if (!months.some((m) => m.key === key) && (!previous || xOf(i) - previous.left >= 12)) {
-			const label = formatMonth(d, lang, 'long', 'UTC');
-			months.push({ key, label, short: formatMonth(d, lang, 'short', 'UTC'), left: xOf(i) });
+			const label = spansYears ? key : formatMonth(x.date, lang, 'long', timeZone);
+			months.push({ key, label, short: formatMonth(x.date, lang, 'short', timeZone), left: xOf(i) });
 		}
 	});
 
@@ -371,9 +369,7 @@ function Trend({ revealed, grid, t, lang }: { revealed: ProgressTasting[]; grid:
 								<span className="progress__wide">{t.trend.legendRolling(ROLLING_WINDOW)}</span>
 								<span className="progress__narrow">{t.trend.legendRollingShort(ROLLING_WINDOW)}</span>
 							</span>
-							<span className="progress-legend__axis progress__wide">
-								{grid === 'cms' ? t.trend.axisCms : t.trend.axisWset}
-							</span>
+							<span className="progress-legend__axis progress__wide">{t.trend.axis}</span>
 						</div>
 					</>
 				)}
@@ -565,7 +561,7 @@ function ProgressEmpty({
 }) {
 	const ordered = [...list].sort((a, b) => a.number - b.number);
 	const revealed = ordered.filter((x) => x.revealed);
-	const waiting = ordered.filter((x) => !x.revealed);
+	const waiting = ordered.filter((x) => x.awaiting);
 	const needed = MIN_FOR_TREND - revealed.length;
 	const slots = [
 		...revealed.map((x) => ({ text: x.title, score: `${x.score} / ${x.outOf}`, kind: 'done' })),

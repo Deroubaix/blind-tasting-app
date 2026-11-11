@@ -337,8 +337,7 @@ function flightSummary(flight: LoadedFlight, lang: Lang = DEFAULT_LANG): FlightS
 		members,
 		wines,
 		totals,
-		groupAverage: average(revealed.map((wine) => wine.average)),
-		groupOutOf: new Set(revealed.map((wine) => wine.outOf)).size === 1 ? revealed[0].outOf : null,
+		...groupTotal(revealed),
 		mostConfused,
 	};
 }
@@ -365,18 +364,32 @@ function confusionNote(flight: LoadedFlight, number: number, lang: Lang): string
 	return `${words[n] ?? n} of ${(words[submitted] ?? String(submitted)).toLowerCase()} called ${grape}.`;
 }
 
-/** For tasting queries: the flight a tasting was submitted to, if any. */
+const ENTRY_FLIGHT = { select: { wineNumber: true, flight: { select: { code: true, name: true, wineCount: true } } } };
+
+/** The Total row's group cell, summed like each taster's: the wines' averages, out of their scores' sum. */
+function groupTotal(revealed: { average: number | null; outOf: number | null }[]) {
+	const scored = revealed.filter((wine) => wine.average !== null);
+	if (!scored.length) {
+		return { groupAverage: null, groupOutOf: null };
+	}
+	const sum = scored.reduce((a, wine) => a + wine.average!, 0);
+	return { groupAverage: Math.round(sum * 10) / 10, groupOutOf: scored.reduce((a, wine) => a + wine.outOf!, 0) };
+}
+
+/** For tasting queries: the flight a tasting was submitted to, if any, on time or late. */
 export const TASTING_FLIGHT_INCLUDE = {
-	flightEntry: { select: { wineNumber: true, flight: { select: { code: true, name: true, wineCount: true } } } },
+	flightEntry: ENTRY_FLIGHT,
+	lateEntry: ENTRY_FLIGHT,
 } satisfies Prisma.TastingInclude;
 
 type TastingWithEntry = Prisma.TastingGetPayload<{ include: typeof TASTING_FLIGHT_INCLUDE }>;
 
 /** A tasting as the archive gets it, with `flight` in the shape the tasting flow uses. */
-export function withFlight({ flightEntry, ...tasting }: TastingWithEntry) {
+export function withFlight({ flightEntry, lateEntry, ...tasting }: TastingWithEntry) {
+	const entry = flightEntry ?? lateEntry;
 	return {
 		...tasting,
-		flight: flightEntry ? { ...flightEntry.flight, wineNumber: flightEntry.wineNumber } : null,
+		flight: entry ? { ...entry.flight, wineNumber: entry.wineNumber } : null,
 	};
 }
 
@@ -539,7 +552,12 @@ export default class FlightService {
 			}),
 			// By relation, not the ids loaded above, so a tasting linked meanwhile gets it too.
 			this._prisma.tasting.updateMany({
-				where: { flightEntry: { is: { flightId: flight.id, wineNumber: number } } },
+				where: {
+					OR: [
+						{ flightEntry: { is: { flightId: flight.id, wineNumber: number } } },
+						{ lateEntry: { is: { flightId: flight.id, wineNumber: number } } },
+					],
+				},
 				data: fields,
 			}),
 		]);

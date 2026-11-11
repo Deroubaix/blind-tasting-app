@@ -33,6 +33,7 @@ type ExportTasting = {
 	revealedAt: Date | null;
 	created_at: Date;
 	flightEntry: { wineNumber: number; flight: { code: string; name: string } } | null;
+	lateEntry?: { wineNumber: number; flight: { code: string; name: string } } | null;
 };
 
 type ExportFlight = {
@@ -60,7 +61,8 @@ export function shapeExport(user: ExportUser, tastings: ExportTasting[], flights
 		memberSince: user.created_at,
 	};
 
-	const tastingDocs = tastings.map(({ photoKey, flightEntry, reveal, ...tasting }) => {
+	const tastingDocs = tastings.map(({ photoKey, flightEntry, lateEntry, reveal, ...tasting }) => {
+		const entry = flightEntry ?? lateEntry;
 		const revealed = isRevealed(reveal as Reveal | null);
 		const call = (tasting.conclusion as { final?: Record<string, string | null>; initial?: never } | null)?.final;
 		return {
@@ -72,9 +74,7 @@ export function shapeExport(user: ExportUser, tastings: ExportTasting[], flights
 					)
 				: null,
 			photo: photoKey ? photoFileName(tasting.number) : null,
-			flight: flightEntry
-				? { code: flightEntry.flight.code, name: flightEntry.flight.name, wineNumber: flightEntry.wineNumber }
-				: null,
+			flight: entry ? { code: entry.flight.code, name: entry.flight.name, wineNumber: entry.wineNumber } : null,
 		};
 	});
 
@@ -151,6 +151,7 @@ export default class ExportService {
 					revealedAt: true,
 					created_at: true,
 					flightEntry: { select: { wineNumber: true, flight: { select: { code: true, name: true } } } },
+					lateEntry: { select: { wineNumber: true, flight: { select: { code: true, name: true } } } },
 				},
 			}),
 			this._prisma.flight.findMany({

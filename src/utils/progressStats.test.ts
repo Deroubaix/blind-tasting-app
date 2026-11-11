@@ -26,6 +26,7 @@ const t = (score: number, extra: Partial<ProgressTasting> = {}): ProgressTasting
 	wineType: 'red',
 	title: '',
 	revealed: true,
+	awaiting: false,
 	score,
 	outOf: 5,
 	grape: null,
@@ -50,6 +51,17 @@ describe('toProgressTasting', () => {
 	it('leaves an unrevealed tasting out of the scores', () => {
 		const p = toProgressTasting({ id: 'b', wineType: 'White', wineName: 'Mystery' } as never);
 		expect(p).toMatchObject({ revealed: false, score: 0, outOf: 0, title: 'Mystery', wineType: 'white' });
+		expect(p.awaiting).toBe(true);
+	});
+
+	it('leaves a flight wine to its host, not the taster', () => {
+		const p = toProgressTasting({ id: 'c', flight: { code: 'ABCDEF', wineNumber: 1 } } as never);
+		expect(p).toMatchObject({ revealed: false, awaiting: false });
+	});
+
+	it('neither scores nor waits on a reveal with nothing this grid scores', () => {
+		const p = toProgressTasting({ id: 'd', grid: 'cms', reveal: { readiness: 'Drink now' } } as never);
+		expect(p).toMatchObject({ revealed: false, awaiting: false });
 	});
 });
 
