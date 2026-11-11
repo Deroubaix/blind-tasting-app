@@ -1,6 +1,6 @@
 'use client';
 
-import React, { type ReactNode, useEffect, useRef } from 'react';
+import React, { type ReactNode, useEffect, useLayoutEffect, useRef } from 'react';
 import TastingPageHeader from './TastingPageHeader';
 import PhaseHeading from './PhaseHeading';
 import TastingFooter from './TastingFooter';
@@ -74,6 +74,11 @@ export default function TastingPhaseLayout({
 		}
 	}, [pathname, furthestPhase, updateTastingData, tastingData.wineType]);
 
+	const latestFooter = useRef(footer);
+	useLayoutEffect(() => {
+		latestFooter.current = footer;
+	});
+
 	useEffect(() => {
 		const handler = (e: KeyboardEvent) => {
 			// A menu took the key, or a dialog is open over the page: neither is a page shortcut.
@@ -86,7 +91,13 @@ export default function TastingPhaseLayout({
 			// Same rule as the Next button: no shortcut past unanswered required questions.
 			if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && !footer.nextLoading && !footer.nextDisabled) {
 				e.preventDefault();
-				footer.onNext();
+				if (isEditable) {
+					// Leaving the box adds what was typed; Next then runs with it, on the next render.
+					(e.target as HTMLElement).blur();
+					setTimeout(() => latestFooter.current.onNext());
+				} else {
+					footer.onNext();
+				}
 				return;
 			}
 

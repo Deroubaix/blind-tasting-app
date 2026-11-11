@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useId } from 'react';
+import { useState, useRef, useEffect, useId, useLayoutEffect } from 'react';
 import useDropPlacement from './useDropPlacement';
 import { matchSuggestions, resolveEnter } from '../../utils/autocompleteMatch';
 import { useText } from '../../i18n/LanguageProvider';
@@ -49,6 +49,17 @@ export default function TastingAutocomplete({
 
 	const showDropdown = open && filtered.length > 0;
 	const { dropUp, maxHeight } = useDropPlacement(wrapRef, showDropdown);
+
+	// Typed but never added: kept when the taster leaves the box, or the page (Cmd+Enter, the clock).
+	const pending = useRef(() => {});
+	useLayoutEffect(() => {
+		pending.current = () => {
+			if (value.trim()) {
+				onConfirm(stored(resolveEnter(value, shown)));
+			}
+		};
+	});
+	useEffect(() => () => pending.current(), []);
 
 	const select = (suggestion: string) => {
 		onConfirm(stored(suggestion));
@@ -113,6 +124,7 @@ export default function TastingAutocomplete({
 						setActiveIndex(-1);
 					}}
 					onKeyDown={handleKeyDown}
+					onBlur={() => pending.current()}
 					onFocus={() => {
 						if (value.trim()) {
 							setOpen(true);

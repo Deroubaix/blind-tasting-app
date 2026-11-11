@@ -13,10 +13,12 @@ interface TimerProps {
 	endsAt?: number;
 	/** While set, the clock is frozen at the time it had left at this moment. See timerClock.ts. */
 	pausedAt?: number | null;
+	/** Fire on mount when the deadline has already passed, e.g. a flight wine reopened too late. */
+	catchUp?: boolean;
 	onTimeUp?: () => void;
 }
 
-export default function Timer({ initialTime, endsAt, pausedAt, onTimeUp }: TimerProps) {
+export default function Timer({ initialTime, endsAt, pausedAt, catchUp, onTimeUp }: TimerProps) {
 	const [timeLeft, setTimeLeft] = useState(initialTime);
 	const onTimeUpRef = useRef(onTimeUp);
 	useEffect(() => {
@@ -39,9 +41,9 @@ export default function Timer({ initialTime, endsAt, pausedAt, onTimeUp }: Timer
 		endsAtRef.current = endsAt ?? now + initialTime * 1000;
 		// A deadline already past when the clock appears belongs to a phase revisited after its time
 		// ran out: show 00:00, but don't move the taster on again from a page they chose to reopen.
-		hasFiredRef.current = endsAtRef.current <= now;
+		hasFiredRef.current = endsAtRef.current <= now && !catchUp;
 		syncRef.current?.();
-	}, [initialTime, endsAt]);
+	}, [initialTime, endsAt, catchUp]);
 
 	useLayoutEffect(() => {
 		pausedAtRef.current = pausedAt ?? null;

@@ -25,24 +25,30 @@ export default function InitialConclusionTastingClient({ wineType }: { wineType:
 	const [varietalInput, setVarietalInput] = useState('');
 	const [countryInput, setCountryInput] = useState('');
 
-	const updateIC = (patch: Partial<NonNullable<typeof ic>>) =>
-		updateTastingData({ conclusion: { ...tastingData.conclusion, initial: { ...ic, ...patch } } });
+	// From the latest state, so two boxes committing as the page closes don't overwrite each other.
+	type Initial = NonNullable<typeof ic>;
+	const updateIC = (patch: Partial<Initial> | ((current: Initial) => Partial<Initial>)) =>
+		updateTastingData((prev) => {
+			const initial = prev.conclusion?.initial ?? {};
+			const changes = typeof patch === 'function' ? patch(initial) : patch;
+			return { conclusion: { ...prev.conclusion, initial: { ...initial, ...changes } } };
+		});
 
 	const handleNextPhase = () => router.push(`/tastings/final-conclusion?wineType=${wineType}`);
 	const handlePreviousPhase = () => router.push(`/tastings/palate?wineType=${wineType}`);
 
 	const addVarietal = (input?: string) => {
 		const v = (input ?? varietalInput).trim();
-		if (v && !(ic.grapeVarieties ?? []).includes(v)) {
-			updateIC({ grapeVarieties: [...(ic.grapeVarieties ?? []), v] });
+		if (v) {
+			updateIC((cur) => ({ grapeVarieties: [...new Set([...(cur.grapeVarieties ?? []), v])] }));
 		}
 		setVarietalInput('');
 	};
 
 	const addCountry = (input?: string) => {
 		const c = (input ?? countryInput).trim();
-		if (c && !(ic.possibleCountries ?? []).includes(c)) {
-			updateIC({ possibleCountries: [...(ic.possibleCountries ?? []), c] });
+		if (c) {
+			updateIC((cur) => ({ possibleCountries: [...new Set([...(cur.possibleCountries ?? []), c])] }));
 		}
 		setCountryInput('');
 	};

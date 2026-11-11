@@ -13,6 +13,9 @@ import { useText } from '../../i18n/LanguageProvider';
 import { commonText } from '../../i18n/common';
 import { layoutText } from '../../i18n/layout';
 
+/** Deadlines whose time-up already ran, so a page reopened afterwards doesn't run it again. */
+const firedDeadlines = new Set<number>();
+
 interface TimerWrapperProps {
 	defaultDuration: number;
 	/** The deadline: exam mode's whole-wine one, or this guided phase's own. */
@@ -23,6 +26,8 @@ interface TimerWrapperProps {
 	nextPhase?: TimerPhase | null;
 	/** The last timed phase ends the session with a modal instead of moving straight on. */
 	isFinalPhase?: boolean;
+	/** One deadline for the whole wine: if it passed while no clock was showing, end the wine now. */
+	wholeWine?: boolean;
 }
 
 export default function TimerWrapper({
@@ -32,6 +37,7 @@ export default function TimerWrapper({
 	destination,
 	nextPhase,
 	isFinalPhase,
+	wholeWine,
 }: TimerWrapperProps) {
 	const router = useRouter();
 	const { tastingData } = useTastingContext();
@@ -57,6 +63,9 @@ export default function TimerWrapper({
 	}, [soundOn]);
 
 	const handleTimeUp = () => {
+		if (endsAt !== undefined) {
+			firedDeadlines.add(endsAt);
+		}
 		if (soundOn) {
 			playBeep();
 		}
@@ -109,6 +118,7 @@ export default function TimerWrapper({
 			initialTime={defaultDuration}
 			endsAt={endsAt}
 			pausedAt={pausedAt}
+			catchUp={wholeWine && endsAt !== undefined && !firedDeadlines.has(endsAt)}
 			onTimeUp={handleTimeUp}
 		/>
 	);

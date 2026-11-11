@@ -72,8 +72,11 @@ export default function FinalConclusionTastingClient({ wineType }: { wineType: '
 	const styleCategory = fc['styleCategory'] ?? '';
 	const vintage = fc['vintage'] ?? '';
 
+	// From the latest state, so two boxes committing as the page closes don't overwrite each other.
 	const updateFC = (patch: Record<string, string | null>) =>
-		updateTastingData({ conclusion: { ...tastingData.conclusion, final: { ...fc, ...patch } } });
+		updateTastingData((prev) => ({
+			conclusion: { ...prev.conclusion, final: { ...prev.conclusion?.final, ...patch } },
+		}));
 
 	const setQualityLevel = (v: string) => updateFC({ qualityLevel: v });
 	const setStyleCategory = (v: string) => updateFC({ styleCategory: v });

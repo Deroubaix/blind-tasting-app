@@ -248,7 +248,7 @@ export default function SavedTasting({ wineType }: { wineType: 'red' | 'white' }
 									grid={grid}
 									value={tastingData.reveal ?? {}}
 									onChange={(patch) =>
-										updateTastingData({ reveal: { ...tastingData.reveal, ...patch } })
+										updateTastingData((prev) => ({ reveal: { ...prev.reveal, ...patch } }))
 									}
 								/>
 								<p className="save-reveal__note">{t.revealNote}</p>

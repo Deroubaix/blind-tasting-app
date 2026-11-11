@@ -104,6 +104,17 @@ describe('Timer', () => {
 			expect(display(container).textContent).toBe('0:00');
 			expect(onTimeUp).not.toHaveBeenCalled();
 		});
+
+		it('fires once for a whole-wine deadline that passed while no clock showed', () => {
+			const onTimeUp = vi.fn();
+			const endsAt = Date.now() - 1_000;
+			const { rerender } = render(<Timer initialTime={30} endsAt={endsAt} catchUp onTimeUp={onTimeUp} />);
+			rerender(<Timer initialTime={30} endsAt={endsAt} catchUp={false} onTimeUp={onTimeUp} />);
+
+			act(() => vi.advanceTimersByTime(2_000));
+
+			expect(onTimeUp).toHaveBeenCalledTimes(1);
+		});
 	});
 
 	describe('paused', () => {

@@ -47,6 +47,7 @@ export default function TimerConditional({ page, destination }: TimerConditional
 				destination={`/tastings/save?wineType=${tastingData.wineType?.toLowerCase() ?? 'red'}`}
 				nextPhase={null}
 				isFinalPhase
+				wholeWine
 			/>
 		);
 	}

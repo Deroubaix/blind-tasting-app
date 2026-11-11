@@ -46,3 +46,24 @@ describe('TastingAutocomplete with translated labels', () => {
 		expect(onConfirm).toHaveBeenCalledWith('Moldávia');
 	});
 });
+
+describe('TastingAutocomplete with text typed but not added', () => {
+	it('adds it when the taster leaves the box', () => {
+		const onConfirm = renderBox('França');
+		fireEvent.blur(screen.getByRole('combobox'));
+		expect(onConfirm).toHaveBeenCalledWith('France');
+	});
+
+	it('adds it when the page closes, e.g. Next or the clock', () => {
+		const onConfirm = renderBox('Moldávia');
+		cleanup();
+		expect(onConfirm).toHaveBeenCalledWith('Moldávia');
+	});
+
+	it('adds nothing for an empty box', () => {
+		const empty = renderBox('  ');
+		fireEvent.blur(screen.getByRole('combobox'));
+		cleanup();
+		expect(empty).not.toHaveBeenCalled();
+	});
+});
