@@ -11,6 +11,8 @@ const UNIQUE_VIOLATION = 'P2002';
 
 // Also what someone else's id gets, so nothing confirms another user's tasting exists.
 const notFound = () => apiError(404, 'tastingNotFound');
+// Anything else in a URL (a NUL, say) would reach Postgres and come back a 500.
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default class TastingService {
 	constructor(
@@ -30,6 +32,9 @@ export default class TastingService {
 	}
 
 	public async get(userId: string, id: string) {
+		if (!UUID.test(id)) {
+			throw notFound();
+		}
 		const tasting = await this._prisma.tasting.findFirst({
 			where: { id, userId },
 			include: TASTING_FLIGHT_INCLUDE,
@@ -84,6 +89,9 @@ export default class TastingService {
 
 	/** Row first, photo after: a failure leaves an unused file, never a tasting without its photo. */
 	public async delete(userId: string, id: string) {
+		if (!UUID.test(id)) {
+			throw notFound();
+		}
 		const tasting = await this._prisma.tasting.findFirst({ where: { id, userId }, select: { photoKey: true } });
 		if (!tasting) {
 			throw notFound();

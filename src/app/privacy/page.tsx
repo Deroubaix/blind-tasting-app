@@ -98,10 +98,10 @@ function PrivacyEn() {
 			<section>
 				<h2>Cookies and your browser</h2>
 				<p>
-					One cookie keeps you signed in. It is strictly necessary, lasts an hour and is removed when you log
-					out. A second one remembers the language you chose. So no consent banner is needed. The app also
-					remembers a few settings, such as your last timer choice, in your own browser; they never leave your
-					device.
+					One cookie keeps you signed in. It is strictly necessary, lasts 30 days from when you last used the
+					app and is removed when you log out. A second one remembers the language you chose. So no consent
+					banner is needed. The app also remembers a few settings, such as your last timer choice, in your own
+					browser; they never leave your device.
 				</p>
 			</section>
 
@@ -240,10 +240,11 @@ function PrivacyPt() {
 			<section>
 				<h2>Cookies e o seu navegador</h2>
 				<p>
-					Um cookie mantém a sua sessão iniciada. É estritamente necessário, dura uma hora e é removido quando
-					termina a sessão. Um segundo cookie lembra o idioma que escolheu. Por isso não é necessário um aviso
-					de consentimento. A aplicação também guarda algumas definições, como a última escolha de cronómetro,
-					no seu próprio navegador; nunca saem do seu dispositivo.
+					Um cookie mantém a sua sessão iniciada. É estritamente necessário, dura 30 dias desde a última vez
+					que usou a aplicação e é removido quando termina a sessão. Um segundo cookie lembra o idioma que
+					escolheu. Por isso não é necessário um aviso de consentimento. A aplicação também guarda algumas
+					definições, como a última escolha de cronómetro, no seu próprio navegador; nunca saem do seu
+					dispositivo.
 				</p>
 			</section>
 

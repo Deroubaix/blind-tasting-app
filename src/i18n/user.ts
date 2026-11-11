@@ -135,7 +135,7 @@ export const userText = dict(
 			deleteMine: 'Delete my account',
 			logOut: 'Log out',
 		},
-		logout: { loggingOut: 'Logging out…' },
+		logout: { confirm: 'Log out on this device?', logOut: 'Log out', loggingOut: 'Logging out…' },
 		toast: { dismiss: 'Dismiss notification' },
 	},
 	{
@@ -271,7 +271,11 @@ export const userText = dict(
 			deleteMine: 'Eliminar a minha conta',
 			logOut: 'Terminar sessão',
 		},
-		logout: { loggingOut: 'A terminar sessão…' },
+		logout: {
+			confirm: 'Terminar sessão neste dispositivo?',
+			logOut: 'Terminar sessão',
+			loggingOut: 'A terminar sessão…',
+		},
 		toast: { dismiss: 'Fechar notificação' },
 	},
 );

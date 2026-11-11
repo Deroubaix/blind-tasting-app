@@ -109,6 +109,16 @@ describe('readJson', () => {
 		await expect(readJson(post('{"x\\u0000":1}'))).rejects.toMatchObject({ statusCode: 400 });
 	});
 
+	it('refuses half a surrogate pair, which Postgres also cannot store', async () => {
+		await expect(readJson(post('{"notes":"\\ud800"}'))).rejects.toMatchObject({ statusCode: 400 });
+		await expect(readJson(post('{"notes":"x\\udc00"}'))).rejects.toMatchObject({ statusCode: 400 });
+		await expect(readJson(post('{"notes":"\\ud83c\\udf77"}'))).resolves.toEqual({ notes: '🍷' });
+	});
+
+	it('refuses deep nesting as a 400 without overflowing', async () => {
+		await expect(readJson(post('['.repeat(20000) + ']'.repeat(20000)))).rejects.toMatchObject({ statusCode: 400 });
+	});
+
 	it('passes an ordinary body through', async () => {
 		await expect(readJson(post('{"notes":"Cassis, \\\\u0000 as text"}'))).resolves.toEqual({
 			notes: 'Cassis, \\u0000 as text',

@@ -82,17 +82,39 @@ export function errorResponse(error: unknown, lang: Lang = DEFAULT_LANG, fallbac
 	return jsonResponse(JsonApiError.toJson(apiError), apiError.statusCode);
 }
 
-const hasNul = (value: unknown): boolean =>
-	typeof value === 'string'
-		? value.includes('\0')
-		: value !== null &&
-			typeof value === 'object' &&
-			Object.entries(value).some(([k, v]) => k.includes('\0') || hasNul(v));
+/** No request needs more; deeper is refused before anything walks it. */
+const MAX_DEPTH = 32;
+const LONE_SURROGATE = /[\ud800-\udbff](?![\udc00-\udfff])|(?<![\ud800-\udbff])[\udc00-\udfff]/;
+const unstorable = (text: string) => text.includes('\0') || LONE_SURROGATE.test(text);
 
-/** The JSON body. Postgres can't store a NUL character, so one is refused here as a 400, not a 500. */
+/** Walked with a stack, not recursion, so deep nesting can't overflow it. */
+function isStorable(body: unknown): boolean {
+	const stack: { value: unknown; depth: number }[] = [{ value: body, depth: 0 }];
+	while (stack.length) {
+		const { value, depth } = stack.pop()!;
+		if (typeof value === 'string') {
+			if (unstorable(value)) {
+				return false;
+			}
+		} else if (value !== null && typeof value === 'object') {
+			if (depth >= MAX_DEPTH) {
+				return false;
+			}
+			for (const [key, child] of Object.entries(value)) {
+				if (unstorable(key)) {
+					return false;
+				}
+				stack.push({ value: child, depth: depth + 1 });
+			}
+		}
+	}
+	return true;
+}
+
+/** The JSON body, refused as a 400 if it holds what Postgres can't store (NUL, half a surrogate pair) or nests absurdly. */
 export async function readJson(request: Request): Promise<unknown> {
 	const body: unknown = await request.json();
-	if (hasNul(body)) {
+	if (!isStorable(body)) {
 		throw apiError(400, 'invalidRequest');
 	}
 	return body;

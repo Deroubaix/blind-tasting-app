@@ -15,16 +15,20 @@ const SECRET = 'test-secret';
 process.env.JWT_SECRET = SECRET;
 
 function setup() {
-	const rows = new Map<string, { id: string; userId: string }>();
+	type Row = { id: string; userId: string; expiresAt: Date };
+	const rows = new Map<string, Row>();
 	let next = 0;
 	const prisma = {
 		session: {
-			create: vi.fn(async ({ data }: { data: { userId: string } }) => {
-				const row = { id: `s${++next}`, userId: data.userId };
+			create: vi.fn(async ({ data }: { data: Omit<Row, 'id'> }) => {
+				const row = { id: `s${++next}`, ...data };
 				rows.set(row.id, row);
 				return row;
 			}),
 			findUnique: vi.fn(async ({ where }: { where: { id: string } }) => rows.get(where.id) ?? null),
+			update: vi.fn(async ({ where, data }: { where: { id: string }; data: { expiresAt: Date } }) => {
+				rows.get(where.id)!.expiresAt = data.expiresAt;
+			}),
 			deleteMany: vi.fn(async ({ where }: { where: { id?: string; userId?: string } }) => {
 				for (const row of [...rows.values()]) {
 					if (row.id === where.id || row.userId === where.userId) {
@@ -79,6 +83,23 @@ describe('sessions', () => {
 		const { sessions } = setup();
 		jar.set('auth-token', jwt.sign({ userId: 'ana' }, SECRET, { algorithm: 'HS256', expiresIn: 3600 }));
 		await expect(sessions.requireUserId()).rejects.toEqual(expired);
+	});
+
+	it('ends a session left unused past its end', async () => {
+		const { sessions, rows } = setup();
+		await sessions.start('ana');
+		[...rows.values()][0].expiresAt = new Date(Date.now() - 1000);
+		await expect(sessions.requireUserId()).rejects.toEqual(expired);
+	});
+
+	it('pushes the end out again when used a day or more later', async () => {
+		const { sessions, rows } = setup();
+		await sessions.start('ana');
+		const row = [...rows.values()][0];
+		const DAY = 24 * 60 * 60 * 1000;
+		row.expiresAt = new Date(Date.now() + 5 * DAY);
+		await expect(sessions.requireUserId()).resolves.toBe('ana');
+		expect(row.expiresAt.getTime()).toBeGreaterThan(Date.now() + 29 * DAY);
 	});
 
 	it('refuses a session that names someone else', async () => {

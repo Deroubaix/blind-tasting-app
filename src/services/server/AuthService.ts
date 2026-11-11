@@ -13,6 +13,8 @@ const TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 // Checked against for unknown emails, so they take as long to refuse as a wrong password does.
 const DUMMY_HASH = `${'0'.repeat(32)}:${'0'.repeat(128)}`;
+/** Tries per address once an account has seen too many wrong passwords from everywhere. */
+const TRIES_WHILE_ATTACKED = 2;
 
 const hashToken = (raw: string) => createHash('sha256').update(raw).digest('hex');
 
@@ -49,14 +51,17 @@ export default class AuthService {
 	public async logIn(email: string, password: string, ip: string): Promise<AuthenticatedUser> {
 		const fromHere = `${email}|${ip}`;
 		await this._rateLimits.consume(RATE_LIMITS.loginIp, ip);
-		await this._rateLimits.check(RATE_LIMITS.loginEmail, fromHere);
-		await this._rateLimits.check(RATE_LIMITS.loginAccount, email);
+		// Counted before the password check, so parallel guesses can't all pass a stale count.
+		const tries = await this._rateLimits.consume(RATE_LIMITS.loginEmail, fromHere);
+		// An account under attack from many places still lets each address try a couple of times.
+		if (tries > TRIES_WHILE_ATTACKED) {
+			await this._rateLimits.check(RATE_LIMITS.loginAccount, email);
+		}
 
 		const user = await this._prisma.user.findUnique({ where: { email } });
 		const isPasswordValid = (await verifyPassword(password, user?.password ?? DUMMY_HASH)) && !!user;
 		if (!user || !isPasswordValid) {
 			// Counted for unknown emails too, so the limit gives away nothing about which exist.
-			await this._rateLimits.consume(RATE_LIMITS.loginEmail, fromHere).catch(() => undefined);
 			await this._rateLimits.consume(RATE_LIMITS.loginAccount, email).catch(() => undefined);
 			throw apiError(401, 'invalidCredentials');
 		}

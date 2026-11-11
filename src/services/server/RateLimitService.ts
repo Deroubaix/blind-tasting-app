@@ -13,9 +13,9 @@ export default class RateLimitService {
 
 	/**
 	 * Counts one attempt and throws a 429 once the limit is passed. One statement, so two requests
-	 * arriving together cannot both read the old count and slip through.
+	 * arriving together cannot both read the old count and slip through. Returns the count so far.
 	 */
-	public async consume(rule: RateLimitRule, identifier: string): Promise<void> {
+	public async consume(rule: RateLimitRule, identifier: string): Promise<number> {
 		const windowSeconds = rule.windowMs / 1000;
 		const [row] = await this._prisma.$queryRaw<{ count: number; windowStart: Date }[]>`
 			INSERT INTO "RateLimit" ("key", "count", "windowStart")
@@ -36,6 +36,7 @@ export default class RateLimitService {
 		if (row.count > rule.limit) {
 			throw tooMany(minutesUntil(row.windowStart, rule));
 		}
+		return row.count;
 	}
 
 	/** Throws a 429 if the limit is already used up, without counting this attempt. */

@@ -22,7 +22,7 @@ const flightService = new ClientFlightService();
 const DELETE_ACCOUNT_MODAL = 'delete-account';
 
 export default function AccountPanel() {
-	const { user, isInitialLoading, deleteAccount } = useAuthProvider();
+	const { user, isInitialLoading, deleteAccount, signOut } = useAuthProvider();
 	const { openModal, closeModal } = useModalProvider();
 	const { showToast } = useToastProvider();
 	const router = useRouter();
@@ -243,9 +243,16 @@ export default function AccountPanel() {
 				</div>
 			</section>
 
-			<Link href="/logout" className="account-logout">
+			<button
+				type="button"
+				className="account-logout"
+				onClick={async () => {
+					await signOut();
+					router.push('/');
+				}}
+			>
 				{t.logOut}
-			</Link>
+			</button>
 		</div>
 	);
 }

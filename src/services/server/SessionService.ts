@@ -6,7 +6,9 @@ import { apiError } from '../../utils/ApiUtils';
 import { JsonApiError } from '../../utils/ErrorUtils';
 
 const AUTH_COOKIE = 'auth-token';
-const SESSION_SECONDS = 60 * 60;
+/** Sliding: each day the session is used pushes its end out to this again. */
+const SESSION_SECONDS = 30 * 24 * 60 * 60;
+const RENEW_AFTER_MS = 24 * 60 * 60 * 1000;
 
 const cookieAttributes = {
 	httpOnly: true,
@@ -24,10 +26,8 @@ export default class SessionService {
 		const session = await this._prisma.session.create({
 			data: { userId, expiresAt: new Date(Date.now() + SESSION_SECONDS * 1000) },
 		});
-		const token = jwt.sign({ userId, sid: session.id }, ServerConfig.getJwtSecret(), {
-			algorithm: 'HS256',
-			expiresIn: SESSION_SECONDS,
-		});
+		// No expiry in the token: the session row's `expiresAt` decides, so renewing it needs no new token.
+		const token = jwt.sign({ userId, sid: session.id }, ServerConfig.getJwtSecret(), { algorithm: 'HS256' });
 		(await cookies()).set(AUTH_COOKIE, token, { ...cookieAttributes, maxAge: SESSION_SECONDS });
 		this.sweepOccasionally();
 	}
@@ -57,11 +57,31 @@ export default class SessionService {
 	public async requireUserId() {
 		const { userId, sid } = await this.claims();
 		// The session row goes with logging out, a password reset and the account itself.
-		const session = await this._prisma.session.findUnique({ where: { id: sid }, select: { userId: true } });
-		if (!session || session.userId !== userId) {
+		const session = await this._prisma.session.findUnique({
+			where: { id: sid },
+			select: { userId: true, expiresAt: true },
+		});
+		if (!session || session.userId !== userId || session.expiresAt.getTime() <= Date.now()) {
 			throw apiError(401, 'sessionExpired');
 		}
+		if (session.expiresAt.getTime() - Date.now() < SESSION_SECONDS * 1000 - RENEW_AFTER_MS) {
+			await this.renew(sid);
+		}
 		return userId;
+	}
+
+	/** Cookie first: a server page can't set one, so it leaves renewing to the next API call. */
+	private async renew(sid: string) {
+		const jar = await cookies();
+		try {
+			jar.set(AUTH_COOKIE, jar.get(AUTH_COOKIE)!.value, { ...cookieAttributes, maxAge: SESSION_SECONDS });
+		} catch {
+			return;
+		}
+		await this._prisma.session.update({
+			where: { id: sid },
+			data: { expiresAt: new Date(Date.now() + SESSION_SECONDS * 1000) },
+		});
 	}
 
 	/** The cookie's verified claims. Tokens from before sessions were recorded have no `sid`: signed out. */
