@@ -29,6 +29,10 @@
 		color: $color-text-secondary;
 	}
 
+	&__context-short {
+		display: none;
+	}
+
 	// ── Clock ───────────────────────────────────────────────────────────────────
 	&__center {
 		display: flex;
@@ -173,6 +177,25 @@
 	// During a tasting the glass alone stands for the name.
 	.tasting-page-header:has(.tasting-page-header__context) .wordmark__name {
 		display: none;
+	}
+}
+
+// "Vinho tinto · CMS" beside "Tempo restante" doesn't fit a 320 screen.
+@include responsive(22.5rem) {
+	.tasting-page-header {
+		gap: 8px;
+	}
+
+	.tasting-page-header__center {
+		gap: 4px;
+	}
+
+	.tasting-page-header__context-full {
+		display: none;
+	}
+
+	.tasting-page-header__context-short {
+		display: inline;
 	}
 }
 

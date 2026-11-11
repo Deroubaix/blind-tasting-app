@@ -1087,6 +1087,12 @@
 		align-items: center;
 		min-width: max-content;
 
+		// Phones: room for a taster column or two beside the wine before the table scrolls.
+		@include responsive($breakpoint-mobile) {
+			grid-template-columns: minmax(130px, 2fr) repeat(var(--cols), minmax(76px, 1fr)) minmax(76px, 1fr);
+			gap: $spacing-sm;
+		}
+
 		&--head {
 			@include ledger-label;
 			border-top: none;

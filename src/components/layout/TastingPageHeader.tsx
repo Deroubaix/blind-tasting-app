@@ -87,8 +87,12 @@ export default function TastingPageHeader({
 	const initials = user?.displayName?.[0]?.toUpperCase() ?? '';
 
 	const wineWord = wineType === 'red' ? c.red : wineType === 'white' ? c.white : null;
-	const context =
-		flightLabel ?? (wineWord ? sidebar.wineGrid(wineWord, c.grid[gridOf(tastingData.grid)].short) : null);
+	const gridName = c.grid[gridOf(tastingData.grid)].short;
+	const context = flightLabel ?? (wineWord ? sidebar.wineGrid(wineWord, gridName) : null);
+	const shortContext =
+		flight && timerPage
+			? t.tastingHeader.flightWineShort(flight.wineNumber, flight.wineCount)
+			: wineWord && t.tastingHeader.wineGridShort(wineWord, gridName);
 
 	return (
 		<header className="tasting-page-header">
@@ -96,7 +100,12 @@ export default function TastingPageHeader({
 				<Wordmark size="sm" />
 			</Link>
 
-			{timerPage && context && <span className="tasting-page-header__context">{context}</span>}
+			{timerPage && context && (
+				<span className="tasting-page-header__context">
+					<span className="tasting-page-header__context-full">{context}</span>
+					<span className="tasting-page-header__context-short">{shortContext}</span>
+				</span>
+			)}
 
 			<div className="tasting-page-header__center">
 				{timerPage && !tastingData.timerEnabled && (

@@ -342,7 +342,7 @@ const PT: Record<string, string> = {
 	Outstanding: 'Excecional',
 	'Too young': 'Demasiado jovem',
 	'Can drink now, but has potential for ageing': 'Pode beber-se já, mas tem potencial de envelhecimento',
-	'Drink now: not suitable for ageing or further ageing': 'Beber já: não é para envelhecer nem envelhecer mais',
+	'Drink now: not suitable for ageing or further ageing': 'Beber já: sem potencial de envelhecimento',
 	'Too old': 'Demasiado velho',
 	Floral: 'Floral',
 	'Green Fruit': 'Fruta verde',

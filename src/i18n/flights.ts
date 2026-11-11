@@ -433,7 +433,7 @@ export const flightsText = dict(
 			heading: (n) => `Qual era o vinho ${n}?`,
 			ledeWset:
 				'Introduza a qualidade e a prontidão da chave de respostas e, se quiser que também seja pontuado, o vinho. Todos os que submeteram são pontuados ao mesmo tempo.',
-			ledeCms: 'Copie-o do rótulo uma vez. Todos os que submeteram são pontuados ao mesmo tempo.',
+			ledeCms: 'Copie-o do rótulo uma única vez. Todos os que submeteram são pontuados ao mesmo tempo.',
 			haveSubmitted: (n, total) => `${n} de ${total} já submeteram.`,
 			oneTasting: (name, clock) => `${name} ainda está a provar${clock ? ` (faltam ${clock})` : ''}.`,
 			manyTasting: (names) => `${names} ainda estão a provar.`,

@@ -7,6 +7,7 @@ import { compareReveal, type FieldStatus, type Reveal } from '../../utils/reveal
 import { formatDecimal } from '../../utils/NumberUtils';
 import { type homeText } from '../../i18n/home';
 import { type Lang } from '../../i18n';
+import { termIn } from '../../i18n/terms';
 
 type HomeT = (typeof homeText)['en'];
 
@@ -149,12 +150,14 @@ export default function HomeIntro({ t, status, lang }: { t: HomeT; status: Recor
 									{t.columns[field.key as keyof HomeT['columns']]}
 								</span>
 								<span className="home-sheet__call">
-									{field.call}
+									{field.call && termIn(lang, field.call, field.key)}
 									{field.status !== 'correct' && (
 										<>
 											{' '}
 											<span className="visually-hidden">{a.label}: </span>
-											<span className="home-sheet__fix">{field.actual}</span>
+											<span className="home-sheet__fix">
+												{field.actual && termIn(lang, field.actual, field.key)}
+											</span>
 										</>
 									)}
 								</span>

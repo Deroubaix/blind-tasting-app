@@ -72,6 +72,9 @@ export const layoutText = dict(
 			carriesOn: 'It carries on from where it was when you resume.',
 			resume: 'Resume',
 			flightWine: (n: number, total: number) => `Flight · Wine ${n} of ${total}`,
+			/** The header's context on the narrowest phones. */
+			flightWineShort: (n: number, total: number) => `Wine ${n} of ${total}`,
+			wineGridShort: (wine: string, grid: string) => `${wine} · ${grid}`,
 			timeRemaining: 'Time left',
 			untimed: 'Untimed',
 			low: 'low',
@@ -85,7 +88,7 @@ export const layoutText = dict(
 			sequenceOver: 'Time is up for the last phase.',
 			kept: 'Everything you chose is kept.',
 			thenSave: 'Look over your sheet, then save it and enter the label to be scored.',
-			reviewSave: 'Review & Save',
+			reviewSave: 'Review & save',
 		},
 		tastingFooter: {
 			startOver: 'Start over',
@@ -180,6 +183,8 @@ export const layoutText = dict(
 			carriesOn: 'Continua de onde ficou quando retomar.',
 			resume: 'Retomar',
 			flightWine: (n, total) => `Flight · Vinho ${n} de ${total}`,
+			flightWineShort: (n, total) => `Vinho ${n} de ${total}`,
+			wineGridShort: (wine, grid) => `${wine} · ${grid}`,
 			timeRemaining: 'Tempo restante',
 			untimed: 'Sem cronómetro',
 			low: 'a acabar',

@@ -403,11 +403,19 @@
 
 	&__remove {
 		@include bare-button;
+		position: relative;
 		color: inherit;
 		opacity: 0.75;
 		font-size: $text-16;
 		line-height: 1;
 		transition: opacity 0.15s ease;
+
+		// At least 24px to tap without growing the chip; it reaches into the chip's own padding.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -6px -10px -6px -6px;
+		}
 
 		&:hover {
 			opacity: 1;

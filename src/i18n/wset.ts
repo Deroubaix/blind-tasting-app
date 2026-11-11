@@ -38,7 +38,7 @@ export const wsetText = dict(
 			description:
 				'Judge the quality on balance, length, intensity and complexity, and say whether the wine is ready. Give your reasons: the exam marks them, though the app scores only the quality and readiness.',
 			back: 'Back to Palate',
-			next: 'Review & Save',
+			next: 'Review & save',
 			quality: 'Quality level',
 			readiness: 'Readiness for drinking',
 			reasons: 'Reasons',
