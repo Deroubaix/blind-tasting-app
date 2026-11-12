@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const CONTROLLER = 'Marisha Deroubaix';
 // TODO: placeholder on the reserved example.com domain; replace with the real privacy inbox before launch.
 const CONTACT: string | null = 'privacy@example.com';
-const UPDATED = { en: '10 November 2026', pt: '10 de novembro de 2026' };
+const UPDATED = { en: '12 November 2026', pt: '12 de novembro de 2026' };
 
 function Contact({ pt = false }: { pt?: boolean }) {
 	if (CONTACT) {
@@ -99,9 +99,9 @@ function PrivacyEn() {
 				<h2>Cookies and your browser</h2>
 				<p>
 					One cookie keeps you signed in. It is strictly necessary, lasts 30 days from when you last used the
-					app and is removed when you log out. A second one remembers the language you chose. So no consent
-					banner is needed. The app also remembers a few settings, such as your last timer choice, in your own
-					browser; they never leave your device.
+					app and is removed when you log out. Two more remember the language and the light or dark theme you
+					chose, and are set only when you choose one. So no consent banner is needed. The app also remembers
+					a few settings, such as your last timer choice, in your own browser; they never leave your device.
 				</p>
 			</section>
 
@@ -241,10 +241,10 @@ function PrivacyPt() {
 				<h2>Cookies e o seu navegador</h2>
 				<p>
 					Um cookie mantém a sua sessão iniciada. É estritamente necessário, dura 30 dias desde a última vez
-					que usou a aplicação e é removido quando termina a sessão. Um segundo cookie lembra o idioma que
-					escolheu. Por isso não é necessário um aviso de consentimento. A aplicação também guarda algumas
-					definições, como a última escolha de cronómetro, no seu próprio navegador; nunca saem do seu
-					dispositivo.
+					que usou a aplicação e é removido quando termina a sessão. Outros dois lembram o idioma e o tema
+					claro ou escuro que escolheu, e só são criados quando faz essa escolha. Por isso não é necessário um
+					aviso de consentimento. A aplicação também guarda algumas definições, como a última escolha de
+					cronómetro, no seu próprio navegador; nunca saem do seu dispositivo.
 				</p>
 			</section>
 
